@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Prédictions</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Mes Prédictions</h1>
+        <nav>
+            <a href="index.html">Accueil</a>
+            <a href="contact.html">Contact</a>
+            <a href="predictions.html">Prédictions</a>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Que nous réserve l’avenir ?</h2>
+            <p>Bienvenue sur ma page dédiée aux prédictions. Ici, je partage mes idées, intuitions ou analyses sur ce qui pourrait se produire dans le futur, que ce soit dans la tech, la société, ou le climat.</p>
+        </section>
+
+        <section>
+            <h3>🔮 Prédiction #1</h3>
+            <p>L’intelligence artificielle deviendra un partenaire de création incontournable dans les métiers artistiques d’ici 2030.</p>
+        </section>
+
+        <section>
+            <h3>🔮 Prédiction #2</h3>
+            <p>Les voitures autonomes seront courantes dans les centres urbains, réduisant les embouteillages et les accidents.</p>
+        </section>
+
+        <!-- Tu peux ajouter autant de prédictions que tu veux ici -->
+
+    </main>
+
+    <footer>
+        <p>&copy; 2025 - Mon Site Web</p>
+    </footer>
+</body>
+</html>
