@@ -98,7 +98,7 @@
           3400, 3400, 3300, 3000, 3000, 3300, 3300, 3350, 3250, 3425, 3400, 3500
         ]
       },
-       "2021": {
+      "2021": {
         real: 4766,
         institutions: [
           "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
@@ -108,7 +108,7 @@
           4300, 4400, 3800, 3900, 4100, 4000, 4000, 4100, 3950, 4050, 4200, 4300
         ]
       },
-        "2022": {
+      "2022": {
         real: 3840,
         institutions: [
           "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
@@ -137,7 +137,7 @@
         previsions: [
           5100, 4200, 5000, 4500, 4700, 4700, 5300, 5000, 5100, 3300, 5100, 5200
         ]
-       },
+      },
     };
 
     // Plugin ligne horizontale
@@ -187,8 +187,12 @@
       const ctx = canvas.getContext('2d');
       const { institutions, previsions, real } = data;
 
+      // Base = minimum (jusqu'à la ligne de réalité)
       const base = previsions.map(p => Math.min(p, real));
-      const ecarts = previsions.map(p => Math.max(real - p, 0));
+      // Écart quand la prévision est inférieure à la réalité (sous-prévision)
+      const ecartsSous = previsions.map(p => Math.max(real - p, 0));
+      // Écart quand la prévision est supérieure à la réalité (sur-prévision)
+      const ecartsSur = previsions.map(p => Math.max(p - real, 0));
 
       const pourcentages = previsions.map(p => {
         const ecart = Math.abs(real - p);
@@ -203,33 +207,45 @@
           labels: institutions,
           datasets: [
             {
-              label: 'Prévision',
+              label: 'Prévision (jusqu’à la réalité)',
               data: base,
               backgroundColor: 'rgba(54, 162, 235, 0.85)',
               borderColor: 'rgba(54, 162, 235, 1)',
               borderWidth: 1,
               stack: 'grp',
-              // Empêche l’affichage des labels sur les barres bleues
               datalabels: { display: false }
             },
             {
-              label: 'Écart vs Réalité',
-              data: ecarts,
-              backgroundColor: 'rgba(255, 99, 132, 0.65)',
+              label: 'Écart vs Réalité (sous-prévision)',
+              data: ecartsSous,
+              backgroundColor: 'rgba(255, 99, 132, 0.65)', // rouge
               borderColor: 'rgba(255, 99, 132, 1)',
               borderWidth: 1,
               stack: 'grp',
-              // Affiche le % à l’intérieur des barres roses
               datalabels: {
-                display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0, // masque si écart nul
+                display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0,
                 anchor: 'center',
                 align: 'center',
-                formatter: (val, ctx) => pourcentages[ctx.dataIndex] + '%',
+                formatter: (val, ctx) => '🔺 ' + pourcentages[ctx.dataIndex] + '%',
                 color: '#fff',
-                font: {
-                  weight: 'bold',
-                  size: 12
-                },
+                font: { weight: 'bold', size: 12 },
+                clip: true
+              }
+            },
+            {
+              label: 'Écart vs Réalité (sur-prévision)',
+              data: ecartsSur,
+              backgroundColor: 'rgba(138, 43, 226, 0.8)', // violet
+              borderColor: 'rgba(138, 43, 226, 1)',
+              borderWidth: 1,
+              stack: 'grp',
+              datalabels: {
+                display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0,
+                anchor: 'center',
+                align: 'center',
+                formatter: (val, ctx) => '🔻 ' + pourcentages[ctx.dataIndex] + '%',
+                color: '#fff',
+                font: { weight: 'bold', size: 12 },
                 clip: true
               }
             }
@@ -251,23 +267,26 @@
               label: `Réalité: ${real} pts`
             },
             datalabels: {
-              clip: false // valeur par défaut globale; le dataset rose l’écrase à true
+              clip: false
+            },
+            tooltip: {
+              callbacks: {
+                afterBody: (items) => {
+                  const idx = items[0].dataIndex;
+                  const p = previsions[idx];
+                  return `Prévision: ${p} pts | Réalité: ${real} pts`;
+                }
+              }
             }
           },
           scales: {
             x: {
               stacked: true,
-              title: {
-                display: true,
-                text: 'Institution'
-              }
+              title: { display: true, text: 'Institution' }
             },
             y: {
               stacked: true,
-              title: {
-                display: true,
-                text: 'Points S&P 500'
-              }
+              title: { display: true, text: 'Points S&P 500' }
             }
           }
         }
