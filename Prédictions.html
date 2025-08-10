@@ -91,7 +91,9 @@
 </div>
 
            
-            <div id="tableContainer"></div>
+            <div id="chartContainer" style="max-width: 960px; margin: auto;">
+  <canvas id="chartCanvas" height="140"></canvas>
+</div>
         </section>
     </main>
 
@@ -107,117 +109,498 @@
             })
             .catch(error => console.error('Erreur de chargement du header :', error));
 
-<section id="sp500-section">
-  <h2 style="text-align: center; font-family: Segoe UI;">Prévisions vs Réalité du S&P 500</h2>
-  
-  <div class="sp500-controls" style="display: flex; justify-content: center; gap: 12px; margin-bottom: 16px;">
-    <button id="sp500-prev">← Année précédente</button>
-    <select id="sp500-select"></select>
-    <button id="sp500-next">Année suivante →</button>
-  </div>
-  
-  <div style="max-width: 960px; margin: auto;">
-    <canvas id="sp500-canvas" height="140"></canvas>
-  </div>
-</section>
+        function displayTable(year) {
+            const tables = {
+                "2020": `
+                    <table>
+                    <table id="tablePrevisions">
+                        <thead>
+                            <tr>
+                                <th>Institution</th>
+                                <th>Prévision</th>
+                                <th>Résultat Réel</th>
+                                <th>Écart de la Prédiction</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Goldman Sachs</td>
+                                <td>3400 pts</td>
+                                <td>3756 pts</td>
+                                <td>-10%</td>
+                            </tr>
+                              <tr>
+                                <td>JP Morgan</td>
+                                <td>3400 pts</td>
+                                <td>3756 pts</td>
+                                <td>-10%</td>
+                            </tr>
+                                <tr>
+                                <td>Bank of America</td>
+                                <td>3300 pts</td>
+                                <td>3756 pts</td>
+                                <td>-14%</td>
+                            </tr>
+                                 <tr>
+                                <td>Morgan Stanley</td>
+                                <td>3000 pts</td>
+                                <td>3756 pts</td>
+                                <td>-25%</td>
+                            </tr>
+                            <tr>
+                                <td>UBS</td>
+                                <td>3000 pts</td>
+                                <td>3756 pts</td>
+                                <td>-25%</td>
+                            </tr>
+                             <tr>
+                                <td>Wells Fargo</td>
+                                <td>3300 pts</td>
+                                <td>3756 pts</td>
+                                <td>-14%</td>
+                            </tr>
+                                <tr>
+                                <td>Barclays</td>
+                                <td>3300 pts</td>
+                                <td>3756 pts</td>
+                                <td>-14%</td>
+                            </tr>
+                                <tr>
+                                <td>RBC</td>
+                                <td>3350 pts</td>
+                                <td>3756 pts</td>
+                                <td>-12%</td>
+                            </tr>
+                                <tr>
+                                <td>Deutsche Bank</td>
+                                <td>3250 pts</td>
+                                <td>3756 pts</td>
+                                <td>-16%</td>
+                            </tr>
+                               <tr>
+                                <td>Credit Suisse</td>
+                                <td>3425 pts</td>
+                                <td>3756 pts</td>
+                                <td>-10%</td>
+                            </tr>
+                                <tr>
+                                <td>BMO</td>
+                                <td>3400 pts</td>
+                                <td>3756 pts</td>
+                                <td>-10%</td>
+                            </tr>
+                            <tr>
+                                <td>Oppenheimer</td>
+                                <td>3500 pts</td>
+                                <td>3756 pts</td>
+                                <td>-7%</td>
+                            </tr>
+                        </tbody>
+                    </table>`,
+                
+                "2021": `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Institution</th>
+                                <th>Prévision</th>
+                                <th>Résultat Réel</th>
+                                <th>Écart de la Prédiction</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Goldman Sachs</td>
+                                <td>4300 pts</td>
+                                <td>4766 pts</td>
+                                <td>-11%</td>
+                            </tr>
+                              <tr>
+                                <td>JP Morgan</td>
+                                <td>4400 pts</td>
+                                <td>4766 pts</td>
+                                <td>-8%</td>
+                            </tr>
+                                <tr>
+                                <td>Bank of America</td>
+                                <td>3800 pts</td>
+                                <td>4766 pts</td>
+                                <td>-25%</td>
+                            </tr>
+                                 <tr>
+                                <td>Morgan Stanley</td>
+                                <td>3900 pts</td>
+                                <td>4766 pts</td>
+                                <td>-22%</td>
+                            </tr>
+                            <tr>
+                                <td>UBS</td>
+                                <td>4100 pts</td>
+                                <td>4766 pts</td>
+                                <td>-16%</td>
+                            </tr>
+                             <tr>
+                                <td>Wells Fargo</td>
+                                <td>4000 pts</td>
+                                <td>4766 pts</td>
+                                <td>-19%</td>
+                            </tr>
+                                <tr>
+                                <td>Stifel</td>
+                                <td>3800 pts</td>
+                                <td>4766 pts</td>
+                                <td>-25%</td>
+                            </tr>
+                                <tr>
+                                <td>RBC</td>
+                                <td>4100 pts</td>
+                                <td>4766 pts</td>
+                                <td>-16%</td>
+                            </tr>
+                                <tr>
+                                <td>Deutsche Bank</td>
+                                <td>3950 pts</td>
+                                <td>4766 pts</td>
+                                <td>-21%</td>
+                            </tr>
+                               <tr>
+                                <td>Credit Suisse</td>
+                                <td>4050 pts</td>
+                                <td>4766 pts</td>
+                                <td>-18%</td>
+                            </tr>
+                                <tr>
+                                <td>BMO</td>
+                                <td>4200 pts</td>
+                                <td>4766 pts</td>
+                                <td>-13%</td>
+                            </tr>
+                            <tr>
+                                <td>Oppenheimer</td>
+                                <td>4300 pts</td>
+                                <td>4766 pts</td>
+                                <td>-11%</td>
+                            </tr>
+                            <tr>
+                                <td>Evercore ISI</td>
+                                <td>4110 pts</td>
+                                <td>4766 pts</td>
+                                <td>-16%</td>
+                            </tr>
+                        </tbody>
+                    </table>`,
+                
+            "2022": `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Institution</th>
+                                <th>Prévision</th>
+                                <th>Résultat Réel</th>
+                                <th>Écart de la Prédiction</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Goldman Sachs</td>
+                                <td>5100 pts</td>
+                                <td>3840 pts</td>
+                                <td>-25%</td>
+                            </tr>
+                              <tr>
+                                <td>JP Morgan</td>
+                                <td>5050 pts</td>
+                                <td>3840 pts</td>
+                                <td>-24%</td>
+                            </tr>
+                                <tr>
+                                <td>Bank of America</td>
+                                <td>4600 pts</td>
+                                <td>3840 pts</td>
+                                <td>-17%</td>
+                            </tr>
+                                 <tr>
+                                <td>Morgan Stanley</td>
+                                <td>4400 pts</td>
+                                <td>3840 pts</td>
+                                <td>-13%</td>
+                            </tr>
+                            <tr>
+                                <td>UBS</td>
+                                <td>4850 pts</td>
+                                <td>3840 pts</td>
+                                <td>-21%</td>
+                            </tr>
+                             <tr>
+                                <td>Wells Fargo</td>
+                                <td>5300 pts</td>
+                                <td>3840 pts</td>
+                                <td>-28%</td>
+                            </tr>
+                                <tr>
+                                <td>Jefferies</td>
+                                <td>5000 pts</td>
+                                <td>3840 pts</td>
+                                <td>-23%</td>
+                            </tr>
+                                <tr>
+                                <td>RBC</td>
+                                <td>5050 pts</td>
+                                <td>3840 pts</td>
+                                <td>-24%</td>
+                            </tr>
+                                <tr>
+                                <td>Deutsche Bank</td>
+                                <td>5250 pts</td>
+                                <td>3840 pts</td>
+                                <td>-27%</td>
+                            </tr>
+                               <tr>
+                                <td>Credit Suisse</td>
+                                <td>5200 pts</td>
+                                <td>3840 pts</td>
+                                <td>-26%</td>
+                            </tr>
+                                <tr>
+                                <td>BMO</td>
+                                <td>5300 pts</td>
+                                <td>3840 pts</td>
+                                <td>-28%</td>
+                            </tr>
+                            <tr>
+                                <td>Oppenheimer</td>
+                                <td>5330 pts</td>
+                                <td>3840 pts</td>
+                                <td>-28%</td>
+                            </tr>
+                        </tbody>
+                    </table>`,
+
+                
+               "2023": `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Institution</th>
+                                <th>Prévision</th>
+                                <th>Résultat Réel</th>
+                                <th>Écart de la Prédiction</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Goldman Sachs</td>
+                                <td>4000 pts</td>
+                                <td>4770 pts</td>
+                                <td>-19%</td>
+                            </tr>
+                              <tr>
+                                <td>JP Morgan</td>
+                                <td>4200 pts</td>
+                                <td>4770 pts</td>
+                                <td>-14%</td>
+                            </tr>
+                                <tr>
+                                <td>Bank of America</td>
+                                <td>4000 pts</td>
+                                <td>4770 pts</td>
+                                <td>-19%</td>
+                            </tr>
+                                 <tr>
+                                <td>Morgan Stanley</td>
+                                <td>3900 pts</td>
+                                <td>4770 pts</td>
+                                <td>-22%</td>
+                            </tr>
+                            <tr>
+                                <td>UBS</td>
+                                <td>3900 pts</td>
+                                <td>4770 pts</td>
+                                <td>-22%</td>
+                            </tr>
+                             <tr>
+                                <td>Wells Fargo</td>
+                                <td>4400 pts</td>
+                                <td>4770 pts</td>
+                                <td>-8%</td>
+                            </tr>
+                                <tr>
+                                <td>Deutsche Bank</td>
+                                <td>4500 pts</td>
+                                <td>4770 pts</td>
+                                <td>-6%</td>
+                            </tr>
+                               <tr>
+                                <td>Credit Suisse</td>
+                                <td>4050 pts</td>
+                                <td>4770 pts</td>
+                                <td>-18%</td>
+                            </tr>
+                                <tr>
+                                <td>BMO</td>
+                                <td>4300 pts</td>
+                                <td>4770 pts</td>
+                                <td>-11%</td>
+                            </tr>
+                            <tr>
+                                <td>Oppenheimer</td>
+                                <td>4400 pts</td>
+                                <td>4770 pts</td>
+                                <td>-8%</td>
+                            </tr>
+                            <tr>
+                                <td>Citigroup</td>
+                                <td>3900 pts</td>
+                                <td>4770 pts</td>
+                                <td>-22%</td>
+                            </tr>
+                        </tbody>
+                    </table>`,
+
+                 "2024": `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Institution</th>
+                                <th>Prévision</th>
+                                <th>Résultat Réel</th>
+                                <th>Écart de la Prédiction</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Goldman Sachs</td>
+                                <td>5100 pts</td>
+                                <td>5882 pts</td>
+                                <td>-15%</td>
+                            </tr>
+                              <tr>
+                                <td>JP Morgan</td>
+                                <td>4200 pts</td>
+                                <td>5882 pts</td>
+                                <td>-40%</td>
+                            </tr>
+                                <tr>
+                                <td>Bank of America</td>
+                                <td>5000 pts</td>
+                                <td>5882 pts</td>
+                                <td>-18%</td>
+                            </tr>
+                                 <tr>
+                                <td>Morgan Stanley</td>
+                                <td>4500 pts</td>
+                                <td>5882 pts</td>
+                                <td>-31%</td>
+                            </tr>
+                            <tr>
+                                <td>UBS</td>
+                                <td>4700 pts</td>
+                                <td>5882 pts</td>
+                                <td>-25%</td>
+                            </tr>
+                             <tr>
+                                <td>Wells Fargo</td>
+                                <td>4700 pts</td>
+                                <td>5882 pts</td>
+                                <td>-25%</td>
+                            </tr>
+                                <tr>
+                                <td>Deutsche Bank</td>
+                                <td>5100 pts</td>
+                                <td>5882 pts</td>
+                                <td>-15%</td>
+                            </tr>
+                                <tr>
+                                <td>BMO</td>
+                                <td>5100 pts</td>
+                                <td>5882 pts</td>
+                                <td>-15%</td>
+                            </tr>
+                            <tr>
+                                <td>Oppenheimer</td>
+                                <td>5200 pts</td>
+                                <td>5882 pts</td>
+                                <td>-13%</td>
+                            </tr>
+                            <tr>
+                                <td>RBC</td>
+                                <td>5000 pts</td>
+                                <td>5882 pts</td>
+                                <td>-18%</td>
+                            </tr>
+                            <tr>
+                                <td>BCA Research</td>
+                                <td>3300 pts</td>
+                                <td>5882 pts</td>
+                                <td>-78%</td>
+                            </tr>
+                            <tr>
+                                <td>Stifel</td>
+                                <td>4650 pts</td>
+                                <td>5882 pts</td>
+                                <td>-26%</td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>`,
+
+            };
 
             document.getElementById("tableContainer").innerHTML = tables[year] || "<p style='text-align:center;'>Aucune donnée disponible pour cette année.</p>";
         }
     </script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3"></script>
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const dataByYear = {
+  const chartDataByYear = {
     "2020": {
       real: 3756,
-      institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS",
-        "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"],
+      institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"],
       previsions: [3400, 3400, 3300, 3000, 3000, 3300, 3300, 3350, 3250, 3425, 3400, 3500]
     },
-    "2021": {
-      real: 4766,
-      institutions: ["JP Morgan", "Goldman Sachs", "Oppenheimer", "Credit Suisse"],
-      previsions: [3900, 4050, 4200, 4000]
-    }
-    // Tu peux ajouter ici tes données pour 2022, 2023, etc.
+    // Tu peux ajouter ici "2021", "2022", etc. avec des objets similaires
   };
 
-  const years = Object.keys(dataByYear).sort();
-  let currentIndex = 0;
-  const $select = document.getElementById('sp500-select');
-  const $prev = document.getElementById('sp500-prev');
-  const $next = document.getElementById('sp500-next');
-  const ctx = document.getElementById('sp500-canvas').getContext('2d');
-  let chart;
+  const ctx = document.getElementById('chartCanvas').getContext('2d');
+  let chartInstance;
 
-  years.forEach(year => {
-    const opt = document.createElement('option');
-    opt.value = year;
-    opt.textContent = year;
-    $select.appendChild(opt);
-  });
-
-  const drawLine = (chart, yValue, label) => {
-    const { ctx, chartArea, scales } = chart;
-    const y = scales.y.getPixelForValue(yValue);
-    ctx.save();
-    ctx.setLineDash([6, 4]);
-    ctx.strokeStyle = '#999';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(chartArea.left, y);
-    ctx.lineTo(chartArea.right, y);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.fillStyle = '#444';
-    ctx.font = '12px Segoe UI';
-    ctx.fillText(label, chartArea.right - ctx.measureText(label).width - 6, y - 6);
-    ctx.restore();
-  };
-
-  Chart.register({
-    id: 'customLine',
-    afterDatasetsDraw: (chart) => {
-      const year = years[currentIndex];
-      const realValue = dataByYear[year].real;
-      drawLine(chart, realValue, `Réalité: ${realValue} pts`);
+  function displayTable(year) {
+    const data = chartDataByYear[year];
+    if (!data) {
+      if (chartInstance) chartInstance.destroy();
+      return;
     }
-  });
 
-  const getDatasets = (previsions, real) => {
-    const gap = previsions.map(p => Math.max(real - p, 0));
+    const { institutions, previsions, real } = data;
+    const ecarts = previsions.map(p => Math.max(real - p, 0));
     const base = previsions.map(p => Math.min(p, real));
-    return [
-      {
-        label: 'Prévision',
-        data: base,
-        backgroundColor: 'rgba(54, 162, 235, 0.8)',
-        stack: 'grp'
-      },
-      {
-        label: 'Écart',
-        data: gap,
-        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-        stack: 'grp'
-      }
-    ];
-  };
 
-  function render(year) {
-    const { institutions, previsions, real } = dataByYear[year];
-    if (chart) chart.destroy();
-    chart = new Chart(ctx, {
+    if (chartInstance) chartInstance.destroy();
+
+    chartInstance = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: institutions,
-        datasets: getDatasets(previsions, real)
+        datasets: [
+          {
+            label: 'Prévision',
+            data: base,
+            backgroundColor: 'rgba(54, 162, 235, 0.8)',
+            stack: 'grp'
+          },
+          {
+            label: 'Écart vers Réalité',
+            data: ecarts,
+            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+            stack: 'grp'
+          }
+        ]
       },
       options: {
         responsive: true,
         plugins: {
           title: {
             display: true,
-            text: `Prévisions vs Réalité (${year})`,
+            text: `S&P 500 – ${year} : Prévisions vs Réalité (${real} pts)`,
             font: { size: 18 }
           },
           legend: { position: 'bottom' }
@@ -232,36 +615,13 @@ document.addEventListener('DOMContentLoaded', () => {
             }
           }
         }
-      },
-      plugins: ['customLine']
+      }
     });
-
-    $select.value = year;
-    $prev.disabled = currentIndex === 0;
-    $next.disabled = currentIndex === years.length - 1;
   }
 
-  $select.addEventListener('change', e => {
-    currentIndex = years.indexOf(e.target.value);
-    render(e.target.value);
+  document.getElementById('yearSelect').addEventListener('change', e => {
+    displayTable(e.target.value);
   });
-
-  $prev.addEventListener('click', () => {
-    if (currentIndex > 0) {
-      currentIndex--;
-      render(years[currentIndex]);
-    }
-  });
-
-  $next.addEventListener('click', () => {
-    if (currentIndex < years.length - 1) {
-      currentIndex++;
-      render(years[currentIndex]);
-    }
-  });
-
-  render(years[currentIndex]);
-});
 </script>
 </body>
 </html>
