@@ -477,23 +477,29 @@
 
     // Écouteurs UI
     document.addEventListener('DOMContentLoaded', () => {
-      const sel = document.getElementById('yearSelect');
-      sel.value = sel.value || '2020';
-      displayTable(sel.value);
+  const sel = document.getElementById('yearSelect');
+  sel.value = sel.value || '2020';
 
-      sel.addEventListener('change', e => {
-        displayTable(e.target.value);
-      });
+  // Le graphique principal dépend toujours du sélecteur
+  sel.addEventListener('change', e => {
+    displayTable(e.target.value);
+  });
 
-      document.querySelectorAll('.horizon-tabs button').forEach(btn => {
-        btn.addEventListener('click', () => {
-          currentHorizon = Number(btn.dataset.h);
-          const latestYear = yearsSorted.at(-1);
-          renderRankingAndChart(latestYear, currentHorizon);
+  // Affiche le graphique principal pour la valeur par défaut
+  displayTable(sel.value);
 
-        });
-      });
+  // Classement et prévision vs réalité sont toujours basés sur la dernière année
+  const latestYear = yearsSorted.at(-1);
+  renderRankingAndChart(latestYear, currentHorizon);
+
+  // Boutons d’horizon : toujours basés sur latestYear
+  document.querySelectorAll('.horizon-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentHorizon = Number(btn.dataset.h);
+      renderRankingAndChart(latestYear, currentHorizon);
     });
+  });
+});
   </script>
 </body>
 </html>
