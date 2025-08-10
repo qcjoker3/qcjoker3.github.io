@@ -1,23 +1,24 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   // 🟦 Étape 1 : Activation des calculatrices via la grille
-  const calcCards = document.querySelectorAll('.card.card-link');
-  const calcSections = document.querySelectorAll('.calculator-card');
+const calcCards = document.querySelectorAll('.card.card-link');
+const calcSections = document.querySelectorAll('.calculator-card');
 
-  calcCards.forEach(card => {
-    card.addEventListener('click', () => {
-      const selected = card.dataset.calc; // ex: "retraite", "valeur-future", "hypotheque", "trex"
+calcCards.forEach(card => {
+  card.addEventListener('click', () => {
+    // Mise à jour de l'apparence des cartes
+    calcCards.forEach(c => c.classList.remove('selected'));
+    card.classList.add('selected');
 
-      // Mise à jour de l'apparence
-      calcCards.forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
+    // Ciblage de la section à activer
+    const selected = card.dataset.calc; // ex: "retraite", "valeur-future", "hypotheque", "trex"
+    calcSections.forEach(sec => sec.classList.remove('active'));
 
-      // Affiche la bonne calculatrice
-      calcSections.forEach(section => section.classList.remove('active'));
-      const activeCalc = document.getElementById(`calc-${selected}`);
-      if (activeCalc) activeCalc.classList.add('active');
-    });
+    const activeSection = document.getElementById(`calc-${selected}`);
+    if (activeSection) activeSection.classList.add('active');
   });
+});
+
 
 
   // 📊 Déclaration des graphiques
