@@ -90,26 +90,7 @@
                 document.getElementById('header-placeholder').innerHTML = data;
             })
             .catch(error => console.error('Erreur de chargement du header :', error));
-<script>
-function trierParEcart() {
-  const tbody = document.querySelector('#tablePrevisions tbody');
-  const rows = Array.from(tbody.querySelectorAll('tr'));
 
-  rows.sort((a, b) => {
-    const valA = extraireEcart(a.cells[3].textContent);
-    const valB = extraireEcart(b.cells[3].textContent);
-    return valB - valA;
-  });
-
-  rows.forEach(row => tbody.appendChild(row));
-}
-
-function extraireEcart(text) {
-  const match = text.replace(/\s/g, '').match(/([-+]?\d+)([.,]?\d*)/);
-  if (!match) return 0;
-  return parseFloat(match[1] + match[2].replace(',', '.'));
-}
-</script>
         function displayTable(year) {
             const tables = {
                 "2020": `
