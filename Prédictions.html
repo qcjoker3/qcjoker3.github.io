@@ -49,7 +49,6 @@
 </head>
 <body>
 
-    <!-- ✅ Header partagé sera injecté ici -->
     <div id="header-placeholder"></div>
 
     <main>
@@ -77,7 +76,6 @@
         <p>&copy; 2025 - Finoza</p>
     </footer>
 
-    <!-- ✅ Script pour charger le header -->
     <script>
         fetch('header.html')
             .then(res => res.text())
@@ -93,19 +91,17 @@
                         <thead>
                             <tr>
                                 <th>Institution</th>
-                                <th>Prévision Initiale</th>
-                                <th>Révisions</th>
-                                <th>Commentaires</th>
+                                <th>Prévision</th>
                                 <th>Résultat Réel</th>
+                                <th>Écart de la Prédiction</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>Oppenheimer</td>
                                 <td>5 330 pts</td>
-                                <td>4 800 ➝ 4 000</td>
-                                <td>Inflation, taux Fed, rebond espéré</td>
                                 <td>3 839 pts</td>
+                                <td>-1 491 pts</td>
                             </tr>
                         </tbody>
                     </table>`,
@@ -116,18 +112,16 @@
                             <tr>
                                 <th>Institution</th>
                                 <th>Prévision</th>
-                                <th>Scénario</th>
-                                <th>Commentaires</th>
                                 <th>Résultat Réel</th>
+                                <th>Écart de la Prédiction</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
                                 <td>RBC</td>
                                 <td>4 200 – 4 900 pts</td>
-                                <td>Récession, stagflation</td>
-                                <td>Analyses de Lori Calvasina</td>
                                 <td>4 769 pts</td>
+                                <td>📈 proche du haut de la fourchette</td>
                             </tr>
                         </tbody>
                     </table>`
