@@ -1,0 +1,272 @@
+/* Base & Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #f7f9fa;
+  color: #0a2540;
+  line-height: 1.6;
+  font-size: 16px;
+  padding: 0;
+}
+
+/* Headings */
+h1, h2, h3 {
+  color: #0a2540;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Header */
+header {
+  background-color: #ffffff;
+  padding: 20px 0;
+  border-bottom: 1px solid #e6ecf1;
+  text-align: center;
+}
+
+header h1 {
+  font-size: 2.2rem;
+}
+
+/* Navigation */
+nav {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  background-color: #ffffff;
+  padding: 15px 0;
+  border-bottom: 1px solid #e6ecf1;
+}
+
+nav a {
+  color: #0a2540;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+nav a:hover {
+  color: #00c48c;
+}
+
+/* Hero Section */
+.hero {
+  background-color: #e6f7f1;
+  text-align: center;
+  padding: 60px 20px;
+  border-bottom: 1px solid #d4e6dd;
+}
+
+.hero h1 {
+  color: #0a2540;
+  margin-bottom: 20px;
+}
+
+.hero p {
+  color: #4f5d75;
+  font-size: 1.2rem;
+  max-width: 700px;
+  margin: 0 auto 30px;
+}
+
+.hero button {
+  background-color: #00c48c;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.hero button:hover {
+  background-color: #00a678;
+}
+
+/* Cards Grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+  text-decoration: none;
+}
+
+/* Cards - commun */
+.card,
+.card-link {
+  background-color: #ffffff;
+  border: 1px solid #e1e8ed;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 180px;
+  text-decoration: none;
+}
+
+.card:hover,
+.card-link:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border-color: #00c48c;
+  text-decoration: none;
+}
+
+/* Contour vert sur sélection */
+.card.selected,
+.card-link.selected {
+  border-color: #00c48c;
+  text-decoration: none;
+}
+
+/* Titles in cards */
+.card h3,
+.card-link h3 {
+  margin-bottom: 10px;
+  color: #0a2540;
+  text-decoration: none;
+}
+
+/* Text in cards */
+.card p,
+.card-link p {
+  color: #4f5d75;
+  font-size: 0.95rem;
+  text-decoration: none;
+}
+
+/* Footer */
+footer {
+  background-color: #0a2540;
+  color: white;
+  text-align: center;
+  padding: 40px 20px;
+  margin-top: 60px;
+}
+
+footer p {
+  font-size: 0.9rem;
+}
+
+/* Buttons */
+.btn-primary {
+  background-color: #00c48c;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: background-color 0.3s ease;
+  align-self: flex-start;
+}
+
+.btn-primary:hover {
+  background-color: #00a678;
+}
+
+/* Section Calculatrices Page */
+
+/* Container principal pour la page calculatrices */
+#selection-calculatrices {
+  margin-bottom: 40px;
+}
+
+.calculator-card {
+  background-color: #ffffff;
+  padding: 25px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  display: none;
+  flex-direction: column;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  border: 2px solid transparent;
+  min-height: 280px;
+}
+
+.calculator-card.active {
+  display: flex;
+}
+
+.calculator-card:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* Form */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #0a2540;
+  font-size: 1rem;
+}
+
+.form-group input {
+  padding: 10px 12px;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #ccd6dd;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: #00c48c;
+  outline: none;
+}
+
+.resultat {
+  margin-top: 15px;
+  font-weight: 600;
+  color: #0a2540;
+  min-height: 1.5em;
+  font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  nav {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .card-grid {
+    grid-template-columns: 1fr;
+  }
+}

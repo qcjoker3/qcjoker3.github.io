@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Finoza - Calculatrices financières</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<header>
+  <h1>Finoza</h1>
+  <nav>
+    <a href="index.html">Accueil</a>
+    <a href="#services">Services</a>
+    <a href="calculatrices.html">Calculatrices</a>
+    <a href="#articles">Articles</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
+</header>
+
+<main class="container">
+
+  <section id="selection-calculatrices">
+    <h2>Choisissez une calculatrice</h2>
+    <div class="card-grid">
+      <div class="card card-link selected" data-calc="retraite">
+        <h3>Retraite</h3>
+        <p>Estimez combien vous aurez besoin et quand vous pourrez arrêter de travailler.</p>
+      </div>
+      <div class="card card-link" data-calc="valeur-future">
+        <h3>Valeur future</h3>
+        <p>Calculez la croissance de vos investissements au fil du temps.</p>
+      </div>
+      <div class="card card-link" data-calc="hypotheque">
+        <h3>Hypothèque</h3>
+        <p>Simulez vos paiements hypothécaires mensuels.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="calculatrices-container">
+
+    <!-- Calculatrice Retraite -->
+    <section id="calc-retraite" class="calculator-card active" aria-label="Calculatrice de Retraite">
+      <h2>Calculatrice de Retraite</h2>
+      <form id="form-retraite" novalidate>
+        <div class="form-group">
+          <label for="age-actuel">Âge actuel</label>
+          <input type="number" id="age-actuel" name="age-actuel" min="0" max="120" placeholder="Ex: 30" required />
+        </div>
+        <div class="form-group">
+          <label for="age-retraite">Âge désiré de retraite</label>
+          <input type="number" id="age-retraite" name="age-retraite" min="0" max="120" placeholder="Ex: 65" required />
+        </div>
+        <div class="form-group">
+          <label for="epargne-mensuelle">Épargne mensuelle (CAD)</label>
+          <input type="number" id="epargne-mensuelle" name="epargne-mensuelle" min="0" placeholder="Ex: 500" required />
+        </div>
+        <div class="form-group">
+          <label for="rendement">Rendement annuel attendu (%)</label>
+          <input type="number" id="rendement" name="rendement" min="0" max="100" step="0.1" placeholder="Ex: 5" required />
+        </div>
+        <button type="submit" class="btn-primary">Calculer</button>
+      </form>
+      <p class="resultat" id="resultat-retraite" aria-live="polite"></p>
+      <canvas id="chart-retraite" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
+    </section>
+
+    <!-- Calculatrice Valeur Future -->
+    <section id="calc-valeur-future" class="calculator-card" aria-label="Calculatrice de Valeur Future">
+      <h2>Calculatrice de Valeur Future</h2>
+      <form id="form-vf" novalidate>
+        <div class="form-group">
+          <label for="montant-initial">Montant initial (CAD)</label>
+          <input type="number" id="montant-initial" name="montant-initial" min="0" placeholder="Ex: 10000" required />
+        </div>
+        <div class="form-group">
+          <label for="duree-vf">Durée (années)</label>
+          <input type="number" id="duree-vf" name="duree-vf" min="0" placeholder="Ex: 10" required />
+        </div>
+        <div class="form-group">
+          <label for="taux-vf">Taux d’intérêt annuel (%)</label>
+          <input type="number" id="taux-vf" name="taux-vf" min="0" max="100" step="0.1" placeholder="Ex: 7" required />
+        </div>
+        <button type="submit" class="btn-primary">Calculer</button>
+      </form>
+      <p class="resultat" id="resultat-vf" aria-live="polite"></p>
+      <canvas id="chart-vf" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
+    </section>
+
+    <!-- Calculatrice Hypothèque -->
+    <section id="calc-hypotheque" class="calculator-card" aria-label="Calculatrice Hypothécaire">
+      <h2>Calculatrice Hypothécaire</h2>
+      <form id="form-hypo" novalidate>
+        <div class="form-group">
+          <label for="montant-pret">Montant du prêt (CAD)</label>
+          <input type="number" id="montant-pret" name="montant-pret" min="0" placeholder="Ex: 300000" required />
+        </div>
+        <div class="form-group">
+          <label for="taux-hypo">Taux d’intérêt annuel (%)</label>
+          <input type="number" id="taux-hypo" name="taux-hypo" min="0" max="100" step="0.1" placeholder="Ex: 3.5" required />
+        </div>
+        <div class="form-group">
+          <label for="duree-hypo">Durée (années)</label>
+          <input type="number" id="duree-hypo" name="duree-hypo" min="0" placeholder="Ex: 25" required />
+        </div>
+        <button type="submit" class="btn-primary">Calculer</button>
+      </form>
+      <p class="resultat" id="resultat-hypo" aria-live="polite"></p>
+      <canvas id="chart-hypo" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
+    </section>
+
+  </section>
+
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="calculatrices.js"></script>
+
+<footer>
+  <p>© 2025 Finoza</p>
+</footer>
+
+</body>
+</html>
