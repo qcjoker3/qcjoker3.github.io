@@ -164,7 +164,9 @@
               backgroundColor: 'rgba(54, 162, 235, 0.85)',
               borderColor: 'rgba(54, 162, 235, 1)',
               borderWidth: 1,
-              stack: 'grp'
+              stack: 'grp',
+              // Empêche l’affichage des labels sur les barres bleues
+              datalabels: { display: false }
             },
             {
               label: 'Écart vers Réalité',
@@ -173,18 +175,18 @@
               borderColor: 'rgba(255, 99, 132, 1)',
               borderWidth: 1,
               stack: 'grp',
+              // Affiche le % à l’intérieur des barres roses
               datalabels: {
-                display: true,
-                anchor:'center'
+                display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0, // masque si écart nul
+                anchor: 'center',
                 align: 'center',
                 formatter: (val, ctx) => pourcentages[ctx.dataIndex] + '%',
                 color: '#fff',
                 font: {
                   weight: 'bold',
-                  size:12
+                  size: 12
                 },
                 clip: true
-                }
               }
             }
           ]
@@ -205,7 +207,7 @@
               label: `Réalité: ${real} pts`
             },
             datalabels: {
-              clip: false
+              clip: false // valeur par défaut globale; le dataset rose l’écrase à true
             }
           },
           scales: {
