@@ -1,247 +1,241 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Prédictions</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .encadre-background {
-            background-color: #f0f8ff;
-            padding: 30px 0;
-        }
+  <meta charset="UTF-8">
+  <title>Prédictions</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+    }
 
-        .encadre-texte {
-            font-family: 'Segoe UI', sans-serif;
-            font-size: 1.1em;
-            width: 60%;
-            margin: 0 auto;
-            padding: 15px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0);
-            border-radius: 8px;
-        }
+    .encadre-texte {
+      font-size: 1.1em;
+      width: 60%;
+      margin: 20px auto;
+      padding: 15px;
+      text-align: center;
+      background-color: #f0f8ff;
+      border-radius: 8px;
+    }
 
-        /* Styles table conservés si tu veux les réutiliser ailleurs */
-        table {
-            width: 80%;
-            margin: auto;
-            border-collapse: collapse;
-            font-family: 'Segoe UI', sans-serif;
-        }
-        th, td {
-            padding: 10px;
-            text-align: center;
-            border: 1px solid #aaa;
-        }
-        .col1 { width: 30%; }
-        .col2 { width: 40%; }
-        .col3 {
-            width: 30%;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        thead {
-            background-color: #4a90e2;
-            color: white;
-        }
+    .year-selector {
+      text-align: center;
+      margin: 20px 0;
+    }
 
-        .year-selector {
-            text-align: center;
-            margin: 12px 0 20px 0;
-            font-family: 'Segoe UI', sans-serif;
-        }
-        #yearSelect {
-            font-size: 1em;
-            padding: 8px 12px;
-        }
+    #chartContainer {
+      max-width: 960px;
+      margin: auto;
+    }
 
-        /* Conteneur du graphique */
-        #chartContainer {
-            max-width: 960px;
-            margin: 0 auto 32px auto;
-        }
-        #chartCanvas {
-            width: 100%;
-            height: 420px; /* hauteur confortable */
-        }
-    </style>
+    #chartCanvas {
+      width: 100%;
+      height: 420px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 40px;
+    }
+  </style>
 </head>
 <body>
 
-    <div id="header-placeholder"></div>
+  <div id="header-placeholder"></div>
 
-    <main>
-        <section>
-            <div class="encadre-texte">
-                À chaque début d'année les stratégistes des grandes banques et fonds d'investissement dévoilent leurs prédictions sur le S&P 500 pour l'année à venir. Ils sont payés des millions par année et possèdent des modèles économétriques très avancés. Ils devraient être bons, n'est-ce pas ? Pourtant année après année ils sont toujours à l'emploi de leur firme à attendre leur chèque aux 2 semaines. Charlatants ou experts? Voyez par vous-mêmes !
-            </div>
+  <main>
+    <section>
+      <div class="encadre-texte">
+        À chaque début d'année les stratégistes des grandes banques et fonds d'investissement dévoilent leurs prédictions sur le S&P 500 pour l'année à venir. Ils sont payés des millions par année et possèdent des modèles économétriques très avancés. Ils devraient être bons, n'est-ce pas ? Pourtant année après année ils sont toujours à l'emploi de leur firme à attendre leur chèque aux 2 semaines. Charlatants ou experts? Voyez par vous-mêmes !
+      </div>
 
-            <h2 style="text-align:center;">Prédictions du S&P 500</h2>
+      <h2 style="text-align:center;">Prédictions du S&P 500</h2>
 
-            <div class="year-selector">
-                <label for="yearSelect">📅 Année :</label>
-                <select id="yearSelect">
-                    <option value="">-- Sélectionner --</option>
-                    <option value="2020">2020</option>
-                    <option value="2021">2021</option>
-                    <option value="2022">2022</option>
-                    <option value="2023">2023</option>
-                    <option value="2024">2024</option>
-                    <!-- Ajoute ici 2021, 2022, 2023, 2024 quand tu as les données -->
-                </select>
-            </div>
+      <div class="year-selector">
+        <label for="yearSelect">📅 Année :</label>
+        <select id="yearSelect">
+          <option value="">-- Sélectionner --</option>
+          <option value="2020">2020</option>
+        </select>
+      </div>
 
-            <div id="chartContainer">
-                <canvas id="chartCanvas"></canvas>
-            </div>
-        </section>
-    </main>
+      <div id="chartContainer">
+        <canvas id="chartCanvas"></canvas>
+      </div>
+    </section>
+  </main>
 
-    <footer style="text-align:center; margin-top: 40px;">
-        <p>&copy; 2025 - Finoza</p>
-    </footer>
+  <footer>
+    <p>&copy; 2025 - Finoza</p>
+  </footer>
 
-    <script>
-        // Injection du header
-        fetch('header.html')
-            .then(res => res.text())
-            .then(data => {
-                document.getElementById('header-placeholder').innerHTML = data;
-            })
-            .catch(error => console.error('Erreur de chargement du header :', error));
-    </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3"></script>
-    <script>
-      // Données par année
-      const chartDataByYear = {
-        "2020": {
-          real: 3756,
-          institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"],
-          previsions:   [       3400,       3400,             3300,            3000,   3000,        3300,       3300,  3350,            3250,            3425,        3400,        3500]
+  <script>
+    // Injection du header
+    fetch('header.html')
+      .then(res => res.text())
+      .then(data => {
+        document.getElementById('header-placeholder').innerHTML = data;
+      })
+      .catch(error => console.error('Erreur de chargement du header :', error));
+
+    // Données
+    const chartDataByYear = {
+      "2020": {
+        real: 3756,
+        institutions: [
+          "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
+          "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"
+        ],
+        previsions: [
+          3400, 3400, 3300, 3000, 3000, 3300, 3300, 3350, 3250, 3425, 3400, 3500
+        ]
+      }
+    };
+
+    // Plugin ligne horizontale
+    const customLine = {
+      id: 'customLine',
+      afterDatasetsDraw(chart) {
+        const opts = chart.options.plugins?.customLine;
+        if (!opts || typeof opts.y !== 'number') return;
+
+        const { ctx, chartArea, scales } = chart;
+        const yPix = scales.y.getPixelForValue(opts.y);
+
+        ctx.save();
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = opts.color || '#888';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(chartArea.left, yPix);
+        ctx.lineTo(chartArea.right, yPix);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        const label = opts.label || `Réalité: ${opts.y} pts`;
+        ctx.fillStyle = opts.labelColor || '#333';
+        ctx.font = '12px Segoe UI';
+        const tw = ctx.measureText(label).width;
+        ctx.fillText(label, chartArea.right - tw - 8, yPix - 6);
+        ctx.restore();
+      }
+    };
+
+    Chart.register(customLine, ChartDataLabels);
+
+    let chartInstance = null;
+
+    function displayTable(year) {
+      const data = chartDataByYear[year];
+      const canvas = document.getElementById('chartCanvas');
+      if (!canvas || !data) {
+        if (chartInstance) {
+          chartInstance.destroy();
+          chartInstance = null;
         }
-        "2021": {
-          real: 4766,
-          institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"],
-          previsions:   [       4300,       4400,             3800,            3900,        4100,        4000,       4000,     4100,            3950,            4050,        4200,        4300]
-        }
-      };
+        return;
+      }
 
-      // Petit plugin pour tracer une ligne horizontale (valeur réelle) + label
-      const customLine = {
-        id: 'customLine',
-        afterDatasetsDraw(chart, args, pluginOptions) {
-          const opts = chart.options.plugins?.customLine;
-          if (!opts || typeof opts.y !== 'number') return;
+      const ctx = canvas.getContext('2d');
+      const { institutions, previsions, real } = data;
 
-          const { ctx, chartArea, scales } = chart;
-          const yPix = scales.y.getPixelForValue(opts.y);
+      const base = previsions.map(p => Math.min(p, real));
+      const ecarts = previsions.map(p => Math.max(real - p, 0));
 
-          ctx.save();
-          ctx.setLineDash([6, 4]);
-          ctx.strokeStyle = opts.color || '#888';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(chartArea.left, yPix);
-          ctx.lineTo(chartArea.right, yPix);
-          ctx.stroke();
-          ctx.setLineDash([]);
+      const pourcentages = previsions.map(p => {
+        const ecart = Math.abs(real - p);
+        return ((ecart / real) * 100).toFixed(1);
+      });
 
-          const label = opts.label || `Réalité: ${opts.y} pts`;
-          ctx.fillStyle = opts.labelColor || '#333';
-          ctx.font = '12px Segoe UI, Arial, sans-serif';
-          const tw = ctx.measureText(label).width;
-          ctx.fillText(label, chartArea.right - tw - 8, yPix - 6);
-          ctx.restore();
-        }
-      };
-      Chart.register(customLine);
+      if (chartInstance) chartInstance.destroy();
 
-      let chartInstance = null;
-
-      function displayTable(year) {
-        const data = chartDataByYear[year];
-        const canvas = document.getElementById('chartCanvas');
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d');
-
-        // Pas de données pour l’année choisie => on efface le graphique
-        if (!data) {
-          if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-          return;
-        }
-
-        const { institutions, previsions, real } = data;
-
-        // Empilement: prévision (base) + écart positif pour atteindre la réalité
-        const base = previsions.map(p => Math.min(p, real));
-        const ecarts = previsions.map(p => Math.max(real - p, 0));
-
-        if (chartInstance) chartInstance.destroy();
-
-        chartInstance = new Chart(ctx, {
-          type: 'bar',
-          data: {
-            labels: institutions,
-            datasets: [
-              {
-                label: 'Prévision',
-                data: base,
-                backgroundColor: 'rgba(54, 162, 235, 0.85)',
-                borderColor: 'rgba(54, 162, 235, 1)',
-                borderWidth: 1,
-                stack: 'grp'
-              },
-              {
-                label: 'Écart vers Réalité',
-                data: ecarts,
-                backgroundColor: 'rgba(255, 99, 132, 0.65)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1,
-                stack: 'grp'
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: institutions,
+          datasets: [
+            {
+              label: 'Prévision',
+              data: base,
+              backgroundColor: 'rgba(54, 162, 235, 0.85)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1,
+              stack: 'grp'
+            },
+            {
+              label: 'Écart vers Réalité',
+              data: ecarts,
+              backgroundColor: 'rgba(255, 99, 132, 0.65)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1,
+              stack: 'grp',
+              datalabels: {
+                display: true,
+                align: 'end',
+                anchor: 'end',
+                formatter: (val, ctx) => pourcentages[ctx.dataIndex] + '%',
+                color: '#333',
+                font: {
+                  weight: 'bold'
+                }
               }
-            ]
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: `S&P 500 – ${year} : Prévisions vs Réalité (${real} pts)`,
+              font: { size: 18 }
+            },
+            legend: { position: 'bottom' },
+            customLine: {
+              y: real,
+              color: '#888',
+              label: `Réalité: ${real} pts`
+            },
+            datalabels: {
+              clip: false
+            }
           },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
+          scales: {
+            x: {
+              stacked: true,
               title: {
                 display: true,
-                text: `S&P 500 – ${year} : Prévisions vs Réalité (${real} pts)`,
-                font: { size: 18 }
-              },
-              legend: { position: 'bottom' },
-              customLine: { y: real, color: '#888', label: `Réalité: ${real} pts` }
+                text: 'Institution'
+              }
             },
-            scales: {
-              x: { stacked: true, title: { display: true, text: 'Institution' } },
-              y: {
-                stacked: true,
-                title: { display: true, text: 'Points S&P 500' }
+            y: {
+              stacked: true,
+              title: {
+                display: true,
+                text: 'Points S&P 500'
               }
             }
           }
-        });
-      }
-
-      // Initialisation après chargement du DOM
-      document.addEventListener('DOMContentLoaded', () => {
-        const sel = document.getElementById('yearSelect');
-
-        // Sélectionne par défaut 2020 si disponible
-        if (sel && Array.from(sel.options).some(o => o.value === '2020')) {
-          sel.value = '2020';
-          displayTable('2020');
         }
-
-        // Écouteur de changement
-        sel?.addEventListener('change', e => {
-          displayTable(e.target.value);
-        });
       });
-    </script>
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const sel = document.getElementById('yearSelect');
+      if (sel.value === '') {
+        sel.value = '2020';
+      }
+      displayTable(sel.value);
+
+      sel.addEventListener('change', e => {
+        displayTable(e.target.value);
+      });
+    });
+  </script>
 </body>
 </html>
