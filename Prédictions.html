@@ -79,6 +79,10 @@
         <p>&copy; 2025 - Finoza</p>
     </footer>
 
+<div style="text-align:center; margin-bottom:15px;">
+  <button onclick="trierParEcart()">📊 Trier par écart (décroissant)</button>
+</div>
+
     <script>
         fetch('header.html')
             .then(res => res.text())
@@ -91,6 +95,7 @@
             const tables = {
                 "2020": `
                     <table>
+                    <table id="tablePrevisions">
                         <thead>
                             <tr>
                                 <th>Institution</th>
@@ -526,6 +531,25 @@
             document.getElementById("tableContainer").innerHTML = tables[year] || "<p style='text-align:center;'>Aucune donnée disponible pour cette année.</p>";
         }
     </script>
+<script>
+function trierParEcart() {
+  const tbody = document.querySelector('#tablePrevisions tbody');
+  const rows = Array.from(tbody.querySelectorAll('tr'));
 
+  rows.sort((a, b) => {
+    const valA = extraireEcart(a.cells[3].textContent);
+    const valB = extraireEcart(b.cells[3].textContent);
+    return valB - valA;
+  });
+
+  rows.forEach(row => tbody.appendChild(row));
+}
+
+function extraireEcart(text) {
+  const match = text.replace(/\s/g, '').match(/([-+]?\d+)([.,]?\d*)/);
+  if (!match) return 0;
+  return parseFloat(match[1] + match[2].replace(',', '.'));
+}
+</script>
 </body>
 </html>
