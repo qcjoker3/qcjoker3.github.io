@@ -19,6 +19,35 @@
     #chartContainer { max-width: 960px; margin: auto; }
     #chartCanvas { width: 100%; height: 420px; }
     footer { text-align: center; margin-top: 40px; }
+
+    /* Analyse détaillée */
+    .analysis {
+      max-width: 960px;
+      margin: 28px auto 60px;
+      padding-top: 8px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .analysis h3 { margin: 14px 0; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid #eceff3; text-align: left; }
+    th { background: #f7f9fa; position: sticky; top: 0; z-index: 1; }
+    .table-wrap { max-height: 340px; overflow: auto; border: 1px solid #eceff3; border-radius: 8px; }
+    .rank-badge {
+      display: inline-block; min-width: 26px; text-align: center; padding: 2px 6px; border-radius: 999px;
+      background: #eef2ff; color: #3730a3; font-weight: 600; font-size: 12px;
+    }
+    tr.focused { background: #fff7ed; } /* survol/clic */
+    tr:hover { background: #f9fafb; cursor: pointer; }
+
+    #errorTrendContainer { max-width: 960px; margin: 6px auto; }
+    #errorTrendCanvas { width: 100%; height: 360px; }
+
+    .hint { color: #6b7280; font-size: 0.9em; margin: 6px 0 12px; }
   </style>
 </head>
 <body>
@@ -47,6 +76,41 @@
       <div id="chartContainer">
         <canvas id="chartCanvas"></canvas>
       </div>
+
+      <!-- Analyse détaillée -->
+      <section class="analysis">
+        <h3>Analyse détaillée</h3>
+        <div class="grid-2">
+          <div>
+            <h4>Classement des institutions (écart le plus petit)</h4>
+            <div class="hint">Astuce: clique une ligne pour mettre l’institution en évidence dans le graphique de droite.</div>
+            <div class="table-wrap">
+              <table id="rankingTable">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Institution</th>
+                    <th>Prévision</th>
+                    <th>Réalité</th>
+                    <th>Écart (pts)</th>
+                    <th>Écart (%)</th>
+                  </tr>
+                </thead>
+                <tbody><!-- rempli par JS --></tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <h4>Écart des prévisions dans le temps</h4>
+            <div class="hint">Écart relatif (|prévision - réalité| / réalité). L’institution en vedette est en couleur vive.</div>
+            <div id="errorTrendContainer">
+              <canvas id="errorTrendCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+      <!-- fin Analyse détaillée -->
+
     </section>
   </main>
 
@@ -146,6 +210,152 @@
 
     Chart.register(customLine, ChartDataLabels);
     let chartInstance = null;
+    let errorTrendChart = null;
+    let focusedInstitution = null; // institution mise en évidence (par défaut: meilleure de l'année)
+
+    // Construire les séries d'écart (%) par institution à travers les années
+    const years = Object.keys(chartDataByYear).sort();
+    const errorSeriesByInst = (() => {
+      const map = new Map(); // inst -> { years: [], errorsPct: [] }
+      years.forEach(y => {
+        const d = chartDataByYear[y];
+        d.institutions.forEach((inst, i) => {
+          const prev = d.previsions[i];
+          const real = d.real;
+          const errPct = Math.abs(prev - real) / real * 100;
+          if (!map.has(inst)) map.set(inst, { years: [], errorsPct: [] });
+          map.get(inst).years.push(y);
+          map.get(inst).errorsPct.push(errPct);
+        });
+      });
+      return map;
+    })();
+
+    function computeRanking(year) {
+      const d = chartDataByYear[year];
+      const { institutions, previsions, real } = d;
+      const rows = institutions.map((inst, i) => {
+        const p = previsions[i];
+        const diff = Math.abs(p - real);
+        const diffPct = diff / real * 100;
+        return {
+          institution: inst,
+          prediction: p,
+          real,
+          diffPoints: diff,
+          diffPct
+        };
+      });
+      rows.sort((a, b) => a.diffPoints - b.diffPoints);
+      return rows;
+    }
+
+    function renderRankingTable(year) {
+      const tbody = document.querySelector('#rankingTable tbody');
+      tbody.innerHTML = '';
+      const rows = computeRanking(year);
+      // Détermine l'institution en vedette par défaut si aucune focalisation utilisateur
+      if (!focusedInstitution) focusedInstitution = rows[0]?.institution;
+
+      rows.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        if (r.institution === focusedInstitution) tr.classList.add('focused');
+        tr.innerHTML = `
+          <td><span class="rank-badge">${idx + 1}</span></td>
+          <td>${r.institution}</td>
+          <td>${r.prediction}</td>
+          <td>${r.real}</td>
+          <td>${r.diffPoints.toFixed(0)}</td>
+          <td>${r.diffPct.toFixed(1)}%</td>
+        `;
+        tr.addEventListener('click', () => {
+          focusedInstitution = r.institution;
+          renderRankingTable(year); // rafraîchit l’état "focused"
+          renderErrorTrend();       // met à jour le graphique temporel
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderErrorTrend() {
+      const canvas = document.getElementById('errorTrendCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Prépare labels: toutes les années uniques
+      const labels = years;
+
+      // Palette et styles
+      const colorFocused = 'rgba(234, 88, 12, 1)';   // orange vif
+      const colorOthers  = 'rgba(100, 116, 139, 0.35)'; // slate/gris atténué
+
+      // Construit les datasets: chaque institution
+      const datasets = [];
+      for (const [inst, series] of errorSeriesByInst.entries()) {
+        // Remplir les données alignées sur "years" (NaN si année absente)
+        const data = labels.map(y => {
+          const idx = series.years.indexOf(y);
+          return idx >= 0 ? series.errorsPct[idx] : null;
+        });
+        const isFocus = inst === focusedInstitution;
+        datasets.push({
+          label: inst,
+          data,
+          borderColor: isFocus ? colorFocused : colorOthers,
+          backgroundColor: 'transparent',
+          borderWidth: isFocus ? 3 : 1.2,
+          pointRadius: isFocus ? 3 : 0,
+          pointHoverRadius: isFocus ? 5 : 3,
+          tension: 0.25,
+          spanGaps: true,
+          hidden: false
+        });
+      }
+
+      if (errorTrendChart) errorTrendChart.destroy();
+      errorTrendChart = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: `Écart des prévisions dans le temps (en % du niveau réel)`,
+              font: { size: 16 }
+            },
+            legend: {
+              position: 'bottom',
+              labels: {
+                filter: (item) => {
+                  // On réduit la surcharge visuelle en n'affichant que l’institution en focus + quelques autres au besoin
+                  // Ici: on affiche toutes dans la légende; adapte si tu veux la restreindre.
+                  return true;
+                }
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  const v = ctx.raw;
+                  return `${ctx.dataset.label}: ${v == null ? '—' : v.toFixed(1) + '%'}`;
+                }
+              }
+            },
+            datalabels: { display: false }
+          },
+          scales: {
+            y: {
+              title: { display: true, text: 'Écart (%)' },
+              ticks: { callback: v => v + ' %' }
+            },
+            x: {
+              title: { display: true, text: 'Année' }
+            }
+          }
+        }
+      });
+    }
 
     function displayTable(year) {
       const data = chartDataByYear[year];
@@ -242,6 +452,11 @@
           }
         }
       });
+
+      // Met à jour l’analyse détaillée (classement + tendance)
+      focusedInstitution = null;           // reset focus à chaque changement d'année
+      renderRankingTable(year);            // calcule et met en évidence la meilleure
+      renderErrorTrend();                  // trace la tendance avec focus
     }
 
     document.addEventListener('DOMContentLoaded', () => {
