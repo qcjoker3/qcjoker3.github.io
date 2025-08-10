@@ -215,41 +215,26 @@
               stack: 'grp',
               datalabels: { display: false }
             },
-            {
-              label: 'Écart vs Réalité',
-              data: ecartsSous,
-              backgroundColor: 'rgba(255, 99, 132, 0.65)', // rouge
-              borderColor: 'rgba(255, 99, 132, 1)',
-              borderWidth: 1,
-              stack: 'grp',
-              datalabels: {
-                display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0,
-                anchor: 'center',
-                align: 'center',
-                formatter: (val, ctx) => '🔺 ' + pourcentages[ctx.dataIndex] + '%',
-                color: '#fff',
-                font: { weight: 'bold', size: 12 },
-                clip: true
-              }
-            },
-            {
-              label: 'Écart vs Réalité',
-              data: ecartsSur,
-              backgroundColor: 'rgba(255, 99, 132, 0.65)', // rouge
-              borderColor: 'rgba(255, 99, 132, 1)',
-              borderWidth: 1,
-              stack: 'grp',
-              datalabels: {
-                display: (ctx) => ctx.dataset.data[ctx.dataIndex] > 0,
-                anchor: 'center',
-                align: 'center',
-                formatter: (val, ctx) => '🔻 ' + pourcentages[ctx.dataIndex] + '%',
-                color: '#fff',
-                font: { weight: 'bold', size: 12 },
-                clip: true
-              }
-            }
-          ]
+          {
+             label: 'Écart vs Réalité',
+            data: ecarts,
+            backgroundColor: 'rgba(255, 99, 132, 0.65)', // rose pour tous
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+            stack: 'grp',
+            datalabels: {
+            display: (ctx) => ctx.dataset.data[ctx.dataIndex] !== 0,
+            anchor: 'center',
+            align: 'center',
+            formatter: (val, ctx) => {
+            const symbole = val < 0 ? '🔻' : '🔺';
+            const percent = ((Math.abs(val) / real) * 100).toFixed(1);
+            return symbole + ' ' + percent + '%';
+          },
+            color: '#fff',
+            font: { weight: 'bold', size: 12 },
+            clip: true
+            
         },
         options: {
           responsive: true,
