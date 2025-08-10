@@ -84,6 +84,10 @@
                 <select id="yearSelect">
                     <option value="">-- Sélectionner --</option>
                     <option value="2020">2020</option>
+                    <option value="2021">2021</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
                     <!-- Ajoute ici 2021, 2022, 2023, 2024 quand tu as les données -->
                 </select>
             </div>
@@ -117,7 +121,11 @@
           institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"],
           previsions:   [       3400,       3400,             3300,            3000,   3000,        3300,       3300,  3350,            3250,            3425,        3400,        3500]
         }
-        // Ajoute ici "2021": { real: xxxx, institutions: [...], previsions: [...] }, etc.
+        "2021": {
+          real: 4766,
+          institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"],
+          previsions:   [       4300,       4400,             3800,            3900,        4100,        4000,       4000,     4100,            3950,            4050,        4200,        4300]
+        }
       };
 
       // Petit plugin pour tracer une ligne horizontale (valeur réelle) + label
