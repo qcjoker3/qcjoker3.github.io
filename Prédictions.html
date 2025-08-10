@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <style>
         .encadre-background {
-            background-color: #f0f8ff;    /* Fond sur toute la largeur */
+            background-color: #f0f8ff;
             padding: 30px 0;
         }
 
@@ -21,8 +21,6 @@
             border-radius: 8px;
         }
 
-
-
         table {
             width: 80%;
             margin: auto;
@@ -34,6 +32,22 @@
             padding: 10px;
             text-align: center;
             border: 1px solid #aaa;
+        }
+
+        /* 🎯 Largeurs personnalisées des colonnes */
+        .col1 {
+            width: 30%;
+        }
+
+        .col2 {
+            width: 40%;
+        }
+
+        .col3 {
+            width: 30%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         thead {
@@ -527,6 +541,16 @@
                             
                         </tbody>
                     </table>`,
+                <tr>
+  <th class="col1">Année</th>
+  <th class="col2">Données</th>
+  <th class="col3">Commentaires</th>
+</tr>
+<tr>
+  <td class="col1">2023</td>
+  <td class="col2">102</td>
+  <td class="col3">Prédictions optimistes</td>
+</tr>
 
             };
 
