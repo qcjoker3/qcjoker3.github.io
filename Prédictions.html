@@ -33,6 +33,16 @@
       grid-template-columns: 1fr 1fr;
       gap: 18px;
     }
+    .horizon-tabs {
+      display: flex; gap: 8px; margin: 6px 0 12px;
+    }
+    .horizon-tabs button {
+      padding: 8px 12px; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer;
+    }
+    .horizon-tabs button.active {
+      background: #111827; color: #fff; border-color: #111827;
+    }
+    .hint { color: #6b7280; font-size: 0.9em; margin: 6px 0 12px; }
     table { width: 100%; border-collapse: collapse; }
     th, td { padding: 9px 10px; border-bottom: 1px solid #eceff3; text-align: left; }
     th { background: #f7f9fa; position: sticky; top: 0; z-index: 1; }
@@ -41,13 +51,11 @@
       display: inline-block; min-width: 26px; text-align: center; padding: 2px 6px; border-radius: 999px;
       background: #eef2ff; color: #3730a3; font-weight: 600; font-size: 12px;
     }
-    tr.focused { background: #fff7ed; } /* survol/clic */
+    tr.focused { background: #fff7ed; }
     tr:hover { background: #f9fafb; cursor: pointer; }
 
-    #errorTrendContainer { max-width: 960px; margin: 6px auto; }
-    #errorTrendCanvas { width: 100%; height: 360px; }
-
-    .hint { color: #6b7280; font-size: 0.9em; margin: 6px 0 12px; }
+    #predRealContainer { max-width: 960px; margin: 6px auto; }
+    #predRealCanvas { width: 100%; height: 360px; }
   </style>
 </head>
 <body>
@@ -82,18 +90,22 @@
         <h3>Analyse détaillée</h3>
         <div class="grid-2">
           <div>
-            <h4>Classement des institutions (écart le plus petit)</h4>
-            <div class="hint">Astuce: clique une ligne pour mettre l’institution en évidence dans le graphique de droite.</div>
+            <h4>Classement des institutions</h4>
+            <div class="horizon-tabs">
+              <button data-h="1" class="active">1 an</button>
+              <button data-h="3">3 ans</button>
+              <button data-h="5">5 ans</button>
+            </div>
+            <div class="hint">Classement par écart moyen en % (MAPE) sur l’horizon choisi, calculé jusqu’à l’année sélectionnée.</div>
             <div class="table-wrap">
               <table id="rankingTable">
                 <thead>
                   <tr>
                     <th>#</th>
                     <th>Institution</th>
-                    <th>Prévision</th>
-                    <th>Réalité</th>
-                    <th>Écart (pts)</th>
-                    <th>Écart (%)</th>
+                    <th>Années (n)</th>
+                    <th>MAPE (%)</th>
+                    <th>MAE (pts)</th>
                   </tr>
                 </thead>
                 <tbody><!-- rempli par JS --></tbody>
@@ -101,10 +113,10 @@
             </div>
           </div>
           <div>
-            <h4>Écart des prévisions dans le temps</h4>
-            <div class="hint">Écart relatif (|prévision - réalité| / réalité). L’institution en vedette est en couleur vive.</div>
-            <div id="errorTrendContainer">
-              <canvas id="errorTrendCanvas"></canvas>
+            <h4>Prévision vs Réalité par année</h4>
+            <div class="hint">Affiche la trajectoire de l’institution sélectionnée (clique une ligne du classement).</div>
+            <div id="predRealContainer">
+              <canvas id="predRealCanvas"></canvas>
             </div>
           </div>
         </div>
@@ -122,11 +134,10 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 
   <script>
+    // Injecte le header
     fetch('header.html')
       .then(res => res.text())
-      .then(data => {
-        document.getElementById('header-placeholder').innerHTML = data;
-      });
+      .then(data => { document.getElementById('header-placeholder').innerHTML = data; });
 
     // Données
     const chartDataByYear = {
@@ -182,7 +193,54 @@
       },
     };
 
-    // Plugin ligne horizontale
+    // Utilitaires
+    const yearsSorted = Object.keys(chartDataByYear).sort();
+    const idxByYear = (y) => yearsSorted.indexOf(String(y));
+
+    function getWindowYears(endYear, horizonYears) {
+      const endIdx = idxByYear(endYear);
+      if (endIdx < 0) return [];
+      const startIdx = Math.max(0, endIdx - (horizonYears - 1));
+      return yearsSorted.slice(startIdx, endIdx + 1);
+    }
+
+    function computeYearErrorsPct(year) {
+      const d = chartDataByYear[year];
+      const { institutions, previsions, real } = d;
+      const map = new Map();
+      institutions.forEach((inst, i) => {
+        const errPct = Math.abs(previsions[i] - real) / real * 100;
+        const errPts = Math.abs(previsions[i] - real);
+        map.set(inst, { errPct, errPts, pred: previsions[i], real });
+      });
+      return map; // inst -> {errPct, errPts, pred, real}
+    }
+
+    function computeRanking(endYear, horizonYears) {
+      const windowYears = getWindowYears(endYear, horizonYears);
+      // Agrège par institution
+      const stats = new Map(); // inst -> { sumPct, sumPts, n }
+      windowYears.forEach(y => {
+        const errs = computeYearErrorsPct(y);
+        errs.forEach((v, inst) => {
+          if (!stats.has(inst)) stats.set(inst, { sumPct: 0, sumPts: 0, n: 0 });
+          const s = stats.get(inst);
+          s.sumPct += v.errPct;
+          s.sumPts += v.errPts;
+          s.n += 1;
+        });
+      });
+      const rows = [];
+      stats.forEach((s, inst) => {
+        const mape = s.sumPct / s.n;
+        const mae = s.sumPts / s.n;
+        rows.push({ institution: inst, n: s.n, mape, mae });
+      });
+      rows.sort((a, b) => (a.mape - b.mape) || (a.mae - b.mae) || a.institution.localeCompare(b.institution));
+      return { rows, windowYears };
+    }
+
+    // Plugin ligne horizontale (pour le graphe principal)
     const customLine = {
       id: 'customLine',
       afterDatasetsDraw(chart) {
@@ -209,153 +267,11 @@
     };
 
     Chart.register(customLine, ChartDataLabels);
-    let chartInstance = null;
-    let errorTrendChart = null;
-    let focusedInstitution = null; // institution mise en évidence (par défaut: meilleure de l'année)
 
-    // Construire les séries d'écart (%) par institution à travers les années
-    const years = Object.keys(chartDataByYear).sort();
-    const errorSeriesByInst = (() => {
-      const map = new Map(); // inst -> { years: [], errorsPct: [] }
-      years.forEach(y => {
-        const d = chartDataByYear[y];
-        d.institutions.forEach((inst, i) => {
-          const prev = d.previsions[i];
-          const real = d.real;
-          const errPct = Math.abs(prev - real) / real * 100;
-          if (!map.has(inst)) map.set(inst, { years: [], errorsPct: [] });
-          map.get(inst).years.push(y);
-          map.get(inst).errorsPct.push(errPct);
-        });
-      });
-      return map;
-    })();
-
-    function computeRanking(year) {
-      const d = chartDataByYear[year];
-      const { institutions, previsions, real } = d;
-      const rows = institutions.map((inst, i) => {
-        const p = previsions[i];
-        const diff = Math.abs(p - real);
-        const diffPct = diff / real * 100;
-        return {
-          institution: inst,
-          prediction: p,
-          real,
-          diffPoints: diff,
-          diffPct
-        };
-      });
-      rows.sort((a, b) => a.diffPoints - b.diffPoints);
-      return rows;
-    }
-
-    function renderRankingTable(year) {
-      const tbody = document.querySelector('#rankingTable tbody');
-      tbody.innerHTML = '';
-      const rows = computeRanking(year);
-      // Détermine l'institution en vedette par défaut si aucune focalisation utilisateur
-      if (!focusedInstitution) focusedInstitution = rows[0]?.institution;
-
-      rows.forEach((r, idx) => {
-        const tr = document.createElement('tr');
-        if (r.institution === focusedInstitution) tr.classList.add('focused');
-        tr.innerHTML = `
-          <td><span class="rank-badge">${idx + 1}</span></td>
-          <td>${r.institution}</td>
-          <td>${r.prediction}</td>
-          <td>${r.real}</td>
-          <td>${r.diffPoints.toFixed(0)}</td>
-          <td>${r.diffPct.toFixed(1)}%</td>
-        `;
-        tr.addEventListener('click', () => {
-          focusedInstitution = r.institution;
-          renderRankingTable(year); // rafraîchit l’état "focused"
-          renderErrorTrend();       // met à jour le graphique temporel
-        });
-        tbody.appendChild(tr);
-      });
-    }
-
-    function renderErrorTrend() {
-      const canvas = document.getElementById('errorTrendCanvas');
-      const ctx = canvas.getContext('2d');
-
-      // Prépare labels: toutes les années uniques
-      const labels = years;
-
-      // Palette et styles
-      const colorFocused = 'rgba(234, 88, 12, 1)';   // orange vif
-      const colorOthers  = 'rgba(100, 116, 139, 0.35)'; // slate/gris atténué
-
-      // Construit les datasets: chaque institution
-      const datasets = [];
-      for (const [inst, series] of errorSeriesByInst.entries()) {
-        // Remplir les données alignées sur "years" (NaN si année absente)
-        const data = labels.map(y => {
-          const idx = series.years.indexOf(y);
-          return idx >= 0 ? series.errorsPct[idx] : null;
-        });
-        const isFocus = inst === focusedInstitution;
-        datasets.push({
-          label: inst,
-          data,
-          borderColor: isFocus ? colorFocused : colorOthers,
-          backgroundColor: 'transparent',
-          borderWidth: isFocus ? 3 : 1.2,
-          pointRadius: isFocus ? 3 : 0,
-          pointHoverRadius: isFocus ? 5 : 3,
-          tension: 0.25,
-          spanGaps: true,
-          hidden: false
-        });
-      }
-
-      if (errorTrendChart) errorTrendChart.destroy();
-      errorTrendChart = new Chart(ctx, {
-        type: 'line',
-        data: { labels, datasets },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            title: {
-              display: true,
-              text: `Écart des prévisions dans le temps (en % du niveau réel)`,
-              font: { size: 16 }
-            },
-            legend: {
-              position: 'bottom',
-              labels: {
-                filter: (item) => {
-                  // On réduit la surcharge visuelle en n'affichant que l’institution en focus + quelques autres au besoin
-                  // Ici: on affiche toutes dans la légende; adapte si tu veux la restreindre.
-                  return true;
-                }
-              }
-            },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => {
-                  const v = ctx.raw;
-                  return `${ctx.dataset.label}: ${v == null ? '—' : v.toFixed(1) + '%'}`;
-                }
-              }
-            },
-            datalabels: { display: false }
-          },
-          scales: {
-            y: {
-              title: { display: true, text: 'Écart (%)' },
-              ticks: { callback: v => v + ' %' }
-            },
-            x: {
-              title: { display: true, text: 'Année' }
-            }
-          }
-        }
-      });
-    }
+    let chartInstance = null;     // graphe principal (barres)
+    let predRealChart = null;     // graphe droite (ligne)
+    let focusedInstitution = null;
+    let currentHorizon = 1;
 
     function displayTable(year) {
       const data = chartDataByYear[year];
@@ -372,9 +288,7 @@
       const ecarts = previsions.map(p => Math.abs(real - p));
       const signes = previsions.map(p => p - real);
 
-      const pourcentages = signes.map(diff =>
-        ((Math.abs(diff) / real) * 100).toFixed(1)
-      );
+      const pourcentages = signes.map(diff => ((Math.abs(diff) / real) * 100).toFixed(1));
 
       if (chartInstance) chartInstance.destroy();
 
@@ -453,17 +367,132 @@
         }
       });
 
-      // Met à jour l’analyse détaillée (classement + tendance)
-      focusedInstitution = null;           // reset focus à chaque changement d'année
-      renderRankingTable(year);            // calcule et met en évidence la meilleure
-      renderErrorTrend();                  // trace la tendance avec focus
+      // Met à jour l’analyse détaillée
+      focusedInstitution = null; // reset
+      renderRankingAndChart(year, currentHorizon);
     }
 
+    function renderRankingAndChart(endYear, horizon) {
+      // Boutons d’horizon
+      document.querySelectorAll('.horizon-tabs button').forEach(btn => {
+        btn.classList.toggle('active', Number(btn.dataset.h) === horizon);
+      });
+
+      const { rows, windowYears } = computeRanking(endYear, horizon);
+      const tbody = document.querySelector('#rankingTable tbody');
+      tbody.innerHTML = '';
+
+      // Choisir institution en focus si non définie
+      if (!focusedInstitution && rows.length) focusedInstitution = rows[0].institution;
+
+      rows.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        if (r.institution === focusedInstitution) tr.classList.add('focused');
+        tr.innerHTML = `
+          <td><span class="rank-badge">${idx + 1}</span></td>
+          <td>${r.institution}</td>
+          <td>${r.n}</td>
+          <td>${r.mape.toFixed(1)}%</td>
+          <td>${r.mae.toFixed(0)}</td>
+        `;
+        tr.addEventListener('click', () => {
+          focusedInstitution = r.institution;
+          renderRankingAndChart(endYear, horizon); // re-render table to update highlight
+        });
+        tbody.appendChild(tr);
+      });
+
+      // Met à jour le graphique droite: Prévision vs Réalité par année pour l’institution focus
+      renderPredVsRealChart(focusedInstitution);
+    }
+
+    function renderPredVsRealChart(institution) {
+      const canvas = document.getElementById('predRealCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Collecte les années où l’institution a une prévision
+      const labels = [];
+      const preds = [];
+      const reals = [];
+      yearsSorted.forEach(y => {
+        const d = chartDataByYear[y];
+        const i = d.institutions.indexOf(institution);
+        if (i >= 0) {
+          labels.push(y);
+          preds.push(d.previsions[i]);
+          reals.push(d.real);
+        }
+      });
+
+      if (predRealChart) predRealChart.destroy();
+      predRealChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: `${institution} – Prévision`,
+              data: preds,
+              borderColor: 'rgba(54, 162, 235, 1)',
+              backgroundColor: 'rgba(54, 162, 235, 0.15)',
+              borderWidth: 3,
+              pointRadius: 3,
+              tension: 0.25
+            },
+            {
+              label: 'Réalité',
+              data: reals,
+              borderColor: 'rgba(31, 41, 55, 0.9)',
+              backgroundColor: 'rgba(31, 41, 55, 0.1)',
+              borderWidth: 2,
+              pointRadius: 2,
+              tension: 0.25
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: `Prévision vs Réalité – ${institution}`,
+              font: { size: 16 }
+            },
+            legend: { position: 'bottom' },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.dataset.label}: ${ctx.raw} pts`
+              }
+            },
+            datalabels: { display: false }
+          },
+          scales: {
+            x: { title: { display: true, text: 'Année' } },
+            y: { title: { display: true, text: 'Points S&P 500' } }
+          }
+        }
+      });
+    }
+
+    // Écouteurs UI
     document.addEventListener('DOMContentLoaded', () => {
       const sel = document.getElementById('yearSelect');
       sel.value = sel.value || '2020';
       displayTable(sel.value);
-      sel.addEventListener('change', e => displayTable(e.target.value));
+
+      sel.addEventListener('change', e => {
+        displayTable(e.target.value);
+      });
+
+      document.querySelectorAll('.horizon-tabs button').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentHorizon = Number(btn.dataset.h);
+          const year = document.getElementById('yearSelect').value || yearsSorted[0];
+          // Si l’horizon dépasse le nombre d’années disponibles jusqu’à l’année choisie, on prend ce qui est dispo
+          renderRankingAndChart(year, currentHorizon);
+        });
+      });
     });
   </script>
 </body>
