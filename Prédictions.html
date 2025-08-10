@@ -488,9 +488,9 @@
       document.querySelectorAll('.horizon-tabs button').forEach(btn => {
         btn.addEventListener('click', () => {
           currentHorizon = Number(btn.dataset.h);
-          const year = document.getElementById('yearSelect').value || yearsSorted[0];
-          // Si l’horizon dépasse le nombre d’années disponibles jusqu’à l’année choisie, on prend ce qui est dispo
-          renderRankingAndChart(year, currentHorizon);
+          const latestYear = yearsSorted.at(-1);
+          renderRankingAndChart(latestYear, currentHorizon);
+
         });
       });
     });
