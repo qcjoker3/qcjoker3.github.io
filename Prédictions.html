@@ -69,22 +69,6 @@
 
       <h2 style="text-align:center;">Prédictions du S&P 500</h2>
 
-      <div class="year-selector">
-        <label for="yearSelect">📅 Année :</label>
-        <select id="yearSelect">
-          <option value="">-- Sélectionner --</option>
-          <option value="2020">2020</option>
-          <option value="2021">2021</option>
-          <option value="2022">2022</option>
-          <option value="2023">2023</option>
-          <option value="2024">2024</option>
-        </select>
-      </div>
-
-      <div id="chartContainer">
-        <canvas id="chartCanvas"></canvas>
-      </div>
-
       <!-- Analyse détaillée -->
       <section class="analysis">
         <h3>Analyse détaillée</h3>
@@ -121,9 +105,25 @@
           </div>
         </div>
       </section>
-      <!-- fin Analyse détaillée -->
+        <!-- fin Analyse détaillée -->
+      
+      <div class="year-selector">
+        <label for="yearSelect">📅 Année :</label>
+        <select id="yearSelect">
+          <option value="">-- Sélectionner --</option>
+          <option value="2020">2020</option>
+          <option value="2021">2021</option>
+          <option value="2022">2022</option>
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+        </select>
+      </div>
 
-    </section>
+      <div id="chartContainer">
+        <canvas id="chartCanvas"></canvas>
+      </div>
+
+     </section>
   </main>
 
   <footer>
