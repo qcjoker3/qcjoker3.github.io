@@ -4,14 +4,7 @@
     <meta charset="UTF-8">
     <title>Prédictions</title>
     <link rel="stylesheet" href="style.css">
-</head>
-<body>
-
-    <!-- ✅ Header partagé sera injecté ici -->
-    <div id="header-placeholder"></div>
-
-    <main>
-        <style>
+    <style>
         .encadre-texte {
             background-color: #f0f8ff;
             border-left: 6px solid #4a90e2;
@@ -42,14 +35,43 @@
             background-color: #4a90e2;
             color: white;
         }
-        </style>
 
+        #yearSelect {
+            font-size: 1em;
+            padding: 6px;
+            margin: 10px auto 20px auto;
+        }
+
+        #tableContainer {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ✅ Header partagé sera injecté ici -->
+    <div id="header-placeholder"></div>
+
+    <main>
         <section>
             <div class="encadre-texte">
                 À chaque début d'année les stratégistes des grandes banques et fonds d'investissement dévoilent leurs prédictions sur le S&P 500 pour l'année à venir. Ils sont payés des millions par année et possèdent des modèles économétriques très avancés. Ils devraient être bons, n'est-ce pas ? Voyez par vous-mêmes !
             </div>
 
-            <h2 style="text-align:center;">Tableau des Prédictions</h2>
+            <h2 style="text-align:center;">Prédictions du S&P 500</h2>
+
+            <div style="text-align:center;">
+                <label for="yearSelect">Choisissez une année :</label>
+                <select id="yearSelect" onchange="displayTable(this.value)">
+                    <option value="">-- Sélectionner --</option>
+                    <option value="2022">2022</option>
+                    <option value="2023">2023</option>
+                </select>
+            </div>
+
+            <div id="tableContainer"></div>
+
+            <h2 style="text-align:center; margin-top:40px;">Autres prédictions générales</h2>
             <table>
                 <thead>
                     <tr>
@@ -91,6 +113,56 @@
                 document.getElementById('header-placeholder').innerHTML = data;
             })
             .catch(error => console.error('Erreur de chargement du header :', error));
+
+        function displayTable(year) {
+            const tables = {
+                "2022": `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Institution</th>
+                                <th>Prévision Initiale</th>
+                                <th>Révisions</th>
+                                <th>Commentaires</th>
+                                <th>Résultat Réel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Oppenheimer</td>
+                                <td>5 330 pts</td>
+                                <td>4 800 ➝ 4 000</td>
+                                <td>Inflation, taux Fed, rebond espéré</td>
+                                <td>3 839 pts</td>
+                            </tr>
+                        </tbody>
+                    </table>`,
+
+                "2023": `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Institution</th>
+                                <th>Prévision</th>
+                                <th>Scénario</th>
+                                <th>Commentaires</th>
+                                <th>Résultat Réel</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RBC</td>
+                                <td>4 200 – 4 900 pts</td>
+                                <td>Récession, stagflation</td>
+                                <td>Analyses de Lori Calvasina</td>
+                                <td>4 769 pts</td>
+                            </tr>
+                        </tbody>
+                    </table>`
+            };
+
+            document.getElementById("tableContainer").innerHTML = tables[year] || "<p style='text-align:center;'>Aucune donnée disponible pour cette année.</p>";
+        }
     </script>
 
 </body>
