@@ -58,13 +58,11 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 
   <script>
-    // Injection du header
     fetch('header.html')
       .then(res => res.text())
       .then(data => {
         document.getElementById('header-placeholder').innerHTML = data;
-      })
-      .catch(error => console.error('Erreur de chargement du header :', error));
+      });
 
     // Données
     const chartDataByYear = {
@@ -147,7 +145,6 @@
     };
 
     Chart.register(customLine, ChartDataLabels);
-
     let chartInstance = null;
 
     function displayTable(year) {
@@ -162,13 +159,12 @@
       const { institutions, previsions, real } = data;
 
       const base = previsions.map(p => Math.min(p, real));
-      const ecarts = previsions.map(p => Math.abs(p - real));
-      const start = previsions.map(p => Math.min(p, real));
-      const signe = previsions.map(p => p - real);
+      const ecarts = previsions.map(p => Math.abs(real - p));
+      const signes = previsions.map(p => p - real);
 
-      const pourcentages = signe.map(diff => {
-        return ((Math.abs(diff) / real) * 100).toFixed(1);
-      });
+      const pourcentages = signes.map(diff =>
+        ((Math.abs(diff) / real) * 100).toFixed(1)
+      );
 
       if (chartInstance) chartInstance.destroy();
 
@@ -193,13 +189,12 @@
               borderColor: 'rgba(255, 99, 132, 1)',
               borderWidth: 1,
               stack: 'grp',
-              base: start,
               datalabels: {
                 display: true,
                 anchor: 'center',
                 align: 'center',
                 formatter: (val, ctx) => {
-                  const sym = signe[ctx.dataIndex] < 0 ? '🔻' : '🔺';
+                  const sym = signes[ctx.dataIndex] < 0 ? '🔻' : '🔺';
                   return sym + ' ' + pourcentages[ctx.dataIndex] + '%';
                 },
                 color: '#fff',
@@ -224,9 +219,7 @@
               color: '#888',
               label: `Réalité: ${real} pts`
             },
-            datalabels: {
-              clip: false
-            },
+            datalabels: { clip: false },
             tooltip: {
               callbacks: {
                 afterBody: items => {
