@@ -190,9 +190,7 @@
       // Base = minimum (jusqu'à la ligne de réalité)
       const base = previsions.map(p => Math.min(p, real));
       // Écart quand la prévision est inférieure à la réalité (sous-prévision)
-      const ecartsSous = previsions.map(p => Math.max(real - p, 0));
-      // Écart quand la prévision est supérieure à la réalité (sur-prévision)
-      const ecartsSur = previsions.map(p => Math.max(p - real, 0));
+      const ecarts = previsions.map(p => p - real); // négatif ou positif
 
       const pourcentages = previsions.map(p => {
         const ecart = Math.abs(real - p);
