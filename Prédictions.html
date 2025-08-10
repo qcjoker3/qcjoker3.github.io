@@ -5,10 +5,7 @@
   <title>Prédictions</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-    }
-
+    body { font-family: 'Segoe UI', sans-serif; }
     .encadre-texte {
       font-size: 1.1em;
       width: 60%;
@@ -18,30 +15,13 @@
       background-color: #f0f8ff;
       border-radius: 8px;
     }
-
-    .year-selector {
-      text-align: center;
-      margin: 20px 0;
-    }
-
-    #chartContainer {
-      max-width: 960px;
-      margin: auto;
-    }
-
-    #chartCanvas {
-      width: 100%;
-      height: 420px;
-    }
-
-    footer {
-      text-align: center;
-      margin-top: 40px;
-    }
+    .year-selector { text-align: center; margin: 20px 0; }
+    #chartContainer { max-width: 960px; margin: auto; }
+    #chartCanvas { width: 100%; height: 420px; }
+    footer { text-align: center; margin-top: 40px; }
   </style>
 </head>
 <body>
-
   <div id="header-placeholder"></div>
 
   <main>
@@ -146,10 +126,8 @@
       afterDatasetsDraw(chart) {
         const opts = chart.options.plugins?.customLine;
         if (!opts || typeof opts.y !== 'number') return;
-
         const { ctx, chartArea, scales } = chart;
         const yPix = scales.y.getPixelForValue(opts.y);
-
         ctx.save();
         ctx.setLineDash([6, 4]);
         ctx.strokeStyle = opts.color || '#888';
@@ -159,7 +137,6 @@
         ctx.lineTo(chartArea.right, yPix);
         ctx.stroke();
         ctx.setLineDash([]);
-
         const label = opts.label || `Réalité: ${opts.y} pts`;
         ctx.fillStyle = opts.labelColor || '#333';
         ctx.font = '12px Segoe UI';
@@ -177,24 +154,20 @@
       const data = chartDataByYear[year];
       const canvas = document.getElementById('chartCanvas');
       if (!canvas || !data) {
-        if (chartInstance) {
-          chartInstance.destroy();
-          chartInstance = null;
-        }
+        if (chartInstance) chartInstance.destroy();
         return;
       }
 
       const ctx = canvas.getContext('2d');
       const { institutions, previsions, real } = data;
 
-      // Base = minimum (jusqu'à la ligne de réalité)
       const base = previsions.map(p => Math.min(p, real));
-      // Écart quand la prévision est inférieure à la réalité (sous-prévision)
-      const ecarts = previsions.map(p => p - real); // négatif ou positif
+      const ecarts = previsions.map(p => Math.abs(p - real));
+      const start = previsions.map(p => Math.min(p, real));
+      const signe = previsions.map(p => p - real);
 
-      const pourcentages = previsions.map(p => {
-        const ecart = Math.abs(real - p);
-        return ((ecart / real) * 100).toFixed(1);
+      const pourcentages = signe.map(diff => {
+        return ((Math.abs(diff) / real) * 100).toFixed(1);
       });
 
       if (chartInstance) chartInstance.destroy();
@@ -213,29 +186,29 @@
               stack: 'grp',
               datalabels: { display: false }
             },
-          {
-            label: 'Écart vs Réalité',
-            data: ecarts,
-            backgroundColor: 'rgba(255, 99, 132, 0.65)', // rose pour tous
-            borderColor: 'rgba(255, 99, 132, 1)',
-            borderWidth: 1,
-            stack: 'grp',
-            datalabels: {
-            display: (ctx) => ctx.dataset.data[ctx.dataIndex] !== 0,
-            anchor: 'center',
-            align: 'center',
-            formatter: (val, ctx) => {
-            const symbole = val < 0 ? '🔻' : '🔺';
-            const percent = ((Math.abs(val) / real) * 100).toFixed(1);
-            return symbole + ' ' + percent + '%';
-          },
-            color: '#fff',
-            font: { weight: 'bold', size: 12 },
-            clip: true
-          }
-        }
-      ]
-    },
+            {
+              label: 'Écart vs Réalité',
+              data: ecarts,
+              backgroundColor: 'rgba(255, 99, 132, 0.65)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1,
+              stack: 'grp',
+              base: start,
+              datalabels: {
+                display: true,
+                anchor: 'center',
+                align: 'center',
+                formatter: (val, ctx) => {
+                  const sym = signe[ctx.dataIndex] < 0 ? '🔻' : '🔺';
+                  return sym + ' ' + pourcentages[ctx.dataIndex] + '%';
+                },
+                color: '#fff',
+                font: { weight: 'bold', size: 12 },
+                clip: true
+              }
+            }
+          ]
+        },
         options: {
           responsive: true,
           maintainAspectRatio: false,
@@ -256,7 +229,7 @@
             },
             tooltip: {
               callbacks: {
-                afterBody: (items) => {
+                afterBody: items => {
                   const idx = items[0].dataIndex;
                   const p = previsions[idx];
                   return `Prévision: ${p} pts | Réalité: ${real} pts`;
@@ -280,14 +253,9 @@
 
     document.addEventListener('DOMContentLoaded', () => {
       const sel = document.getElementById('yearSelect');
-      if (sel.value === '') {
-        sel.value = '2020';
-      }
+      sel.value = sel.value || '2020';
       displayTable(sel.value);
-
-      sel.addEventListener('change', e => {
-        displayTable(e.target.value);
-      });
+      sel.addEventListener('change', e => displayTable(e.target.value));
     });
   </script>
 </body>
