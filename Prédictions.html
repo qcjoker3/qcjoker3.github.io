@@ -6,75 +6,92 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>Prédictions</h1>
-        <nav>
-        <a href="#accueil">Accueil</a>
-        <a href="#services">Services</a>
-        <a href="#prédictions">Prédictions</a>
-        <a href="calculatrices.html">Calculatrices</a>
-        <a href="#articles">Articles</a>
-        <a href="#contact">Contact</a>
-        </nav>
-    </header>
+
+    <!-- ✅ Header partagé sera injecté ici -->
+    <div id="header-placeholder"></div>
 
     <main>
-     <style>
-.encadre-texte {
-    background-color: #f0f8ff;
-    border-left: 6px solid #4a90e2;
-    padding: 15px;
-    font-family: 'Segoe UI', sans-serif;
-    font-size: 1.1em;
-    width: 60%; /* Limite la largeur */
-    margin: 0 auto 20px auto; /* Centre horizontalement */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    text-align: center;
-    border-radius: 8px;
+        <style>
+        .encadre-texte {
+            background-color: #f0f8ff;
+            border-left: 6px solid #4a90e2;
+            padding: 15px;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 1.1em;
+            width: 60%;
+            margin: 0 auto 20px auto;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+            border-radius: 8px;
+        }
 
-}
-</style>
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            font-family: 'Segoe UI', sans-serif;
+        }
 
-<section>
-    <div class="encadre-texte">
-        À chaque début d'année les stratégistes des grandes banques et fonds d'investissement dévoilent leur prédictions sur le S&P 500 pour l'année qui vient. Ils sont payés des millions par année et possèdent des modèles économétriques très avancés. Ils devraient être bons n'est-ce pas? Voyez par vous mêmes!
-    </div>
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #aaa;
+        }
 
-<section>
-    <h2>Tableau des Prédictions</h2>
-        <table border="1">
-        <thead>
-            <tr>
-                <th>Année</th>
-                <th>Événement Prédit</th>
-                <th>Probabilité</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>2025</td>
-                <td>Déploiement massif de l’IA dans l’éducation</td>
-                <td>Élevée</td>
-            </tr>
-            <tr>
-                <td>2028</td>
-                <td>Généralisation des voitures autonomes</td>
-                <td>Moyenne</td>
-            </tr>
-            <tr>
-                <td>2030</td>
-                <td>Colonies expérimentales sur Mars</td>
-                <td>Faible</td>
-            </tr>
-        </tbody>
-    </table>
-</section>
+        thead {
+            background-color: #4a90e2;
+            color: white;
+        }
+        </style>
 
+        <section>
+            <div class="encadre-texte">
+                À chaque début d'année les stratégistes des grandes banques et fonds d'investissement dévoilent leurs prédictions sur le S&P 500 pour l'année à venir. Ils sont payés des millions par année et possèdent des modèles économétriques très avancés. Ils devraient être bons, n'est-ce pas ? Voyez par vous-mêmes !
+            </div>
 
+            <h2 style="text-align:center;">Tableau des Prédictions</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Année</th>
+                        <th>Événement Prédit</th>
+                        <th>Probabilité</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2025</td>
+                        <td>Déploiement massif de l’IA dans l’éducation</td>
+                        <td>Élevée</td>
+                    </tr>
+                    <tr>
+                        <td>2028</td>
+                        <td>Généralisation des voitures autonomes</td>
+                        <td>Moyenne</td>
+                    </tr>
+                    <tr>
+                        <td>2030</td>
+                        <td>Colonies expérimentales sur Mars</td>
+                        <td>Faible</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
     </main>
 
-    <footer>
+    <footer style="text-align:center; margin-top: 40px;">
         <p>&copy; 2025 - Finoza</p>
     </footer>
+
+    <!-- ✅ Script pour charger le header -->
+    <script>
+        fetch('header.html')
+            .then(res => res.text())
+            .then(data => {
+                document.getElementById('header-placeholder').innerHTML = data;
+            })
+            .catch(error => console.error('Erreur de chargement du header :', error));
+    </script>
+
 </body>
 </html>
