@@ -175,13 +175,15 @@
               stack: 'grp',
               datalabels: {
                 display: true,
-                align: 'end',
-                anchor: 'end',
+                anchor:'center'
+                align: 'center',
                 formatter: (val, ctx) => pourcentages[ctx.dataIndex] + '%',
-                color: '#333',
+                color: '#fff',
                 font: {
-                  weight: 'bold'
-                }
+                  weight: 'bold',
+                  size:12
+                },
+                clip: true
               }
             }
           ]
