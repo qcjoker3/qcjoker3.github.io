@@ -369,7 +369,7 @@
 
       // Met à jour l’analyse détaillée
       focusedInstitution = null; // reset
-      renderRankingAndChart(year, currentHorizon);
+      //renderRankingAndChart(year, currentHorizon);
     }
 
     function renderRankingAndChart(endYear, horizon) {
@@ -496,6 +496,7 @@
   document.querySelectorAll('.horizon-tabs button').forEach(btn => {
     btn.addEventListener('click', () => {
       currentHorizon = Number(btn.dataset.h);
+      const latestYear = yearsSorted.at(-1);
       renderRankingAndChart(latestYear, currentHorizon);
     });
   });
