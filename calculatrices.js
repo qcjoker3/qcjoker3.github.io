@@ -1,23 +1,24 @@
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-  // 🗂️ Gestion des onglets
-  const tabs = document.querySelectorAll('.calculatrice-tabs .tab');
-  const panels = document.querySelectorAll('[role="tabpanel"]');
+  // 🟦 Étape 1 : Activation des calculatrices via la grille
+  const calcCards = document.querySelectorAll('.card.card-link');
+  const calcSections = document.querySelectorAll('.calculator-card');
 
-  tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      tabs.forEach(t => {
-        t.classList.remove('active');
-        t.setAttribute('aria-selected', 'false');
-      });
-      panels.forEach(panel => panel.hidden = true);
+  calcCards.forEach(card => {
+    card.addEventListener('click', () => {
+      const selected = card.dataset.calc; // ex: "retraite", "valeur-future", "hypotheque", "trex"
 
-      tab.classList.add('active');
-      tab.setAttribute('aria-selected', 'true');
-      const panelId = tab.getAttribute('aria-controls');
-      document.getElementById(panelId).hidden = false;
+      // Mise à jour de l'apparence
+      calcCards.forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+
+      // Affiche la bonne calculatrice
+      calcSections.forEach(section => section.classList.remove('active'));
+      const activeCalc = document.getElementById(`calc-${selected}`);
+      if (activeCalc) activeCalc.classList.add('active');
     });
   });
+
 
   // 📊 Déclaration des graphiques
   let chartRetraite = null;
