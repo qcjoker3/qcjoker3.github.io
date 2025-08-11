@@ -170,102 +170,115 @@
   <canvas id="chart-trex" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
 </section>
  
-    <!-- Calculatrice Acheter vs Louer -->
+<!-- Calculatrice Acheter vs Louer -->
 <section id="calc-acheter-louer" class="calculator-card" aria-label="Calculatrice Acheter vs Louer">
   <h2>Acheter vs Louer</h2>
   <form id="form-avl" novalidate>
-    <!-- Horizon et hypothèque -->
+
+    <!-- 🧠 Horizon de l’analyse -->
     <div class="form-group">
       <label for="avl-horizon">Horizon d’analyse (années)</label>
       <input type="text" class="calculator-input" id="avl-horizon" name="avl-horizon" placeholder="Ex: 25" required />
     </div>
-    <div class="form-group">
-      <label for="avl-prix">Prix d’achat de la propriété (CAD)</label>
-      <input type="text" class="calculator-input" id="avl-prix" name="avl-prix" placeholder="Ex: 500000" required />
-    </div>
-    <div class="form-group">
-      <label for="avl-mise-fonds">Mise de fonds (CAD)</label>
-      <input type="text" class="calculator-input" id="avl-mise-fonds" name="avl-mise-fonds" placeholder="Ex: 100000" required />
-    </div>
-    <div class="form-group">
-      <label for="avl-taux-hypo">Taux hypothécaire annuel (%)</label>
-      <input type="text" class="calculator-input" id="avl-taux-hypo" name="avl-taux-hypo" placeholder="Ex: 5" required />
-    </div>
-    <div class="form-group">
-      <label for="avl-amortissement">Amortissement (années)</label>
-      <input type="text" class="calculator-input" id="avl-amortissement" name="avl-amortissement" placeholder="Ex: 25" required />
+
+    <!-- 🏠 Informations Acheteur -->
+    <div class="form-block">
+      <h3>Acheteur</h3>
+
+      <div class="form-group">
+        <label for="avl-prix">Prix d’achat de la propriété (CAD)</label>
+        <input type="text" class="calculator-input" id="avl-prix" name="avl-prix" placeholder="Ex: 500000" required />
+      </div>
+      <div class="form-group">
+        <label for="avl-mise-fonds">Mise de fonds (CAD)</label>
+        <input type="text" class="calculator-input" id="avl-mise-fonds" name="avl-mise-fonds" placeholder="Ex: 100000" required />
+      </div>
+      <div class="form-group">
+        <label for="avl-taux-hypo">Taux hypothécaire annuel (%)</label>
+        <input type="text" class="calculator-input" id="avl-taux-hypo" name="avl-taux-hypo" placeholder="Ex: 5" required />
+      </div>
+      <div class="form-group">
+        <label for="avl-amortissement">Amortissement (années)</label>
+        <input type="text" class="calculator-input" id="avl-amortissement" name="avl-amortissement" placeholder="Ex: 25" required />
+      </div>
+      <div class="form-group">
+        <label for="avl-frais-achat">Frais initiaux à l’achat (%) — notaire, taxe de bienvenue, etc.</label>
+        <input type="text" class="calculator-input" id="avl-frais-achat" name="avl-frais-achat" placeholder="Ex: 2" />
+      </div>
+      <div class="form-group">
+        <label for="avl-taxes-foncieres">Taxes foncières (% de la valeur/an)</label>
+        <input type="text" class="calculator-input" id="avl-taxes-foncieres" name="avl-taxes-foncieres" placeholder="Ex: 1" />
+      </div>
+      <div class="form-group">
+        <label for="avl-entretien">Entretien (% de la valeur/an)</label>
+        <input type="text" class="calculator-input" id="avl-entretien" name="avl-entretien" placeholder="Ex: 1" />
+      </div>
+      <div class="form-group">
+        <label for="avl-assurance-maison">Assurance habitation (CAD/mois)</label>
+        <input type="text" class="calculator-input" id="avl-assurance-maison" name="avl-assurance-maison" placeholder="Ex: 100" />
+      </div>
+      <div class="form-group">
+        <label for="avl-copro">Frais de copropriété (CAD/mois) — si applicable</label>
+        <input type="text" class="calculator-input" id="avl-copro" name="avl-copro" placeholder="Ex: 200" />
+      </div>
+      <div class="form-group">
+        <label for="avl-croissance-immobilier">Croissance du prix immobilier (% annuel)</label>
+        <input type="text" class="calculator-input" id="avl-croissance-immobilier" name="avl-croissance-immobilier" placeholder="Ex: 3" />
+      </div>
+      <div class="form-group">
+        <label for="avl-frais-vente">Frais de vente au terme (%) — courtage, notaire, etc.</label>
+        <input type="text" class="calculator-input" id="avl-frais-vente" name="avl-frais-vente" placeholder="Ex: 5" />
+      </div>
     </div>
 
-    <!-- Coûts propriétaire -->
-    <div class="form-group">
-      <label for="avl-frais-achat">Frais initiaux à l’achat (%) — notaire, taxe de bienvenue, etc.</label>
-      <input type="text" class="calculator-input" id="avl-frais-achat" name="avl-frais-achat" placeholder="Ex: 2" />
-    </div>
-    <div class="form-group">
-      <label for="avl-taxes-foncieres">Taxes foncières (% de la valeur/an)</label>
-      <input type="text" class="calculator-input" id="avl-taxes-foncieres" name="avl-taxes-foncieres" placeholder="Ex: 1" />
-    </div>
-    <div class="form-group">
-      <label for="avl-entretien">Entretien (% de la valeur/an)</label>
-      <input type="text" class="calculator-input" id="avl-entretien" name="avl-entretien" placeholder="Ex: 1" />
-    </div>
-    <div class="form-group">
-      <label for="avl-assurance-maison">Assurance habitation (CAD/mois)</label>
-      <input type="text" class="calculator-input" id="avl-assurance-maison" name="avl-assurance-maison" placeholder="Ex: 100" />
-    </div>
-    <div class="form-group">
-      <label for="avl-copro">Frais de copropriété (CAD/mois) — si applicable</label>
-      <input type="text" class="calculator-input" id="avl-copro" name="avl-copro" placeholder="Ex: 200" />
-    </div>
-    <div class="form-group">
-      <label for="avl-croissance-immobilier">Croissance du prix immobilier (% annuel)</label>
-      <input type="text" class="calculator-input" id="avl-croissance-immobilier" name="avl-croissance-immobilier" placeholder="Ex: 3" />
-    </div>
-    <div class="form-group">
-      <label for="avl-frais-vente">Frais de vente au terme (%) — courtage, notaire, etc.</label>
-      <input type="text" class="calculator-input" id="avl-frais-vente" name="avl-frais-vente" placeholder="Ex: 5" />
+    <!-- 🧍 Informations Locataire -->
+    <div class="form-block">
+      <h3>Locataire</h3>
+
+      <div class="form-group">
+        <label for="avl-loyer">Loyer initial (CAD/mois)</label>
+        <input type="text" class="calculator-input" id="avl-loyer" name="avl-loyer" placeholder="Ex: 1800" required />
+      </div>
+      <div class="form-group">
+        <label for="avl-croissance-loyer">Croissance annuelle du loyer (%)</label>
+        <input type="text" class="calculator-input" id="avl-croissance-loyer" name="avl-croissance-loyer" placeholder="Ex: 2" />
+      </div>
+      <div class="form-group">
+        <label for="avl-assurance-loc">Assurance du locataire (CAD/mois)</label>
+        <input type="text" class="calculator-input" id="avl-assurance-loc" name="avl-assurance-loc" placeholder="Ex: 25" />
+      </div>
     </div>
 
-    <!-- Côté locataire -->
-    <div class="form-group">
-      <label for="avl-loyer">Loyer initial (CAD/mois)</label>
-      <input type="text" class="calculator-input" id="avl-loyer" name="avl-loyer" placeholder="Ex: 1800" required />
-    </div>
-    <div class="form-group">
-      <label for="avl-croissance-loyer">Croissance annuelle du loyer (%)</label>
-      <input type="text" class="calculator-input" id="avl-croissance-loyer" name="avl-croissance-loyer" placeholder="Ex: 2" />
-    </div>
-    <div class="form-group">
-      <label for="avl-assurance-loc">Assurance du locataire (CAD/mois)</label>
-      <input type="text" class="calculator-input" id="avl-assurance-loc" name="avl-assurance-loc" placeholder="Ex: 25" />
-    </div>
+    <!-- 📈 Investissements / fiscalité -->
+    <div class="form-block">
+      <h3>Investissements et fiscalité</h3>
 
-    <!-- Investissements / fiscalité -->
-    <div class="form-group">
-      <label for="avl-rendement">Rendement annuel des investissements (%)</label>
-      <input type="text" class="calculator-input" id="avl-rendement" name="avl-rendement" placeholder="Ex: 6" required />
-    </div>
-    <div class="form-group">
-      <label for="avl-alloc-tfsa">Allocation CELI (% des contributions)</label>
-      <input type="text" class="calculator-input" id="avl-alloc-tfsa" name="avl-alloc-tfsa" placeholder="Ex: 60" />
-    </div>
-    <div class="form-group">
-      <label for="avl-alloc-rrsp">Allocation REER (% des contributions)</label>
-      <input type="text" class="calculator-input" id="avl-alloc-rrsp" name="avl-alloc-rrsp" placeholder="Ex: 40" />
-    </div>
-    <div class="form-group">
-      <label for="avl-taux-marginal">Taux marginal d’imposition actuel (%) — pour remboursement REER</label>
-      <input type="text" class="calculator-input" id="avl-taux-marginal" name="avl-taux-marginal" placeholder="Ex: 40" />
-    </div>
-    <div class="form-group">
-      <label for="avl-taux-retrait">Taux d’imposition au retrait REER (%) — pour valeur après impôt</label>
-      <input type="text" class="calculator-input" id="avl-taux-retrait" name="avl-taux-retrait" placeholder="Ex: 30" />
-    </div>
-    <div class="form-group">
-      <label>
-        <input type="checkbox" id="avl-reinvest-remboursement" checked />
-        Réinvestir automatiquement le remboursement d’impôt REER
-      </label>
+      <div class="form-group">
+        <label for="avl-rendement">Rendement annuel des investissements (%)</label>
+        <input type="text" class="calculator-input" id="avl-rendement" name="avl-rendement" placeholder="Ex: 6" required />
+      </div>
+      <div class="form-group">
+        <label for="avl-alloc-tfsa">Allocation CELI (% des contributions)</label>
+        <input type="text" class="calculator-input" id="avl-alloc-tfsa" name="avl-alloc-tfsa" placeholder="Ex: 60" />
+      </div>
+      <div class="form-group">
+        <label for="avl-alloc-rrsp">Allocation REER (% des contributions)</label>
+        <input type="text" class="calculator-input" id="avl-alloc-rrsp" name="avl-alloc-rrsp" placeholder="Ex: 40" />
+      </div>
+      <div class="form-group">
+        <label for="avl-taux-marginal">Taux marginal d’imposition actuel (%) — pour remboursement REER</label>
+        <input type="text" class="calculator-input" id="avl-taux-marginal" name="avl-taux-marginal" placeholder="Ex: 40" />
+      </div>
+      <div class="form-group">
+        <label for="avl-taux-retrait">Taux d’imposition au retrait REER (%) — pour valeur après impôt</label>
+        <input type="text" class="calculator-input" id="avl-taux-retrait" name="avl-taux-retrait" placeholder="Ex: 30" />
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" id="avl-reinvest-remboursement" checked />
+          Réinvestir automatiquement le remboursement d’impôt REER
+        </label>
+      </div>
     </div>
 
     <button type="submit" class="btn-primary">Comparer</button>
