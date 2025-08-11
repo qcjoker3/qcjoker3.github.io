@@ -343,11 +343,10 @@ if (formVF) {
     const fraisPayesEstimes = perteDueAuxFrais;
 
       resultatTrex.textContent =
-        `Votre score T‑Rex est de ${(scoreTrex * 100).toFixed(1)}%. ` +
-      `\nValeur finale avec frais : ${fmtCurrency(capitalAvecFrais)} ` +
-      `| sans frais : ${fmtCurrency(capitalSansFrais)}.` +
-      `\nDifférence liée aux frais : ${fmtCurrency(perteDueAuxFrais)}.` +
-      `\nFrais payés estimés sur ${duree} ans : ${fmtCurrency(fraisPayesEstimes)}.`;
+  `Votre score T‑Rex est de ${(scoreTrex * 100).toFixed(1)}%.\n` +
+  `Valeur finale avec frais : ${fmtCurrency(capitalAvecFrais)}\n` +
+  `Valeur sans frais : ${fmtCurrency(capitalSansFrais)} → Frais payés : ${fmtCurrency(fraisPayesEstimes)}\n` +
+  `Différence liée aux frais : ${fmtCurrency(perteDueAuxFrais)}.`;
 
       const labels = ['Avec frais', 'Sans frais'];
       const dataValues = [capitalAvecFrais, capitalSansFrais];
