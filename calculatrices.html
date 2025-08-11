@@ -171,76 +171,114 @@
 </section>
 
     <!-- Calculatrice Acheter vs Louer -->
+<style>
+  /* Mise en page 2 colonnes, scoped à cette section */
+  #calc-acheter-louer .avl-two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin: 16px 0 24px;
+  }
+  #calc-acheter-louer .form-column {
+    background: #f8fafc;
+    padding: 16px;
+    border-radius: 8px;
+  }
+  #calc-acheter-louer .form-column h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.1rem;
+  }
+  @media (max-width: 768px) {
+    #calc-acheter-louer .avl-two-column {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
 <section id="calc-acheter-louer" class="calculator-card" aria-label="Calculatrice Acheter vs Louer">
   <h2>Acheter vs Louer</h2>
   <form id="form-avl" novalidate>
-    <!-- Horizon et hypothèque -->
+    <!-- Champs communs -->
     <div class="form-group">
       <label for="avl-horizon">Horizon d’analyse (années)</label>
       <input type="text" class="calculator-input" id="avl-horizon" name="avl-horizon" placeholder="Ex: 25" required />
     </div>
-    <div class="form-group">
-      <label for="avl-prix">Prix d’achat de la propriété (CAD)</label>
-      <input type="text" class="calculator-input" id="avl-prix" name="avl-prix" placeholder="Ex: 500000" required />
-    </div>
-    <div class="form-group">
-      <label for="avl-mise-fonds">Mise de fonds (CAD)</label>
-      <input type="text" class="calculator-input" id="avl-mise-fonds" name="avl-mise-fonds" placeholder="Ex: 100000" required />
-    </div>
-    <div class="form-group">
-      <label for="avl-taux-hypo">Taux hypothécaire annuel (%)</label>
-      <input type="text" class="calculator-input" id="avl-taux-hypo" name="avl-taux-hypo" placeholder="Ex: 5" required />
-    </div>
-    <div class="form-group">
-      <label for="avl-amortissement">Amortissement (années)</label>
-      <input type="text" class="calculator-input" id="avl-amortissement" name="avl-amortissement" placeholder="Ex: 25" required />
+
+    <!-- Colonnes Acheteur (gauche) / Locataire (droite) -->
+    <div class="avl-two-column">
+      <!-- Acheteur -->
+      <div class="form-column" aria-label="Paramètres Acheteur">
+        <h3>Acheteur</h3>
+
+        <!-- Horizon et hypothèque (côté acheteur) -->
+        <div class="form-group">
+          <label for="avl-prix">Prix d’achat de la propriété (CAD)</label>
+          <input type="text" class="calculator-input" id="avl-prix" name="avl-prix" placeholder="Ex: 500000" required />
+        </div>
+        <div class="form-group">
+          <label for="avl-mise-fonds">Mise de fonds (CAD)</label>
+          <input type="text" class="calculator-input" id="avl-mise-fonds" name="avl-mise-fonds" placeholder="Ex: 100000" required />
+        </div>
+        <div class="form-group">
+          <label for="avl-taux-hypo">Taux hypothécaire annuel (%)</label>
+          <input type="text" class="calculator-input" id="avl-taux-hypo" name="avl-taux-hypo" placeholder="Ex: 5" required />
+        </div>
+        <div class="form-group">
+          <label for="avl-amortissement">Amortissement (années)</label>
+          <input type="text" class="calculator-input" id="avl-amortissement" name="avl-amortissement" placeholder="Ex: 25" required />
+        </div>
+
+        <!-- Coûts propriétaire -->
+        <div class="form-group">
+          <label for="avl-frais-achat">Frais initiaux à l’achat (%) — notaire, taxe de bienvenue, etc.</label>
+          <input type="text" class="calculator-input" id="avl-frais-achat" name="avl-frais-achat" placeholder="Ex: 2" />
+        </div>
+        <div class="form-group">
+          <label for="avl-taxes-foncieres">Taxes foncières (% de la valeur/an)</label>
+          <input type="text" class="calculator-input" id="avl-taxes-foncieres" name="avl-taxes-foncieres" placeholder="Ex: 1" />
+        </div>
+        <div class="form-group">
+          <label for="avl-entretien">Entretien (% de la valeur/an)</label>
+          <input type="text" class="calculator-input" id="avl-entretien" name="avl-entretien" placeholder="Ex: 1" />
+        </div>
+        <div class="form-group">
+          <label for="avl-assurance-maison">Assurance habitation (CAD/mois)</label>
+          <input type="text" class="calculator-input" id="avl-assurance-maison" name="avl-assurance-maison" placeholder="Ex: 100" />
+        </div>
+        <div class="form-group">
+          <label for="avl-copro">Frais de copropriété (CAD/mois) — si applicable</label>
+          <input type="text" class="calculator-input" id="avl-copro" name="avl-copro" placeholder="Ex: 200" />
+        </div>
+        <div class="form-group">
+          <label for="avl-croissance-immobilier">Croissance du prix immobilier (% annuel)</label>
+          <input type="text" class="calculator-input" id="avl-croissance-immobilier" name="avl-croissance-immobilier" placeholder="Ex: 3" />
+        </div>
+        <div class="form-group">
+          <label for="avl-frais-vente">Frais de vente au terme (%) — courtage, notaire, etc.</label>
+          <input type="text" class="calculator-input" id="avl-frais-vente" name="avl-frais-vente" placeholder="Ex: 5" />
+        </div>
+      </div>
+
+      <!-- Locataire -->
+      <div class="form-column" aria-label="Paramètres Locataire">
+        <h3>Locataire</h3>
+
+        <div class="form-group">
+          <label for="avl-loyer">Loyer initial (CAD/mois)</label>
+          <input type="text" class="calculator-input" id="avl-loyer" name="avl-loyer" placeholder="Ex: 1800" required />
+        </div>
+        <div class="form-group">
+          <label for="avl-croissance-loyer">Croissance annuelle du loyer (%)</label>
+          <input type="text" class="calculator-input" id="avl-croissance-loyer" name="avl-croissance-loyer" placeholder="Ex: 2" />
+        </div>
+        <div class="form-group">
+          <label for="avl-assurance-loc">Assurance du locataire (CAD/mois)</label>
+          <input type="text" class="calculator-input" id="avl-assurance-loc" name="avl-assurance-loc" placeholder="Ex: 25" />
+        </div>
+      </div>
     </div>
 
-    <!-- Coûts propriétaire -->
-    <div class="form-group">
-      <label for="avl-frais-achat">Frais initiaux à l’achat (%) — notaire, taxe de bienvenue, etc.</label>
-      <input type="text" class="calculator-input" id="avl-frais-achat" name="avl-frais-achat" placeholder="Ex: 2" />
-    </div>
-    <div class="form-group">
-      <label for="avl-taxes-foncieres">Taxes foncières (% de la valeur/an)</label>
-      <input type="text" class="calculator-input" id="avl-taxes-foncieres" name="avl-taxes-foncieres" placeholder="Ex: 1" />
-    </div>
-    <div class="form-group">
-      <label for="avl-entretien">Entretien (% de la valeur/an)</label>
-      <input type="text" class="calculator-input" id="avl-entretien" name="avl-entretien" placeholder="Ex: 1" />
-    </div>
-    <div class="form-group">
-      <label for="avl-assurance-maison">Assurance habitation (CAD/mois)</label>
-      <input type="text" class="calculator-input" id="avl-assurance-maison" name="avl-assurance-maison" placeholder="Ex: 100" />
-    </div>
-    <div class="form-group">
-      <label for="avl-copro">Frais de copropriété (CAD/mois) — si applicable</label>
-      <input type="text" class="calculator-input" id="avl-copro" name="avl-copro" placeholder="Ex: 200" />
-    </div>
-    <div class="form-group">
-      <label for="avl-croissance-immobilier">Croissance du prix immobilier (% annuel)</label>
-      <input type="text" class="calculator-input" id="avl-croissance-immobilier" name="avl-croissance-immobilier" placeholder="Ex: 3" />
-    </div>
-    <div class="form-group">
-      <label for="avl-frais-vente">Frais de vente au terme (%) — courtage, notaire, etc.</label>
-      <input type="text" class="calculator-input" id="avl-frais-vente" name="avl-frais-vente" placeholder="Ex: 5" />
-    </div>
-
-    <!-- Côté locataire -->
-    <div class="form-group">
-      <label for="avl-loyer">Loyer initial (CAD/mois)</label>
-      <input type="text" class="calculator-input" id="avl-loyer" name="avl-loyer" placeholder="Ex: 1800" required />
-    </div>
-    <div class="form-group">
-      <label for="avl-croissance-loyer">Croissance annuelle du loyer (%)</label>
-      <input type="text" class="calculator-input" id="avl-croissance-loyer" name="avl-croissance-loyer" placeholder="Ex: 2" />
-    </div>
-    <div class="form-group">
-      <label for="avl-assurance-loc">Assurance du locataire (CAD/mois)</label>
-      <input type="text" class="calculator-input" id="avl-assurance-loc" name="avl-assurance-loc" placeholder="Ex: 25" />
-    </div>
-
-    <!-- Investissements / fiscalité -->
+    <!-- Investissements / fiscalité (champs communs) -->
     <div class="form-group">
       <label for="avl-rendement">Rendement annuel des investissements (%)</label>
       <input type="text" class="calculator-input" id="avl-rendement" name="avl-rendement" placeholder="Ex: 6" required />
