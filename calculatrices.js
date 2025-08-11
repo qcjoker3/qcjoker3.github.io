@@ -345,7 +345,7 @@ if (formVF) {
       resultatTrex.textContent =
   `Votre score T‑Rex est de ${(scoreTrex * 100).toFixed(1)}%.\n` +
   `Valeur finale avec frais : ${fmtCurrency(capitalAvecFrais)}\n` +
-  `Valeur sans frais : ${fmtCurrency(capitalSansFrais)} → Frais payés : ${fmtCurrency(fraisPayesEstimes)}
+  `Valeur sans frais : ${fmtCurrency(capitalSansFrais)} → Frais payés : ${fmtCurrency(fraisPayesEstimes)}.`;
 
       const labels = ['Avec frais', 'Sans frais'];
       const dataValues = [capitalAvecFrais, capitalSansFrais];
