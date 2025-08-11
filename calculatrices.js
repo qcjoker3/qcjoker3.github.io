@@ -295,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const scoreTrex = capitalAvecFrais / (capitalSansFrais || 1); // évite division par 0
 
       resultatTrex.textContent =
-        `Votre score T‑Rex est de ${(scoreTrex * 100).toFixed(1)}%. ` +
+        `Votre score est de ${(scoreTrex * 100).toFixed(1)}%. ` +
         `Valeur avec frais: ${fmtCurrency(capitalAvecFrais)} | sans frais: ${fmtCurrency(capitalSansFrais)}.`;
 
       const labels = ['Avec frais', 'Sans frais'];
