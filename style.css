@@ -263,6 +263,16 @@ footer p {
   font-size: 1.1rem;
 }
 
+select.form-control {
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+
 /* Responsive */
 @media (max-width: 768px) {
   nav {
