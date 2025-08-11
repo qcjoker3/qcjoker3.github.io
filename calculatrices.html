@@ -39,31 +39,31 @@
       <div class="card card-link" data-calc="trex">
         <h3>Frais de gestion</h3>
         <p>Simulez vos paiements de frais de gestion.</p>
-      </div>
+      </div>  
     </div>
   </section>
 
   <section id="calculatrices-container">
 
-    <!-- Exemple : Calculatrice Retraite -->
+    <!-- Calculatrice Retraite -->
     <section id="calc-retraite" class="calculator-card active" aria-label="Calculatrice de Retraite">
       <h2>Calculatrice de Retraite</h2>
       <form id="form-retraite" novalidate>
         <div class="form-group">
           <label for="age-actuel">Âge actuel</label>
-          <input type="text" class="calculator-input" id="age-actuel" name="age-actuel" placeholder="Ex: 30" required />
+          <input type="number" id="age-actuel" name="age-actuel" min="0" max="120" placeholder="Ex: 30" required />
         </div>
         <div class="form-group">
           <label for="age-retraite">Âge désiré de retraite</label>
-          <input type="text" class="calculator-input" id="age-retraite" name="age-retraite" placeholder="Ex: 65" required />
+          <input type="number" id="age-retraite" name="age-retraite" min="0" max="120" placeholder="Ex: 65" required />
         </div>
         <div class="form-group">
           <label for="epargne-mensuelle">Épargne mensuelle (CAD)</label>
-          <input type="text" class="calculator-input" id="epargne-mensuelle" name="epargne-mensuelle" placeholder="Ex: 500" required />
+          <input type="number" id="epargne-mensuelle" name="epargne-mensuelle" min="0" placeholder="Ex: 500" required />
         </div>
         <div class="form-group">
           <label for="rendement">Rendement annuel attendu (%)</label>
-          <input type="text" class="calculator-input" id="rendement" name="rendement" placeholder="Ex: 5" required />
+          <input type="number" id="rendement" name="rendement" min="0" max="100" step="0.1" placeholder="Ex: 5" required />
         </div>
         <button type="submit" class="btn-primary">Calculer</button>
       </form>
@@ -71,18 +71,110 @@
       <canvas id="chart-retraite" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
     </section>
 
-    <!-- Tu peux appliquer le même principe à tes autres formulaires -->
-    <!-- Remplace chaque type="number" par type="text" + class="calculator-input" -->
+    <!-- Calculatrice Valeur Future -->
+    <section id="calc-valeur-future" class="calculator-card" aria-label="Calculatrice de Valeur Future">
+      <h2>Calculatrice de Valeur Future</h2>
+      <form id="form-vf" novalidate>
+        <div class="form-group">
+          <label for="montant-initial">Montant initial</label>
+          <input type="number" id="montant-initial" name="montant-initial" min="0" placeholder="Ex: 10000" required />
+        </div>
+        <div class="form-group">
+      <label for="cotisation-vf">Cotisation additionnelle</label>
+          <input type="number" id="cotisation-vf" name="cotisation-vf" min="0" placeholder="Ex: 200" />
+        </div>
 
+        <div class="form-group">
+          <label for="frequence-vf">Fréquence de cotisation</label>
+          <select id="frequence-vf" name="frequence-vf" class="form-control">
+          <option value="annuelle">Annuelle</option>
+          <option value="mensuelle">Mensuelle</option>
+          <option value="hebdomadaire">Hebdomadaire</option>
+          </select>
+          </div>
+        <div class="form-group">
+          <label for="duree-vf">Durée (années)</label>
+          <input type="number" id="duree-vf" name="duree-vf" min="0" placeholder="Ex: 10" required />
+        </div>
+        <div class="form-group">
+          <label for="taux-vf">Taux d’intérêt annuel (%)</label>
+          <input type="number" id="taux-vf" name="taux-vf" min="0" max="100" step="0.1" placeholder="Ex: 7" required />
+        </div>
+        <button type="submit" class="btn-primary">Calculer</button>
+      </form>
+      <p class="resultat" id="resultat-vf" aria-live="polite"></p>
+      <canvas id="chart-vf" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
+    </section>
+
+    <!-- Calculatrice Hypothèque -->
+    <section id="calc-hypotheque" class="calculator-card" aria-label="Calculatrice Hypothécaire">
+      <h2>Calculatrice Hypothécaire</h2>
+      <form id="form-hypo" novalidate>
+        <div class="form-group">
+          <label for="montant-pret">Montant du prêt (CAD)</label>
+          <input type="number" id="montant-pret" name="montant-pret" min="0" placeholder="Ex: 300000" required />
+        </div>
+        <div class="form-group">
+          <label for="taux-hypo">Taux d’intérêt annuel (%)</label>
+          <input type="number" id="taux-hypo" name="taux-hypo" min="0" max="100" step="0.1" placeholder="Ex: 3.5" required />
+        </div>
+        <div class="form-group">
+          <label for="duree-hypo">Durée (années)</label>
+          <input type="number" id="duree-hypo" name="duree-hypo" min="0" placeholder="Ex: 25" required />
+        </div>
+        <button type="submit" class="btn-primary">Calculer</button>
+      </form>
+      <p class="resultat" id="resultat-hypo" aria-live="polite"></p>
+      <canvas id="chart-hypo" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
+    </section>
+
+    <!-- Calculatrice T‑Rex Score -->
+<section id="calc-trex" class="calculator-card" aria-label="Calculatrice de frais de gestion">
+  <h2>Calculatrice de frais de gestion</h2>
+
+  <form id="form-trex" novalidate>
+    <div class="form-group">
+      <label for="montant-initial">Montant initial</label>
+      <input type="number" id="montant-initial" name="montant-initial" min="0" placeholder="Ex: 10000" required />
+    </div>
+
+    <div class="form-group">
+      <label for="cotisation-annuelle">Cotisation annuelle<span style="color:#6b7280">(optionnel)</span></label>
+      <input type="number" id="cotisation-annuelle" name="cotisation-annuelle" min="0" placeholder="Ex: 3000" />
+    </div>
+
+    <div class="form-group">
+      <label for="duree-trex">Durée (années)</label>
+      <input type="number" id="duree-trex" name="duree-trex" min="1" placeholder="Ex: 30" required />
+    </div>
+
+    <div class="form-group">
+      <label for="rendement-brut">Rendement brut annuel (%)</label>
+      <input type="number" id="rendement-brut" name="rendement-brut" min="0" max="100" step="0.1" placeholder="Ex: 6.0" required />
+    </div>
+
+    <div class="form-group">
+      <label for="frais-annuels">Frais annuels totaux (%)</label>
+      <input type="number" id="frais-annuels" name="frais-annuels" min="0" max="100" step="0.05" placeholder="Ex: 1.5" required />
+    </div>
+
+    <button type="submit" class="btn-primary">Calculer</button>
+  </form>
+
+  <p class="resultat" id="resultat-trex" aria-live="polite"></p>
+  <canvas id="chart-trex" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
+</section>
+
+  
   </section>
+
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="calculatrices.js"></script>
 
-<!-- 🎯 Script de formatage -->
-<script>
-  document.querySelectorAll('.calculator-input').forEach(input => {
+  <script>
+  document.querySelectorAll('.calculator-card input[type="number"]').forEach(input => {
     input.addEventListener('input', function (e) {
       let raw = e.target.value.replace(/\s/g, '');
       let numeric = raw.replace(',', '.');
@@ -95,7 +187,6 @@
     });
   });
 </script>
-
 <footer>
   <p>© 2025 Finoza</p>
 </footer>
