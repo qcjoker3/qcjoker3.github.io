@@ -297,7 +297,9 @@ if (formVF) {
   // =====================================================================
 // Calculatrice Acheter ou Louer
 // =====================================================================
-<script>
+window.addEventListener('DOMContentLoaded', () => {
+
+  <script>
   // Helpers locaux si besoin
   function parseNum(v) {
     if (v == null) return 0;
@@ -551,6 +553,8 @@ if (formVF) {
     });
   }
 </script>
+  });
+
   
   // =====================================================================
   // Calculatrice T‑Rex Score
