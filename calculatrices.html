@@ -173,20 +173,6 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="calculatrices.js"></script>
 
-  <script>
-  document.querySelectorAll('.calculator-card input[type="number"]').forEach(input => {
-    input.addEventListener('input', function (e) {
-      let raw = e.target.value.replace(/\s/g, '');
-      let numeric = raw.replace(',', '.');
-
-      if (isNaN(numeric)) return;
-
-      const parts = numeric.split('.');
-      parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-      e.target.value = parts.length > 1 ? parts[0] + ',' + parts[1] : parts[0];
-    });
-  });
-</script>
 <footer>
   <p>© 2025 Finoza</p>
 </footer>
