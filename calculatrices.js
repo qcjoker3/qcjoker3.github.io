@@ -121,56 +121,97 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =====================================================================
-  // Calculatrice Valeur Future
-  // =====================================================================
-  const formVF = document.getElementById('form-vf');
-  const resultatVF = document.getElementById('resultat-vf');
-  const ctxVF = document.getElementById('chart-vf')?.getContext('2d');
+// Calculatrice Valeur Future (avec cotisations)
+// =====================================================================
+const formVF = document.getElementById('form-vf');
+const resultatVF = document.getElementById('resultat-vf');
+const ctxVF = document.getElementById('chart-vf')?.getContext('2d');
 
-  if (formVF) {
-    formVF.addEventListener('submit', e => {
-      e.preventDefault();
-      const montantInitial = toFloat(formVF['montant-initial'].value);
-      const duree = parseInt(formVF['duree-vf'].value);
-      const taux = toFloat(formVF['taux-vf'].value) / 100;
+if (formVF) {
+  formVF.addEventListener('submit', e => {
+    e.preventDefault();
+    const montantInitial = toFloat(formVF['montant-initial'].value);
+    const duree = parseInt(formVF['duree-vf'].value);
+    const taux = toFloat(formVF['taux-vf'].value) / 100;
 
-      if (!Number.isFinite(montantInitial) || !Number.isFinite(duree) || !Number.isFinite(taux)) {
-        resultatVF.textContent = 'Veuillez remplir tous les champs correctement.';
-        return;
+    // Nouveaux champs
+    const cotisation = toFloat(formVF['cotisation-vf']?.value) || 0;
+    const freq = formVF['frequence-vf']?.value || 'annuelle';
+
+    if (!Number.isFinite(montantInitial) || !Number.isFinite(duree) || !Number.isFinite(taux)) {
+      resultatVF.textContent = 'Veuillez remplir tous les champs correctement.';
+      return;
+    }
+
+    // Fréquence → nombre de périodes par an
+    const m = (freq === 'mensuelle') ? 12 : (freq === 'hebdomadaire') ? 52 : 1;
+
+    // Taux par période (cohérent avec un taux effectif annuel "taux")
+    const rP = Math.pow(1 + taux, 1 / m) - 1;
+
+    // Valeur future de l’apport initial (capitalise annuellement)
+    const FV_initial = montantInitial * Math.pow(1 + taux, duree);
+
+    // Valeur future des cotisations (annuité sur rP, avec contributions en fin de période)
+    const nP = duree * m;
+    const FV_cot = (Math.abs(rP) < 1e-12)
+      ? cotisation * nP
+      : cotisation * ((Math.pow(1 + rP, nP) - 1) / rP);
+
+    const FV_total = FV_initial + FV_cot;
+
+    // Total des cotisations versées (sans intérêts)
+    const totalCotisations = cotisation * nP;
+
+    // Texte de résultat
+    const labelFreq =
+      freq === 'mensuelle' ? 'mensuelle'
+      : freq === 'hebdomadaire' ? 'hebdomadaire'
+      : 'annuelle';
+
+    resultatVF.textContent =
+      `Après ${duree} ans, votre investissement de ${fmtCurrency(montantInitial)} ` +
+      `avec une cotisation ${labelFreq} de ${fmtCurrency(cotisation)} ` +
+      `vaudra environ ${fmtCurrency(FV_total)}. ` +
+      `(dont ${fmtCurrency(totalCotisations)} de cotisations versées)`;
+
+    // Données du graphique par année (0 → duree)
+    const labels = [];
+    const dataCapital = [];
+    for (let year = 0; year <= duree; year++) {
+      labels.push(year.toString());
+
+      const periodsY = year * m;
+      const FV_init_y = montantInitial * Math.pow(1 + taux, year);
+      const FV_cot_y = (Math.abs(rP) < 1e-12)
+        ? cotisation * periodsY
+        : cotisation * ((Math.pow(1 + rP, periodsY) - 1) / rP);
+
+      dataCapital.push(FV_init_y + FV_cot_y);
+    }
+
+    if (chartVF) chartVF.destroy();
+    chartVF = new Chart(ctxVF, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Valeur future (avec cotisations)',
+          data: dataCapital,
+          borderColor: '#00c48c',
+          backgroundColor: 'rgba(0, 196, 140, 0.2)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'top' }, title: { display: true, text: 'Évolution de la valeur future' } },
+        scales: { y: { beginAtZero: true } }
       }
-
-      const FV = montantInitial * Math.pow(1 + taux, duree);
-      resultatVF.textContent = `Après ${duree} ans, votre investissement de ${fmtCurrency(montantInitial)} vaudra environ ${fmtCurrency(FV)}.`;
-
-      const labels = [];
-      const dataCapital = [];
-      for (let year = 0; year <= duree; year++) {
-        labels.push(year.toString());
-        dataCapital.push(montantInitial * Math.pow(1 + taux, year));
-      }
-
-      if (chartVF) chartVF.destroy();
-      chartVF = new Chart(ctxVF, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Valeur future',
-            data: dataCapital,
-            borderColor: '#00c48c',
-            backgroundColor: 'rgba(0, 196, 140, 0.2)',
-            fill: true,
-            tension: 0.3
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: { legend: { position: 'top' }, title: { display: true, text: 'Évolution de la valeur future' } },
-          scales: { y: { beginAtZero: true } }
-        }
-      });
     });
-  }
+  });
+}
 
   // =====================================================================
   // Calculatrice Hypothèque
