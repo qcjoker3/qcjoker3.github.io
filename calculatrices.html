@@ -80,6 +80,19 @@
           <input type="number" id="montant-initial" name="montant-initial" min="0" placeholder="Ex: 10000" required />
         </div>
         <div class="form-group">
+      <label for="cotisation-vf">Cotisation additionnelle</label>
+          <input type="number" id="cotisation-vf" name="cotisation-vf" min="0" placeholder="Ex: 200" />
+        </div>
+
+        <div class="form-group">
+          <label for="frequence-vf">Fréquence de cotisation</label>
+          <select id="frequence-vf" name="frequence-vf">
+          <option value="annuelle">Annuelle</option>
+          <option value="mensuelle">Mensuelle</option>
+          <option value="hebdomadaire">Hebdomadaire</option>
+          </select>
+          </div>
+        <div class="form-group">
           <label for="duree-vf">Durée (années)</label>
           <input type="number" id="duree-vf" name="duree-vf" min="0" placeholder="Ex: 10" required />
         </div>
