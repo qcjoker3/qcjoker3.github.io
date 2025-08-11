@@ -20,7 +20,13 @@
 </header>
   <div id="header-placeholder"></div>
 <main class="container">
+    // Injecte le header
+    fetch('header.html')
+      .then(res => res.text())
+      .then(data => { document.getElementById('header-placeholder').innerHTML = data; });
 
+
+  
   <section id="selection-calculatrices">
     <h2>Choisissez une calculatrice</h2>
     <div class="card-grid">
