@@ -272,6 +272,10 @@ select.form-control {
   box-sizing: border-box;
 }
 
+.form-group:focus-within,
+fieldset:focus-within {
+  box-shadow: none;
+}
 
 /* Responsive */
 @media (max-width: 768px) {
