@@ -272,13 +272,6 @@ select.form-control {
   box-sizing: border-box;
 }
 
-.calculator-card {
-  display: none;
-}
-
-.calculator-card.active {
-  display: block;
-}
 
 /* Responsive */
 @media (max-width: 768px) {
