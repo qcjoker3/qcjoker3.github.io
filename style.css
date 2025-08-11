@@ -224,9 +224,9 @@ footer p {
   overflow: visible;
 }
 
-.calculator-card:hover {
+/* .calculator-card:hover {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-}
+}*/
 
 /* Form */
 .form-group {
@@ -272,10 +272,6 @@ select.form-control {
   box-sizing: border-box;
 }
 
-.form-group:focus-within,
-fieldset:focus-within {
-  box-shadow: none;
-}
 
 /* Responsive */
 @media (max-width: 768px) {
