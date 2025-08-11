@@ -335,9 +335,19 @@ if (formVF) {
 
       const scoreTrex = capitalAvecFrais / (capitalSansFrais || 1); // évite division par 0
 
+      // 💸 Montant des frais payés estimé (approx)
+    const perteDueAuxFrais = capitalSansFrais - capitalAvecFrais;
+    const totalCotisations = cotisationAnnuelle * duree;
+    const montantInvesti = montantInitial + totalCotisations;
+   
+    const fraisPayesEstimes = perteDueAuxFrais;
+
       resultatTrex.textContent =
-        `Votre score est de ${(scoreTrex * 100).toFixed(1)}%. ` +
-        `Valeur avec frais: ${fmtCurrency(capitalAvecFrais)} | sans frais: ${fmtCurrency(capitalSansFrais)}.`;
+        `Votre score T‑Rex est de ${(scoreTrex * 100).toFixed(1)}%. ` +
+      `\nValeur finale avec frais : ${fmtCurrency(capitalAvecFrais)} ` +
+      `| sans frais : ${fmtCurrency(capitalSansFrais)}.` +
+      `\nDifférence liée aux frais : ${fmtCurrency(perteDueAuxFrais)}.` +
+      `\nFrais payés estimés sur ${duree} ans : ${fmtCurrency(fraisPayesEstimes)}.`;
 
       const labels = ['Avec frais', 'Sans frais'];
       const dataValues = [capitalAvecFrais, capitalSansFrais];
@@ -352,9 +362,12 @@ if (formVF) {
           ]
         },
         options: {
-          responsive: true,
-          plugins: { legend: { display: false }, title: { display: true, text: "Impact des frais sur la valeur finale" } },
-          scales: { y: { beginAtZero: true } }
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: "Impact des frais sur la valeur finale" }
+        },
+        scales: { y: { beginAtZero: true } }
         }
       });
     });
