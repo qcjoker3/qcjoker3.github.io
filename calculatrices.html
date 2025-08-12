@@ -195,54 +195,26 @@
     }
   }
 </style>
+<!-- Coûts propriétaire -->
+    <div class="form-group">
+      <label for="avl-frais-achat">Frais initiaux à l’achat (%) — notaire, taxe de bienvenue, etc.</label>
+      <input type="text" class="calculator-input" id="avl-frais-achat" name="avl-frais-achat" placeholder="Ex: 2" />
+    </div>
 
-    <div class="form-section">
-  <label>Frais d’achat :</label>
-  <div>
-    <label><input type="radio" name="avl-frais-achat-mode" value="pct" checked> Pourcentage (%)</label>
-    <input type="number" id="avl-frais-achat-pct" placeholder="% du prix" step="0.01">
-  </div>
-  <div>
-    <label><input type="radio" name="avl-frais-achat-mode" value="dollar"> Montant ($)</label>
-    <input type="number" id="avl-frais-achat-dollar" placeholder="Montant en dollars" step="0.01" disabled>
-  </div>
-</div>
+    <div class="form-group">
+      <label for="avl-taxes-foncieres">Taxes foncières (% de la valeur/an)</label>
+      <input type="text" class="calculator-input" id="avl-taxes-foncieres" name="avl-taxes-foncieres" placeholder="Ex: 1" />
+    </div>
 
-  <div class="form-section">
-  <label>Taxes foncières annuelles :</label>
-  <div>
-    <label><input type="radio" name="avl-taxes-mode" value="pct" checked> Pourcentage (%)</label>
-    <input type="number" id="avl-taxes-pct" placeholder="% de la valeur" step="0.01">
-  </div>
-  <div>
-    <label><input type="radio" name="avl-taxes-mode" value="dollar"> Montant ($/an)</label>
-    <input type="number" id="avl-taxes-dollar" placeholder="Montant annuel" step="0.01" disabled>
-  </div>
-</div>
+    <div class="form-group">
+      <label for="avl-entretien">Entretien (% de la valeur/an)</label>
+      <input type="text" class="calculator-input" id="avl-entretien" name="avl-entretien" placeholder="Ex: 1" />
+    </div>
 
-    <div class="form-section">
-  <label>Entretien annuel :</label>
-  <div>
-    <label><input type="radio" name="avl-entretien-mode" value="pct" checked> Pourcentage (%)</label>
-    <input type="number" id="avl-entretien-pct" placeholder="% de la valeur" step="0.01">
-  </div>
-  <div>
-    <label><input type="radio" name="avl-entretien-mode" value="dollar"> Montant ($/an)</label>
-    <input type="number" id="avl-entretien-dollar" placeholder="Montant annuel" step="0.01" disabled>
-  </div>
-</div>
-
-    <div class="form-section">
-  <label>Frais de vente :</label>
-  <div>
-    <label><input type="radio" name="avl-frais-vente-mode" value="pct" checked> Pourcentage (%)</label>
-    <input type="number" id="avl-frais-vente-pct" placeholder="% du prix de vente" step="0.01">
-  </div>
-  <div>
-    <label><input type="radio" name="avl-frais-vente-mode" value="dollar"> Montant ($)</label>
-    <input type="number" id="avl-frais-vente-dollar" placeholder="Montant en dollars" step="0.01" disabled>
-  </div>
-</div>
+    <div class="form-group">
+      <label for="avl-frais-vente">Frais de vente au terme (%) — courtage, notaire, etc.</label>
+      <input type="text" class="calculator-input" id="avl-frais-vente" name="avl-frais-vente" placeholder="Ex: 5" />
+    </div>
         
 <section id="calc-acheter-louer" class="calculator-card" aria-label="Calculatrice Acheter vs Louer">
   <h2>Acheter vs Louer</h2>
