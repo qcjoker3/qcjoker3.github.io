@@ -63,7 +63,7 @@ function croissanceInvestissement(values, montantInitial = 10000) {
 }
 
 // --- FETCH du JSON puis calculs ---
-fetch('rendements_finoza.json')
+fetch('fonds.json')
   .then(response => {
     if (!response.ok) throw new Error("Erreur lors du chargement du fichier JSON");
     return response.json();
