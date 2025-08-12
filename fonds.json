@@ -1,8 +1,10 @@
 {
   "active": [
+    { "name": "Desjardins Chorus II Croissance 100% actions", "symbol": "A0P0001JMJD.TO" },
     { "name": "Desjardins Chorus II Croissance 100% actions", "symbol": "A0P0001JMJD.TO" }
   ],
   "passive": [
+    { "name": "iShares MSCI World Index ETF", "symbol": "XWD.TO" },
     { "name": "iShares MSCI World Index ETF", "symbol": "XWD.TO" }
   ]
 }
