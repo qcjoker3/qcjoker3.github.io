@@ -371,6 +371,9 @@ if (formVF) {
     });
   }
 });
+  // =====================================================================
+  // Calculatrice Louer ou acheter
+  // =====================================================================
 <script>
   // Helpers locaux si besoin
   function parseNum(v) {
