@@ -1,225 +1,32 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finoza</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Finoza - Gestion active</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    
-<header>
-  <h1>Finoza</h1>
- <nav>
-    <a href="index.html">Accueil</a>
-    <a href="#services">Services</a>
-    <a href="Prédictions.html">Prédictions</a>
-    <a href="calculatrices.html">Calculatrices</a>
-    <a href="gestionActive.html">Gestion active</a>
-    <a href="#articles">Articles</a>
-    <a href="index.html#contact">Contact</a>
-  </nav>
-</header>
+  <header>
+    <h1>Finoza</h1>
+    <nav>
+      <a href="index.html">Accueil</a>
+      <a href="#services">Services</a>
+      <a href="Prédictions.html">Prédictions</a>
+      <a href="calculatrices.html">Calculatrices</a>
+      <a href="gestionActive.html">Gestion active</a>
+      <a href="#articles">Articles</a>
+      <a href="index.html#contact">Contact</a>
+    </nav>
+  </header>
 
-<h1>Comparaison gestion active contre gestion passive</h1>
+  <main>
+    <h2>Comparaison gestion active contre gestion passive</h2>
+    <canvas id="rendementsAnnuel" width="860" height="400"></canvas>
+    <canvas id="croissanceInvestissement" width="860" height="400"></canvas>
+  </main>
 
-<canvas id="rendementsAnnuel" width="860" height="400"></canvas>
-<canvas id="croissanceInvestissement" width="860" height="400"></canvas>
-
-<script type="module">
-  import { dataFonds } from './dataFonds.js';
-
-  // Fonctions utilitaires identiques (comme dans le code précédent)
-  function sortedMonths(rendements) {
-    return Object.keys(rendements).sort();
-  }
-  function cumulerRendements(rendements) {
-    let cumule = 1.0;
-    const cumulParMois = {};
-    for (const mois of sortedMonths(rendements)) {
-      cumule *= (1 + rendements[mois]);
-      cumulParMois[mois] = cumule - 1;
-    }
-    return cumulParMois;
-  }
-  function rendementsAnnuels(rendementsMensuels) {
-    const rendAnnuels = {};
-    let lastYear = null;
-    let lastMonthValue = null;
-
-    for (const mois of sortedMonths(rendementsMensuels)) {
-      const [annee, moisNum] = mois.split('-');
-      if (annee !== lastYear && lastYear !== null) {
-        rendAnnuels[lastYear] = rendementsMensuels[`${lastYear}-12`] - lastMonthValue;
-      }
-      if (moisNum === '12') {
-        lastMonthValue = rendementsMensuels[mois];
-        lastYear = annee;
-      }
-    }
-    if (lastYear !== null && !(lastYear in rendAnnuels)) {
-      rendAnnuels[lastYear] = rendementsMensuels[`${lastYear}-12`] - (rendementsMensuels[`${parseInt(lastYear)-1}-12`] || 0);
-    }
-    return rendAnnuels;
-  }
-  function portefeuilleRebalance(dataFonds, pond, freq = 'annuel') {
-    const tickers = Object.keys(dataFonds);
-    let allMonths = tickers
-      .map(t => Object.keys(dataFonds[t]))
-      .reduce((a, b) => a.filter(c => b.includes(c)));
-    allMonths.sort();
-
-    function isRebalanceMonth(m) {
-      const monthNum = parseInt(m.split('-')[1], 10);
-      if (freq === 'mensuel') return true;
-      if (freq === 'trimestriel') return [3, 6, 9, 12].includes(monthNum);
-      if (freq === 'annuel') return monthNum === 12;
-      return false;
-    }
-
-    let value = 1.0;
-    let weights = {...pond};
-    const values = {};
-
-    for (const mois of allMonths) {
-      let rPort = 0;
-      for (const t of tickers) {
-        const r = dataFonds[t][mois] || 0;
-        rPort += weights[t] * r;
-      }
-      value *= (1 + rPort);
-      values[mois] = value;
-
-      if (isRebalanceMonth(mois)) {
-        weights = {...pond};
-      }
-    }
-
-    return values;
-  }
-  function croissanceInvestissement(values, montantInitial = 10000) {
-    const res = {};
-    for (const [k, v] of Object.entries(values)) {
-      res[k] = v * montantInitial;
-    }
-    return res;
-  }
-  function extraireAnnees(moisList) {
-    const annees = new Set();
-    for (const mois of moisList) {
-      annees.add(mois.split('-')[0]);
-    }
-    return Array.from(annees).sort();
-  }
-
-  // Main code
-  const fondActifKey = "0P00016G44.TO";
-  const rendActif = dataFonds.fonds_actifs[fondActifKey].rendements_mensuels;
-  const cumulActif = cumulerRendements(rendActif);
-
-  const pondPassif = { "XWD.TO": 0.6, "XBB.TO": 0.4 };
-  const dataPassif = {};
-  for (const ticker of Object.keys(pondPassif)) {
-    dataPassif[ticker] = dataFonds.fonds_passifs[ticker].rendements_mensuels;
-  }
-  const valPassif = portefeuilleRebalance(dataPassif, pondPassif, 'annuel');
-
-  const croissActif = croissanceInvestissement(cumulActif, 10000);
-  const croissPassif = croissanceInvestissement(valPassif, 10000);
-
-  const rendActifAnnuels = rendementsAnnuels(cumulActif);
-  const rendPassifAnnuels = rendementsAnnuels(valPassif);
-
-  const annees = extraireAnnees(Object.keys(cumulActif));
-
-  // Préparer données Chart.js
-  const dataRendActif = annees.map(y => rendActifAnnuels[y] ?? 0);
-  const dataRendPassif = annees.map(y => rendPassifAnnuels[y] ?? 0);
-  const dataCroissActif = annees.map(y => croissActif[`${y}-12`] ?? 0);
-  const dataCroissPassif = annees.map(y => croissPassif[`${y}-12`] ?? 0);
-
-  // Affichage Chart.js
-  const ctxBar = document.getElementById('rendementsAnnuel').getContext('2d');
-  new Chart(ctxBar, {
-    type: 'bar',
-    data: {
-      labels: annees,
-      datasets: [
-        {
-          label: 'Rendement Actif',
-          data: dataRendActif,
-          backgroundColor: 'rgba(26, 115, 232, 0.7)'
-        },
-        {
-          label: 'Rendement Passif',
-          data: dataRendPassif,
-          backgroundColor: 'rgba(100, 100, 100, 0.7)'
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: {
-            callback: v => (v * 100).toFixed(1) + '%'
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          labels: { font: { family: "'Assistant', sans-serif", size: 14 } }
-        }
-      }
-    }
-  });
-
-  const ctxLine = document.getElementById('croissanceInvestissement').getContext('2d');
-  new Chart(ctxLine, {
-    type: 'line',
-    data: {
-      labels: annees,
-      datasets: [
-        {
-          label: 'Croissance Actif ($)',
-          data: dataCroissActif,
-          borderColor: 'rgba(26, 115, 232, 1)',
-          fill: false,
-          tension: 0.3,
-          pointRadius: 4,
-          pointHoverRadius: 6
-        },
-        {
-          label: 'Croissance Passif ($)',
-          data: dataCroissPassif,
-          borderColor: 'rgba(100, 100, 100, 1)',
-          fill: false,
-          tension: 0.3,
-          pointRadius: 4,
-          pointHoverRadius: 6
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: false,
-          ticks: {
-            callback: v => '$' + v.toLocaleString()
-          }
-        }
-      },
-      plugins: {
-        legend: {
-          labels: { font: { family: "'Assistant', sans-serif", size: 14 } }
-        }
-      }
-    }
-  });
-
-<script src="dataFonds.js"></script>
+  <script src="dataFonds.js"></script>
 </body>
 </html>
