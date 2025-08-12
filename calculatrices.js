@@ -368,13 +368,43 @@ document.addEventListener('DOMContentLoaded', () => {
     const amortYears = parseNum(document.getElementById('avl-amortissement').value);
     const amortMonths = Math.max(1, Math.round(amortYears * 12));
 
-    const fraisAchatPct = parseNum(document.getElementById('avl-frais-achat').value) / 100;
-    const taxesFoncieresPctA = parseNum(document.getElementById('avl-taxes-foncieres').value) / 100;
-    const entretienPctA = parseNum(document.getElementById('avl-entretien').value) / 100;
+    const fraisAchatMode = document.getElementById('avl-frais-achat-mode')?.value; // 'pct' ou 'dollar'
+    let fraisInit = 0;
+
+    if (fraisAchatMode === 'pct') {
+    const fraisAchatPct = parseNum(document.getElementById('avl-frais-achat-pct').value) / 100;
+    fraisInit = price * fraisAchatPct;
+    } else {
+    fraisInit = parseNum(document.getElementById('avl-frais-achat-dollar').value);
+    }
+
+    const taxesMode = document.querySelector('[name="avl-taxes-mode"]:checked')?.value; // 'pct' ou 'dollar'
+    let taxesFoncieresM = 0;
+    if (taxesMode === 'pct') {
+    const taxesPctA = parseNum(document.getElementById('avl-taxes-pct').value) / 100;
+    taxesFoncieresM = (valeurMaison * taxesPctA) / 12;
+    } else {
+    taxesFoncieresM = parseNum(document.getElementById('avl-taxes-dollar').value);
+    }
+    const entretienMode = document.querySelector('[name="avl-entretien-mode"]:checked')?.value; // 'pct' ou 'dollar'
+    let entretienM = 0;
+    if (entretienMode === 'pct') {
+    const entretienPctA = parseNum(document.getElementById('avl-entretien-pct').value) / 100;
+    entretienM = (valeurMaison * entretienPctA) / 12;
+    } else {
+    entretienM = parseNum(document.getElementById('avl-entretien-dollar').value);
+    }
     const assurMaisonM = parseNum(document.getElementById('avl-assurance-maison').value);
     const coproM = parseNum(document.getElementById('avl-copro').value);
     const growthImmoM = pctToMonthly(document.getElementById('avl-croissance-immobilier').value);
-    const fraisVentePct = parseNum(document.getElementById('avl-frais-vente').value) / 100;
+    const venteMode = document.querySelector('[name="avl-frais-vente-mode"]:checked')?.value; // 'pct' ou 'dollar'
+    let fraisVente = 0;
+    if (venteMode === 'pct') {
+    const fraisVentePct = parseNum(document.getElementById('avl-frais-vente-pct').value) / 100;
+    fraisVente = valeurMaison * fraisVentePct;
+    } else {
+    fraisVente = parseNum(document.getElementById('avl-frais-vente-dollar').value);
+    }
 
     const loyerM0 = parseNum(document.getElementById('avl-loyer').value);
     const growthLoyerM = pctToMonthly(document.getElementById('avl-croissance-loyer').value);
@@ -487,7 +517,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const annee = m / 12;
         labels.push(String(annee));
 
-        const valeurNetMaison = (valeurMaison * (1 - (fraisVentePct || 0))) - soldeHypo;
+        const valeurNetMaison = valeurMaison - fraisVente - soldeHypo;
         const buyerAfterTaxRRSP = rrspBuyer * (1 - (tauxRetrait || 0));
         const buyerNW = Math.max(0, valeurNetMaison) + tfsaBuyer + buyerAfterTaxRRSP;
 
