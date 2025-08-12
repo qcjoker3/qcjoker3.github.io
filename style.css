@@ -216,13 +216,26 @@ footer {
   font-size: 1.1rem;
 }
 
+body {
+  font-family: 'Assistant', sans-serif;
+  max-width: 900px;
+  margin: 40px auto;
+  background: #fff;
+  color: #222;
+  padding: 0 20px;
+}
+
+h1, h2 {
+  text-align: center;
+  color: #1a73e8;
+  margin-bottom: 20px;
+}
+
 canvas {
   display: block;
-  width: 860px;     /* ou 100% si tu veux responsive */
-  height: 400px;
-  background-color: white;
+  margin: 0 auto 50px;
   border: 1px solid #ddd;
-  margin: 20px auto;
   border-radius: 6px;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.1);
 }
+
