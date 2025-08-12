@@ -404,21 +404,21 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Déterminer la clé initiale
-  const hashKey = (location.hash || '').replace('#', '');
-  const storedKey = (() => { try { return localStorage.getItem('calc:selected'); } catch { return null; } })();
-  const activeFromDOM = sections.find(s => s.classList.contains('active'));
-  let initialKey =
-    (hashKey && sectionByKey.has(hashKey) && hashKey) ||
-    (storedKey && sectionByKey.has(storedKey) && storedKey) ||
-    (activeFromDOM && activeFromDOM.id.replace(/^calc-/, '')) ||
-    (cards[0] && cards[0].dataset.calc) ||
-    (sections[0] && sections[0].id.replace(/^calc-/, ''));
+//  const hashKey = (location.hash || '').replace('#', '');
+  //const storedKey = (() => { try { return localStorage.getItem('calc:selected'); } catch { return null; } })();
+  //const activeFromDOM = sections.find(s => s.classList.contains('active'));
+ // let initialKey =
+   // (hashKey && sectionByKey.has(hashKey) && hashKey) ||
+    //(storedKey && sectionByKey.has(storedKey) && storedKey) ||
+    //(activeFromDOM && activeFromDOM.id.replace(/^calc-/, '')) ||
+    //(cards[0] && cards[0].dataset.calc) ||
+    //(sections[0] && sections[0].id.replace(/^calc-/, ''));
 
-  if (initialKey) {
+  //if (initialKey) {
     // Ne pas scroller ni changer le hash lors de l'init
-    showCalc(initialKey, { scroll: false, updateHash: false });
-  }
-});
+    //showCalc(initialKey, { scroll: false, updateHash: false });
+//  }
+//});
 </script>
 </body>
 </html>
