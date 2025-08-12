@@ -215,3 +215,14 @@ footer {
   min-height: 1.5em;
   font-size: 1.1rem;
 }
+
+canvas {
+  display: block;
+  width: 860px;     /* ou 100% si tu veux responsive */
+  height: 400px;
+  background-color: white;
+  border: 1px solid #ddd;
+  margin: 20px auto;
+  border-radius: 6px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
