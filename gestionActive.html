@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Finoza - Gestion active</title>
+  <title>Finoza - Gestion Active vs Passive</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -22,11 +22,41 @@
   </header>
 
   <main>
-    <h2>Comparaison gestion active contre gestion passive</h2>
-    <canvas id="rendementsAnnuel" width="860" height="400"></canvas>
-    <canvas id="croissanceInvestissement" width="860" height="400"></canvas>
+    <h1>Comparaison gestion active vs gestion passive</h1>
+
+    <section>
+      <label for="fondActifSelect">Choisir un fonds actif :</label>
+      <select id="fondActifSelect"></select>
+    </section>
+
+    <section>
+      <h2>Fonds passifs</h2>
+      <label for="fondPassif1">Fonds passif 1 :</label>
+      <select id="fondPassif1"></select>
+      <label for="pondPassif1">Pondération (%) :</label>
+      <input type="number" id="pondPassif1" min="0" max="100" value="60" />
+
+      <br />
+
+      <label for="fondPassif2">Fonds passif 2 :</label>
+      <select id="fondPassif2"></select>
+      <label for="pondPassif2">Pondération (%) :</label>
+      <input type="number" id="pondPassif2" min="0" max="100" value="40" />
+    </section>
+
+    <button id="btnAfficher">Afficher comparaison</button>
+
+    <section>
+      <h2>Rendements annuels</h2>
+      <canvas id="rendementsAnnuel" width="860" height="400"></canvas>
+    </section>
+
+    <section>
+      <h2>Croissance d’un investissement initial</h2>
+      <canvas id="croissanceInvestissement" width="860" height="400"></canvas>
+    </section>
   </main>
 
-  <script src="dataFonds.js"></script>
+  <script src="dataFonds.js" type="module"></script>
 </body>
 </html>
