@@ -1,0 +1,12 @@
+[
+    {
+        "nom": "Fonds mutuel ABC",
+        "symbole": "ABC.TO",
+        "type": "actif"
+    },
+    {
+        "nom": "ETF XYZ",
+        "symbole": "XYZ.TO",
+        "type": "passif"
+    }
+]
