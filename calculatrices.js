@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const m = freq === 'mensuelle' ? 12 : freq === 'hebdomadaire' ? 52 : 1;
     const rP = Math.pow(1 + taux, 1 / m) - 1;
-    const FV_initial = montantInitial * Math.pow(1 + taux, duree);
+    const FV_initial = montantInitial * Math.pow(1 + rP, nP);
     const nP = duree * m;
     const FV_cot = Math.abs(rP) < 1e-12
       ? cotisation * nP
