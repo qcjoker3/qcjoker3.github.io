@@ -1,12 +1,12 @@
 [
     {
-        "nom": "Fonds mutuel ABC",
-        "symbole": "ABC.TO",
+        "nom": "Desjardins Chorus II Croissance 100% actions",
+        "symbole": "A0P0001JMJD.TO",
         "type": "actif"
     },
     {
-        "nom": "ETF XYZ",
-        "symbole": "XYZ.TO",
+        "nom": "iShares MSCI World Index ETF",
+        "symbole": "XWD.TO",
         "type": "passif"
     }
 ]
