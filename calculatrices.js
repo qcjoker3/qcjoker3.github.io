@@ -578,4 +578,23 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }
   });
+  document.addEventListener('DOMContentLoaded', () => {
+  // … toutes tes calculatrices …
+
+  // 👉 Activation/désactivation des champs selon le mode sélectionné
+  function toggleFieldSet(name, pctId, dollarId) {
+    document.querySelectorAll(`[name="${name}"]`).forEach(el => {
+      el.addEventListener('change', () => {
+        const mode = el.value;
+        document.getElementById(pctId).disabled = (mode !== 'pct');
+        document.getElementById(dollarId).disabled = (mode !== 'dollar');
+      });
+    });
+  }
+
+  toggleFieldSet('avl-frais-achat-mode', 'avl-frais-achat-pct', 'avl-frais-achat-dollar');
+  toggleFieldSet('avl-taxes-mode', 'avl-taxes-pct', 'avl-taxes-dollar');
+  toggleFieldSet('avl-entretien-mode', 'avl-entretien-pct', 'avl-entretien-dollar');
+  toggleFieldSet('avl-frais-vente-mode', 'avl-frais-vente-pct', 'avl-frais-vente-dollar');
+});
 });
