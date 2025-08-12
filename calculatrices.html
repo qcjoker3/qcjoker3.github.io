@@ -324,6 +324,101 @@
 <footer>
   <p>© 2025 Finoza</p>
 </footer>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const cards = Array.from(document.querySelectorAll('.card-link[data-calc]'));
+  const sections = Array.from(document.querySelectorAll('.calculator-card'));
 
+  // Index rapide par clé (ex: "vf" -> section #calc-vf)
+  const sectionByKey = new Map(
+    sections.map(s => [s.id.replace(/^calc-/, ''), s])
+  );
+  const cardByKey = new Map(
+    cards.map(c => [c.dataset.calc, c])
+  );
+
+  function setAriaVisibility(el, visible) {
+    if (!el) return;
+    el.setAttribute('aria-hidden', visible ? 'false' : 'true');
+  }
+
+  function showCalc(key, opts = { scroll: true, updateHash: true }) {
+    const target = sectionByKey.get(key);
+    if (!target) {
+      console.warn('Section introuvable pour la clé:', key);
+      return;
+    }
+
+    // Désactiver tout
+    sections.forEach(s => {
+      s.classList.remove('active');
+      setAriaVisibility(s, false);
+    });
+    cards.forEach(c => {
+      c.classList.remove('selected');
+      c.setAttribute('aria-selected', 'false');
+    });
+
+    // Activer la cible
+    target.classList.add('active');
+    setAriaVisibility(target, true);
+
+    const card = cardByKey.get(key);
+    if (card) {
+      card.classList.add('selected');
+      card.setAttribute('aria-selected', 'true');
+      // Si tes <a> ont href="#", on évite le focus-jump
+      if (opts.scroll) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+
+    // Mémoriser et hash
+    try { localStorage.setItem('calc:selected', key); } catch {}
+    if (opts.updateHash) {
+      const newHash = `#${key}`;
+      if (location.hash !== newHash) {
+        history.replaceState(null, '', newHash);
+      }
+    }
+  }
+
+  // Écouteurs sur les cartes
+  cards.forEach(card => {
+    // Amélioration accessibilité
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', card.tabIndex >= 0 ? card.tabIndex : '0');
+    card.setAttribute('aria-selected', 'false');
+
+    card.addEventListener('click', (e) => {
+      e.preventDefault();
+      const key = card.dataset.calc;
+      showCalc(key);
+    });
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        showCalc(card.dataset.calc);
+      }
+    });
+  });
+
+  // Déterminer la clé initiale
+  const hashKey = (location.hash || '').replace('#', '');
+  const storedKey = (() => { try { return localStorage.getItem('calc:selected'); } catch { return null; } })();
+  const activeFromDOM = sections.find(s => s.classList.contains('active'));
+  let initialKey =
+    (hashKey && sectionByKey.has(hashKey) && hashKey) ||
+    (storedKey && sectionByKey.has(storedKey) && storedKey) ||
+    (activeFromDOM && activeFromDOM.id.replace(/^calc-/, '')) ||
+    (cards[0] && cards[0].dataset.calc) ||
+    (sections[0] && sections[0].id.replace(/^calc-/, ''));
+
+  if (initialKey) {
+    // Ne pas scroller ni changer le hash lors de l'init
+    showCalc(initialKey, { scroll: false, updateHash: false });
+  }
+});
+</script>
 </body>
 </html>
