@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => {
+Réflexion pendant 12sdocument.addEventListener('DOMContentLoaded', () => {
 // ==========================================================
 // 🧰 Fonctions utilitaires
 // ==========================================================
@@ -68,14 +68,10 @@ card.click();
 const hashKey = location.hash.replace('#', '');
 const storedKey = localStorage.getItem('calc:selected');
 const initialKey = hashKey || storedKey;
-let cardToSelect;
 if (initialKey) {
-cardToSelect = Array.from(calcCards).find(c => c.dataset.calc === initialKey);
+const card = Array.from(calcCards).find(c => c.dataset.calc === initialKey);
+card?.click();
 }
-if (!cardToSelect && calcCards.length > 0) {
-cardToSelect = calcCards[0]; // Sélectionne la première par défaut
-}
-cardToSelect?.click();
 // ==========================================================
 // 🧮 Calculatrice — Retraite
 // ==========================================================
@@ -133,6 +129,7 @@ title: { display: true, text: "Épargne avec intérêts" }
 },
 scales: { y: { beginAtZero: true } }
 }
+});
 });
 });
 // ============================================================================
@@ -224,17 +221,16 @@ const mensualite = Math.abs(rMensuel) < 1e-12
 : montantPret * (rMensuel * Math.pow(1 + rMensuel, n)) / (Math.pow(1 + rMensuel, n) - 1);
 resultatHypo.textContent = Mensualité estimée: ${fmtCurrency(mensualite)} sur ${dureeHypo} ans.;
 let capitalRestant = montantPret;
-let interetsCumules = 0;
 const labels = [], dataInteretsCumul = [], dataCapitalPayes = [];
+let interetsCumules = 0;
 for (let mois = 0; mois <= n; mois++) {
 labels.push((mois / 12).toFixed(1));
-dataInteretsCumul.push(interetsCumules);
-dataCapitalPayes.push(montantPret - capitalRestant);
-if (mois === n) break; // Pas de paiement après la dernière période
 const interetMois = capitalRestant * rMensuel;
 const capitalMois = Math.min(mensualite - interetMois, capitalRestant);
-interetsCumules += interetMois;
+interetsCumules += Math.max(0, interetMois);
 capitalRestant = Math.max(0, capitalRestant - capitalMois);
+dataInteretsCumul.push(interetsCumules);
+dataCapitalPayes.push(montantPret - capitalRestant);
 }
 if (chartHypo) chartHypo.destroy();
 chartHypo = new Chart(ctxHypo, {
@@ -300,8 +296,8 @@ const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnue
 const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
 const scoreTrex = capitalAvecFrais / (capitalSansFrais || 1);
 const perteDueAuxFrais = capitalSansFrais - capitalAvecFrais;
-resultatTrex.innerHTML =
-Votre score est de ${(scoreTrex * 100).toFixed(1)}%.<br>Valeur finale avec frais : ${fmtCurrency(capitalAvecFrais)}<br>Valeur sans frais : ${fmtCurrency(capitalSansFrais)} → Frais payés : ${fmtCurrency(perteDueAuxFrais)}.;
+resultatTrex.textContent =
+Votre score est de ${(scoreTrex * 100).toFixed(1)}%.\nValeur finale avec frais : ${fmtCurrency(capitalAvecFrais)}\nValeur sans frais : ${fmtCurrency(capitalSansFrais)} → Frais payés : ${fmtCurrency(perteDueAuxFrais)}.;
 if (chartTrex) chartTrex.destroy();
 chartTrex = new Chart(ctxTrex, {
 type: 'bar',
@@ -450,8 +446,7 @@ const lignes = [
 🏷️ Frais d’achat initiaux (évités en location) : ${fmtCurrency(fraisAchat)},
 🏠 Frais de vente à l’horizon : ${fmtCurrency(fraisVente)}
 ];
-resultatAvsL.innerHTML = lignes.join('
-');
+resultatAvsL.textContent = lignes.join('\n');
 // --- (Optionnel) Graphe comparatif
 const ctx = document.getElementById('chart-achat-vs-location')?.getContext('2d');
 if (ctx) {
