@@ -1,9 +1,8 @@
-// Fonction utilitaire : trier les mois (ex: "2020-01")
+// Fonctions utilitaires
 function sortedMonths(rendements) {
   return Object.keys(rendements).sort();
 }
 
-// Calcul des rendements cumulés (1 + r1)*(1 + r2)*... - 1
 function cumulerRendements(rendements) {
   let cumule = 1.0;
   const cumulParMois = {};
@@ -15,10 +14,8 @@ function cumulerRendements(rendements) {
   return cumulParMois;
 }
 
-// Rebalancement périodique portefeuille
 function portefeuilleRebalance(dataFonds, pond, freq = 'annuel') {
   const tickers = Object.keys(dataFonds);
-  // Intersection des mois communs
   let allMonths = tickers
     .map(t => Object.keys(dataFonds[t]))
     .reduce((a, b) => a.filter(c => b.includes(c)));
@@ -46,14 +43,12 @@ function portefeuilleRebalance(dataFonds, pond, freq = 'annuel') {
     values[mois] = value;
 
     if (isRebalanceMonth(mois)) {
-      weights = {...pond}; // Reset poids
+      weights = {...pond};
     }
   }
-
   return values;
 }
 
-// Calcul de la croissance avec montant initial
 function croissanceInvestissement(values, montantInitial = 10000) {
   const res = {};
   for (const [k, v] of Object.entries(values)) {
@@ -62,14 +57,98 @@ function croissanceInvestissement(values, montantInitial = 10000) {
   return res;
 }
 
-// --- FETCH du JSON puis calculs ---
+function rendementsAnnuels(rendementsCumul) {
+  const annees = {};
+  let anneePrec = null;
+  let valPrec = 0;
+  for (const mois of sortedMonths(rendementsCumul)) {
+    const [annee, moisNum] = mois.split('-');
+    if (annee !== anneePrec && anneePrec !== null) {
+      annees[anneePrec] = rendementsCumul[`${anneePrec}-12`] - valPrec;
+    }
+    if (moisNum === '12') {
+      valPrec = rendementsCumul[mois];
+      anneePrec = annee;
+    }
+  }
+  // Dernière année si pas calculée
+  if (anneePrec !== null && !(anneePrec in annees)) {
+    const anneeAvant = (parseInt(anneePrec) - 1).toString();
+    annees[anneePrec] = rendementsCumul[`${anneePrec}-12`] - (rendementsCumul[`${anneeAvant}-12`] || 0);
+  }
+  return annees;
+}
+
+function extraireAnnees(moisList) {
+  const annees = new Set();
+  for (const mois of moisList) {
+    annees.add(mois.split('-')[0]);
+  }
+  return Array.from(annees).sort();
+}
+
+function afficherGraphiques(annees, dataRendActif, dataRendPassif, dataCroissActif, dataCroissPassif) {
+  const ctxBar = document.getElementById('rendementsAnnuel').getContext('2d');
+  new Chart(ctxBar, {
+    type: 'bar',
+    data: {
+      labels: annees,
+      datasets: [
+        { label: 'Rendement Actif', data: dataRendActif, backgroundColor: 'rgba(26, 115, 232, 0.7)' },
+        { label: 'Rendement Passif', data: dataRendPassif, backgroundColor: 'rgba(100, 100, 100, 0.7)' }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => (v * 100).toFixed(1) + '%' }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: { font: { family: "'Assistant', sans-serif", size: 14 } }
+        }
+      }
+    }
+  });
+
+  const ctxLine = document.getElementById('croissanceInvestissement').getContext('2d');
+  new Chart(ctxLine, {
+    type: 'line',
+    data: {
+      labels: annees,
+      datasets: [
+        { label: 'Croissance Actif ($)', data: dataCroissActif, borderColor: 'rgba(26, 115, 232, 1)', fill: false },
+        { label: 'Croissance Passif ($)', data: dataCroissPassif, borderColor: 'rgba(100, 100, 100, 1)', fill: false }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: {
+          beginAtZero: false,
+          ticks: { callback: v => '$' + v.toLocaleString() }
+        }
+      },
+      plugins: {
+        legend: {
+          labels: { font: { family: "'Assistant', sans-serif", size: 14 } }
+        }
+      }
+    }
+  });
+}
+
+// --- Chargement et traitement des données ---
 fetch('fonds.json')
   .then(response => {
     if (!response.ok) throw new Error("Erreur lors du chargement du fichier JSON");
     return response.json();
   })
   .then(data => {
-    const fondActifKey = "0P00016G44.TO"; // Exemple
+    const fondActifKey = "0P00016G44.TO"; // Exemple : fonds actif sélectionné
     const rendActif = data.fonds_actifs[fondActifKey].rendements_mensuels;
     const cumulActif = cumulerRendements(rendActif);
 
@@ -83,10 +162,17 @@ fetch('fonds.json')
     const croissActif = croissanceInvestissement(cumulActif, 10000);
     const croissPassif = croissanceInvestissement(valPassif, 10000);
 
-    console.log("Croissance actif (fin 2025):", croissActif[Object.keys(croissActif).pop()]);
-    console.log("Croissance passif (fin 2025):", croissPassif[Object.keys(croissPassif).pop()]);
+    const rendActifAnnuels = rendementsAnnuels(cumulerRendements(rendActif));
+    const rendPassifAnnuels = rendementsAnnuels(valPassif);
 
-    // Tu peux ici appeler ta fonction d'affichage graphique ou autre traitement
+    const annees = extraireAnnees(Object.keys(cumulerRendements(rendActif)));
+
+    const dataRendActif = annees.map(y => rendActifAnnuels[y] ?? 0);
+    const dataRendPassif = annees.map(y => rendPassifAnnuels[y] ?? 0);
+    const dataCroissActif = annees.map(y => croissActif[`${y}-12`] ?? 0);
+    const dataCroissPassif = annees.map(y => croissPassif[`${y}-12`] ?? 0);
+
+    afficherGraphiques(annees, dataRendActif, dataRendPassif, dataCroissActif, dataCroissPassif);
   })
   .catch(err => {
     console.error("Erreur:", err);
