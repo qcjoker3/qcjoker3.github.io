@@ -1,5 +1,5 @@
 async function loadFunds() {
-  const response = await fetch('funds.json');
+  const response = await fetch('fonds.json');
   const funds = await response.json();
   
   loadData(funds.active, 'active-list');
