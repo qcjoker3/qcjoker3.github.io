@@ -398,7 +398,7 @@ formAVL?.addEventListener('submit', (e) => {
   let allocTFSA = (parseNum(document.getElementById('avl-alloc-tfsa').value) / 100) || 0;
   let allocRRSP = (parseNum(document.getElementById('avl-alloc-rrsp').value) / 100) || 0;
   if (allocTFSA + allocRRSP <= 0) { allocTFSA = 1; allocRRSP = 0; }
-  const totalAlloc = allocTFSA + allocRRSP; // normaliser
+  const totalAlloc = allocTFSA + allocRRSP;
   allocTFSA /= totalAlloc;
   allocRRSP /= totalAlloc;
 
@@ -432,7 +432,6 @@ formAVL?.addEventListener('submit', (e) => {
   let tfsaRenter = 0, rrspRenter = 0;
 
   const fraisInit = price * fraisAchatPct;
-  // Locataire investit mise de fonds + frais initiaux évités
   let investInitialRenter = down + fraisInit;
   if (investInitialRenter > 0) {
     const toTFSA0 = investInitialRenter * allocTFSA;
@@ -455,7 +454,7 @@ formAVL?.addEventListener('submit', (e) => {
     const taxesM = (valeurMaison * taxesFoncieresPctA) / 12;
     const entretienM = (valeurMaison * entretienPctA) / 12;
 
-    // Hypothèque (intérêt/principal)
+    // Hypothèque
     const interetM = soldeHypo > 0 ? soldeHypo * r : 0;
     let principalM = 0;
     let versementHypo = 0;
@@ -475,7 +474,7 @@ formAVL?.addEventListener('submit', (e) => {
     const diff = coutBuyerM - coutRenterM;
 
     if (diff > 0) {
-      // Louer coûte moins → le locataire investit la différence
+      // Locataire investit la différence
       const toTFSA = diff * allocTFSA;
       const toRRSP = diff * allocRRSP;
       tfsaRenter += toTFSA;
@@ -485,7 +484,7 @@ formAVL?.addEventListener('submit', (e) => {
         tfsaRenter += refund;
       }
     } else if (diff < 0) {
-      // Acheter coûte moins → l’acheteur investit la différence
+      // Acheteur investit la différence
       const investBuyer = -diff;
       const toTFSA = investBuyer * allocTFSA;
       const toRRSP = investBuyer * allocRRSP;
@@ -497,7 +496,7 @@ formAVL?.addEventListener('submit', (e) => {
       }
     }
 
-    // Croissance mensuelle des portefeuilles
+    // Croissance des portefeuilles
     tfsaRenter *= (1 + rInvM);
     rrspRenter *= (1 + rInvM);
     tfsaBuyer  *= (1 + rInvM);
