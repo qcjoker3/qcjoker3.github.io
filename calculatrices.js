@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
-  // ============================================================================
-  // Helpers globaux
-  // ============================================================================
+  // ==========================================================
+  // 🧰 Fonctions utilitaires
+  // ==========================================================
   const fmtCurrency = n =>
     new Intl.NumberFormat('fr-CA', {
       style: 'currency',
@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const parseNum = v =>
-    parseFloat(String(v).replace(/\s/g, '').replace(',', '.')) || 0;
+    parseFloat(String(v ?? '').replace(/\s/g, '').replace(',', '.')) || 0;
 
   const pctToMonthly = p => {
     const a = parseNum(p) / 100;
@@ -27,38 +27,65 @@ document.addEventListener('DOMContentLoaded', () => {
     return Math.pow(1 + r, 1 / 12) - 1;
   };
 
-  // ============================================================================
-  // Références graphiques Chart.js
-  // ============================================================================
+  // ==========================================================
+  // 🎯 Références Chart.js
+  // ==========================================================
   let chartRetraite = null;
   let chartVF = null;
   let chartHypo = null;
   let chartTrex = null;
   let chartAVL = null;
 
-  // ============================================================================
-  // Activation des cartes (affichage des sections)
-  // ============================================================================
-  const calcCards = document.querySelectorAll('.card.card-link');
+  // ==========================================================
+  // 📌 Navigation entre calculatrices
+  // ==========================================================
+  const calcCards = document.querySelectorAll('.card.card-link[data-calc]');
   const calcSections = document.querySelectorAll('.calculator-card');
 
   calcCards.forEach(card => {
     card.addEventListener('click', () => {
-      // 1) style visuel carte
-      calcCards.forEach(c => c.classList.remove('selected'));
+      calcCards.forEach(c => {
+        c.classList.remove('selected');
+        c.setAttribute('aria-selected', 'false');
+      });
       card.classList.add('selected');
+      card.setAttribute('aria-selected', 'true');
 
-      // 2) section ciblée
-      const selected = card.dataset.calc; // ex: "retraite", "vf", "hypotheque", "trex", "avl"
-      calcSections.forEach(sec => sec.classList.remove('active'));
-      const activeSection = document.getElementById(`calc-${selected}`);
-      if (activeSection) activeSection.classList.add('active');
+      const key = card.dataset.calc;
+      calcSections.forEach(sec => {
+        sec.classList.remove('active');
+        sec.setAttribute('aria-hidden', 'true');
+      });
+      const target = document.getElementById(`calc-${key}`);
+      if (target) {
+        target.classList.add('active');
+        target.setAttribute('aria-hidden', 'false');
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        try { localStorage.setItem('calc:selected', key); } catch {}
+        history.replaceState(null, '', `#${key}`);
+      }
+    });
+
+    card.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        card.click();
+      }
     });
   });
 
-  // ============================================================================
-  // Calculatrice Retraite
-  // ============================================================================
+  // Sélection initiale depuis le hash ou localStorage
+  const hashKey = location.hash.replace('#', '');
+  const storedKey = localStorage.getItem('calc:selected');
+  const initialKey = hashKey || storedKey;
+  if (initialKey) {
+    const card = Array.from(calcCards).find(c => c.dataset.calc === initialKey);
+    card?.click();
+  }
+
+  // ==========================================================
+  // 🧮 Calculatrice — Retraite
+  // ==========================================================
   const formRetraite = document.getElementById('form-retraite');
   const resultatRetraite = document.getElementById('resultat-retraite');
   const ctxRetraite = document.getElementById('chart-retraite')?.getContext('2d');
@@ -83,14 +110,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const annees = ageRetraite - ageActuel;
     const rMensuel = Math.pow(1 + rendementAnnuel, 1 / 12) - 1;
-    let FV = Math.abs(rMensuel) < 1e-12
+
+    const FV = Math.abs(rMensuel) < 1e-12
       ? epargneMensuelle * 12 * annees
       : epargneMensuelle * ((Math.pow(1 + rMensuel, annees * 12) - 1) / rMensuel);
 
     resultatRetraite.textContent =
-      `En économisant ${fmtCurrency(epargneMensuelle)} par mois pendant ${annees} ans ` +
-      `avec un rendement annuel moyen de ${(rendementAnnuel * 100).toFixed(2)}%, ` +
-      `vous aurez accumulé environ ${fmtCurrency(FV)}.`;
+      `En économisant ${fmtCurrency(epargneMensuelle)} par mois pendant ${annees} ans avec un rendement annuel moyen de ${(rendementAnnuel * 100).toFixed(2)}%, vous aurez environ ${fmtCurrency(FV)}.`;
 
     const labels = [], dataEpargne = [], dataInteret = [];
     for (let year = 0; year <= annees; year++) {
@@ -98,7 +124,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const fvAnnee = Math.abs(rMensuel) < 1e-12
         ? epargneMensuelle * mois
         : epargneMensuelle * ((Math.pow(1 + rMensuel, mois) - 1) / rMensuel);
-
       const epargneSansInteret = epargneMensuelle * 12 * year;
       labels.push(year.toString());
       dataEpargne.push(epargneSansInteret);
@@ -106,31 +131,34 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (chartRetraite) chartRetraite.destroy();
-    if (ctxRetraite && typeof Chart !== 'undefined') {
-      chartRetraite = new Chart(ctxRetraite, {
-        type: 'bar',
-        data: {
-          labels,
-          datasets: [
-            { label: 'Capital épargné', data: dataEpargne, backgroundColor: '#00c48c' },
-            { label: 'Intérêts accumulés', data: dataInteret, backgroundColor: '#00a678' }
-          ]
+    chartRetraite = new Chart(ctxRetraite, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Épargne', data: dataEpargne, backgroundColor: '#00c48c' },
+          { label: 'Intérêts', data: dataInteret, backgroundColor: '#00a678' }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: true, text: "Épargne avec intérêts" }
         },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: 'top' },
-            title: { display: true, text: "Évolution de l'épargne avec intérêts" }
-          },
-          scales: { y: { beginAtZero: true } }
-        }
-      });
-    }
+        scales: { y: { beginAtZero: true } }
+      }
+    });
   });
+
+});
 
   // ============================================================================
   // Valeur future (avec cotisations)
   // ============================================================================
+  // ==========================================================
+  // 📈 Calculatrice — Valeur future
+  // ==========================================================
   const formVF = document.getElementById('form-vf');
   const resultatVF = document.getElementById('resultat-vf');
   const ctxVF = document.getElementById('chart-vf')?.getContext('2d');
@@ -163,10 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                       freq === 'hebdomadaire' ? 'hebdomadaire' : 'annuelle';
 
     resultatVF.textContent =
-      `Après ${duree} ans, votre investissement de ${fmtCurrency(montantInitial)} ` +
-      `avec une cotisation ${labelFreq} de ${fmtCurrency(cotisation)} ` +
-      `vaudra environ ${fmtCurrency(FV_total)}. ` +
-      `(dont ${fmtCurrency(totalCotisations)} de cotisations versées)`;
+      `Après ${duree} ans, votre investissement de ${fmtCurrency(montantInitial)} avec une cotisation ${labelFreq} de ${fmtCurrency(cotisation)} vaudra environ ${fmtCurrency(FV_total)}. (${fmtCurrency(totalCotisations)} de cotisations)`;
 
     const labels = [], dataCapital = [];
     for (let year = 0; year <= duree; year++) {
@@ -175,41 +200,38 @@ document.addEventListener('DOMContentLoaded', () => {
       const FV_cot_y = Math.abs(rP) < 1e-12
         ? cotisation * periodsY
         : cotisation * ((Math.pow(1 + rP, periodsY) - 1) / rP);
-
       labels.push(year.toString());
       dataCapital.push(FV_init_y + FV_cot_y);
     }
 
     if (chartVF) chartVF.destroy();
-    if (ctxVF && typeof Chart !== 'undefined') {
-      chartVF = new Chart(ctxVF, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Valeur future (avec cotisations)',
-            data: dataCapital,
-            borderColor: '#00c48c',
-            backgroundColor: 'rgba(0, 196, 140, 0.2)',
-            fill: true,
-            tension: 0.3
-          }]
+    chartVF = new Chart(ctxVF, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Valeur future (avec cotisations)',
+          data: dataCapital,
+          borderColor: '#00c48c',
+          backgroundColor: 'rgba(0,196,140,0.2)',
+          fill: true,
+          tension: 0.3
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: true, text: 'Évolution de la valeur future' }
         },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: 'top' },
-            title: { display: true, text: 'Évolution de la valeur future' }
-          },
-          scales: { y: { beginAtZero: true } }
-        }
-      });
-    }
+        scales: { y: { beginAtZero: true } }
+      }
+    });
   });
 
-  // ============================================================================
-  // Hypothèque
-  // ============================================================================
+  // ==========================================================
+  // 🏠 Calculatrice — Hypothèque
+  // ==========================================================
   const formHypo = document.getElementById('form-hypo');
   const resultatHypo = document.getElementById('resultat-hypo');
   const ctxHypo = document.getElementById('chart-hypo')?.getContext('2d');
@@ -251,45 +273,46 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     if (chartHypo) chartHypo.destroy();
-    if (ctxHypo && typeof Chart !== 'undefined') {
-      chartHypo = new Chart(ctxHypo, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            {
-              label: 'Capital remboursé',
-              data: dataCapitalPayes,
-              borderColor: '#00c48c',
-              backgroundColor: 'rgba(0, 196, 140, 0.4)',
-              fill: true,
-              tension: 0.3
-            },
-            {
-              label: 'Intérêts cumulés',
-              data: dataInteretsCumul,
-              borderColor: '#00a678',
-              backgroundColor: 'rgba(0, 166, 120, 0.4)',
-              fill: true,
-              tension: 0.3
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: 'top' },
-            title: { display: true, text: 'Évolution du prêt hypothécaire' }
+    chartHypo = new Chart(ctxHypo, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Capital remboursé',
+            data: dataCapitalPayes,
+            borderColor: '#00c48c',
+            backgroundColor: 'rgba(0,196,140,0.4)',
+            fill: true,
+            tension: 0.3
           },
-          scales: { y: { beginAtZero: true } }
-        }
-      });
-    }
+          {
+            label: 'Intérêts cumulés',
+            data: dataInteretsCumul,
+            borderColor: '#00a678',
+            backgroundColor: 'rgba(0,166,120,0.4)',
+            fill: true,
+            tension: 0.3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'top' },
+          title: { display: true, text: 'Évolution du prêt hypothécaire' }
+        },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
   });
 
   // ============================================================================
   // T‑Rex Score
   // ============================================================================
+   // ==========================================================
+  // 🦖 Calculatrice — T‑Rex Score
+  // ==========================================================
   const formTrex = document.getElementById('form-trex');
   const resultatTrex = document.getElementById('resultat-trex');
   const ctxTrex = document.getElementById('chart-trex')?.getContext('2d');
@@ -310,6 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const rendementNet = rendementBrut - fraisAnnuel;
+
     const fv = (P, r, n, C) => {
       if (Math.abs(r) < 1e-12) return P + C * n;
       return P * Math.pow(1 + r, n) + C * ((Math.pow(1 + r, n) - 1) / r);
@@ -321,261 +345,208 @@ document.addEventListener('DOMContentLoaded', () => {
     const perteDueAuxFrais = capitalSansFrais - capitalAvecFrais;
 
     resultatTrex.textContent =
-      `Votre score est de ${(scoreTrex * 100).toFixed(1)}%.\n` +
-      `Valeur finale avec frais : ${fmtCurrency(capitalAvecFrais)}\n` +
-      `Valeur sans frais : ${fmtCurrency(capitalSansFrais)} → Frais payés : ${fmtCurrency(perteDueAuxFrais)}.`;
+      `Votre score est de ${(scoreTrex * 100).toFixed(1)}%.\nValeur finale avec frais : ${fmtCurrency(capitalAvecFrais)}\nValeur sans frais : ${fmtCurrency(capitalSansFrais)} → Frais payés : ${fmtCurrency(perteDueAuxFrais)}.`;
 
     if (chartTrex) chartTrex.destroy();
-    if (ctxTrex && typeof Chart !== 'undefined') {
-      chartTrex = new Chart(ctxTrex, {
-        type: 'bar',
-        data: {
-          labels: ['Avec frais', 'Sans frais'],
-          datasets: [{
-            label: 'Valeur finale',
-            data: [capitalAvecFrais, capitalSansFrais],
-            backgroundColor: ['#00a678', '#00c48c']
-          }]
+    chartTrex = new Chart(ctxTrex, {
+      type: 'bar',
+      data: {
+        labels: ['Avec frais', 'Sans frais'],
+        datasets: [{
+          label: 'Valeur finale',
+          data: [capitalAvecFrais, capitalSansFrais],
+          backgroundColor: ['#00a678', '#00c48c']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true, text: "Impact des frais sur la valeur finale" }
         },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { display: false },
-            title: { display: true, text: "Impact des frais sur la valeur finale" }
-          },
-          scales: { y: { beginAtZero: true } }
-        }
-      });
-    }
+        scales: { y: { beginAtZero: true } }
+      }
+    });
   });
-
   // ============================================================================
   // Louer vs Acheter
   // ============================================================================
-  const formAVL = document.getElementById('form-avl');
-  const resAVL = document.getElementById('resultat-avl');
-  const ctxAVL = document.getElementById('chart-avl')?.getContext('2d');
+ const formAvsL = document.getElementById('form-achat-vs-location');
+const resultatAvsL = document.getElementById('resultat-achat-vs-location');
+// Optionnel: <canvas id="chart-achat-vs-location"></canvas> si tu veux un graphe
+let chartAvsL;
 
-  formAVL?.addEventListener('submit', (e) => {
-    e.preventDefault();
+formAvsL?.addEventListener('submit', e => {
+  e.preventDefault();
 
-    const years = parseNum(document.getElementById('avl-horizon').value);
-    const months = Math.max(1, Math.round(years * 12));
+  // --- Lecture des champs (avec valeurs par défaut robustes)
+  const mise = toFloat(formAvsL['mise-de-fond']?.value);
+  const empruntBase = toFloat(formAvsL['montant-emprunt']?.value);
+  const dureeAns = parseInt(formAvsL['duree-avsl']?.value);
 
-    const price = parseNum(document.getElementById('avl-prix').value);
-    const down = parseNum(document.getElementById('avl-mise-fonds').value);
-    const rateHypoM = annualToMonthlyRate(document.getElementById('avl-taux-hypo').value);
-    const amortYears = parseNum(document.getElementById('avl-amortissement').value);
-    const amortMonths = Math.max(1, Math.round(amortYears * 12));
+  const tauxPretAnn = toFloat(formAvsL['taux-emprunt']?.value) / 100;
+  const loyer0 = toFloat(formAvsL['loyer-mensuel']?.value);
+  const croissanceLoyerAnn = (toFloat(formAvsL['croissance-loyer']?.value) / 100) || 0.02;
 
-    const fraisAchatMode = document.getElementById('avl-frais-achat-mode')?.value; // 'pct' ou 'dollar'
-    let fraisInit = 0;
+  const rendementAnn = toFloat(formAvsL['rendement-placement']?.value) / 100;
 
-    if (fraisAchatMode === 'pct') {
-    const fraisAchatPct = parseNum(document.getElementById('avl-frais-achat-pct').value) / 100;
-    fraisInit = price * fraisAchatPct;
-    } else {
-    fraisInit = parseNum(document.getElementById('avl-frais-achat-dollar').value);
+  const coutAnnuelProprio0 = toFloat(formAvsL['cout-annuel-proprio']?.value) || 0;
+  const inflationCoutsAnn = (toFloat(formAvsL['inflation-couts']?.value) / 100) || 0.02;
+  const entretienPctAnn = (toFloat(formAvsL['entretien-pourcent']?.value) / 100) || 0.01;
+
+  const appreciationAnn =
+    (toFloat(formAvsL['taux-appreciation']?.value) / 100) ||
+    (toFloat(formAvsL['taux-revente']?.value) / 100) || 0.02;
+
+  const fraisAchatPct = (toFloat(formAvsL['frais-achat-pourcent']?.value) / 100) || 0.015;
+  const fraisVentePct = (toFloat(formAvsL['frais-vente-pourcent']?.value) / 100) || 0.06;
+  const assurancePretPct = (toFloat(formAvsL['assurance-pret-pourcent']?.value) / 100) || 0;
+
+  // --- Validations minimales
+  if (![mise, empruntBase, dureeAns, tauxPretAnn, loyer0, rendementAnn].every(Number.isFinite)) {
+    resultatAvsL.textContent = 'Veuillez remplir tous les champs obligatoires correctement.';
+    return;
+  }
+  if (mise < 0 || empruntBase <= 0 || dureeAns <= 0) {
+    resultatAvsL.textContent = 'Vérifiez la mise de fonds (>0), le montant emprunté (>0) et la durée (>0).';
+    return;
+  }
+
+  // --- Paramètres dérivés
+  const prix = mise + empruntBase;
+  let solde = empruntBase * (1 + assurancePretPct); // prime d’assurance ajoutée au solde si précisée
+  const n = dureeAns * 12;
+
+  const r_m = tauxPretAnn / 12;
+  const r_inv_m = rendementAnn / 12;
+  const g_rent_m = Math.pow(1 + croissanceLoyerAnn, 1 / 12) - 1;
+  const g_cost_m = Math.pow(1 + inflationCoutsAnn, 1 / 12) - 1;
+  const g_home_m = Math.pow(1 + appreciationAnn, 1 / 12) - 1;
+
+  // Paiement mensuel (gestion r=0)
+  const mensualite = (Math.abs(r_m) < 1e-12)
+    ? (solde / n)
+    : solde * (r_m) / (1 - Math.pow(1 + r_m, -n));
+
+  // --- Portefeuilles & états initiaux
+  let valeurMaison = prix;
+  let loyer = loyer0;
+  let coutAnnuelBase = coutAnnuelProprio0; // évolue mensuellement avec g_cost_m
+
+  // Le locataire investit la mise de fonds + frais d’achat évités
+  const fraisAchat = prix * fraisAchatPct;
+  let portefeuilleLocataire = mise + fraisAchat;
+
+  // L’acheteur peut aussi investir un éventuel surplus mensuel
+  let portefeuilleAcheteur = 0;
+
+  let interetsTotaux = 0;
+  let principalTotal = 0;
+
+  // (Optionnel) séries pour graphe
+  const serieAcheteur = [];
+  const serieLocataire = [];
+  const labels = [];
+
+  for (let m = 1; m <= n; m++) {
+    // Intérêt/principal ce mois
+    const interet = solde * r_m;
+    let principal = mensualite - interet;
+
+    // Ajustement dernière échéance si besoin
+    if (principal > solde || m === n) {
+      principal = solde;
+    }
+    solde -= principal;
+    interetsTotaux += interet;
+    principalTotal += principal;
+
+    // Valeur du bien et coûts propriétaires
+    valeurMaison *= (1 + g_home_m);
+
+    const maintenanceMensuelle = (entretienPctAnn > 0) ? (valeurMaison * entretienPctAnn) / 12 : 0;
+    const coutsMensuelsBase = (coutAnnuelBase / 12);
+    const coutsProprioMensuels = coutsMensuelsBase + maintenanceMensuelle;
+
+    // Indexer le socle de coûts pour le mois suivant
+    coutAnnuelBase *= (1 + g_cost_m);
+
+    // Loyer indexé
+    loyer *= (1 + g_rent_m);
+
+    // Dépenses mensuelles de chaque camp
+    const depenseAcheteur = mensualite + coutsProprioMensuels;
+    const depenseLocataire = loyer;
+
+    // Différence investissable (scénario symétrique)
+    const diff = depenseAcheteur - depenseLocataire;
+    if (diff > 0) {
+      // Louer est moins cher ce mois-ci -> le locataire investit le surplus
+      portefeuilleLocataire += diff;
+    } else if (diff < 0) {
+      // Acheter est moins cher -> l’acheteur investit le surplus
+      portefeuilleAcheteur += (-diff);
     }
 
-    const taxesMode = document.querySelector('[name="avl-taxes-mode"]:checked')?.value; // 'pct' ou 'dollar'
-    let taxesFoncieresM = 0;
-    if (taxesMode === 'pct') {
-    const taxesPctA = parseNum(document.getElementById('avl-taxes-pct').value) / 100;
-    taxesFoncieresM = (valeurMaison * taxesPctA) / 12;
-    } else {
-    taxesFoncieresM = parseNum(document.getElementById('avl-taxes-dollar').value);
+    // Croissance mensuelle des portefeuilles
+    portefeuilleLocataire *= (1 + r_inv_m);
+    portefeuilleAcheteur *= (1 + r_inv_m);
+
+    // (Optionnel) échantillonnage annuel pour graphe
+    if (m % 12 === 0) {
+      const an = m / 12;
+      const fraisVenteTh = valeurMaison * fraisVentePct; // hypothétique si on vendait maintenant
+      const equiteTheorique = Math.max(0, valeurMaison - fraisVenteTh - solde);
+      const patrimoineAcheteurTh = equiteTheorique + portefeuilleAcheteur;
+      const patrimoineLocataireTh = portefeuilleLocataire;
+
+      labels.push(`Année ${an}`);
+      serieAcheteur.push(patrimoineAcheteurTh);
+      serieLocataire.push(patrimoineLocataireTh);
     }
-    const entretienMode = document.querySelector('[name="avl-entretien-mode"]:checked')?.value; // 'pct' ou 'dollar'
-    let entretienM = 0;
-    if (entretienMode === 'pct') {
-    const entretienPctA = parseNum(document.getElementById('avl-entretien-pct').value) / 100;
-    entretienM = (valeurMaison * entretienPctA) / 12;
-    } else {
-    entretienM = parseNum(document.getElementById('avl-entretien-dollar').value);
-    }
-    const assurMaisonM = parseNum(document.getElementById('avl-assurance-maison').value);
-    const coproM = parseNum(document.getElementById('avl-copro').value);
-    const growthImmoM = pctToMonthly(document.getElementById('avl-croissance-immobilier').value);
-    const venteMode = document.querySelector('[name="avl-frais-vente-mode"]:checked')?.value; // 'pct' ou 'dollar'
-    let fraisVente = 0;
-    if (venteMode === 'pct') {
-    const fraisVentePct = parseNum(document.getElementById('avl-frais-vente-pct').value) / 100;
-    fraisVente = valeurMaison * fraisVentePct;
-    } else {
-    fraisVente = parseNum(document.getElementById('avl-frais-vente-dollar').value);
-    }
+  }
 
-    const loyerM0 = parseNum(document.getElementById('avl-loyer').value);
-    const growthLoyerM = pctToMonthly(document.getElementById('avl-croissance-loyer').value);
-    const assurLocM = parseNum(document.getElementById('avl-assurance-loc').value);
+  // --- Revente à l’horizon
+  const fraisVente = valeurMaison * fraisVentePct;
+  const equiteNette = Math.max(0, valeurMaison - fraisVente - solde);
 
-    const rInvM = annualToMonthlyRate(document.getElementById('avl-rendement').value);
+  const patrimoineAcheteur = equiteNette + portefeuilleAcheteur;
+  const patrimoineLocataire = portefeuilleLocataire;
+  const diffFinale = patrimoineAcheteur - patrimoineLocataire;
 
-    let allocTFSA = parseNum(document.getElementById('avl-alloc-tfsa').value) / 100;
-    let allocRRSP = parseNum(document.getElementById('avl-alloc-rrsp').value) / 100;
-    if (allocTFSA + allocRRSP <= 0) { allocTFSA = 1; allocRRSP = 0; }
-    const totalAlloc = allocTFSA + allocRRSP;
-    allocTFSA /= totalAlloc;
-    allocRRSP /= totalAlloc;
+  // --- Restitution
+  const lignes = [
+    `🏡 Patrimoine (acheter) : ${fmtCurrency(patrimoineAcheteur)}`,
+    `🏠 Patrimoine (louer) : ${fmtCurrency(patrimoineLocataire)}`,
+    `📊 Différence : ${fmtCurrency(diffFinale)} ${diffFinale > 0 ? '(acheter > louer)' : diffFinale < 0 ? '(louer > acheter)' : ''}`,
+    `💵 Mensualité prêt : ${fmtCurrency(mensualite)}`,
+    `💸 Intérêts totaux payés : ${fmtCurrency(interetsTotaux)}`,
+    `📈 Principal remboursé : ${fmtCurrency(principalTotal)}`,
+    `🏷️ Frais d’achat initiaux (évités en location) : ${fmtCurrency(fraisAchat)}`,
+    `🏠 Frais de vente à l’horizon : ${fmtCurrency(fraisVente)}`
+  ];
+  resultatAvsL.textContent = lignes.join('\n');
 
-    const tauxMarg = parseNum(document.getElementById('avl-taux-marginal').value) / 100;
-    const tauxRetrait = parseNum(document.getElementById('avl-taux-retrait').value) / 100;
-    const reinvestRefund = document.getElementById('avl-reinvest-remboursement').checked;
-
-    if (down > price) {
-      resAVL.textContent = "La mise de fonds ne peut pas excéder le prix d’achat.";
-      return;
-    }
-    if (years <= 0 || price <= 0 || amortYears <= 0) {
-      resAVL.textContent = "Veuillez remplir les champs essentiels correctement.";
-      return;
-    }
-
-    const principal0 = price - down;
-    const r = rateHypoM;
-    const n = amortMonths;
-    const paymentM = Math.abs(r) < 1e-12
-      ? (principal0 / n)
-      : principal0 * (r / (1 - Math.pow(1 + r, -n)));
-
-    const fraisInit = price * (fraisAchatPct || 0);
-
-    let valeurMaison = price;
-    let soldeHypo = principal0;
-    let tfsaBuyer = 0, rrspBuyer = 0;
-    let tfsaRenter = 0, rrspRenter = 0;
-
-    let investInitialRenter = down + fraisInit;
-    if (investInitialRenter > 0) {
-      const toTFSA0 = investInitialRenter * allocTFSA;
-      const toRRSP0 = investInitialRenter * allocRRSP;
-      tfsaRenter += toTFSA0;
-      rrspRenter += toRRSP0;
-      if (reinvestRefund && toRRSP0 > 0 && tauxMarg > 0) {
-        const refund0 = toRRSP0 * tauxMarg;
-        tfsaRenter += refund0;
+  // --- (Optionnel) Graphe comparatif
+  const ctx = document.getElementById('chart-achat-vs-location')?.getContext('2d');
+  if (ctx) {
+    if (chartAvsL) chartAvsL.destroy();
+    chartAvsL = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          { label: 'Acheter (patrimoine net)', data: serieAcheteur, borderColor: '#0ea5e9', fill: false },
+          { label: 'Louer (patrimoine net)', data: serieLocataire, borderColor: '#22c55e', fill: false }
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: { legend: { display: true }, title: { display: true, text: 'Acheter vs Louer — Patrimoine net' } },
+        scales: { y: { beginAtZero: false } }
       }
-    }
-
-    let loyerM = loyerM0;
-    const labels = [], dataBuyer = [], dataRenter = [];
-
-    for (let m = 1; m <= months; m++) {
-      valeurMaison *= (1 + (growthImmoM || 0));
-
-      const taxesM = (valeurMaison * (taxesFoncieresPctA || 0)) / 12;
-      const entretienM = (valeurMaison * (entretienPctA || 0)) / 12;
-
-      let interetM = soldeHypo > 0 ? soldeHypo * r : 0;
-      let principalM = 0;
-      let versementHypo = 0;
-      if (soldeHypo > 0) {
-        if (Math.abs(r) < 1e-12) {
-          principalM = Math.min(soldeHypo, paymentM);
-          versementHypo = principalM;
-        } else {
-          versementHypo = Math.min(paymentM, soldeHypo + interetM);
-          principalM = versementHypo - interetM;
-        }
-        soldeHypo = Math.max(0, soldeHypo - principalM);
-      }
-
-      const coutBuyerM = versementHypo + taxesM + entretienM + (assurMaisonM || 0) + (coproM || 0);
-      const coutRenterM = loyerM + (assurLocM || 0);
-      const diff = coutBuyerM - coutRenterM;
-
-      if (diff > 0) {
-        const toTFSA = diff * allocTFSA;
-        const toRRSP = diff * allocRRSP;
-        tfsaRenter += toTFSA;
-        rrspRenter += toRRSP;
-        if (reinvestRefund && toRRSP > 0 && tauxMarg > 0) {
-          const refund = toRRSP * tauxMarg;
-          tfsaRenter += refund;
-        }
-      } else if (diff < 0) {
-        const investBuyer = -diff;
-        const toTFSA = investBuyer * allocTFSA;
-        const toRRSP = investBuyer * allocRRSP;
-        tfsaBuyer += toTFSA;
-        rrspBuyer += toRRSP;
-        if (reinvestRefund && toRRSP > 0 && tauxMarg > 0) {
-          const refund = toRRSP * tauxMarg;
-          tfsaBuyer += refund;
-        }
-      }
-
-      tfsaRenter *= (1 + (rInvM || 0));
-      rrspRenter *= (1 + (rInvM || 0));
-      tfsaBuyer *= (1 + (rInvM || 0));
-      rrspBuyer *= (1 + (rInvM || 0));
-
-      loyerM *= (1 + (growthLoyerM || 0));
-
-      if (m % 12 === 0) {
-        const annee = m / 12;
-        labels.push(String(annee));
-
-        const valeurNetMaison = valeurMaison - fraisVente - soldeHypo;
-        const buyerAfterTaxRRSP = rrspBuyer * (1 - (tauxRetrait || 0));
-        const buyerNW = Math.max(0, valeurNetMaison) + tfsaBuyer + buyerAfterTaxRRSP;
-
-        const renterAfterTaxRRSP = rrspRenter * (1 - (tauxRetrait || 0));
-        const renterNW = tfsaRenter + renterAfterTaxRRSP;
-
-        dataBuyer.push(buyerNW);
-        dataRenter.push(renterNW);
-      }
-    }
-
-    const valeurNetMaisonFinale = (valeurMaison * (1 - (fraisVentePct || 0))) - soldeHypo;
-    const buyerAfterTaxRRSPF = rrspBuyer * (1 - (tauxRetrait || 0));
-    const renterAfterTaxRRSPF = rrspRenter * (1 - (tauxRetrait || 0));
-
-    const buyerNWFinal = Math.max(0, valeurNetMaisonFinale) + tfsaBuyer + buyerAfterTaxRRSPF;
-    const renterNWFinal = tfsaRenter + renterAfterTaxRRSPF;
-    const ecart = buyerNWFinal - renterNWFinal;
-
-    resAVL.textContent =
-      `Actif net acheteur: ${fmtCurrency(buyerNWFinal)} | ` +
-      `Actif net locataire: ${fmtCurrency(renterNWFinal)} | ` +
-      `Écart: ${fmtCurrency(ecart)} (positif = avantage à l’achat).`;
-
-    if (chartAVL) chartAVL.destroy();
-    if (ctxAVL && typeof Chart !== 'undefined') {
-      chartAVL = new Chart(ctxAVL, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [
-            {
-              label: 'Acheter - Actif net (après impôt REER)',
-              data: dataBuyer,
-              borderColor: '#00c48c',
-              backgroundColor: 'rgba(0, 196, 140, 0.15)',
-              fill: true,
-              tension: 0.25
-            },
-            {
-              label: 'Louer - Actif net (après impôt REER)',
-              data: dataRenter,
-              borderColor: '#4f5d75',
-              backgroundColor: 'rgba(79, 93, 117, 0.15)',
-              fill: true,
-              tension: 0.25
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: { position: 'top' },
-            title: { display: true, text: 'Évolution de l’actif net — Acheter vs Louer' }
-          },
-          scales: { y: { beginAtZero: true } }
-        }
-      });
-    }
-  });
+    });
+  }
+});
 });
