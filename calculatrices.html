@@ -5,12 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Finoza</title>
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Sécurités/UX minimales au cas où style.css est vide ou en cours -->
+  <style>
+    .container { max-width: 1100px; margin: 0 auto; padding: 16px; }
+    header, footer { padding: 12px 16px; }
+    nav a { margin-right: 12px; }
+    .card-grid { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+    .card.card-link { cursor: pointer; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; }
+    .card.card-link.selected { outline: 2px solid #2563eb; outline-offset: 2px; }
+    .calculator-card { display: none; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; background: #fff; }
+    .calculator-card.active { display: block; }
+    .form-group { margin-bottom: 12px; }
+    .btn-primary { background: #2563eb; color: #fff; border: 0; padding: 10px 14px; border-radius: 6px; cursor: pointer; }
+    label { display: block; margin-bottom: 6px; }
+    input[type="number"], select { width: 100%; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px; }
+    .resultat { margin-top: 10px; }
+  </style>
 </head>
 <body>
 
 <header>
   <h1>Finoza</h1>
- <nav>
+  <nav>
     <a href="index.html">Accueil</a>
     <a href="#services">Services</a>
     <a href="Prédictions.html">Prédictions</a>
@@ -20,29 +37,29 @@
     <a href="index.html#contact">Contact</a>
   </nav>
 </header>
-  
-  <main class="container">
-  
+
+<main class="container">
+
   <section id="selection-calculatrices">
     <h2>Choisissez une calculatrice</h2>
     <div class="card-grid">
-      <div class="card card-link selected" data-calc="retraite">
+      <div class="card card-link selected" data-calc="retraite" role="button" tabindex="0" aria-selected="true">
         <h3>Retraite</h3>
         <p>Estimez combien vous aurez besoin et quand vous pourrez arrêter de travailler.</p>
       </div>
-      <div class="card card-link" data-calc="valeur-future">
+      <div class="card card-link" data-calc="valeur-future" role="button" tabindex="0" aria-selected="false">
         <h3>Valeur future</h3>
         <p>Calculez la croissance de vos investissements au fil du temps.</p>
       </div>
-      <div class="card card-link" data-calc="hypotheque">
+      <div class="card card-link" data-calc="hypotheque" role="button" tabindex="0" aria-selected="false">
         <h3>Hypothèque</h3>
         <p>Simulez vos paiements hypothécaires mensuels.</p>
       </div>
-      <div class="card card-link" data-calc="trex">
+      <div class="card card-link" data-calc="trex" role="button" tabindex="0" aria-selected="false">
         <h3>Frais de gestion</h3>
         <p>Simulez vos paiements de frais de gestion.</p>
       </div>
-      <div class="card card-link" data-calc="acheter-louer">
+      <div class="card card-link" data-calc="acheter-louer" role="button" tabindex="0" aria-selected="false">
         <h3>Acheter ou Louer</h3>
         <p>Locataire ou propriétaire</p>
       </div>
@@ -52,7 +69,7 @@
   <section id="calculatrices-container">
 
     <!-- Calculatrice Retraite -->
-    <section id="calc-retraite" class="calculator-card active" aria-label="Calculatrice de Retraite">
+    <section id="calc-retraite" class="calculator-card active" aria-label="Calculatrice de Retraite" aria-hidden="false">
       <h2>Calculatrice de Retraite</h2>
       <form id="form-retraite" novalidate>
         <div class="form-group">
@@ -78,33 +95,32 @@
     </section>
 
     <!-- Calculatrice Valeur Future -->
-    <section id="calc-valeur-future" class="calculator-card" aria-label="Calculatrice de Valeur Future">
+    <section id="calc-valeur-future" class="calculator-card" aria-label="Calculatrice de Valeur Future" aria-hidden="true">
       <h2>Calculatrice de Valeur Future</h2>
       <form id="form-vf" novalidate>
         <div class="form-group">
-          <label for="montant-initial">Montant initial</label>
-          <input type="number" id="montant-initial" name="montant-initial" min="0" placeholder="Ex: 10000" required />
+          <label for="vf-montant-initial">Montant initial</label>
+          <input type="number" id="vf-montant-initial" name="vf-montant-initial" min="0" placeholder="Ex: 10000" required />
         </div>
         <div class="form-group">
-      <label for="cotisation-vf">Cotisation additionnelle</label>
-          <input type="number" id="cotisation-vf" name="cotisation-vf" min="0" placeholder="Ex: 200" />
+          <label for="vf-cotisation">Cotisation additionnelle</label>
+          <input type="number" id="vf-cotisation" name="vf-cotisation" min="0" placeholder="Ex: 200" />
         </div>
-
         <div class="form-group">
-          <label for="frequence-vf">Fréquence de cotisation</label>
-          <select id="frequence-vf" name="frequence-vf" class="form-control">
-          <option value="annuelle">Annuelle</option>
-          <option value="mensuelle">Mensuelle</option>
-          <option value="hebdomadaire">Hebdomadaire</option>
+          <label for="vf-frequence">Fréquence de cotisation</label>
+          <select id="vf-frequence" name="vf-frequence">
+            <option value="annuelle">Annuelle</option>
+            <option value="mensuelle">Mensuelle</option>
+            <option value="hebdomadaire">Hebdomadaire</option>
           </select>
-          </div>
-        <div class="form-group">
-          <label for="duree-vf">Durée (années)</label>
-          <input type="number" id="duree-vf" name="duree-vf" min="0" placeholder="Ex: 10" required />
         </div>
         <div class="form-group">
-          <label for="taux-vf">Taux d’intérêt annuel (%)</label>
-          <input type="number" id="taux-vf" name="taux-vf" min="0" max="100" step="0.1" placeholder="Ex: 7" required />
+          <label for="vf-duree">Durée (années)</label>
+          <input type="number" id="vf-duree" name="vf-duree" min="0" placeholder="Ex: 10" required />
+        </div>
+        <div class="form-group">
+          <label for="vf-taux">Taux d’intérêt annuel (%)</label>
+          <input type="number" id="vf-taux" name="vf-taux" min="0" max="100" step="0.1" placeholder="Ex: 7" required />
         </div>
         <button type="submit" class="btn-primary">Calculer</button>
       </form>
@@ -113,7 +129,7 @@
     </section>
 
     <!-- Calculatrice Hypothèque -->
-    <section id="calc-hypotheque" class="calculator-card" aria-label="Calculatrice Hypothécaire">
+    <section id="calc-hypotheque" class="calculator-card" aria-label="Calculatrice Hypothécaire" aria-hidden="true">
       <h2>Calculatrice Hypothécaire</h2>
       <form id="form-hypo" novalidate>
         <div class="form-group">
@@ -134,207 +150,199 @@
       <canvas id="chart-hypo" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
     </section>
 
-    <!-- Calculatrice T‑Rex Score -->
-<section id="calc-trex" class="calculator-card" aria-label="Calculatrice de frais de gestion">
-  <h2>Calculatrice de frais de gestion</h2>
-
-  <form id="form-trex" novalidate>
-    <div class="form-group">
-      <label for="montant-initial">Montant initial</label>
-      <input type="number" id="montant-initial" name="montant-initial" min="0" placeholder="Ex: 10000" required />
-    </div>
-
-    <div class="form-group">
-      <label for="cotisation-annuelle">Cotisation annuelle<span style="color:#6b7280">(optionnel)</span></label>
-      <input type="number" id="cotisation-annuelle" name="cotisation-annuelle" min="0" placeholder="Ex: 3000" />
-    </div>
-
-    <div class="form-group">
-      <label for="duree-trex">Durée (années)</label>
-      <input type="number" id="duree-trex" name="duree-trex" min="1" placeholder="Ex: 30" required />
-    </div>
-
-    <div class="form-group">
-      <label for="rendement-brut">Rendement brut annuel (%)</label>
-      <input type="number" id="rendement-brut" name="rendement-brut" min="0" max="100" step="0.1" placeholder="Ex: 6.0" required />
-    </div>
-
-    <div class="form-group">
-      <label for="frais-annuels">Frais annuels totaux (%)</label>
-      <input type="number" id="frais-annuels" name="frais-annuels" min="0" max="100" step="0.05" placeholder="Ex: 1.5" required />
-    </div>
-
-    <button type="submit" class="btn-primary">Calculer</button>
-  </form>
-
-  <p class="resultat" id="resultat-trex" aria-live="polite"></p>
-  <canvas id="chart-trex" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
-</section>
-
-<!-- Calculatrice Acheter vs Louer -->
-<section id="calc-acheter-louer" class="calculator-card" aria-label="Calculatrice Acheter vs Louer">
-  <h2>Acheter vs Louer</h2>
-
-  <form id="form-avl" novalidate>
-    <!-- Mise en page 2 colonnes, scoped à cette section -->
-    <style>
-      #calc-acheter-louer .avl-two-column {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 24px;
-        margin: 16px 0 24px;
-      }
-      #calc-acheter-louer .form-column {
-        background: #f8fafc;
-        padding: 16px;
-        border-radius: 8px;
-      }
-      #calc-acheter-louer .form-column h3 {
-        margin: 0 0 8px 0;
-        font-size: 1.1rem;
-      }
-      @media (max-width: 768px) {
-        #calc-acheter-louer .avl-two-column {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-
-    <!-- Champs communs -->
-    <div class="form-group">
-      <label for="avl-horizon">Horizon d’analyse (années)</label>
-      <input type="number" inputmode="numeric" min="1" step="1"
-             class="calculator-input" id="avl-horizon" name="avl-horizon" placeholder="Ex: 25" required />
-    </div>
-
-    <div class="avl-two-column">
-      <!-- Acheteur -->
-      <div class="form-column" aria-label="Paramètres Acheteur">
-        <h3>Acheteur</h3>
-
+    <!-- Calculatrice Frais de gestion (T‑Rex) -->
+    <section id="calc-trex" class="calculator-card" aria-label="Calculatrice de frais de gestion" aria-hidden="true">
+      <h2>Calculatrice de frais de gestion</h2>
+      <form id="form-trex" novalidate>
         <div class="form-group">
-          <label for="avl-prix">Prix d’achat de la propriété</label>
-          <input type="number" inputmode="decimal" min="0" step="1000"
-                 class="calculator-input" id="avl-prix" name="avl-prix" placeholder="Ex: 500000" required />
+          <label for="trex-montant-initial">Montant initial</label>
+          <input type="number" id="trex-montant-initial" name="trex-montant-initial" min="0" placeholder="Ex: 10000" required />
         </div>
         <div class="form-group">
-          <label for="avl-mise-fonds">Mise de fonds</label>
-          <input type="number" inputmode="decimal" min="0" step="1000"
-                 class="calculator-input" id="avl-mise-fonds" name="avl-mise-fonds" placeholder="Ex: 100000" required />
+          <label for="trex-cotisation-annuelle">Cotisation annuelle <span style="color:#6b7280">(optionnel)</span></label>
+          <input type="number" id="trex-cotisation-annuelle" name="trex-cotisation-annuelle" min="0" placeholder="Ex: 3000" />
         </div>
         <div class="form-group">
-          <label for="avl-taux-hypo">Taux hypothécaire annuel (%)</label>
-          <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
-                 class="calculator-input" id="avl-taux-hypo" name="avl-taux-hypo" placeholder="Ex: 5" required />
+          <label for="trex-duree">Durée (années)</label>
+          <input type="number" id="trex-duree" name="trex-duree" min="1" placeholder="Ex: 30" required />
         </div>
         <div class="form-group">
-          <label for="avl-amortissement">Amortissement (années)</label>
+          <label for="trex-rendement-brut">Rendement brut annuel (%)</label>
+          <input type="number" id="trex-rendement-brut" name="trex-rendement-brut" min="0" max="100" step="0.1" placeholder="Ex: 6.0" required />
+        </div>
+        <div class="form-group">
+          <label for="trex-frais-annuels">Frais annuels totaux (%)</label>
+          <input type="number" id="trex-frais-annuels" name="trex-frais-annuels" min="0" max="100" step="0.05" placeholder="Ex: 1.5" required />
+        </div>
+        <button type="submit" class="btn-primary">Calculer</button>
+      </form>
+      <p class="resultat" id="resultat-trex" aria-live="polite"></p>
+      <canvas id="chart-trex" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
+    </section>
+
+    <!-- Calculatrice Acheter vs Louer -->
+    <section id="calc-acheter-louer" class="calculator-card" aria-label="Calculatrice Acheter vs Louer" aria-hidden="true">
+      <h2>Acheter vs Louer</h2>
+
+      <form id="form-avl" novalidate>
+        <!-- Mise en page 2 colonnes, scoped à cette section -->
+        <style>
+          #calc-acheter-louer .avl-two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin: 16px 0 24px;
+          }
+          #calc-acheter-louer .form-column {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 8px;
+          }
+          #calc-acheter-louer .form-column h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.1rem;
+          }
+          @media (max-width: 768px) {
+            #calc-acheter-louer .avl-two-column {
+              grid-template-columns: 1fr;
+            }
+          }
+        </style>
+
+        <!-- Champs communs -->
+        <div class="form-group">
+          <label for="avl-horizon">Horizon d’analyse (années)</label>
           <input type="number" inputmode="numeric" min="1" step="1"
-                 class="calculator-input" id="avl-amortissement" name="avl-amortissement" placeholder="Ex: 25" required />
+                 class="calculator-input" id="avl-horizon" name="avl-horizon" placeholder="Ex: 25" required />
         </div>
 
-        <!-- Coûts propriétaire -->
+        <div class="avl-two-column">
+          <!-- Acheteur -->
+          <div class="form-column" aria-label="Paramètres Acheteur">
+            <h3>Acheteur</h3>
+
+            <div class="form-group">
+              <label for="avl-prix">Prix d’achat de la propriété</label>
+              <input type="number" inputmode="decimal" min="0" step="1000"
+                     class="calculator-input" id="avl-prix" name="avl-prix" placeholder="Ex: 500000" required />
+            </div>
+            <div class="form-group">
+              <label for="avl-mise-fonds">Mise de fonds</label>
+              <input type="number" inputmode="decimal" min="0" step="1000"
+                     class="calculator-input" id="avl-mise-fonds" name="avl-mise-fonds" placeholder="Ex: 100000" required />
+            </div>
+            <div class="form-group">
+              <label for="avl-taux-hypo">Taux hypothécaire annuel (%)</label>
+              <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
+                     class="calculator-input" id="avl-taux-hypo" name="avl-taux-hypo" placeholder="Ex: 5" required />
+            </div>
+            <div class="form-group">
+              <label for="avl-amortissement">Amortissement (années)</label>
+              <input type="number" inputmode="numeric" min="1" step="1"
+                     class="calculator-input" id="avl-amortissement" name="avl-amortissement" placeholder="Ex: 25" required />
+            </div>
+
+            <!-- Coûts propriétaire -->
+            <div class="form-group">
+              <label for="avl-frais-achat">Frais initiaux à l’achat (%) — notaire, taxe de bienvenue, etc.</label>
+              <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
+                     class="calculator-input" id="avl-frais-achat" name="avl-frais-achat" placeholder="Ex: 2" />
+            </div>
+            <div class="form-group">
+              <label for="avl-taxes-foncieres">Taxes foncières (% de la valeur/an)</label>
+              <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
+                     class="calculator-input" id="avl-taxes-foncieres" name="avl-taxes-foncieres" placeholder="Ex: 1" />
+            </div>
+            <div class="form-group">
+              <label for="avl-entretien">Entretien (% de la valeur/an)</label>
+              <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
+                     class="calculator-input" id="avl-entretien" name="avl-entretien" placeholder="Ex: 1" />
+            </div>
+            <div class="form-group">
+              <label for="avl-assurance-maison">Assurance habitation ($/mois)</label>
+              <input type="number" inputmode="decimal" min="0" step="1"
+                     class="calculator-input" id="avl-assurance-maison" name="avl-assurance-maison" placeholder="Ex: 100" />
+            </div>
+            <div class="form-group">
+              <label for="avl-copro">Frais de copropriété ($/mois) — si applicable</label>
+              <input type="number" inputmode="decimal" min="0" step="1"
+                     class="calculator-input" id="avl-copro" name="avl-copro" placeholder="Ex: 200" />
+            </div>
+            <div class="form-group">
+              <label for="avl-croissance-immobilier">Croissance du prix immobilier (% annuel)</label>
+              <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
+                     class="calculator-input" id="avl-croissance-immobilier" name="avl-croissance-immobilier" placeholder="Ex: 3" />
+            </div>
+            <div class="form-group">
+              <label for="avl-frais-vente">Frais de vente au terme (%) — courtage, notaire, etc.</label>
+              <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
+                     class="calculator-input" id="avl-frais-vente" name="avl-frais-vente" placeholder="Ex: 5" />
+            </div>
+          </div>
+
+          <!-- Locataire -->
+          <div class="form-column" aria-label="Paramètres Locataire">
+            <h3>Locataire</h3>
+
+            <div class="form-group">
+              <label for="avl-loyer">Loyer initial ($/mois)</label>
+              <input type="number" inputmode="decimal" min="0" step="1"
+                     class="calculator-input" id="avl-loyer" name="avl-loyer" placeholder="Ex: 1800" required />
+            </div>
+            <div class="form-group">
+              <label for="avl-croissance-loyer">Croissance annuelle du loyer (%)</label>
+              <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
+                     class="calculator-input" id="avl-croissance-loyer" name="avl-croissance-loyer" placeholder="Ex: 2" />
+            </div>
+            <div class="form-group">
+              <label for="avl-assurance-loc">Assurance du locataire ($/mois)</label>
+              <input type="number" inputmode="decimal" min="0" step="1"
+                     class="calculator-input" id="avl-assurance-loc" name="avl-assurance-loc" placeholder="Ex: 25" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Investissements / fiscalité (champs communs) -->
         <div class="form-group">
-          <label for="avl-frais-achat">Frais initiaux à l’achat (%) — notaire, taxe de bienvenue, etc.</label>
+          <label for="avl-rendement">Rendement annuel des investissements (%)</label>
           <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
-                 class="calculator-input" id="avl-frais-achat" name="avl-frais-achat" placeholder="Ex: 2" />
+                 class="calculator-input" id="avl-rendement" name="avl-rendement" placeholder="Ex: 6" required />
         </div>
         <div class="form-group">
-          <label for="avl-taxes-foncieres">Taxes foncières (% de la valeur/an)</label>
+          <label for="avl-alloc-tfsa">Allocation CELI (% des contributions)</label>
+          <input type="number" inputmode="decimal" min="0" max="100" step="1"
+                 class="calculator-input" id="avl-alloc-tfsa" name="avl-alloc-tfsa" placeholder="Ex: 60" />
+        </div>
+        <div class="form-group">
+          <label for="avl-alloc-rrsp">Allocation REER (% des contributions)</label>
+          <input type="number" inputmode="decimal" min="0" max="100" step="1"
+                 class="calculator-input" id="avl-alloc-rrsp" name="avl-alloc-rrsp" placeholder="Ex: 40" />
+        </div>
+        <div class="form-group">
+          <label for="avl-taux-marginal">Taux marginal d’imposition actuel (%) — pour remboursement REER</label>
           <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
-                 class="calculator-input" id="avl-taxes-foncieres" name="avl-taxes-foncieres" placeholder="Ex: 1" />
+                 class="calculator-input" id="avl-taux-marginal" name="avl-taux-marginal" placeholder="Ex: 40" />
         </div>
         <div class="form-group">
-          <label for="avl-entretien">Entretien (% de la valeur/an)</label>
+          <label for="avl-taux-retrait">Taux d’imposition au retrait REER (%) — pour valeur après impôt</label>
           <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
-                 class="calculator-input" id="avl-entretien" name="avl-entretien" placeholder="Ex: 1" />
+                 class="calculator-input" id="avl-taux-retrait" name="avl-taux-retrait" placeholder="Ex: 30" />
         </div>
         <div class="form-group">
-          <label for="avl-assurance-maison">Assurance habitation ($/mois)</label>
-          <input type="number" inputmode="decimal" min="0" step="1"
-                 class="calculator-input" id="avl-assurance-maison" name="avl-assurance-maison" placeholder="Ex: 100" />
+          <label>
+            <input type="checkbox" id="avl-reinvest-remboursement" checked />
+            Réinvestir automatiquement le remboursement d’impôt REER
+          </label>
         </div>
-        <div class="form-group">
-          <label for="avl-copro">Frais de copropriété ($/mois) — si applicable</label>
-          <input type="number" inputmode="decimal" min="0" step="1"
-                 class="calculator-input" id="avl-copro" name="avl-copro" placeholder="Ex: 200" />
-        </div>
-        <div class="form-group">
-          <label for="avl-croissance-immobilier">Croissance du prix immobilier (% annuel)</label>
-          <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
-                 class="calculator-input" id="avl-croissance-immobilier" name="avl-croissance-immobilier" placeholder="Ex: 3" />
-        </div>
-        <div class="form-group">
-          <label for="avl-frais-vente">Frais de vente au terme (%) — courtage, notaire, etc.</label>
-          <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
-                 class="calculator-input" id="avl-frais-vente" name="avl-frais-vente" placeholder="Ex: 5" />
-        </div>
-      </div>
 
-      <!-- Locataire -->
-      <div class="form-column" aria-label="Paramètres Locataire">
-        <h3>Locataire</h3>
+        <button type="submit" class="btn-primary">Comparer</button>
+      </form>
 
-        <div class="form-group">
-          <label for="avl-loyer">Loyer initial ($/mois)</label>
-          <input type="number" inputmode="decimal" min="0" step="1"
-                 class="calculator-input" id="avl-loyer" name="avl-loyer" placeholder="Ex: 1800" required />
-        </div>
-        <div class="form-group">
-          <label for="avl-croissance-loyer">Croissance annuelle du loyer (%)</label>
-          <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
-                 class="calculator-input" id="avl-croissance-loyer" name="avl-croissance-loyer" placeholder="Ex: 2" />
-        </div>
-        <div class="form-group">
-          <label for="avl-assurance-loc">Assurance du locataire ($/mois)</label>
-          <input type="number" inputmode="decimal" min="0" step="1"
-                 class="calculator-input" id="avl-assurance-loc" name="avl-assurance-loc" placeholder="Ex: 25" />
-        </div>
-      </div>
-    </div>
+      <p class="resultat" id="resultat-avl" aria-live="polite"></p>
+      <canvas id="chart-avl" style="max-width: 100%; height: 320px; margin-top: 20px;"></canvas>
+    </section>
 
-    <!-- Investissements / fiscalité (champs communs) -->
-    <div class="form-group">
-      <label for="avl-rendement">Rendement annuel des investissements (%)</label>
-      <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
-             class="calculator-input" id="avl-rendement" name="avl-rendement" placeholder="Ex: 6" required />
-    </div>
-    <div class="form-group">
-      <label for="avl-alloc-tfsa">Allocation CELI (% des contributions)</label>
-      <input type="number" inputmode="decimal" min="0" max="100" step="1"
-             class="calculator-input" id="avl-alloc-tfsa" name="avl-alloc-tfsa" placeholder="Ex: 60" />
-    </div>
-    <div class="form-group">
-      <label for="avl-alloc-rrsp">Allocation REER (% des contributions)</label>
-      <input type="number" inputmode="decimal" min="0" max="100" step="1"
-             class="calculator-input" id="avl-alloc-rrsp" name="avl-alloc-rrsp" placeholder="Ex: 40" />
-    </div>
-    <div class="form-group">
-      <label for="avl-taux-marginal">Taux marginal d’imposition actuel (%) — pour remboursement REER</label>
-      <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
-             class="calculator-input" id="avl-taux-marginal" name="avl-taux-marginal" placeholder="Ex: 40" />
-    </div>
-    <div class="form-group">
-      <label for="avl-taux-retrait">Taux d’imposition au retrait REER (%) — pour valeur après impôt</label>
-      <input type="number" inputmode="decimal" min="0" max="100" step="0.01"
-             class="calculator-input" id="avl-taux-retrait" name="avl-taux-retrait" placeholder="Ex: 30" />
-    </div>
-    <div class="form-group">
-      <label>
-        <input type="checkbox" id="avl-reinvest-remboursement" checked />
-        Réinvestir automatiquement le remboursement d’impôt REER
-      </label>
-    </div>
-
-    <button type="submit" class="btn-primary">Comparer</button>
-  </form>
-
-  <p class="resultat" id="resultat-avl" aria-live="polite"></p>
-  <canvas id="chart-avl" style="max-width: 100%; height: 320px; margin-top: 20px;"></canvas>
-</section>
-
-      
-  </section> 
+  </section><!-- /#calculatrices-container -->
 
 </main>
 
@@ -344,25 +352,22 @@
 <footer>
   <p>© 2025 Finoza</p>
 </footer>
+
 <script>
 document.addEventListener('DOMContentLoaded', () => {
   const cards = Array.from(document.querySelectorAll('.card-link[data-calc]'));
   const sections = Array.from(document.querySelectorAll('.calculator-card'));
 
-  // Index rapide par clé (ex: "vf" -> section #calc-vf)
-  const sectionByKey = new Map(
-    sections.map(s => [s.id.replace(/^calc-/, ''), s])
-  );
-  const cardByKey = new Map(
-    cards.map(c => [c.dataset.calc, c])
-  );
+  const sectionByKey = new Map(sections.map(s => [s.id.replace(/^calc-/, ''), s]));
+  const cardByKey = new Map(cards.map(c => [c.dataset.calc, c]));
 
   function setAriaVisibility(el, visible) {
     if (!el) return;
     el.setAttribute('aria-hidden', visible ? 'false' : 'true');
   }
 
-  function showCalc(key, opts = { scroll: true, updateHash: true }) {
+  function showCalc(key, opts = {}) {
+    const { scroll = true, updateHash = true } = opts;
     const target = sectionByKey.get(key);
     if (!target) {
       console.warn('Section introuvable pour la clé:', key);
@@ -387,15 +392,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (card) {
       card.classList.add('selected');
       card.setAttribute('aria-selected', 'true');
-      // Si tes <a> ont href="#", on évite le focus-jump
-      if (opts.scroll) {
+      if (scroll) {
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
 
-    // Mémoriser et hash
+    // Persistance + hash
     try { localStorage.setItem('calc:selected', key); } catch {}
-    if (opts.updateHash) {
+    if (updateHash) {
       const newHash = `#${key}`;
       if (location.hash !== newHash) {
         history.replaceState(null, '', newHash);
@@ -405,15 +409,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Écouteurs sur les cartes
   cards.forEach(card => {
-    // Amélioration accessibilité
-    card.setAttribute('role', 'button');
-    card.setAttribute('tabindex', card.tabIndex >= 0 ? card.tabIndex : '0');
-    card.setAttribute('aria-selected', 'false');
+    if (!card.hasAttribute('role')) card.setAttribute('role', 'button');
+    if (!card.hasAttribute('tabindex')) card.setAttribute('tabindex', '0');
+    if (!card.hasAttribute('aria-selected')) card.setAttribute('aria-selected', 'false');
 
     card.addEventListener('click', (e) => {
       e.preventDefault();
-      const key = card.dataset.calc;
-      showCalc(key);
+      showCalc(card.dataset.calc);
     });
     card.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' || e.key === ' ') {
@@ -423,22 +425,31 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Déterminer la clé initiale
-//  const hashKey = (location.hash || '').replace('#', '');
-  //const storedKey = (() => { try { return localStorage.getItem('calc:selected'); } catch { return null; } })();
-  //const activeFromDOM = sections.find(s => s.classList.contains('active'));
- // let initialKey =
-   // (hashKey && sectionByKey.has(hashKey) && hashKey) ||
-    //(storedKey && sectionByKey.has(storedKey) && storedKey) ||
-    //(activeFromDOM && activeFromDOM.id.replace(/^calc-/, '')) ||
-    //(cards[0] && cards[0].dataset.calc) ||
-    //(sections[0] && sections[0].id.replace(/^calc-/, ''));
+  // Initialisation
+  const hashKey = (location.hash || '').replace('#', '');
+  const storedKey = (() => { try { return localStorage.getItem('calc:selected'); } catch { return null; } })();
+  const activeFromDOM = sections.find(s => s.classList.contains('active'));
+  const fallbackKey = (cards[0] && cards[0].dataset.calc) || (sections[0] && sections[0].id.replace(/^calc-/, ''));
 
-  //if (initialKey) {
-    // Ne pas scroller ni changer le hash lors de l'init
-    //showCalc(initialKey, { scroll: false, updateHash: false });
-//  }
-//});
+  const initialKey =
+    (hashKey && sectionByKey.has(hashKey) && hashKey) ||
+    (storedKey && sectionByKey.has(storedKey) && storedKey) ||
+    (activeFromDOM && activeFromDOM.id.replace(/^calc-/, '')) ||
+    fallbackKey;
+
+  if (initialKey) {
+    showCalc(initialKey, { scroll: false, updateHash: false });
+  }
+
+  // Navigation par changement de hash (ex: lien externe)
+  window.addEventListener('hashchange', () => {
+    const key = (location.hash || '').replace('#', '');
+    if (key && sectionByKey.has(key)) {
+      showCalc(key, { scroll: true, updateHash: false });
+    }
+  });
+});
 </script>
+
 </body>
 </html>
