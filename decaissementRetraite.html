@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Calculatrice Décaissement - Prototype</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background: #fafafa;
+  }
+  h1 {
+    text-align: center;
+  }
+  .form-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  }
+  label {
+    display: block;
+    font-weight: bold;
+  }
+  input, select {
+    padding: 5px;
+    width: 150px;
+  }
+  canvas {
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+  }
+</style>
+</head>
+<body>
+
+<h1>Calculatrice de Décaissement - Prototype</h1>
+
+<div class="form-section">
+  <div>
+    <label>Âge actuel</label>
+    <input type="number" id="age" value="65">
+  </div>
+  <div>
+    <label>Sexe</label>
+    <select id="sexe">
+      <option value="H">Homme</option>
+      <option value="F">Femme</option>
+    </select>
+  </div>
+  <div>
+    <label>Espérance de vie</label>
+    <select id="lifeExpectancy">
+      <option value="75">Courte (75 ans)</option>
+      <option value="85" selected>Moyenne (85 ans)</option>
+      <option value="100">Longue (100 ans)</option>
+    </select>
+  </div>
+  <div>
+    <label>Capital initial CELI ($)</label>
+    <input type="number" id="celi" value="50000">
+  </div>
+  <div>
+    <label>Capital initial REER ($)</label>
+    <input type="number" id="reer" value="150000">
+  </div>
+  <div>
+    <label>Capital initial CRI ($)</label>
+    <input type="number" id="cri" value="80000">
+  </div>
+  <div>
+    <label>Scénario</label>
+    <select id="scenario">
+      <option value="1">Maximiser la durée</option>
+      <option value="2">Minimiser l'impôt</option>
+      <option value="3">Espérance choisie</option>
+    </select>
+  </div>
+</div>
+
+<canvas id="decaissChart" height="100"></canvas>
+
+<script>
+const ctx = document.getElementById('decaissChart').getContext('2d');
+let chart;
+
+// Fonction de simulation simple
+function simulate() {
+  const age = parseInt(document.getElementById('age').value);
+  const sexe = document.getElementById('sexe').value;
+  const expectancy = parseInt(document.getElementById('lifeExpectancy').value);
+  const celiStart = parseFloat(document.getElementById('celi').value);
+  const reerStart = parseFloat(document.getElementById('reer').value);
+  const criStart = parseFloat(document.getElementById('cri').value);
+  const scenario = parseInt(document.getElementById('scenario').value);
+
+  let years = [];
+  let celi = [];
+  let reer = [];
+  let cri = [];
+  let total = [];
+
+  // Durée de simulation
+  let endAge;
+  if (scenario === 3) {
+    endAge = expectancy;
+  } else {
+    endAge = expectancy + 5; // pour scénario 1 et 2, on simule un peu plus long
+  }
+
+  let celiBal = celiStart;
+  let reerBal = reerStart;
+  let criBal = criStart;
+
+  for (let a = age; a <= endAge; a++) {
+    years.push(a);
+
+    // Stratégie simplifiée
+    let withdrawCELI = 0, withdrawREER = 0, withdrawCRI = 0;
+
+    if (scenario === 1) {
+      withdrawREER = reerBal * 0.04;
+      withdrawCELI = celiBal * 0.02;
+      withdrawCRI = criBal * 0.03;
+    } else if (scenario === 2) {
+      withdrawCELI = celiBal * 0.03;
+      withdrawREER = reerBal * 0.02;
+      withdrawCRI = criBal * 0.02;
+    } else if (scenario === 3) {
+      let yearsLeft = expectancy - a + 1;
+      withdrawCELI = celiBal / yearsLeft;
+      withdrawREER = reerBal / yearsLeft;
+      withdrawCRI = criBal / yearsLeft;
+    }
+
+    // Mise à jour balances
+    celiBal = Math.max(0, celiBal - withdrawCELI);
+    reerBal = Math.max(0, reerBal - withdrawREER);
+    criBal = Math.max(0, criBal - withdrawCRI);
+
+    celi.push(celiBal);
+    reer.push(reerBal);
+    cri.push(criBal);
+    total.push(celiBal + reerBal + criBal);
+  }
+
+  // Mettre à jour graphique
+  if (chart) chart.destroy();
+  chart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: years,
+      datasets: [
+        {
+          label: 'CELI',
+          data: celi,
+          borderColor: '#4CAF50',
+          backgroundColor: 'rgba(76, 175, 80, 0.3)',
+          fill: true,
+          stack: 'stack1'
+        },
+        {
+          label: 'REER/FERR',
+          data: reer,
+          borderColor: '#2196F3',
+          backgroundColor: 'rgba(33, 150, 243, 0.3)',
+          fill: true,
+          stack: 'stack1'
+        },
+        {
+          label: 'CRI/FRV',
+          data: cri,
+          borderColor: '#FFC107',
+          backgroundColor: 'rgba(255, 193, 7, 0.3)',
+          fill: true,
+          stack: 'stack1'
+        },
+        {
+          label: 'Total',
+          data: total,
+          borderColor: '#000',
+          backgroundColor: 'transparent',
+          fill: false,
+          borderWidth: 2
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      interaction: {
+        mode: 'index',
+        intersect: false,
+      },
+      stacked: true,
+      plugins: {
+        title: {
+          display: true,
+          text: 'Projection des décaissements'
+        }
+      },
+      scales: {
+        y: {
+          beginAtZero: true,
+          title: {
+            display: true,
+            text: 'Montant ($)'
+          }
+        },
+        x: {
+          title: {
+            display: true,
+            text: 'Âge'
+          }
+        }
+      }
+    }
+  });
+}
+
+// Écouteurs pour mise à jour dynamique
+document.querySelectorAll('input, select').forEach(el => {
+  el.addEventListener('input', simulate);
+});
+
+// Lancement initial
+simulate();
+</script>
+
+</body>
+</html>
