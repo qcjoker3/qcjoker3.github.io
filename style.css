@@ -1,6 +1,39 @@
 /* ================== */
-/* CARTES & GRID */
+/* RESET & BASE */
 /* ================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  background-color: #f7f9fa;
+  color: #0a2540;
+  line-height: 1.6;
+  font-size: 16px;
+  padding: 20px;
+}
+
+h1, h2, h3 {
+  color: #0a2540;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+h1 { font-size: 2.2rem; text-align: center; }
+h2 { font-size: 1.8rem; text-align: center; }
+h3 { font-size: 1.2rem; }
+
+/* ================== */
+/* CONTAINER & GRID */
+/* ================== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -8,6 +41,9 @@
   margin-top: 20px;
 }
 
+/* ================== */
+/* CARDS */
+/* ================== */
 .card {
   display: flex;
   flex-direction: column;
@@ -17,6 +53,7 @@
   background-color: #ffffff;
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  min-height: 280px;
 }
 
 .card:hover {
@@ -27,6 +64,17 @@
 /* ================== */
 /* FORM GROUPS */
 /* ================== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 14px;
+}
+
+.form-group label {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
 .form-group input, .form-group select {
   padding: 10px 14px;
   font-size: 1rem;
@@ -38,24 +86,12 @@
 .form-group input:focus, .form-group select:focus {
   border-color: #00c48c;
   box-shadow: 0 0 6px rgba(0,196,140,0.2);
-}
-
-/* ================== */
-/* TABLEAU EVENTS */
-/* ================== */
-.card table th, .card table td {
-  padding: 8px 10px;
-  text-align: center;
-  border-bottom: 1px solid #e6ecf1;
-}
-
-.card table th {
-  background-color: #f9fafc;
-  font-weight: 600;
+  outline: none;
 }
 
 /* ================== */
 /* BOUTONS & SCENARIOS */
+/* ================== */
 .btn-primary {
   background-color: #00c48c;
   color: #fff;
@@ -69,6 +105,14 @@
 
 .btn-primary:hover {
   background-color: #00a678;
+}
+
+.scenario-btns {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  margin: 20px 0;
+  flex-wrap: wrap;
 }
 
 .scenario-btn {
@@ -87,6 +131,73 @@
 }
 
 /* ================== */
+/* BULLES COMPTES & ÉVÉNEMENTS */
+/* ================== */
+.accounts-grid, .events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.account-bubble, .event-bubble {
+  border-radius: 12px;
+  padding: 12px;
+  color: white;
+  font-weight: 600;
+  position: relative;
+  text-align: center;
+  transition: transform 0.2s ease;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.account-bubble:hover, .event-bubble:hover {
+  transform: scale(1.05);
+}
+
+.account-celi { background-color: #00c48c; }
+.account-reer { background-color: #1a73e8; }
+.account-cri { background-color: #ffc107; color:#222; }
+.account-non { background-color: #dc3545; }
+
+.event-add { background-color: #28a745; }
+.event-depense { background-color: #dc3545; }
+
+.event-bubble button {
+  position: absolute;
+  top: 4px; right: 6px;
+  background: transparent;
+  border: none;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* ================== */
+/* TABLEAUX */
+/* ================== */
+.card table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+.card table th, .card table td {
+  padding: 8px 10px;
+  text-align: center;
+  border-bottom: 1px solid #e6ecf1;
+}
+
+.card table th {
+  background-color: #f9fafc;
+  font-weight: 600;
+}
+
+/* ================== */
 /* GRAPHIQUE */
 canvas {
   display: block;
@@ -95,14 +206,8 @@ canvas {
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
 
-/* Barres pastel */
-.chartjs-color-celi { background-color: rgba(0,196,140,0.4); border-color: rgba(0,196,140,0.8); }
-.chartjs-color-reer { background-color: rgba(26,115,232,0.4); border-color: rgba(26,115,232,0.8); }
-.chartjs-color-cri { background-color: rgba(255,193,7,0.4); border-color: rgba(255,193,7,0.8); }
-.chartjs-color-non { background-color: rgba(220,53,69,0.4); border-color: rgba(220,53,69,0.8); }
-
 /* ================== */
-/* TOTAL CAPITAL CARD */
+/* TOTAL CAPITAL */
 #totalCapitalCard {
   display: flex;
   flex-direction: column;
@@ -124,4 +229,5 @@ canvas {
 @media (max-width:768px){
   .card-grid { grid-template-columns: 1fr; }
   .scenario-btns { flex-direction: column; gap: 12px; }
+  .accounts-grid, .events-grid { grid-template-columns: 1fr 1fr; }
 }
