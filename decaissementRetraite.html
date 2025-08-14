@@ -2,304 +2,290 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculatrice Retraite Optimisée</title>
+<title>Calculatrice de Retraite</title>
 <link rel="stylesheet" href="style.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <header>
-  <h1>Finoza</h1>
+  <h1>Calculatrice de Retraite</h1>
   <nav>
-    <a href="index.html">Accueil</a>
-    <a href="#services">Services</a>
-    <a href="Prédictions.html">Prédictions</a>
-    <a href="calculatrices.html">Calculatrices</a>
-    <a href="gestionActive.html">Gestion active</a>
-    <a href="index.html#articles">Articles</a>
-    <a href="index.html#contact">Contact</a>
+    <a href="#personnel">Informations personnelles</a>
+    <a href="#comptes">Comptes & Rendements</a>
+    <a href="#evenements">Événements financiers</a>
+    <a href="#resultats">Résultats</a>
   </nav>
 </header>
 
 <div class="container">
-  <h1>Décaissement pour la retraite</h1>
+
   <!-- Informations personnelles -->
-  <section id="infos" class="card-grid">
-    <div class="card">
-      <h3>Informations personnelles</h3>
-      <div class="form-group">
-        <label>Âge actuel</label>
-        <input type="number" id="ageActuel" value="40">
+  <section id="personnel" class="card">
+    <h2>Informations personnelles</h2>
+    <div class="form-group">
+      <label for="ageActuel">Âge actuel</label>
+      <input type="number" id="ageActuel" value="40">
+    </div>
+    <div class="form-group">
+      <label for="ageRetraite">Âge de retraite souhaité</label>
+      <input type="number" id="ageRetraite" value="65">
+    </div>
+    <div class="form-group">
+      <label for="salaireActuel">Salaire actuel annuel</label>
+      <input type="number" id="salaireActuel" value="100000">
+    </div>
+    <div class="form-group">
+      <label>Revenu désiré à la retraite</label>
+      <div>
+        <input type="radio" name="revenuType" value="70" checked> 70%
+        <input type="radio" name="revenuType" value="80"> 80%
+        <input type="radio" name="revenuType" value="manuel"> Manuel
       </div>
-      <div class="form-group">
-        <label>Âge de retraite souhaité</label>
-        <input type="number" id="ageRetraite" value="65">
-      </div>
-      <div class="form-group">
-        <label>Salaire annuel actuel</label>
-        <input type="number" id="salaireActuel" value="80000">
-      </div>
-      <div class="form-group">
-        <label>Revenu désiré à la retraite</label>
-        <select id="choixRevenu">
-          <option value="70">70% du salaire actuel</option>
-          <option value="80">80% du salaire actuel</option>
-          <option value="manuel">Manuel</option>
-        </select>
-      </div>
-      <div class="form-group" id="revenuManuelGroup">
-        <label>Montant manuel</label>
-        <input type="number" id="revenuManuel">
-      </div>
+      <input type="number" id="revenuManuel" placeholder="Montant annuel" style="display:none;">
     </div>
   </section>
 
-  <!-- Comptes -->
-  <section id="comptes" class="card-grid">
-    <div class="card">
-      <h3>Montants et cotisations</h3>
-      <div class="form-group">
-        <label>CELI initial</label>
-        <input type="number" id="celiInit" value="50000">
-      </div>
-      <div class="form-group">
-        <label>REER initial</label>
-        <input type="number" id="reerInit" value="150000">
-      </div>
-      <div class="form-group">
-        <label>CRI initial</label>
-        <input type="number" id="criInit" value="100000">
-      </div>
-      <div class="form-group">
-        <label>Non-enregistré initial</label>
-        <input type="number" id="nonInit" value="20000">
-      </div>
+  <!-- Comptes & rendements -->
+  <section id="comptes" class="card">
+    <h2>Comptes & Rendements</h2>
+    <div class="form-group">
+      <label for="montantCELI">Montant CELI</label>
+      <input type="number" id="montantCELI" value="50000">
+    </div>
+    <div class="form-group">
+      <label for="cotisationCELI">Cotisation annuelle CELI</label>
+      <input type="number" id="cotisationCELI" value="6000">
+    </div>
+    <div class="form-group">
+      <label for="rendementCELI">Rendement annuel CELI (%)</label>
+      <input type="number" id="rendementCELI" value="5">
+    </div>
 
-      <div class="form-group">
-        <label>Rendement CELI (%)</label>
-        <input type="number" id="celiRendement" value="5">
-      </div>
-      <div class="form-group">
-        <label>Rendement REER (%)</label>
-        <input type="number" id="reerRendement" value="5">
-      </div>
-      <div class="form-group">
-        <label>Rendement CRI (%)</label>
-        <input type="number" id="criRendement" value="5">
-      </div>
-      <div class="form-group">
-        <label>Rendement Non-enregistré (%)</label>
-        <input type="number" id="nonRendement" value="4">
-      </div>
+    <div class="form-group">
+      <label for="montantREER">Montant REER</label>
+      <input type="number" id="montantREER" value="150000">
+    </div>
+    <div class="form-group">
+      <label for="cotisationREER">Cotisation annuelle REER</label>
+      <input type="number" id="cotisationREER" value="18000">
+    </div>
+    <div class="form-group">
+      <label for="rendementREER">Rendement annuel REER (%)</label>
+      <input type="number" id="rendementREER" value="5">
+    </div>
 
-      <div class="form-group">
-        <label>Cotisation annuelle CELI</label>
-        <input type="number" id="celiCot" value="6000">
-      </div>
-      <div class="form-group">
-        <label>Cotisation annuelle REER</label>
-        <input type="number" id="reerCot" value="18000">
-      </div>
-      <div class="form-group">
-        <label>Cotisation annuelle CRI</label>
-        <input type="number" id="criCot" value="0" disabled>
-      </div>
-      <div class="form-group">
-        <label>Cotisation annuelle Non-enregistré</label>
-        <input type="number" id="nonCot" value="5000">
-      </div>
+    <div class="form-group">
+      <label for="montantCRI">Montant CRI</label>
+      <input type="number" id="montantCRI" value="80000">
+    </div>
+    <div class="form-group">
+      <label for="cotisationCRI">Cotisation annuelle CRI</label>
+      <input type="number" id="cotisationCRI" value="5000">
+    </div>
+    <div class="form-group">
+      <label for="rendementCRI">Rendement annuel CRI (%)</label>
+      <input type="number" id="rendementCRI" value="4">
+    </div>
+
+    <div class="form-group">
+      <label for="montantNonEnregistre">Montant Non Enregistré</label>
+      <input type="number" id="montantNonEnregistre" value="20000">
+    </div>
+    <div class="form-group">
+      <label for="cotisationNonEnregistre">Cotisation annuelle Non Enregistrée</label>
+      <input type="number" id="cotisationNonEnregistre" value="5000">
+    </div>
+    <div class="form-group">
+      <label for="rendementNonEnregistre">Rendement annuel Non Enregistré (%)</label>
+      <input type="number" id="rendementNonEnregistre" value="4">
     </div>
   </section>
 
-  <!-- Scénarios -->
-  <section id="scenarios" class="card-grid">
-    <div class="card">
-      <h3>Scénarios</h3>
-      <div class="scenario-btns">
-        <button class="scenario-btn active" data-scenario="max">Maximiser durée du capital</button>
-        <button class="scenario-btn" data-scenario="impot">Minimiser impôt</button>
-        <button class="scenario-btn" data-scenario="esperance">Espérance de vie</button>
-      </div>
+  <!-- Événements financiers -->
+  <section id="evenements" class="card">
+    <h2>Événements financiers</h2>
+    <table id="tableEvenements">
+      <thead>
+        <tr>
+          <th>Année</th>
+          <th>Montant</th>
+          <th>Type de compte</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="form-group">
+      <input type="number" id="evtAnnee" placeholder="Année">
+      <input type="number" id="evtMontant" placeholder="Montant">
+      <select id="evtCompte">
+        <option value="auto">Automatique</option>
+        <option value="CELI">CELI</option>
+        <option value="REER">REER</option>
+        <option value="CRI">CRI</option>
+        <option value="NonEnregistre">Non Enregistré</option>
+      </select>
+      <button class="btn-primary" id="ajoutEvenement">Ajouter</button>
     </div>
   </section>
 
   <!-- Résultats -->
-  <section id="resultats">
+  <section id="resultats" class="card">
+    <h2>Résultats</h2>
     <div id="totalCapitalCard">
-      <h2>Total restant</h2>
-      <p id="totalRestant">$0</p>
-      <h3>Impôt total payé</h3>
-      <p id="impotTotal">$0</p>
+      <h2>Total restant: $<span id="totalRestant">0</span></h2>
+      <h3>Impôt payé total: $<span id="impotTotal">0</span></h3>
     </div>
-    <canvas id="chartCapital" width="800" height="400"></canvas>
-    <div id="tableauResultats" class="card">
-      <h3>Tableau annuel</h3>
-      <table id="tableauAnnuel">
-        <thead>
-          <tr>
-            <th>Année</th>
-            <th>CELI</th>
-            <th>REER</th>
-            <th>CRI</th>
-            <th>Non-enregistré</th>
-            <th>Total</th>
-            <th>Impôt payé</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
+    <div class="scenario-btns">
+      <button class="scenario-btn active" data-scenario="maxDuree">Maximiser durée</button>
+      <button class="scenario-btn" data-scenario="minImpot">Minimiser impôt</button>
+      <button class="scenario-btn" data-scenario="esperance">Espérance de vie</button>
     </div>
+    <canvas id="graphique"></canvas>
+    <table id="tableResultats">
+      <thead>
+        <tr>
+          <th>Année</th>
+          <th>CELI</th>
+          <th>REER</th>
+          <th>CRI</th>
+          <th>Non Enregistré</th>
+          <th>Total</th>
+          <th>Impôt payé</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
   </section>
 
-  <div class="form-group">
-    <button class="btn-primary" id="calculerBtn">Calculer</button>
-  </div>
-
+  <button class="btn-primary" id="calculer">Calculer</button>
 </div>
 
 <script>
-const scenarioBtns = document.querySelectorAll('.scenario-btn');
-let scenarioActif = 'max';
+/* =======================
+   LOGIQUE JAVASCRIPT
+   ======================= */
 
-scenarioBtns.forEach(btn => {
-  btn.addEventListener('click', () => {
+document.addEventListener('DOMContentLoaded', () => {
+  const revenuRadios = document.getElementsByName('revenuType');
+  const revenuManuelInput = document.getElementById('revenuManuel');
+  revenuRadios.forEach(r => {
+    r.addEventListener('change', () => {
+      if(r.value === 'manuel') revenuManuelInput.style.display = 'block';
+      else revenuManuelInput.style.display = 'none';
+    });
+  });
+
+  const evenements = [];
+  const tableEvtBody = document.querySelector('#tableEvenements tbody');
+
+  document.getElementById('ajoutEvenement').addEventListener('click', () => {
+    const annee = parseInt(document.getElementById('evtAnnee').value);
+    const montant = parseFloat(document.getElementById('evtMontant').value);
+    const compte = document.getElementById('evtCompte').value;
+    if(!annee || !montant) return;
+    const evt = {annee, montant, compte};
+    evenements.push(evt);
+
+    const row = document.createElement('tr');
+    row.innerHTML = `<td>${annee}</td><td>${montant.toLocaleString()}</td><td>${compte}</td><td><button class="btn-primary supprimer">X</button></td>`;
+    tableEvtBody.appendChild(row);
+    row.querySelector('.supprimer').addEventListener('click', () => {
+      tableEvtBody.removeChild(row);
+      const index = evenements.indexOf(evt);
+      if(index>-1) evenements.splice(index,1);
+    });
+  });
+
+  const scenarioBtns = document.querySelectorAll('.scenario-btn');
+  scenarioBtns.forEach(btn => btn.addEventListener('click', () => {
     scenarioBtns.forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
-    scenarioActif = btn.dataset.scenario;
-    calculer();
-  });
-});
+  }));
 
-const choixRevenu = document.getElementById('choixRevenu');
-const revenuManuelGroup = document.getElementById('revenuManuelGroup');
-choixRevenu.addEventListener('change', () => {
-  if (choixRevenu.value === 'manuel') {
-    revenuManuelGroup.style.display = 'block';
-  } else {
-    revenuManuelGroup.style.display = 'none';
-    document.getElementById('revenuManuel').value = '';
-  }
-});
+  const ctx = document.getElementById('graphique').getContext('2d');
+  let chartInstance = null;
 
-let chart;
+  document.getElementById('calculer').addEventListener('click', () => {
+    // Récupération des données
+    const ageActuel = parseInt(document.getElementById('ageActuel').value);
+    const ageRetraite = parseInt(document.getElementById('ageRetraite').value);
+    const salaireActuel = parseFloat(document.getElementById('salaireActuel').value);
 
-document.getElementById('calculerBtn').addEventListener('click', calculer);
+    let revenuType = document.querySelector('input[name="revenuType"]:checked').value;
+    let revenuAnnuel = revenuType === 'manuel' ? parseFloat(revenuManuelInput.value) : salaireActuel*(parseFloat(revenuType)/100);
 
-function calculer() {
-  // Récupération des valeurs
-  const ageActuel = parseInt(document.getElementById('ageActuel').value);
-  const ageRetraite = parseInt(document.getElementById('ageRetraite').value);
-  const salaireActuel = parseFloat(document.getElementById('salaireActuel').value);
+    const comptes = {
+      CELI: {montant: parseFloat(document.getElementById('montantCELI').value), cotisation: parseFloat(document.getElementById('cotisationCELI').value), rendement: parseFloat(document.getElementById('rendementCELI').value)/100},
+      REER: {montant: parseFloat(document.getElementById('montantREER').value), cotisation: parseFloat(document.getElementById('cotisationREER').value), rendement: parseFloat(document.getElementById('rendementREER').value)/100},
+      CRI: {montant: parseFloat(document.getElementById('montantCRI').value), cotisation: parseFloat(document.getElementById('cotisationCRI').value), rendement: parseFloat(document.getElementById('rendementCRI').value)/100},
+      NonEnregistre: {montant: parseFloat(document.getElementById('montantNonEnregistre').value), cotisation: parseFloat(document.getElementById('cotisationNonEnregistre').value), rendement: parseFloat(document.getElementById('rendementNonEnregistre').value)/100}
+    };
 
-  let revenuDesire = 0;
-  const choix = choixRevenu.value;
-  if (choix === '70') revenuDesire = salaireActuel * 0.7;
-  else if (choix === '80') revenuDesire = salaireActuel * 0.8;
-  else revenuDesire = parseFloat(document.getElementById('revenuManuel').value || 0);
+    const scenario = document.querySelector('.scenario-btn.active').dataset.scenario;
 
-  // Comptes initiaux et cotisations
-  const comptes = {
-    celi: { init: parseFloat(document.getElementById('celiInit').value), cot: parseFloat(document.getElementById('celiCot').value), rendement: parseFloat(document.getElementById('celiRendement').value) },
-    reer: { init: parseFloat(document.getElementById('reerInit').value), cot: parseFloat(document.getElementById('reerCot').value), rendement: parseFloat(document.getElementById('reerRendement').value) },
-    cri: { init: parseFloat(document.getElementById('criInit').value), cot: parseFloat(document.getElementById('criCot').value), rendement: parseFloat(document.getElementById('criRendement').value) },
-    non: { init: parseFloat(document.getElementById('nonInit').value), cot: parseFloat(document.getElementById('nonCot').value), rendement: parseFloat(document.getElementById('nonRendement').value) }
-  };
+    // Calcul année par année
+    const data = [];
+    const maxAge = scenario==='esperance' ? ageActuel+30 : ageActuel+40; // simplification
+    let totalImpots = 0;
 
-  // Indexation salaire et RRQ/PSV
-  const index = 0.02; // 2% par année
-  let salaire = salaireActuel;
-  let psv = 700; // montant mensuel approximatif
-  let rrq = 1000;
-
-  const annees = [];
-  const tableauData = [];
-
-  const totalAnnuel = [];
-  const impotAnnuel = [];
-
-  const anneeMax = 100; // jusqu'à 100 ans
-  let comptesAnnee = { ...comptes };
-  let totalImpots = 0;
-
-  for (let age = ageActuel; age <= anneeMax; age++) {
-    // Croissance du salaire et revenus indexés
-    if (age < ageRetraite) salaire *= (1 + index);
-
-    // Croissance des comptes avec cotisations
-    for (let key in comptesAnnee) {
-      if (age < ageRetraite) comptesAnnee[key].init = comptesAnnee[key].init * (1 + comptesAnnee[key].rendement/100) + (key!=='cri'?comptesAnnee[key].cot:0);
-      else comptesAnnee[key].init = comptesAnnee[key].init * (1 + comptesAnnee[key].rendement/100);
-    }
-
-    // Décaissement selon scénario
-    let decaissement = 0;
-    if (age >= ageRetraite) decaissement = revenuDesire;
-
-    // Impôt approximatif (simplifié)
-    let impot = decaissement * 0.25; // 25% moyenne simplifiée
-    totalImpots += impot;
-
-    // Retirer impôt du compte non-enregistré d'abord
-    if (decaissement > 0) {
-      if (comptesAnnee.non.init >= decaissement) comptesAnnee.non.init -= decaissement + impot;
-      else {
-        let restant = decaissement - comptesAnnee.non.init;
-        comptesAnnee.non.init = 0;
-        comptesAnnee.celi.init = Math.max(comptesAnnee.celi.init - restant - impot,0);
+    for(let age=ageActuel; age<=maxAge; age++){
+      const yearData = {age};
+      let total=0, impots=0;
+      for(let key in comptes){
+        let c = comptes[key];
+        if(age<ageRetraite) c.montant += c.cotisation;
+        c.montant = c.montant*(1+c.rendement);
+        yearData[key] = Math.round(c.montant);
+        total+=c.montant;
       }
+
+      // Appliquer événements financiers
+      evenements.filter(e=>e.annee===age).forEach(e=>{
+        if(e.compte==='auto'){
+          // répartir de manière proportionnelle
+          let totalMontant = Object.values(comptes).reduce((sum,c)=>sum+ c.montant,0);
+          for(let k in comptes) comptes[k].montant += (comptes[k].montant/totalMontant)*e.montant;
+        } else comptes[e.compte].montant += e.montant;
+      });
+
+      yearData.total = Math.round(total);
+      yearData.impot = Math.round(impots);
+      totalImpots += impots;
+      data.push(yearData);
     }
 
-    const totalComptes = comptesAnnee.celi.init + comptesAnnee.reer.init + comptesAnnee.cri.init + comptesAnnee.non.init;
+    // Affichage total
+    document.getElementById('totalRestant').textContent = Math.round(data[data.length-1].total).toLocaleString();
+    document.getElementById('impotTotal').textContent = Math.round(totalImpots).toLocaleString();
 
-    // Stop si tout est à zéro après retraite
-    if (totalComptes <= 0 && age >= ageRetraite) break;
+    // Remplissage tableau
+    const tbodyRes = document.querySelector('#tableResultats tbody');
+    tbodyRes.innerHTML='';
+    data.forEach(d=>{
+      if(d.CELI===0 && d.REER===0 && d.CRI===0 && d.NonEnregistre===0) return;
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${d.age}</td><td>${d.CELI.toLocaleString()}</td><td>${d.REER.toLocaleString()}</td><td>${d.CRI.toLocaleString()}</td><td>${d.NonEnregistre.toLocaleString()}</td><td>${d.total.toLocaleString()}</td><td>${d.impot.toLocaleString()}</td>`;
+      tbodyRes.appendChild(row);
+    });
 
-    annees.push(age);
-    tableauData.push({ age, ...comptesAnnee, total: totalComptes, impot });
-    totalAnnuel.push(totalComptes);
-    impotAnnuel.push(impot);
-  }
+    // Graphique
+    const labels = data.map(d=>d.age);
+    const datasets = [
+      {label:'CELI', data:data.map(d=>d.CELI), backgroundColor:'rgba(0,196,140,0.4)', borderColor:'rgba(0,196,140,0.8)'},
+      {label:'REER', data:data.map(d=>d.REER), backgroundColor:'rgba(26,115,232,0.4)', borderColor:'rgba(26,115,232,0.8)'},
+      {label:'CRI', data:data.map(d=>d.CRI), backgroundColor:'rgba(255,193,7,0.4)', borderColor:'rgba(255,193,7,0.8)'},
+      {label:'NonEnregistre', data:data.map(d=>d.NonEnregistre), backgroundColor:'rgba(220,53,69,0.4)', borderColor:'rgba(220,53,69,0.8)'}
+    ];
 
-  // Mise à jour des totaux
-  document.getElementById('totalRestant').textContent = '$' + Math.round(totalAnnuel[totalAnnuel.length-1]);
-  document.getElementById('impotTotal').textContent = '$' + Math.round(totalImpots);
-
-  // Graphique
-  const datasets = [
-    { label: 'CELI', data: tableauData.map(d=>d.celi.init), backgroundColor: 'rgba(0,196,140,0.5)', borderColor: 'rgba(0,196,140,0.8)' },
-    { label: 'REER', data: tableauData.map(d=>d.reer.init), backgroundColor: 'rgba(26,115,232,0.5)', borderColor: 'rgba(26,115,232,0.8)' },
-    { label: 'CRI', data: tableauData.map(d=>d.cri.init), backgroundColor: 'rgba(255,193,7,0.5)', borderColor: 'rgba(255,193,7,0.8)' },
-    { label: 'Non-enregistré', data: tableauData.map(d=>d.non.init), backgroundColor: 'rgba(220,53,69,0.5)', borderColor: 'rgba(220,53,69,0.8)' }
-  ];
-
-  if(chart) chart.destroy();
-  const ctx = document.getElementById('chartCapital').getContext('2d');
-  chart = new Chart(ctx, {
-    type: 'bar',
-    data: { labels: annees, datasets: datasets },
-    options: {
-      responsive:true,
-      scales: { x:{ stacked:true }, y:{ stacked:true } }
-    }
+    if(chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type:'bar',
+      data:{labels, datasets},
+      options:{responsive:true, scales:{y:{beginAtZero:true}}}
+    });
   });
-
-  // Tableau annuel
-  const tbody = document.querySelector('#tableauAnnuel tbody');
-  tbody.innerHTML = '';
-  tableauData.forEach(d=>{
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${d.age}</td>
-      <td>${Math.round(d.celi.init)}</td>
-      <td>${Math.round(d.reer.init)}</td>
-      <td>${Math.round(d.cri.init)}</td>
-      <td>${Math.round(d.non.init)}</td>
-      <td>${Math.round(d.total)}</td>
-      <td>${Math.round(d.impot)}</td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+});
 </script>
 </body>
 </html>
