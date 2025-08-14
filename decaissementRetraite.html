@@ -3,23 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calculatrice Décaissement Premium</title>
+<title>Calculatrice Décaissement Optimisée</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
 <div class="container">
-<h1>Calculatrice de Décaissement</h1>
+<h1>Calculatrice de Décaissement Optimisée</h1>
 
-<!-- Grand chiffre capital total -->
 <div class="card" id="totalCapitalCard">
   <h2>Total restant: <span id="totalCapital">$0</span></h2>
   <div class="progress-bar"><div id="progress" style="width:0%"></div></div>
 </div>
 
-<!-- Inputs -->
 <div class="card-grid">
-  <!-- Informations personnelles -->
   <div class="card">
     <h3>Informations personnelles</h3>
     <div class="form-group"><label>Âge actuel</label><input type="number" id="age" value="65"></div>
@@ -28,7 +25,6 @@
     <div class="form-group"><label>Espérance de vie</label><select id="lifeExpectancy"><option value="75">Courte</option><option value="85" selected>Moyenne</option><option value="100">Longue</option></select></div>
   </div>
 
-  <!-- Comptes et rendements -->
   <div class="card">
     <h3>Comptes et rendements (%)</h3>
     <div class="form-group"><label>CELI ($)</label><input type="number" id="celi" value="50000"></div>
@@ -41,14 +37,12 @@
     <div class="form-group"><label>Rendement Non-enregistré</label><input type="number" id="nonRendement" value="3" step="0.1"></div>
   </div>
 
-  <!-- Revenu désiré -->
   <div class="card">
     <h3>Revenu désiré</h3>
     <div class="form-group"><label>Montant</label><input type="number" id="revenu" value="30000"></div>
     <div class="form-group"><label>Fréquence</label><select id="frequence"><option value="annuel">Annuel</option><option value="mensuel">Mensuel</option></select></div>
   </div>
 
-  <!-- RRQ & PSV -->
   <div class="card">
     <h3>RRQ & PSV</h3>
     <div class="form-group"><label>RRQ: âge début</label><input type="number" id="rrqAge" value="65"></div>
@@ -58,14 +52,12 @@
   </div>
 </div>
 
-<!-- Scénarios -->
 <div class="scenario-btns">
   <button class="scenario-btn scenario1 active" data-scenario="1">Maximiser durée</button>
   <button class="scenario-btn scenario2" data-scenario="2">Minimiser impôt</button>
   <button class="scenario-btn scenario3" data-scenario="3">Espérance choisie</button>
 </div>
 
-<!-- Événements -->
 <div class="card">
   <h3>Événements financiers</h3>
   <table id="events-table">
@@ -79,131 +71,110 @@
 </div>
 
 <script>
-// Chart.js
 const ctx = document.getElementById('decaissChart').getContext('2d');
-let chart; let events = [];
-const inflation = 0.02;
+let chart = null;
+let events = [];
 
-// --- Ajouter événement dynamique
 document.getElementById('addEvent').addEventListener('click', () => {
   const tbody = document.getElementById('events-body');
-  const row = document.createElement('tr');
-  row.innerHTML = `<td><input type="number" class="event-year" value="2030"></td>
-                   <td><select class="event-type"><option value="ajout">Ajout</option><option value="depense">Dépense</option></select></td>
-                   <td><input type="number" class="event-amount" value="10000"></td>
-                   <td><button class="remove-btn">Supprimer</button></td>`;
-  tbody.appendChild(row);
-  row.querySelector('.remove-btn').addEventListener('click', ()=>{row.remove(); simulate();});
-  row.querySelectorAll('input,select').forEach(el=>el.addEventListener('input', simulate));
-  simulate();
+  const tr = document.createElement('tr');
+  tr.innerHTML = `
+    <td><input type="number" class="event-year" value="2030"></td>
+    <td>
+      <select class="event-type">
+        <option value="ajout">Ajout</option>
+        <option value="depense">Dépense</option>
+      </select>
+    </td>
+    <td><input type="number" class="event-montant" value="0"></td>
+    <td><button class="remove-btn">Supprimer</button></td>
+  `;
+  tbody.appendChild(tr);
+  tr.querySelector('.remove-btn').addEventListener('click', () => { tr.remove(); simulate(); });
+  tr.querySelectorAll('input, select').forEach(el => el.addEventListener('input', simulate));
 });
 
-// --- Simulation helpers
-function revenuIndexed(base, yearOffset){ return base*Math.pow(1+inflation,yearOffset);}
-function psvClawbackIndexed(psvBase,revenuTotal,yearOffset){
-  let seuilBase=97392; let seuil=seuilBase*Math.pow(1+inflation,yearOffset);
-  let psv=psvBase; if(revenuTotal>seuil) psv=Math.max(0,psv-0.15*(revenuTotal-seuil));
-  return psv;
-}
-function calcImpotsIndexed(revenuAnnuel, yearOffset){
-  let fedBracketsBase=[53359,106717,165430,235675]; let fedRates=[0.15,0.205,0.26,0.29,0.33];
-  let qcBracketsBase=[49020,98040,119910]; let qcRates=[0.15,0.20,0.24,0.2575];
-  let fedBrackets=fedBracketsBase.map(b=>b*Math.pow(1+inflation,yearOffset));
-  let qcBrackets=qcBracketsBase.map(b=>b*Math.pow(1+inflation,yearOffset));
+let currentScenario = 1;
+document.querySelectorAll('.scenario-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentScenario = parseInt(btn.dataset.scenario);
+    simulate();
+  });
+});
 
-  let fedImp=0,last=0;
-  for(let i=0;i<fedBrackets.length;i++){
-    if(revenuAnnuel>fedBrackets[i]){fedImp+=(fedBrackets[i]-last)*fedRates[i];last=fedBrackets[i];}
-    else{fedImp+=(revenuAnnuel-last)*fedRates[i];last=revenuAnnuel;break;}
-  }
-  if(revenuAnnuel>last) fedImp+=(revenuAnnuel-last)*fedRates[fedRates.length-1];
+function simulate() {
+  const age = parseInt(document.getElementById('age').value);
+  const ageRetraite = parseInt(document.getElementById('ageRetraite').value);
+  const expectancy = parseInt(document.getElementById('lifeExpectancy').value);
 
-  let qcImp=0; last=0;
-  for(let i=0;i<qcBrackets.length;i++){
-    if(revenuAnnuel>qcBrackets[i]){qcImp+=(qcBrackets[i]-last)*qcRates[i];last=qcBrackets[i];}
-    else{qcImp+=(revenuAnnuel-last)*qcRates[i];last=revenuAnnuel;break;}
-  }
-  if(revenuAnnuel>last) qcImp+=(revenuAnnuel-last)*qcRates[qcRates.length-1];
+  let celiBal = parseFloat(document.getElementById('celi').value);
+  const celiRend = parseFloat(document.getElementById('celiRendement').value)/100;
+  let reerBal = parseFloat(document.getElementById('reer').value);
+  const reerRend = parseFloat(document.getElementById('reerRendement').value)/100;
+  let criBal = parseFloat(document.getElementById('cri').value);
+  const criRend = parseFloat(document.getElementById('criRendement').value)/100;
+  let nonBal = parseFloat(document.getElementById('nonEnregistre').value);
+  const nonRend = parseFloat(document.getElementById('nonRendement').value)/100;
 
-  return fedImp+qcImp;
-}
+  const revenuInput = parseFloat(document.getElementById('revenu').value);
+  const frequence = document.getElementById('frequence').value;
+  const revenu = frequence==='mensuel'? revenuInput*12 : revenuInput;
 
-function retraitStrategique(balances,reste,ordre,celiDroite){
-  let res=[...balances];
-  for(let i of ordre){
-    if(res[i]>=reste){res[i]-=reste; if(i===0) celiDroite+=reste; reste=0;}
-    else {reste-=res[i]; if(i===0) celiDroite+=res[i]; res[i]=0;}
-  }
-  return [...res,celiDroite];
-}
+  const rrqAge = parseInt(document.getElementById('rrqAge').value);
+  const rrqMontant = parseFloat(document.getElementById('rrqMontant').value);
+  const psvAge = parseInt(document.getElementById('psvAge').value);
+  const psvMontant = parseFloat(document.getElementById('psvMontant').value);
 
-// --- Simulation principale
-function simulate(){
-  const age=parseInt(document.getElementById('age').value);
-  const ageRetraite=parseInt(document.getElementById('ageRetraite').value);
-  const sexe=document.getElementById('sexe').value;
-  const expectancy=parseInt(document.getElementById('lifeExpectancy').value);
-  const scenario=parseInt(document.querySelector('.scenario-btn.active').dataset.scenario);
-
-  let celiBal=parseFloat(document.getElementById('celi').value);
-  let reerBal=parseFloat(document.getElementById('reer').value);
-  let criBal=parseFloat(document.getElementById('cri').value);
-  let nonBal=parseFloat(document.getElementById('nonEnregistre').value);
-  let celiDroite=0;
-
-  let revenu=parseFloat(document.getElementById('revenu').value);
-  if(document.getElementById('frequence').value==='mensuel') revenu*=12;
-
-  const rrqAge=parseInt(document.getElementById('rrqAge').value);
-  const rrqMontant=parseFloat(document.getElementById('rrqMontant').value);
-  const psvAge=parseInt(document.getElementById('psvAge').value);
-  const psvMontant=parseFloat(document.getElementById('psvMontant').value);
-
-  let celiRend=parseFloat(document.getElementById('celiRendement').value)/100;
-  let reerRend=parseFloat(document.getElementById('reerRendement').value)/100;
-  let criRend=parseFloat(document.getElementById('criRendement').value)/100;
-  let nonRend=parseFloat(document.getElementById('nonRendement').value)/100;
-
-  events=[]; document.querySelectorAll('#events-body tr').forEach(tr=>{
-    events.push({annee:parseInt(tr.querySelector('.event-year').value),
-                 type:tr.querySelector('.event-type').value,
-                 montant:parseFloat(tr.querySelector('.event-amount').value)});
+  events = [];
+  document.querySelectorAll('#events-body tr').forEach(tr=>{
+    const annee = parseInt(tr.querySelector('.event-year').value);
+    const type = tr.querySelector('.event-type').value;
+    const montant = parseFloat(tr.querySelector('.event-montant').value);
+    events.push({annee,type,montant});
   });
 
-  const years=[]; for(let y=ageRetraite;y<=expectancy;y++) years.push(y);
-  const celi=[],reer=[],cri=[],nonE=[],total=[];
+  const years=[];
+  for(let y=ageRetraite;y<=expectancy;y++) years.push(y);
 
-  years.forEach((year,i)=>{
-    let revenuAnnuel=revenu;
+  const celiArr=[],reerArr=[],criArr=[],nonArr=[],totalArr=[];
 
-    // RRQ & PSV
-    if(year>=rrqAge) revenuAnnuel+=rrqMontant* Math.pow(1+inflation,i);
-    if(year>=psvAge) revenuAnnuel+=psvClawbackIndexed(psvMontant,revenuAnnuel,i);
+  let droitsCELI = 0;
 
-    // Événements
-    events.forEach(e=>{if(e.annee===year) revenuAnnuel+= e.type==='ajout'? e.montant:-e.montant;});
+  years.forEach(year=>{
+    let revenuAnnuel = revenu;
+    if(year>=rrqAge) revenuAnnuel+=rrqMontant;
+    if(year>=psvAge) revenuAnnuel+=psvMontant;
 
-    // Retrait selon scénario
-    let retraitRest=revenuAnnuel;
-    let ordre=[0,1,2,3]; if(scenario===2) ordre=[3,2,1,0];
-    [celiBal,reerBal,criBal,nonBal,celiDroite]=retraitStrategique([celiBal,reerBal,criBal,nonBal],retraitRest,ordre,celiDroite);
+    events.forEach(e=>{if(e.annee===year) revenuAnnuel += e.type==='ajout'? e.montant : -e.montant;});
 
-    // Rendement
-    celiBal*=1+celiRend; reerBal*=1+reerRend; criBal*=1+criRend; nonBal*=1+nonRend;
+    [celiBal,reerBal,criBal,nonBal] = retraitStrategiqueOptimise([celiBal,reerBal,criBal,nonBal],revenuAnnuel,currentScenario,droitsCELI);
 
-    celi.push(celiBal); reer.push(reerBal); cri.push(criBal); nonE.push(nonBal);
-    total.push(celiBal+reerBal+criBal+nonBal);
+    celiBal *= 1+celiRend; reerBal *= 1+reerRend; criBal *= 1+criRend; nonBal *= 1+nonRend;
+
+    celiArr.push(celiBal); reerArr.push(reerBal); criArr.push(criBal); nonArr.push(nonBal);
+    totalArr.push(celiBal+reerBal+criBal+nonBal);
   });
+
+  const totalCapital = totalArr[totalArr.length-1];
+  document.getElementById('totalCapital').textContent = `$${totalCapital.toLocaleString()}`;
+  const progressPercent = Math.max(0,Math.min(100,(totalCapital/(celiBal+reerBal+criBal+nonBal+revenu))*100));
+  document.getElementById('progress').style.width = progressPercent + '%';
 
   if(chart) chart.destroy();
-  chart=new Chart(ctx,{
-    type:'line',
-    data:{labels:years,datasets:[
-      {label:'CELI',data:celi,backgroundColor:'rgba(0,196,140,0.5)',stack:'Stack 0',fill:true},
-      {label:'REER/FERR',data:reer,backgroundColor:'rgba(26,115,232,0.5)',stack:'Stack 0',fill:true},
-      {label:'CRI/FRV',data:cri,backgroundColor:'rgba(255,193,7,0.5)',stack:'Stack 0',fill:true},
-      {label:'Non-enregistré',data:nonE,backgroundColor:'rgba(220,53,69,0.5)',stack:'Stack 0',fill:true},
-      {label:'Total',data:total,type:'line',borderColor:'#0a2540',borderWidth:2,fill:false}]},
+  chart = new Chart(ctx,{
+    type:'bar',
+    data:{
+      labels:years,
+      datasets:[
+        {label:'CELI',data:celiArr,backgroundColor:'rgba(0,196,140,0.5)',stack:'Stack0'},
+        {label:'REER/FERR',data:reerArr,backgroundColor:'rgba(26,115,232,0.5)',stack:'Stack0'},
+        {label:'CRI/FRV',data:criArr,backgroundColor:'rgba(255,193,7,0.5)',stack:'Stack0'},
+        {label:'Non-enregistré',data:nonArr,backgroundColor:'rgba(220,53,69,0.5)',stack:'Stack0'},
+        {label:'Total',data:totalArr,type:'line',borderColor:'#0a2540',borderWidth:2,fill:false}
+      ]
+    },
     options:{
       responsive:true,
       interaction:{mode:'index',intersect:false},
@@ -213,16 +184,33 @@ function simulate(){
   });
 }
 
-// --- Événements input
-document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',simulate));
-document.querySelectorAll('.scenario-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.scenario-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    simulate();
-  });
-});
+// Retrait stratégique avancé
+function retraitStrategiqueOptimise(balances,montant,scenario,droitsCELI=0){
+  let [celi,reer,cri,nonE]=balances;
+  let ordre=[];
+  if(scenario===1) ordre=[3,0,2,1];
+  else if(scenario===2) ordre=[0,3,2,1];
+  else if(scenario===3) ordre=[3,0,2,1];
 
+  for(let i of ordre){
+    if(montant<=0) break;
+    let solde=[celi,reer,cri,nonE][i];
+    let retrait=Math.min(solde,montant);
+    if(i===0){ celi-=retrait; montant-=retrait; droitsCELI+=retrait; }
+    else if(i===1){ reer-=retrait; montant-=retrait; }
+    else if(i===2){ cri-=retrait; montant-=retrait; }
+    else if(i===3){ 
+      nonE-=retrait; montant-=retrait;
+      if(droitsCELI>0){
+        let transfert=Math.min(retrait,droitsCELI);
+        celi+=transfert; nonE-=transfert; droitsCELI-=transfert;
+      }
+    }
+  }
+  return [celi,reer,cri,nonE];
+}
+
+document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',simulate));
 simulate();
 </script>
 </body>
