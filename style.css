@@ -1,5 +1,5 @@
 /* ================== */
-/* RESET & BASE */
+/* BASE & RESET */
 /* ================== */
 * {
   margin: 0;
@@ -14,32 +14,24 @@ body {
   line-height: 1.6;
   font-size: 16px;
   padding: 0;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
-/* Headings */
+/* ================== */
+/* HEADINGS */
 h1, h2, h3 {
   color: #0a2540;
   font-weight: 700;
   margin-bottom: 16px;
-  text-align: center;
 }
 
-h1 { font-size: 2.5rem; }
-h2 { font-size: 2rem; }
+h1 { font-size: 2.5rem; text-align:center; }
+h2 { font-size: 2rem; text-align:center; }
 h3 { font-size: 1.5rem; }
 
 /* ================== */
-/* CONTAINER */
-/* ================== */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 40px 20px;
-}
-
-/* ================== */
 /* HEADER & NAV */
-/* ================== */
 header {
   background-color: #ffffff;
   padding: 20px 0;
@@ -68,65 +60,41 @@ nav a {
 nav a:hover { color: #00c48c; }
 
 /* ================== */
-/* HERO */
+/* HERO SECTION */
 .hero {
   background-color: #e6f7f1;
   text-align: center;
-  padding: 60px 20px;
+  padding: 40px 20px;
   border-bottom: 1px solid #d4e6dd;
 }
 
 .hero h1 { color: #0a2540; margin-bottom: 20px; }
 .hero p { color: #4f5d75; font-size: 1.2rem; max-width: 700px; margin: 0 auto 30px; }
-.hero button {
-  background-color: #00c48c;
-  color: white;
-  border: none;
-  padding: 14px 28px;
-  font-size: 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-.hero button:hover { background-color: #00a678; }
 
 /* ================== */
-/* CARTES & GRID */
+/* CARDS & GRID */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-  margin-top: 40px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
 }
 
-.card, .card-link, .calculator-card {
-  background-color: #ffffff;
-  border: 1px solid #e1e8ed;
-  border-radius: 12px;
-  padding: 22px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-  cursor: pointer;
+.card {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  min-height: 280px;
-  color: inherit;
-  text-decoration: none;
+  padding: 22px;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.card:hover, .card-link:hover, .calculator-card:hover {
-  transform: translateY(-6px);
+.card:hover {
+  transform: translateY(0); /* supprime le saut */
   box-shadow: 0 10px 25px rgba(0,0,0,0.12);
-  border-color: #00c48c;
 }
-
-.card.selected, .card-link.selected {
-  border-color: #00c48c;
-}
-
-.card h3, .card-link h3, .calculator-card h3 { margin-bottom: 10px; color: #0a2540; }
-.card p, .card-link p { color: #4f5d75; font-size: 0.95rem; }
 
 /* ================== */
 /* FORM GROUPS */
@@ -158,46 +126,69 @@ nav a:hover { color: #00c48c; }
 }
 
 /* ================== */
-/* BOUTONS & SCÉNARIOS */
+/* BOUTONS & SCENARIOS */
 .btn-primary {
   background-color: #00c48c;
-  color: white;
+  color: #fff;
   border: none;
   padding: 12px 24px;
   font-size: 1rem;
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   font-weight: 700;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease;
   align-self: flex-start;
 }
 
 .btn-primary:hover { background-color: #00a678; }
 
-.scenario-btns {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  margin: 30px 0;
-}
-
 .scenario-btn {
-  padding: 10px 22px;
+  padding: 10px 20px;
   border-radius: 12px;
   border: 1px solid #00c48c;
   background-color: #ffffff;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  margin-right: 10px;
 }
 
 .scenario-btn.active {
   background-color: #00c48c;
-  color: #fff;
+  color: white;
 }
 
 /* ================== */
-/* TOTAL CAPITAL & IMPÔT */
+/* CHART & TABLEAU */
+canvas {
+  display: block;
+  margin: 20px auto 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 40px;
+}
+
+table th, table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #e6ecf1;
+}
+
+table th { background-color: #f9fafc; font-weight: 600; }
+
+/* Barres pastel */
+.chartjs-color-celi { background-color: rgba(0,196,140,0.4); border-color: rgba(0,196,140,0.8); }
+.chartjs-color-reer { background-color: rgba(26,115,232,0.4); border-color: rgba(26,115,232,0.8); }
+.chartjs-color-cri { background-color: rgba(255,193,7,0.4); border-color: rgba(255,193,7,0.8); }
+.chartjs-color-non { background-color: rgba(220,53,69,0.4); border-color: rgba(220,53,69,0.8); }
+
+/* ================== */
+/* TOTAL CAPITAL CARD */
 #totalCapitalCard {
   display: flex;
   flex-direction: column;
@@ -210,72 +201,14 @@ nav a:hover { color: #00c48c; }
 }
 
 #totalCapitalCard h2 { font-size: 1.8rem; margin-bottom: 12px; }
-#totalCapitalCard h3 { font-size: 1.2rem; color: #555; }
-
-/* ================== */
-/* EVENTS BUBBLES */
-.events-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.event-bubble {
-  padding: 6px 10px;
-  border-radius: 12px;
-  background-color: #e6f7f1;
-  font-size: 0.9rem;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.event-bubble button {
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-weight: 700;
-  color: #dc3545;
-}
-
-/* ================== */
-/* TABLEAU */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-table th, table td {
-  padding: 10px;
-  text-align: center;
-  border-bottom: 1px solid #e6ecf1;
-}
-
-table th { background-color: #f9fafc; font-weight: 600; }
-
-/* ================== */
-/* GRAPHIQUE */
-canvas {
-  display: block;
-  width: 100%;
-  max-height: 450px;
-  margin: 0 auto 40px;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
-}
-
-/* Couleurs comptes */
-.chartjs-color-celi { background-color: rgba(0,196,140,0.4); border-color: rgba(0,196,140,0.8); }
-.chartjs-color-reer { background-color: rgba(26,115,232,0.4); border-color: rgba(26,115,232,0.8); }
-.chartjs-color-cri { background-color: rgba(255,193,7,0.4); border-color: rgba(255,193,7,0.8); }
-.chartjs-color-non { background-color: rgba(220,53,69,0.4); border-color: rgba(220,53,69,0.8); }
 
 /* ================== */
 /* RESPONSIVE */
-@media (max-width: 768px){
-  nav { flex-direction: column; gap: 12px; }
+@media (max-width:768px){
+  nav {
+    flex-direction: column;
+    gap: 12px;
+  }
   .card-grid { grid-template-columns: 1fr; }
   .scenario-btns { flex-direction: column; gap: 12px; }
 }
