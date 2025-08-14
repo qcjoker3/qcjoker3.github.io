@@ -1,56 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculatrice Décaissement Premium</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
 <div class="container">
-  <h1>Calculatrice de Décaissement</h1>
+<h1>Calculatrice de Décaissement</h1>
 
-  <div class="form-section">
-    <div class="form-group"><label>Âge actuel</label><input type="number" id="age" value="65"></div>
-    <div class="form-group"><label>Âge de la retraite</label><input type="number" id="ageRetraite" value="65"></div>
-    <div class="form-group"><label>Sexe</label>
-      <select id="sexe"><option value="H">Homme</option><option value="F">Femme</option></select>
-    </div>
-    <div class="form-group"><label>Espérance de vie</label>
-      <select id="lifeExpectancy"><option value="75">Courte (75 ans)</option><option value="85" selected>Moyenne (85 ans)</option><option value="100">Longue (100 ans)</option></select>
-    </div>
-
-    <div class="form-group"><label>Capital initial CELI ($)</label><input type="number" id="celi" value="50000"></div>
-    <div class="form-group"><label>Capital initial REER ($)</label><input type="number" id="reer" value="150000"></div>
-    <div class="form-group"><label>Capital initial CRI ($)</label><input type="number" id="cri" value="80000"></div>
-    <div class="form-group"><label>Capital initial Non enregistré ($)</label><input type="number" id="nonEnregistre" value="0"></div>
-
-    <div class="form-group"><label>Revenu désiré</label>
-      <input type="number" id="revenu" value="30000">
-      <select id="frequence"><option value="annuel">Par année</option><option value="mensuel">Par mois</option></select>
-    </div>
-
-    <div class="form-group"><label>Scénario</label>
-      <select id="scenario"><option value="1">Maximiser la durée</option><option value="2">Minimiser l'impôt</option><option value="3">Espérance choisie</option></select>
-    </div>
-
-    <div class="form-group"><label>RRQ: âge début</label><input type="number" id="rrqAge" value="65"></div>
-    <div class="form-group"><label>RRQ: montant projeté à 65</label><input type="number" id="rrqMontant" value="12000"></div>
-    <div class="form-group"><label>PSV: âge début</label><input type="number" id="psvAge" value="65"></div>
-    <div class="form-group"><label>PSV: montant projeté à 65</label><input type="number" id="psvMontant" value="7800"></div>
-  </div>
-
-  <div class="form-section">
-    <h3>Événements financiers</h3>
-    <table id="events-table">
-      <thead><tr><th>Année</th><th>Type</th><th>Montant</th><th>Action</th></tr></thead>
-      <tbody id="events-body"></tbody>
-    </table>
-    <button class="btn-primary" id="addEvent">Ajouter un événement</button>
-  </div>
-
-  <canvas id="decaissChart" height="100"></canvas>
+<!-- Grand chiffre capital total -->
+<div class="card" id="totalCapitalCard">
+  <h2>Total restant: <span id="totalCapital">$0</span></h2>
+  <div class="progress-bar"><div id="progress" style="width:0%"></div></div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-// === Variables globales
-const ctx = document.getElementById('decaissChart').getContext('2d');
-let chart;
-let events = [];
+<!-- Inputs -->
+<div class="card-grid">
+  <!-- Informations personnelles -->
+  <div class="card">
+    <h3>Informations personnelles</h3>
+    <div class="form-group"><label>Âge actuel</label><input type="number" id="age" value="65"></div>
+    <div class="form-group"><label>Âge de la retraite</label><input type="number" id="ageRetraite" value="65"></div>
+    <div class="form-group"><label>Sexe</label><select id="sexe"><option value="H">Homme</option><option value="F">Femme</option></select></div>
+    <div class="form-group"><label>Espérance de vie</label><select id="lifeExpectancy"><option value="75">Courte</option><option value="85" selected>Moyenne</option><option value="100">Longue</option></select></div>
+  </div>
 
-// === Ajouter un événement
+  <!-- Comptes et rendements -->
+  <div class="card">
+    <h3>Comptes et rendements (%)</h3>
+    <div class="form-group"><label>CELI ($)</label><input type="number" id="celi" value="50000"></div>
+    <div class="form-group"><label>Rendement CELI</label><input type="number" id="celiRendement" value="5" step="0.1"></div>
+    <div class="form-group"><label>REER/FERR ($)</label><input type="number" id="reer" value="150000"></div>
+    <div class="form-group"><label>Rendement REER</label><input type="number" id="reerRendement" value="6" step="0.1"></div>
+    <div class="form-group"><label>CRI/FRV ($)</label><input type="number" id="cri" value="80000"></div>
+    <div class="form-group"><label>Rendement CRI</label><input type="number" id="criRendement" value="4" step="0.1"></div>
+    <div class="form-group"><label>Non-enregistré ($)</label><input type="number" id="nonEnregistre" value="0"></div>
+    <div class="form-group"><label>Rendement Non-enregistré</label><input type="number" id="nonRendement" value="3" step="0.1"></div>
+  </div>
+
+  <!-- Revenu désiré -->
+  <div class="card">
+    <h3>Revenu désiré</h3>
+    <div class="form-group"><label>Montant</label><input type="number" id="revenu" value="30000"></div>
+    <div class="form-group"><label>Fréquence</label><select id="frequence"><option value="annuel">Annuel</option><option value="mensuel">Mensuel</option></select></div>
+  </div>
+
+  <!-- RRQ & PSV -->
+  <div class="card">
+    <h3>RRQ & PSV</h3>
+    <div class="form-group"><label>RRQ: âge début</label><input type="number" id="rrqAge" value="65"></div>
+    <div class="form-group"><label>RRQ: montant à 65</label><input type="number" id="rrqMontant" value="12000"></div>
+    <div class="form-group"><label>PSV: âge début</label><input type="number" id="psvAge" value="65"></div>
+    <div class="form-group"><label>PSV: montant à 65</label><input type="number" id="psvMontant" value="7800"></div>
+  </div>
+</div>
+
+<!-- Scénarios -->
+<div class="scenario-btns">
+  <button class="scenario-btn scenario1 active" data-scenario="1">Maximiser durée</button>
+  <button class="scenario-btn scenario2" data-scenario="2">Minimiser impôt</button>
+  <button class="scenario-btn scenario3" data-scenario="3">Espérance choisie</button>
+</div>
+
+<!-- Événements -->
+<div class="card">
+  <h3>Événements financiers</h3>
+  <table id="events-table">
+    <thead><tr><th>Année</th><th>Type</th><th>Montant</th><th>Action</th></tr></thead>
+    <tbody id="events-body"></tbody>
+  </table>
+  <button class="btn-primary" id="addEvent">Ajouter un événement</button>
+</div>
+
+<canvas id="decaissChart" height="200"></canvas>
+</div>
+
+<script>
+// Chart.js
+const ctx = document.getElementById('decaissChart').getContext('2d');
+let chart; let events = [];
+const inflation = 0.02;
+
+// --- Ajouter événement dynamique
 document.getElementById('addEvent').addEventListener('click', () => {
   const tbody = document.getElementById('events-body');
   const row = document.createElement('tr');
@@ -59,177 +93,137 @@ document.getElementById('addEvent').addEventListener('click', () => {
                    <td><input type="number" class="event-amount" value="10000"></td>
                    <td><button class="remove-btn">Supprimer</button></td>`;
   tbody.appendChild(row);
-  row.querySelector('.remove-btn').addEventListener('click', () => { row.remove(); simulate(); });
-  row.querySelectorAll('input, select').forEach(el => el.addEventListener('input', simulate));
+  row.querySelector('.remove-btn').addEventListener('click', ()=>{row.remove(); simulate();});
+  row.querySelectorAll('input,select').forEach(el=>el.addEventListener('input', simulate));
   simulate();
 });
 
-// === Simulation
+// --- Simulation helpers
+function revenuIndexed(base, yearOffset){ return base*Math.pow(1+inflation,yearOffset);}
+function psvClawbackIndexed(psvBase,revenuTotal,yearOffset){
+  let seuilBase=97392; let seuil=seuilBase*Math.pow(1+inflation,yearOffset);
+  let psv=psvBase; if(revenuTotal>seuil) psv=Math.max(0,psv-0.15*(revenuTotal-seuil));
+  return psv;
+}
+function calcImpotsIndexed(revenuAnnuel, yearOffset){
+  let fedBracketsBase=[53359,106717,165430,235675]; let fedRates=[0.15,0.205,0.26,0.29,0.33];
+  let qcBracketsBase=[49020,98040,119910]; let qcRates=[0.15,0.20,0.24,0.2575];
+  let fedBrackets=fedBracketsBase.map(b=>b*Math.pow(1+inflation,yearOffset));
+  let qcBrackets=qcBracketsBase.map(b=>b*Math.pow(1+inflation,yearOffset));
+
+  let fedImp=0,last=0;
+  for(let i=0;i<fedBrackets.length;i++){
+    if(revenuAnnuel>fedBrackets[i]){fedImp+=(fedBrackets[i]-last)*fedRates[i];last=fedBrackets[i];}
+    else{fedImp+=(revenuAnnuel-last)*fedRates[i];last=revenuAnnuel;break;}
+  }
+  if(revenuAnnuel>last) fedImp+=(revenuAnnuel-last)*fedRates[fedRates.length-1];
+
+  let qcImp=0; last=0;
+  for(let i=0;i<qcBrackets.length;i++){
+    if(revenuAnnuel>qcBrackets[i]){qcImp+=(qcBrackets[i]-last)*qcRates[i];last=qcBrackets[i];}
+    else{qcImp+=(revenuAnnuel-last)*qcRates[i];last=revenuAnnuel;break;}
+  }
+  if(revenuAnnuel>last) qcImp+=(revenuAnnuel-last)*qcRates[qcRates.length-1];
+
+  return fedImp+qcImp;
+}
+
+function retraitStrategique(balances,reste,ordre,celiDroite){
+  let res=[...balances];
+  for(let i of ordre){
+    if(res[i]>=reste){res[i]-=reste; if(i===0) celiDroite+=reste; reste=0;}
+    else {reste-=res[i]; if(i===0) celiDroite+=res[i]; res[i]=0;}
+  }
+  return [...res,celiDroite];
+}
+
+// --- Simulation principale
 function simulate(){
   const age=parseInt(document.getElementById('age').value);
   const ageRetraite=parseInt(document.getElementById('ageRetraite').value);
   const sexe=document.getElementById('sexe').value;
   const expectancy=parseInt(document.getElementById('lifeExpectancy').value);
-  const celiStart=parseFloat(document.getElementById('celi').value);
-  const reerStart=parseFloat(document.getElementById('reer').value);
-  const criStart=parseFloat(document.getElementById('cri').value);
-  const nonStart=parseFloat(document.getElementById('nonEnregistre').value);
-  const scenario=parseInt(document.getElementById('scenario').value);
+  const scenario=parseInt(document.querySelector('.scenario-btn.active').dataset.scenario);
+
+  let celiBal=parseFloat(document.getElementById('celi').value);
+  let reerBal=parseFloat(document.getElementById('reer').value);
+  let criBal=parseFloat(document.getElementById('cri').value);
+  let nonBal=parseFloat(document.getElementById('nonEnregistre').value);
+  let celiDroite=0;
 
   let revenu=parseFloat(document.getElementById('revenu').value);
   if(document.getElementById('frequence').value==='mensuel') revenu*=12;
 
-  // RRQ/PSV
   const rrqAge=parseInt(document.getElementById('rrqAge').value);
   const rrqMontant=parseFloat(document.getElementById('rrqMontant').value);
   const psvAge=parseInt(document.getElementById('psvAge').value);
   const psvMontant=parseFloat(document.getElementById('psvMontant').value);
 
-  events=[];
-  document.querySelectorAll('#events-body tr').forEach(tr=>{
-    events.push({
-      annee:parseInt(tr.querySelector('.event-year').value),
-      type:tr.querySelector('.event-type').value,
-      montant:parseFloat(tr.querySelector('.event-amount').value)
-    });
+  let celiRend=parseFloat(document.getElementById('celiRendement').value)/100;
+  let reerRend=parseFloat(document.getElementById('reerRendement').value)/100;
+  let criRend=parseFloat(document.getElementById('criRendement').value)/100;
+  let nonRend=parseFloat(document.getElementById('nonRendement').value)/100;
+
+  events=[]; document.querySelectorAll('#events-body tr').forEach(tr=>{
+    events.push({annee:parseInt(tr.querySelector('.event-year').value),
+                 type:tr.querySelector('.event-type').value,
+                 montant:parseFloat(tr.querySelector('.event-amount').value)});
   });
 
-  let years=[], celi=[], reer=[], cri=[], nonE=[], total=[];
-  let endAge=scenario===3? expectancy : expectancy+5;
+  const years=[]; for(let y=ageRetraite;y<=expectancy;y++) years.push(y);
+  const celi=[],reer=[],cri=[],nonE=[],total=[];
 
-  let celiBal=celiStart,reerBal=reerStart,criBal=criStart,nonBal=nonStart;
-  let celiDroite=0; // droits CELI libérés par retraits
+  years.forEach((year,i)=>{
+    let revenuAnnuel=revenu;
 
-  for(let a=age;a<=endAge;a++){
-    years.push(a);
+    // RRQ & PSV
+    if(year>=rrqAge) revenuAnnuel+=rrqMontant* Math.pow(1+inflation,i);
+    if(year>=psvAge) revenuAnnuel+=psvClawbackIndexed(psvMontant,revenuAnnuel,i);
 
-    // --- Appliquer événements
-    events.filter(e=>e.annee===a).forEach(e=>{
-      if(e.type==='ajout'){
-        let reste=e.montant;
-        // Allocation automatique
-        let maxCELI=100000-celiBal+celiDroite; 
-        let putCELI=Math.min(reste,maxCELI); celiBal+=putCELI; reste-=putCELI; celiDroite=Math.max(0,celiDroite-putCELI);
-        let maxREER=100000-reerBal; let putREER=Math.min(reste,maxREER); reerBal+=putREER; reste-=putREER;
-        criBal+=reste; // surplus
-      } else if(e.type==='depense'){
-        let dep=e.montant;
-        let totalBal=celiBal+reerBal+criBal+nonBal;
-        if(dep>=totalBal){ celiBal=0;reerBal=0;criBal=0;nonBal=0;} 
-        else{
-          let ratio=dep/totalBal;
-          celiBal-=celiBal*ratio; reerBal-=reerBal*ratio; criBal-=criBal*ratio; nonBal-=nonBal*ratio;
-        }
-      }
-    });
+    // Événements
+    events.forEach(e=>{if(e.annee===year) revenuAnnuel+= e.type==='ajout'? e.montant:-e.montant;});
 
-    // --- Appliquer revenus retraite
-    let revenuAnnuel=0;
-    if(a>=ageRetraite) revenuAnnuel+=revenu;
+    // Retrait selon scénario
+    let retraitRest=revenuAnnuel;
+    let ordre=[0,1,2,3]; if(scenario===2) ordre=[3,2,1,0];
+    [celiBal,reerBal,criBal,nonBal,celiDroite]=retraitStrategique([celiBal,reerBal,criBal,nonBal],retraitRest,ordre,celiDroite);
 
-    // RRQ
-    if(a>=rrqAge) revenuAnnuel+=rrqMontant;
-    // PSV avec clawback approximatif
-    let psvRecevable=0;
-    if(a>=psvAge){
-      psvRecevable=psvMontant;
-      let totalRevenuAvantPSV=revenuAnnuel; // seulement autres revenus
-      if(totalRevenuAvantPSV>97392){ // seuil 2025
-        psvRecevable=Math.max(0, psvMontant - 0.15*(totalRevenuAvantPSV-97392));
-      }
-      revenuAnnuel+=psvRecevable;
-    }
+    // Rendement
+    celiBal*=1+celiRend; reerBal*=1+reerRend; criBal*=1+criRend; nonBal*=1+nonRend;
 
-    // --- Calcul impôts simples
-    let impots=calcImpots(reerBal,criBal,nonBal,revenuAnnuel);
-
-    // Retirer impôt du compte prioritaire (REER/CRI/Non)
-    let impotsRestants=impots;
-    let comptes=[reerBal,criBal,nonBal];
-    for(let i=0;i<comptes.length;i++){
-      if(comptes[i]>=impotsRestants){ comptes[i]-=impotsRestants; impotsRestants=0;} 
-      else{ impotsRestants-=comptes[i]; comptes[i]=0;}
-    }
-    [reerBal,criBal,nonBal]=comptes;
-
-    // Retrait du scénario
-    if(a>=ageRetraite){
-      let reste=revenuAnnuel;
-      if(scenario===1){
-        [celiBal,reerBal,criBal,nonBal,celiDroite]=retraitStrategique([celiBal,reerBal,criBal,nonBal],reste,[0,1,2,3],celiDroite);
-      } else if(scenario===2){
-        [celiBal,reerBal,criBal,nonBal,celiDroite]=retraitStrategique([celiBal,reerBal,criBal,nonBal],reste,[2,0,1,3],celiDroite);
-      } else if(scenario===3){
-        let totalBal=celiBal+reerBal+criBal+nonBal;
-        let yearsLeft=expectancy-a+1;
-        let retraitAnnuel=Math.min(revenuAnnuel,totalBal/yearsLeft);
-        let totalActuel=totalBal||1;
-        celiBal-=retraitAnnuel*(celiBal/totalActuel);
-        reerBal-=retraitAnnuel*(reerBal/totalActuel);
-        criBal-=retraitAnnuel*(criBal/totalActuel);
-        nonBal-=retraitAnnuel*(nonBal/totalActuel);
-      }
-    }
-
-    // Appliquer rendements
-    celiBal*=1+0.05; reerBal*=1+0.06; criBal*=1+0.04; nonBal*=1+0.03;
-
-    celi.push(Math.max(0,celiBal));
-    reer.push(Math.max(0,reerBal));
-    cri.push(Math.max(0,criBal));
-    nonE.push(Math.max(0,nonBal));
+    celi.push(celiBal); reer.push(reerBal); cri.push(criBal); nonE.push(nonBal);
     total.push(celiBal+reerBal+criBal+nonBal);
-  }
+  });
 
   if(chart) chart.destroy();
   chart=new Chart(ctx,{
     type:'line',
-    data:{
-      labels:years,
-      datasets:[
-        {label:'CELI',data:celi,borderColor:'#4CAF50',backgroundColor:'rgba(76,175,80,0.3)',fill:true,stack:'stack1'},
-        {label:'REER/FERR',data:reer,borderColor:'#2196F3',backgroundColor:'rgba(33,150,243,0.3)',fill:true,stack:'stack1'},
-        {label:'CRI/FRV',data:cri,borderColor:'#FFC107',backgroundColor:'rgba(255,193,7,0.3)',fill:true,stack:'stack1'},
-        {label:'Non enregistré',data:nonE,borderColor:'#9C27B0',backgroundColor:'rgba(156,39,176,0.3)',fill:true,stack:'stack1'},
-        {label:'Total',data:total,borderColor:'#000',backgroundColor:'transparent',fill:false,borderWidth:2}
-      ]
-    },
+    data:{labels:years,datasets:[
+      {label:'CELI',data:celi,backgroundColor:'rgba(0,196,140,0.5)',stack:'Stack 0',fill:true},
+      {label:'REER/FERR',data:reer,backgroundColor:'rgba(26,115,232,0.5)',stack:'Stack 0',fill:true},
+      {label:'CRI/FRV',data:cri,backgroundColor:'rgba(255,193,7,0.5)',stack:'Stack 0',fill:true},
+      {label:'Non-enregistré',data:nonE,backgroundColor:'rgba(220,53,69,0.5)',stack:'Stack 0',fill:true},
+      {label:'Total',data:total,type:'line',borderColor:'#0a2540',borderWidth:2,fill:false}]},
     options:{
       responsive:true,
       interaction:{mode:'index',intersect:false},
-      stacked:true,
-      plugins:{title:{display:true,text:'Projection des décaissements'}},
-      scales:{y:{beginAtZero:true,title:{display:true,text:'Montant ($)'}},x:{title:{display:true,text:'Âge'}}}
+      plugins:{title:{display:true,text:'Simulation Décaissement'}},
+      scales:{y:{beginAtZero:true}}
     }
   });
 }
 
-// --- Fonctions helpers
-function retraitStrategique(balances,reste,ordre,celiDroite){
-  let res=[...balances];
-  for(let i of ordre){
-    if(res[i]>=reste){ 
-      res[i]-=reste; 
-      if(i===0) celiDroite+=reste;
-      reste=0;
-    } else { 
-      reste-=res[i]; 
-      if(i===0) celiDroite+=res[i];
-      res[i]=0;
-    }
-  }
-  return [...res,celiDroite];
-}
+// --- Événements input
+document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',simulate));
+document.querySelectorAll('.scenario-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.scenario-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    simulate();
+  });
+});
 
-// --- Impôts simplifiés (fédéral+QC)
-function calcImpots(reer,cri,nonE,revenuAnnuel){
-  // Taux simplifiés approximatifs
-  let tauxF=0.15; let tauxQ=0.15;
-  let base=(reer+cri+nonE+revenuAnnuel);
-  return base*(tauxF+tauxQ);
-}
-
-// === Initialiser
-document.querySelectorAll('input, select').forEach(el=>el.addEventListener('input',simulate));
 simulate();
 </script>
+</body>
+</html>
