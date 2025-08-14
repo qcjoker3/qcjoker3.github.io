@@ -239,3 +239,11 @@ canvas {
   box-shadow: 0 3px 6px rgba(0,0,0,0.1);
 }
 
+/* Formulaire et tableaux d'événements */
+.form-section { display: flex; flex-wrap: wrap; gap: 15px; margin-bottom: 20px; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 3px 6px rgba(0,0,0,0.05); }
+#events-table { width: 100%; margin-top: 10px; border-collapse: collapse; }
+#events-table th, #events-table td { border: 1px solid #ddd; padding: 6px; text-align: center; font-size: 0.95rem; }
+#events-table input, #events-table select { width: 100px; padding: 4px; border-radius: 4px; border: 1px solid #ccd6dd; }
+#events-table button { background-color:#00c48c;color:white;border:none;padding:5px 10px;border-radius:4px;cursor:pointer; }
+#events-table button:hover { background-color:#00a678; }
+
