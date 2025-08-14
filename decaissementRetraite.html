@@ -139,7 +139,6 @@ function simulate() {
   for(let y=ageRetraite;y<=expectancy;y++) years.push(y);
 
   const celiArr=[],reerArr=[],criArr=[],nonArr=[],totalArr=[];
-
   let droitsCELI = 0;
 
   years.forEach(year=>{
@@ -147,14 +146,41 @@ function simulate() {
     if(year>=rrqAge) revenuAnnuel+=rrqMontant;
     if(year>=psvAge) revenuAnnuel+=psvMontant;
 
-    events.forEach(e=>{if(e.annee===year) revenuAnnuel += e.type==='ajout'? e.montant : -e.montant;});
+    // --- Appliquer événements financiers ---
+    events.forEach(e=>{
+      if(e.annee===year){
+        if(e.type==='ajout') nonBal+=e.montant; // ajout dans non-enregistré
+        else if(e.type==='depense'){
+          // dépense depuis les comptes selon scénario
+          [celiBal,reerBal,criBal,nonBal] = retraitStrategiqueOptimise(
+            [celiBal,reerBal,criBal,nonBal],
+            e.montant,
+            currentScenario,
+            droitsCELI
+          );
+        }
+      }
+    });
 
-    [celiBal,reerBal,criBal,nonBal] = retraitStrategiqueOptimise([celiBal,reerBal,criBal,nonBal],revenuAnnuel,currentScenario,droitsCELI);
+    // Retrait normal pour revenu désiré
+    [celiBal,reerBal,criBal,nonBal] = retraitStrategiqueOptimise(
+        [celiBal,reerBal,criBal,nonBal],
+        revenuAnnuel,
+        currentScenario,
+        droitsCELI
+    );
 
-    celiBal *= 1+celiRend; reerBal *= 1+reerRend; criBal *= 1+criRend; nonBal *= 1+nonRend;
+    // Appliquer rendement
+    celiBal *= 1 + celiRend;
+    reerBal *= 1 + reerRend;
+    criBal *= 1 + criRend;
+    nonBal *= 1 + nonRend;
 
-    celiArr.push(celiBal); reerArr.push(reerBal); criArr.push(criBal); nonArr.push(nonBal);
-    totalArr.push(celiBal+reerBal+criBal+nonBal);
+    celiArr.push(celiBal);
+    reerArr.push(reerBal);
+    criArr.push(criBal);
+    nonArr.push(nonBal);
+    totalArr.push(celiBal + reerBal + criBal + nonBal);
   });
 
   const totalCapital = totalArr[totalArr.length-1];
@@ -188,30 +214,20 @@ function simulate() {
 function retraitStrategiqueOptimise(balances,montant,scenario,droitsCELI=0){
   let [celi,reer,cri,nonE]=balances;
   let ordre=[];
-  if(scenario===1) ordre=[3,0,2,1];
-  else if(scenario===2) ordre=[0,3,2,1];
-  else if(scenario===3) ordre=[3,0,2,1];
-
-  for(let i of ordre){
+  if(scenario===1) ordre=[3,0,2,1]; // maximiser durée
+  else if(scenario===2) ordre=[0,3,2,1]; // minimiser impôt
+  else ordre=[0,1,2,3]; // espérance choisie
+  for(let idx of ordre){
+    let retrait=Math.min(balances[idx],montant);
+    balances[idx]-=retrait;
+    montant-=retrait;
     if(montant<=0) break;
-    let solde=[celi,reer,cri,nonE][i];
-    let retrait=Math.min(solde,montant);
-    if(i===0){ celi-=retrait; montant-=retrait; droitsCELI+=retrait; }
-    else if(i===1){ reer-=retrait; montant-=retrait; }
-    else if(i===2){ cri-=retrait; montant-=retrait; }
-    else if(i===3){ 
-      nonE-=retrait; montant-=retrait;
-      if(droitsCELI>0){
-        let transfert=Math.min(retrait,droitsCELI);
-        celi+=transfert; nonE-=transfert; droitsCELI-=transfert;
-      }
-    }
   }
-  return [celi,reer,cri,nonE];
+  return balances;
 }
 
-document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',simulate));
 simulate();
+document.querySelectorAll('input,select').forEach(el=>el.addEventListener('input',simulate));
 </script>
 </body>
 </html>
