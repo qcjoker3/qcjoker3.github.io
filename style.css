@@ -1,4 +1,6 @@
-/* Base & Reset */
+/* ================== */
+/* RESET & BASE */
+/* ================== */
 * {
   margin: 0;
   padding: 0;
@@ -19,28 +21,25 @@ h1, h2, h3 {
   color: #0a2540;
   font-weight: 700;
   margin-bottom: 16px;
+  text-align: center;
 }
 
-h1 {
-  font-size: 2.5rem;
-}
+h1 { font-size: 2.5rem; }
+h2 { font-size: 2rem; }
+h3 { font-size: 1.5rem; }
 
-h2 {
-  font-size: 2rem;
-}
-
-h3 {
-  font-size: 1.5rem;
-}
-
-/* Container */
+/* ================== */
+/* CONTAINER */
+/* ================== */
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 40px 20px;
 }
 
-/* Header */
+/* ================== */
+/* HEADER & NAV */
+/* ================== */
 header {
   background-color: #ffffff;
   padding: 20px 0;
@@ -48,11 +47,8 @@ header {
   text-align: center;
 }
 
-header h1 {
-  font-size: 2.2rem;
-}
+header h1 { font-size: 2.2rem; }
 
-/* Navigation */
 nav {
   display: flex;
   justify-content: center;
@@ -69,11 +65,10 @@ nav a {
   transition: color 0.3s ease;
 }
 
-nav a:hover {
-  color: #00c48c;
-}
+nav a:hover { color: #00c48c; }
 
-/* Hero Section */
+/* ================== */
+/* HERO */
 .hero {
   background-color: #e6f7f1;
   text-align: center;
@@ -81,18 +76,8 @@ nav a:hover {
   border-bottom: 1px solid #d4e6dd;
 }
 
-.hero h1 {
-  color: #0a2540;
-  margin-bottom: 20px;
-}
-
-.hero p {
-  color: #4f5d75;
-  font-size: 1.2rem;
-  max-width: 700px;
-  margin: 0 auto 30px;
-}
-
+.hero h1 { color: #0a2540; margin-bottom: 20px; }
+.hero p { color: #4f5d75; font-size: 1.2rem; max-width: 700px; margin: 0 auto 30px; }
 .hero button {
   background-color: #00c48c;
   color: white;
@@ -103,128 +88,48 @@ nav a:hover {
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
+.hero button:hover { background-color: #00a678; }
 
-.hero button:hover {
-  background-color: #00a678;
-}
-
-/* Cards Grid */
+/* ================== */
+/* CARTES & GRID */
 .card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
   gap: 24px;
   margin-top: 40px;
-  text-decoration: none;
 }
 
-/* Cards - commun */
-.card,
-.card-link {
+.card, .card-link, .calculator-card {
   background-color: #ffffff;
   border: 1px solid #e1e8ed;
-  border-radius: 8px;
-  padding: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+  border-radius: 12px;
+  padding: 22px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
   cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  min-height: 280px;
   color: inherit;
   text-decoration: none;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 180px;
-  text-decoration: none;
 }
 
-.card:hover,
-.card-link:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+.card:hover, .card-link:hover, .calculator-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.12);
   border-color: #00c48c;
-  text-decoration: none;
 }
 
-/* Contour vert sur sélection */
-.card.selected,
-.card-link.selected {
+.card.selected, .card-link.selected {
   border-color: #00c48c;
-  text-decoration: none;
 }
 
-/* Titles in cards */
-.card h3,
-.card-link h3 {
-  margin-bottom: 10px;
-  color: #0a2540;
-  text-decoration: none;
-}
+.card h3, .card-link h3, .calculator-card h3 { margin-bottom: 10px; color: #0a2540; }
+.card p, .card-link p { color: #4f5d75; font-size: 0.95rem; }
 
-/* Text in cards */
-.card p,
-.card-link p {
-  color: #4f5d75;
-  font-size: 0.95rem;
-  text-decoration: none;
-}
-
-/* Footer */
-footer {
-  background-color: #0a2540;
-  color: white;
-  text-align: center;
-  padding: 40px 20px;
-  margin-top: 60px;
-}
-
-footer p {
-  font-size: 0.9rem;
-}
-
-/* Buttons */
-.btn-primary {
-  background-color: #00c48c;
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  font-size: 1rem;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 700;
-  transition: background-color 0.3s ease;
-  align-self: flex-start;
-}
-
-.btn-primary:hover {
-  background-color: #00a678;
-}
-
-/* Section Calculatrices Page */
-
-/* Container principal pour la page calculatrices */
-#selection-calculatrices {
-  margin-bottom: 40px;
-}
-
-.calculator-card {
-  background-color: #ffffff;
-  padding: 25px 30px;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  display: none;
-  flex-direction: column;
-  transition: box-shadow 0.3s ease, border-color 0.3s ease;
-  border: 2px solid transparent;
-  min-height: 280px;
-}
-
-.calculator-card.active {
-  display: flex;
-}
-
-.calculator-card:hover {
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-}
-
-/* Form */
+/* ================== */
+/* FORM GROUPS */
 .form-group {
   display: flex;
   flex-direction: column;
@@ -238,35 +143,139 @@ footer p {
   font-size: 1rem;
 }
 
-.form-group input {
-  padding: 10px 12px;
+.form-group input, .form-group select {
+  padding: 10px 14px;
   font-size: 1rem;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #ccd6dd;
-  transition: border-color 0.3s ease;
+  transition: all 0.3s ease;
 }
 
-.form-group input:focus {
+.form-group input:focus, .form-group select:focus {
   border-color: #00c48c;
+  box-shadow: 0 0 6px rgba(0,196,140,0.2);
   outline: none;
 }
 
-.resultat {
-  margin-top: 15px;
-  font-weight: 600;
-  color: #0a2540;
-  min-height: 1.5em;
-  font-size: 1.1rem;
+/* ================== */
+/* BOUTONS & SCÉNARIOS */
+.btn-primary {
+  background-color: #00c48c;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 0.3s ease;
+  align-self: flex-start;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  nav {
-    flex-direction: column;
-    gap: 12px;
-  }
+.btn-primary:hover { background-color: #00a678; }
 
-  .card-grid {
-    grid-template-columns: 1fr;
-  }
+.scenario-btns {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 30px 0;
+}
+
+.scenario-btn {
+  padding: 10px 22px;
+  border-radius: 12px;
+  border: 1px solid #00c48c;
+  background-color: #ffffff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.scenario-btn.active {
+  background-color: #00c48c;
+  color: #fff;
+}
+
+/* ================== */
+/* TOTAL CAPITAL & IMPÔT */
+#totalCapitalCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 26px;
+  border-radius: 16px;
+  background-color: #f0fdf8;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  margin-bottom: 28px;
+}
+
+#totalCapitalCard h2 { font-size: 1.8rem; margin-bottom: 12px; }
+#totalCapitalCard h3 { font-size: 1.2rem; color: #555; }
+
+/* ================== */
+/* EVENTS BUBBLES */
+.events-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.event-bubble {
+  padding: 6px 10px;
+  border-radius: 12px;
+  background-color: #e6f7f1;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.event-bubble button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-weight: 700;
+  color: #dc3545;
+}
+
+/* ================== */
+/* TABLEAU */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  padding: 10px;
+  text-align: center;
+  border-bottom: 1px solid #e6ecf1;
+}
+
+table th { background-color: #f9fafc; font-weight: 600; }
+
+/* ================== */
+/* GRAPHIQUE */
+canvas {
+  display: block;
+  width: 100%;
+  max-height: 450px;
+  margin: 0 auto 40px;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+/* Couleurs comptes */
+.chartjs-color-celi { background-color: rgba(0,196,140,0.4); border-color: rgba(0,196,140,0.8); }
+.chartjs-color-reer { background-color: rgba(26,115,232,0.4); border-color: rgba(26,115,232,0.8); }
+.chartjs-color-cri { background-color: rgba(255,193,7,0.4); border-color: rgba(255,193,7,0.8); }
+.chartjs-color-non { background-color: rgba(220,53,69,0.4); border-color: rgba(220,53,69,0.8); }
+
+/* ================== */
+/* RESPONSIVE */
+@media (max-width: 768px){
+  nav { flex-direction: column; gap: 12px; }
+  .card-grid { grid-template-columns: 1fr; }
+  .scenario-btns { flex-direction: column; gap: 12px; }
 }
