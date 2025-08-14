@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Calculatrice Décaissement - Prototype</title>
+<title>Calculatrice Décaissement - Prototype avec Revenu</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   body {
@@ -75,6 +75,14 @@
     <input type="number" id="cri" value="80000">
   </div>
   <div>
+    <label>Revenu désiré</label>
+    <input type="number" id="revenu" value="30000">
+    <select id="frequence">
+      <option value="annuel">Par année</option>
+      <option value="mensuel">Par mois</option>
+    </select>
+  </div>
+  <div>
     <label>Scénario</label>
     <select id="scenario">
       <option value="1">Maximiser la durée</option>
@@ -90,7 +98,7 @@
 const ctx = document.getElementById('decaissChart').getContext('2d');
 let chart;
 
-// Fonction de simulation simple
+// Simulation simplifiée
 function simulate() {
   const age = parseInt(document.getElementById('age').value);
   const sexe = document.getElementById('sexe').value;
@@ -99,6 +107,10 @@ function simulate() {
   const reerStart = parseFloat(document.getElementById('reer').value);
   const criStart = parseFloat(document.getElementById('cri').value);
   const scenario = parseInt(document.getElementById('scenario').value);
+
+  let revenu = parseFloat(document.getElementById('revenu').value);
+  const frequence = document.getElementById('frequence').value;
+  if (frequence === 'mensuel') revenu *= 12; // conversion en annuel
 
   let years = [];
   let celi = [];
@@ -111,7 +123,7 @@ function simulate() {
   if (scenario === 3) {
     endAge = expectancy;
   } else {
-    endAge = expectancy + 5; // pour scénario 1 et 2, on simule un peu plus long
+    endAge = expectancy + 5;
   }
 
   let celiBal = celiStart;
@@ -121,116 +133,53 @@ function simulate() {
   for (let a = age; a <= endAge; a++) {
     years.push(a);
 
-    // Stratégie simplifiée
     let withdrawCELI = 0, withdrawREER = 0, withdrawCRI = 0;
+    let reste = revenu;
 
+    // Stratégies de décaissement simplifiées
     if (scenario === 1) {
-      withdrawREER = reerBal * 0.04;
-      withdrawCELI = celiBal * 0.02;
-      withdrawCRI = criBal * 0.03;
+      // Maximiser durée → on prend dans CELI d'abord (pas imposable), puis REER, puis CRI
+      if (celiBal >= reste) {
+        withdrawCELI = reste;
+      } else {
+        withdrawCELI = celiBal;
+        reste -= withdrawCELI;
+        if (reerBal >= reste) {
+          withdrawREER = reste;
+        } else {
+          withdrawREER = reerBal;
+          reste -= withdrawREER;
+          withdrawCRI = Math.min(criBal, reste);
+        }
+      }
     } else if (scenario === 2) {
-      withdrawCELI = celiBal * 0.03;
-      withdrawREER = reerBal * 0.02;
-      withdrawCRI = criBal * 0.02;
+      // Minimiser impôt → on prend dans REER le moins possible, priorité CELI et CRI
+      if (celiBal >= reste) {
+        withdrawCELI = reste;
+      } else {
+        withdrawCELI = celiBal;
+        reste -= withdrawCELI;
+        if (criBal >= reste) {
+          withdrawCRI = reste;
+        } else {
+          withdrawCRI = criBal;
+          reste -= withdrawCRI;
+          withdrawREER = Math.min(reerBal, reste);
+        }
+      }
     } else if (scenario === 3) {
+      // Espérance choisie → répartir le solde total sur les années restantes
+      let totalBal = celiBal + reerBal + criBal;
       let yearsLeft = expectancy - a + 1;
-      withdrawCELI = celiBal / yearsLeft;
-      withdrawREER = reerBal / yearsLeft;
-      withdrawCRI = criBal / yearsLeft;
+      let retraitAnnuel = totalBal / yearsLeft;
+      let retraitCible = Math.min(revenu, retraitAnnuel);
+
+      // Proportionnel aux soldes
+      let totalActuel = totalBal || 1; 
+      withdrawCELI = retraitCible * (celiBal / totalActuel);
+      withdrawREER = retraitCible * (reerBal / totalActuel);
+      withdrawCRI = retraitCible * (criBal / totalActuel);
     }
 
     // Mise à jour balances
-    celiBal = Math.max(0, celiBal - withdrawCELI);
-    reerBal = Math.max(0, reerBal - withdrawREER);
-    criBal = Math.max(0, criBal - withdrawCRI);
-
-    celi.push(celiBal);
-    reer.push(reerBal);
-    cri.push(criBal);
-    total.push(celiBal + reerBal + criBal);
-  }
-
-  // Mettre à jour graphique
-  if (chart) chart.destroy();
-  chart = new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: years,
-      datasets: [
-        {
-          label: 'CELI',
-          data: celi,
-          borderColor: '#4CAF50',
-          backgroundColor: 'rgba(76, 175, 80, 0.3)',
-          fill: true,
-          stack: 'stack1'
-        },
-        {
-          label: 'REER/FERR',
-          data: reer,
-          borderColor: '#2196F3',
-          backgroundColor: 'rgba(33, 150, 243, 0.3)',
-          fill: true,
-          stack: 'stack1'
-        },
-        {
-          label: 'CRI/FRV',
-          data: cri,
-          borderColor: '#FFC107',
-          backgroundColor: 'rgba(255, 193, 7, 0.3)',
-          fill: true,
-          stack: 'stack1'
-        },
-        {
-          label: 'Total',
-          data: total,
-          borderColor: '#000',
-          backgroundColor: 'transparent',
-          fill: false,
-          borderWidth: 2
-        }
-      ]
-    },
-    options: {
-      responsive: true,
-      interaction: {
-        mode: 'index',
-        intersect: false,
-      },
-      stacked: true,
-      plugins: {
-        title: {
-          display: true,
-          text: 'Projection des décaissements'
-        }
-      },
-      scales: {
-        y: {
-          beginAtZero: true,
-          title: {
-            display: true,
-            text: 'Montant ($)'
-          }
-        },
-        x: {
-          title: {
-            display: true,
-            text: 'Âge'
-          }
-        }
-      }
-    }
-  });
-}
-
-// Écouteurs pour mise à jour dynamique
-document.querySelectorAll('input, select').forEach(el => {
-  el.addEventListener('input', simulate);
-});
-
-// Lancement initial
-simulate();
-</script>
-
-</body>
-</html>
+    celiBal = Math.max(0, celiBal -
