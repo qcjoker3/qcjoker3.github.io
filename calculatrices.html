@@ -1,177 +1,244 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Finoza</title>
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Finoza - Test Complet</title>
+    
+    <style>
+        /* BASE & RESET */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: system-ui, -apple-system, sans-serif; background-color: #f7f9fa; color: #0a2540; line-height: 1.6; font-size: 16px; }
+        
+        /* HEADINGS */
+        h1, h2, h3 { color: #0a2540; font-weight: 700; margin-bottom: 16px; }
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 2rem; }
+        h3 { font-size: 1.5rem; }
+
+        /* CONTAINER & GRID */
+        .container { max-width: 1100px; margin: 0 auto; padding: 20px; }
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+
+        /* CARDS DE SÉLECTION */
+        .card { display: flex; flex-direction: column; padding: 22px; border-radius: 16px; background-color: #ffffff; box-shadow: 0 6px 18px rgba(0,0,0,0.08); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
+        .card:hover { transform: translateY(-4px); box-shadow: 0 10px 25px rgba(0,0,0,0.12); }
+        .card.selected { outline: 3px solid #00c48c; outline-offset: 2px; }
+
+        /* ================================================== */
+        /* === RÈGLES CSS POUR AFFICHER/CACHER CALCULATRICES === */
+        /* ================================================== */
+        .calculator-card {
+            display: none; /* Cacher toutes les calculatrices par défaut */
+            padding: 24px;
+            margin-top: 30px;
+            border-radius: 16px;
+            background-color: #ffffff;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+        .calculator-card.active {
+            display: block; /* Afficher SEULEMENT celle qui a la classe .active */
+        }
+        /* ================================================== */
+
+        /* FORMULAIRES */
+        .form-group { display: flex; flex-direction: column; margin-bottom: 15px; }
+        .form-group label { margin-bottom: 6px; font-weight: 600; color: #0a2540; font-size: 1rem; }
+        .form-group input, .form-group select { padding: 10px 14px; font-size: 1rem; border-radius: 8px; border: 1px solid #ccd6dd; transition: all 0.3s ease; width: 100%; }
+        .form-group input:focus, .form-group select:focus { border-color: #00c48c; box-shadow: 0 0 6px rgba(0,196,140,0.2); outline: none; }
+        .resultat { margin-top: 15px; font-weight: bold; }
+
+        /* BOUTONS */
+        .btn-primary { background-color: #00c48c; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; margin-top: 10px; }
+        .btn-primary:hover { background-color: #00a678; }
+        
+        /* NAVIGATION */
+        nav { display: flex; justify-content: center; flex-wrap: wrap; gap: 24px; padding: 15px 0; border-bottom: 1px solid #e6ecf1; }
+        nav a { color: #0a2540; text-decoration: none; font-weight: 500; transition: color 0.3s ease; }
+        nav a:hover { color: #00c48c; }
+    </style>
 </head>
 <body>
 
 <header class="container">
-  <h1>Finoza</h1>
-  <nav>
-    <a href="index.html">Accueil</a>
-    <a href="#services">Services</a>
-    <a href="Prédictions.html">Prédictions</a>
-    <a href="calculatrices.html">Calculatrices</a>
-    <a href="gestionActive.html">Gestion active</a>
-    <a href="#articles">Articles</a>
-    <a href="index.html#contact">Contact</a>
-  </nav>
+    <h1>Finoza</h1>
+    <nav>
+        <a href="#accueil">Accueil</a>
+        <a href="#calculatrices">Calculatrices</a>
+        <a href="#contact">Contact</a>
+    </nav>
 </header>
 
 <main class="container">
-
-  <section id="selection-calculatrices">
-    <h2>Choisissez une calculatrice</h2>
-    <div class="card-grid">
-      <div class="card card-link selected" data-calc="retraite" role="button" tabindex="0" aria-selected="true">
-        <h3>Retraite</h3>
-        <p>Estimez combien vous aurez besoin et quand vous pourrez arrêter de travailler.</p>
-      </div>
-      <div class="card card-link" data-calc="valeur-future" role="button" tabindex="0" aria-selected="false">
-        <h3>Valeur future</h3>
-        <p>Calculez la croissance de vos investissements au fil du temps.</p>
-      </div>
-      <div class="card card-link" data-calc="hypotheque" role="button" tabindex="0" aria-selected="false">
-        <h3>Hypothèque</h3>
-        <p>Simulez vos paiements hypothécaires mensuels.</p>
-      </div>
-      <div class="card card-link" data-calc="trex" role="button" tabindex="0" aria-selected="false">
-        <h3>Frais de gestion</h3>
-        <p>Simulez vos paiements de frais de gestion.</p>
-      </div>
-      <div class="card card-link" data-calc="acheter-louer" role="button" tabindex="0" aria-selected="false">
-        <h3>Acheter ou Louer</h3>
-        <p>Locataire ou propriétaire</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="calculatrices-container">
-
-    <section id="calc-retraite" class="calculator-card active" aria-label="Calculatrice de Retraite" aria-hidden="false">
-      <h2>Calculatrice de Retraite</h2>
-      <form id="form-retraite" novalidate>
-        <div class="form-group">
-          <label for="age-actuel">Âge actuel</label>
-          <input type="number" id="age-actuel" name="age-actuel" min="0" max="120" placeholder="Ex: 30" required />
+    <section id="selection-calculatrices">
+        <h2>Choisissez une calculatrice</h2>
+        <div class="card-grid">
+            <div class="card card-link selected" data-calc="retraite">
+                <h3>Retraite</h3>
+                <p>Estimez combien il vous faudra pour la retraite.</p>
+            </div>
+            <div class="card card-link" data-calc="valeur-future">
+                <h3>Valeur future</h3>
+                <p>Calculez la croissance de vos investissements.</p>
+            </div>
+            <div class="card card-link" data-calc="hypotheque">
+                <h3>Hypothèque</h3>
+                <p>Simulez vos paiements hypothécaires.</p>
+            </div>
+            <div class="card card-link" data-calc="trex">
+                <h3>Frais de gestion</h3>
+                <p>Visualisez l'impact des frais sur le long terme.</p>
+            </div>
         </div>
-        <div class="form-group">
-          <label for="age-retraite">Âge désiré de retraite</label>
-          <input type="number" id="age-retraite" name="age-retraite" min="0" max="120" placeholder="Ex: 65" required />
-        </div>
-        <div class="form-group">
-          <label for="epargne-mensuelle">Épargne mensuelle</label>
-          <input type="number" id="epargne-mensuelle" name="epargne-mensuelle" min="0" placeholder="Ex: 500" required />
-        </div>
-        <div class="form-group">
-          <label for="rendement">Rendement annuel attendu (%)</label>
-          <input type="number" id="rendement" name="rendement" min="0" max="100" step="0.1" placeholder="Ex: 5" required />
-        </div>
-        <button type="submit" class="btn-primary">Calculer</button>
-      </form>
-      <p class="resultat" id="resultat-retraite" aria-live="polite"></p>
-      <canvas id="chart-retraite" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
     </section>
 
-    <section id="calc-valeur-future" class="calculator-card" aria-label="Calculatrice de Valeur Future" aria-hidden="true">
-      <h2>Calculatrice de Valeur Future</h2>
-      <form id="form-vf" novalidate>
-        <div class="form-group">
-          <label for="vf-montant-initial">Montant initial</label>
-          <input type="number" id="vf-montant-initial" name="montant-initial" min="0" placeholder="Ex: 10000" required />
-        </div>
-        <div class="form-group">
-          <label for="vf-cotisation">Cotisation additionnelle</label>
-          <input type="number" id="vf-cotisation" name="cotisation-vf" min="0" placeholder="Ex: 200" />
-        </div>
-        <div class="form-group">
-          <label for="vf-frequence">Fréquence de cotisation</label>
-          <select id="vf-frequence" name="frequence-vf">
-            <option value="annuelle">Annuelle</option>
-            <option value="mensuelle">Mensuelle</option>
-            <option value="hebdomadaire">Hebdomadaire</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label for="vf-duree">Durée (années)</label>
-          <input type="number" id="vf-duree" name="duree-vf" min="0" placeholder="Ex: 10" required />
-        </div>
-        <div class="form-group">
-          <label for="vf-taux">Taux d’intérêt annuel (%)</label>
-          <input type="number" id="vf-taux" name="taux-vf" min="0" max="100" step="0.1" placeholder="Ex: 7" required />
-        </div>
-        <button type="submit" class="btn-primary">Calculer</button>
-      </form>
-      <p class="resultat" id="resultat-vf" aria-live="polite"></p>
-      <canvas id="chart-vf" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
-    </section>
-    
-    <section id="calc-hypotheque" class="calculator-card" aria-label="Calculatrice d'Hypothèque" aria-hidden="true">
-      <h2>Calculatrice d'Hypothèque</h2>
-      <form id="form-hypotheque" novalidate>
-        <div class="form-group">
-          <label for="hypo-montant">Montant du prêt</label>
-          <input type="number" id="hypo-montant" name="hypo-montant" min="0" required />
-        </div>
-        <div class="form-group">
-          <label for="hypo-taux">Taux d’intérêt annuel (%)</label>
-          <input type="number" id="hypo-taux" name="hypo-taux" min="0" max="100" step="0.1" required />
-        </div>
-        <div class="form-group">
-          <label for="hypo-duree">Durée du prêt (années)</label>
-          <input type="number" id="hypo-duree" name="hypo-duree" min="1" max="50" required />
-        </div>
-        <button type="submit" class="btn-primary">Calculer</button>
-      </form>
-      <p class="resultat" id="resultat-hypotheque" aria-live="polite"></p>
-      <canvas id="chart-hypotheque" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
-    </section>
+    <section id="calculatrices-container">
+        <section id="calc-retraite" class="calculator-card active">
+            <h2>Calculatrice de Retraite</h2>
+            <form id="form-retraite">
+                <div class="form-group"><label for="age-actuel">Âge actuel</label><input type="number" id="age-actuel" value="30"></div>
+                <div class="form-group"><label for="age-retraite">Âge de la retraite</label><input type="number" id="age-retraite" value="65"></div>
+                <div class="form-group"><label for="epargne-mensuelle">Épargne mensuelle (€)</label><input type="number" id="epargne-mensuelle" value="500"></div>
+                <div class="form-group"><label for="rendement">Rendement annuel attendu (%)</label><input type="number" id="rendement" value="5"></div>
+                <button type="submit" class="btn-primary">Calculer</button>
+            </form>
+            <p class="resultat" id="resultat-retraite"></p>
+        </section>
 
-    <section id="calc-trex" class="calculator-card" aria-label="Calculatrice de Frais de gestion" aria-hidden="true">
-      <h2>Frais de gestion</h2>
-      <form id="form-trex" novalidate>
-        <div class="form-group">
-          <label for="trex-montant">Montant de l'investissement initial</label>
-          <input type="number" id="trex-montant" name="trex-montant" min="0" required />
-        </div>
-        <div class="form-group">
-          <label for="trex-cotisation-annuelle">Cotisation annuelle</label>
-          <input type="number" id="trex-cotisation-annuelle" name="trex-cotisation-annuelle" min="0" placeholder="Ex: 1000" value="0" />
-        </div>
-        <div class="form-group">
-          <label for="trex-rendement-brut">Rendement brut annuel (%)</label>
-          <input type="number" id="trex-rendement-brut" name="trex-rendement-brut" min="0" max="100" step="0.1" placeholder="Ex: 7" required />
-        </div>
-        <div class="form-group">
-          <label for="trex-taux">Taux de frais annuel (%)</label>
-          <input type="number" id="trex-taux" name="trex-taux" min="0" max="10" step="0.1" required />
-        </div>
-        <div class="form-group">
-          <label for="trex-duree">Durée de l'investissement (années)</label>
-          <input type="number" id="trex-duree" name="trex-duree" min="0" required />
-        </div>
-        <button type="submit" class="btn-primary">Calculer</button>
-      </form>
-      <p class="resultat" id="resultat-trex" aria-live="polite"></p>
-      <canvas id="chart-trex" style="max-width: 100%; height: 300px; margin-top: 20px;"></canvas>
+        <section id="calc-valeur-future" class="calculator-card">
+            <h2>Calculatrice de Valeur Future</h2>
+            <form id="form-vf">
+                <div class="form-group"><label for="vf-montant-initial">Montant initial (€)</label><input type="number" id="vf-montant-initial" value="10000"></div>
+                <div class="form-group"><label for="vf-cotisation">Cotisation additionnelle</label><input type="number" id="vf-cotisation" value="200"></div>
+                <div class="form-group"><label for="vf-frequence">Fréquence</label><select id="vf-frequence"><option value="mensuelle">Mensuelle</option><option value="annuelle">Annuelle</option></select></div>
+                <div class="form-group"><label for="vf-duree">Durée (années)</label><input type="number" id="vf-duree" value="10"></div>
+                <div class="form-group"><label for="vf-taux">Taux d'intérêt annuel (%)</label><input type="number" id="vf-taux" value="7"></div>
+                <button type="submit" class="btn-primary">Calculer</button>
+            </form>
+            <p class="resultat" id="resultat-vf"></p>
+        </section>
+
+        <section id="calc-hypotheque" class="calculator-card">
+            <h2>Calculatrice d'Hypothèque</h2>
+            <form id="form-hypotheque">
+                <div class="form-group"><label for="hypo-montant">Montant du prêt (€)</label><input type="number" id="hypo-montant" value="200000"></div>
+                <div class="form-group"><label for="hypo-taux">Taux d'intérêt annuel (%)</label><input type="number" id="hypo-taux" value="3.5"></div>
+                <div class="form-group"><label for="hypo-duree">Durée du prêt (années)</label><input type="number" id="hypo-duree" value="25"></div>
+                <button type="submit" class="btn-primary">Calculer</button>
+            </form>
+            <p class="resultat" id="resultat-hypotheque"></p>
+        </section>
+
+        <section id="calc-trex" class="calculator-card">
+            <h2>Calculatrice de Frais de Gestion</h2>
+            <form id="form-trex">
+                <div class="form-group"><label for="trex-montant">Montant initial (€)</label><input type="number" id="trex-montant" value="10000"></div>
+                <div class="form-group"><label for="trex-cotisation-annuelle">Cotisation annuelle (€)</label><input type="number" id="trex-cotisation-annuelle" value="1200"></div>
+                <div class="form-group"><label for="trex-rendement-brut">Rendement brut annuel (%)</label><input type="number" id="trex-rendement-brut" value="7"></div>
+                <div class="form-group"><label for="trex-taux">Taux de frais annuel (%)</label><input type="number" id="trex-taux" value="2"></div>
+                <div class="form-group"><label for="trex-duree">Durée (années)</label><input type="number" id="trex-duree" value="20"></div>
+                <button type="submit" class="btn-primary">Calculer</button>
+            </form>
+            <p class="resultat" id="resultat-trex"></p>
+        </section>
     </section>
-
-    <section id="calc-acheter-louer" class="calculator-card" aria-label="Calculatrice Acheter vs Louer" aria-hidden="true">
-      </section>
-    
-  </section>
-
 </main>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="calculatrices.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Fonctions utilitaires
+    const fmtCurrency = n => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(n);
+    const toFloat = v => parseFloat(String(v).replace(',', '.')) || 0;
 
-<footer>
-  <p>© 2025 Finoza</p>
-</footer>
+    // Navigation entre calculatrices
+    const calcCards = document.querySelectorAll('.card-link[data-calc]');
+    const calcSections = document.querySelectorAll('.calculator-card');
+
+    calcCards.forEach(card => {
+        card.addEventListener('click', () => {
+            calcCards.forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            
+            const key = card.dataset.calc;
+            calcSections.forEach(sec => sec.classList.remove('active'));
+            document.getElementById(`calc-${key}`)?.classList.add('active');
+        });
+    });
+
+    // Calculatrice — Retraite
+    document.getElementById('form-retraite')?.addEventListener('submit', e => {
+        e.preventDefault();
+        const resultatRetraite = document.getElementById('resultat-retraite');
+        const ageActuel = toFloat(document.getElementById('age-actuel').value);
+        const ageRetraite = toFloat(document.getElementById('age-retraite').value);
+        const epargneMensuelle = toFloat(document.getElementById('epargne-mensuelle').value);
+        const rendementAnnuel = toFloat(document.getElementById('rendement').value) / 100;
+
+        if (ageRetraite <= ageActuel) {
+            resultatRetraite.textContent = "L'âge de retraite doit être supérieur à l'âge actuel.";
+            return;
+        }
+
+        const annees = ageRetraite - ageActuel;
+        const rMensuel = Math.pow(1 + rendementAnnuel, 1 / 12) - 1;
+        const FV = epargneMensuelle * ((Math.pow(1 + rMensuel, annees * 12) - 1) / rMensuel);
+        resultatRetraite.textContent = `Capital estimé à la retraite : ${fmtCurrency(FV)}.`;
+    });
+
+    // Calculatrice — Valeur future
+    document.getElementById('form-vf')?.addEventListener('submit', e => {
+        e.preventDefault();
+        const resultatVF = document.getElementById('resultat-vf');
+        const montantInitial = toFloat(document.getElementById('vf-montant-initial').value);
+        const duree = toFloat(document.getElementById('vf-duree').value);
+        const taux = toFloat(document.getElementById('vf-taux').value) / 100;
+        const cotisation = toFloat(document.getElementById('vf-cotisation').value);
+        const freq = document.getElementById('vf-frequence').value;
+        
+        const m = freq === 'mensuelle' ? 12 : 1;
+        const rP = Math.pow(1 + taux, 1 / m) - 1;
+        const nP = duree * m;
+        const FV_initial = montantInitial * Math.pow(1 + rP, nP);
+        const FV_cot = cotisation * ((Math.pow(1 + rP, nP) - 1) / rP);
+        resultatVF.textContent = `Valeur future estimée : ${fmtCurrency(FV_initial + FV_cot)}.`;
+    });
+
+    // Calculatrice — Hypothèque
+    document.getElementById('form-hypotheque')?.addEventListener('submit', e => {
+        e.preventDefault();
+        const resultatHypo = document.getElementById('resultat-hypotheque');
+        const montantPret = toFloat(document.getElementById('hypo-montant').value);
+        const tauxHypo = toFloat(document.getElementById('hypo-taux').value) / 100;
+        const dureeHypo = toFloat(document.getElementById('hypo-duree').value);
+
+        const rMensuel = tauxHypo / 12;
+        const n = dureeHypo * 12;
+        const mensualite = montantPret * (rMensuel * Math.pow(1 + rMensuel, n)) / (Math.pow(1 + rMensuel, n) - 1);
+        resultatHypo.textContent = `Mensualité estimée : ${fmtCurrency(mensualite)}.`;
+    });
+
+    // Calculatrice — Frais de gestion
+    document.getElementById('form-trex')?.addEventListener('submit', e => {
+        e.preventDefault();
+        const resultatTrex = document.getElementById('resultat-trex');
+        const montantInitial = toFloat(document.getElementById('trex-montant').value);
+        const cotisationAnnuelle = toFloat(document.getElementById('trex-cotisation-annuelle').value);
+        const duree = toFloat(document.getElementById('trex-duree').value);
+        const rendementBrut = toFloat(document.getElementById('trex-rendement-brut').value) / 100;
+        const fraisAnnuel = toFloat(document.getElementById('trex-taux').value) / 100;
+
+        const rendementNet = rendementBrut - fraisAnnuel;
+        const fv = (P, r, n, C) => P * Math.pow(1 + r, n) + C * ((Math.pow(1 + r, n) - 1) / r);
+
+        const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
+        const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
+        resultatTrex.textContent = `Impact des frais : ${fmtCurrency(capitalSansFrais - capitalAvecFrais)}. Valeur finale : ${fmtCurrency(capitalAvecFrais)}.`;
+    });
+    
+    // Déclencher le calcul initial pour la première calculatrice visible
+    document.getElementById('form-retraite')?.dispatchEvent(new Event('submit'));
+});
+</script>
 
 </body>
 </html>
