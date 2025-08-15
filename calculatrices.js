@@ -122,7 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 labels: labels,
                 datasets: [{ label: 'Valeur du portefeuille', data: valeurData, borderColor: '#00c48c', fill: true, backgroundColor: 'rgba(0,196,140,0.1)' }]
             },
-            options: { scales: { y: { ticks: { callback: value => fmtCurrency(value) } } } }
+            options: { 
+                maintainAspectRatio: false, // <-- AJOUTEZ CETTE LIGNE
+                scales: { y: { ticks: { callback: v => fmtCurrency(v) } } } 
+            } 
         });
     });
 
