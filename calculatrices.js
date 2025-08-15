@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // Affichage initial
-    showCalculator('retraite');
+   // showCalculator('retraite');
     
     // À ajouter à la fin de votre fichier calculatrices.js, à l'intérieur de l'événement DOMContentLoaded
 
