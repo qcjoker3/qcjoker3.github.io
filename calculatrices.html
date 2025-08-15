@@ -11,9 +11,13 @@
 <header class="container">
     <h1>Finoza</h1>
     <nav>
-        <a href="#accueil">Accueil</a>
-        <a href="#calculatrices">Calculatrices</a>
-        <a href="#contact">Contact</a>
+        <a href="index.html">Accueil</a>
+        <a href="#services">Services</a>
+        <a href="Prédictions.html">Prédictions</a>
+        <a href="calculatrices.html">Calculatrices</a>
+        <a href="gestionActive.html">Gestion active</a>
+        <a href="#articles">Articles</a>
+        <a href="index.html#contact">Contact</a>
     </nav>
 </header>
 
@@ -51,6 +55,7 @@
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-retraite"></p>
+            <canvas id="chart-retraite" class="chart-canvas"></canvas>
         </section>
 
         <section id="calc-valeur-future" class="calculator-card">
@@ -64,6 +69,7 @@
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-vf"></p>
+            <canvas id="chart-vf" class="chart-canvas"></canvas>
         </section>
 
         <section id="calc-hypotheque" class="calculator-card">
@@ -75,6 +81,7 @@
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-hypotheque"></p>
+            <canvas id="chart-hypotheque" class="chart-canvas"></canvas>
         </section>
 
         <section id="calc-trex" class="calculator-card">
@@ -88,10 +95,12 @@
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-trex"></p>
+            <canvas id="chart-trex" class="chart-canvas"></canvas>
         </section>
     </section>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="calculatrices.js"></script>
 
 </body>
