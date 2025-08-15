@@ -3,24 +3,40 @@ document.addEventListener('DOMContentLoaded', () => {
     const fmtCurrency = n => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(n);
     const toFloat = v => parseFloat(String(v).replace(',', '.')) || 0;
 
-    // --- Navigation entre calculatrices ---
-    const calcCards = document.querySelectorAll('.card-link[data-calc]');
+    // --- Navigation entre calculatrices (SECTION CORRIGÉE) ---
+    const calcCards = document.querySelectorAll('.card-grid .card[data-calc]');
     const calcSections = document.querySelectorAll('.calculator-card');
 
+    // Fonction pour afficher une calculatrice spécifique
+    const showCalculator = (key) => {
+        const targetSection = document.getElementById(`calc-${key}`);
+        if (!targetSection) return;
+
+        // Met à jour la visibilité des sections de calculatrices
+        calcSections.forEach(sec => {
+            sec.classList.remove('active');
+        });
+        targetSection.classList.add('active');
+
+        // Met à jour le style des cartes de sélection
+        calcCards.forEach(card => {
+            if (card.dataset.calc === key) {
+                card.classList.add('selected');
+            } else {
+                card.classList.remove('selected');
+            }
+        });
+    };
+
+    // Ajoute un écouteur d'événement sur chaque carte
     calcCards.forEach(card => {
         card.addEventListener('click', () => {
-            // Met à jour le style des cartes de sélection
-            calcCards.forEach(c => c.classList.remove('selected'));
-            card.classList.add('selected');
-            
-            // Affiche la bonne calculatrice
-            const key = card.dataset.calc;
-            calcSections.forEach(sec => sec.classList.remove('active'));
-            document.getElementById(`calc-${key}`)?.classList.add('active');
+            const calculatorKey = card.dataset.calc;
+            showCalculator(calculatorKey);
         });
     });
-
-    // --- Logique des calculatrices ---
+    
+    // --- Logique des calculatrices (inchangée) ---
 
     // Calculatrice — Retraite
     document.getElementById('form-retraite')?.addEventListener('submit', e => {
