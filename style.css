@@ -203,8 +203,8 @@ nav a:hover {
 
 /* ================== */
 /* RESPONSIVE */
-@media (max-width:768px){
+/*@media (max-width:768px){
   .card-grid { grid-template-columns: 1fr; }
   .scenario-btns { flex-direction: column; gap: 12px; }
   nav { flex-direction: column; gap: 12px; }
-}
+}*/
