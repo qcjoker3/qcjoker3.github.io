@@ -199,7 +199,7 @@ nav a:hover {
 .chart-container {
     position: relative;
     width: 100%;
-    max-width: 100%; /* Largeur maximale pour le graphique */
+    max-width: 800px; /* Largeur maximale pour le graphique */
     height: 400px;      /* Hauteur modérée et définie */
     margin: 30px auto 0 auto; /* Marge en haut et centrage horizontal */
 }
