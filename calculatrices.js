@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let chartVF = null;
     let chartHypo = null;
     let chartTrex = null;
+    let chartAcheterLouer = null;
 
     // --- Navigation entre calculatrices ---
     const calcCards = document.querySelectorAll('.card-grid .card[data-calc]');
