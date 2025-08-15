@@ -325,64 +325,80 @@ formHypo?.addEventListener('submit', e => {
   });
 });
 
-  // ==========================================================
-  // 🦖 Calculatrice — T‑Rex Score
-  // ==========================================================
-  const formTrex = document.getElementById('form-trex');
-  const resultatTrex = document.getElementById('resultat-trex');
-  const ctxTrex = document.getElementById('chart-trex')?.getContext('2d');
+// ==========================================================
+// 🦖 Calculatrice — T‑Rex Score
+// ==========================================================
+const formTrex = document.getElementById('form-trex');
+const resultatTrex = document.getElementById('resultat-trex');
+const ctxTrex = document.getElementById('chart-trex')?.getContext('2d');
 
-  formTrex?.addEventListener('submit', e => {
-    e.preventDefault();
+formTrex?.addEventListener('submit', e => {
+  e.preventDefault();
 
-    const montantInitial = toFloat(formTrex['montant-initial'].value);
-    const cotisationAnnuelle = toFloat(formTrex['cotisation-annuelle'].value) || 0;
-    const duree = parseInt(formTrex['duree-trex'].value);
-    const rendementBrut = toFloat(formTrex['rendement-brut'].value) / 100;
-    const fraisAnnuel = toFloat(formTrex['frais-annuels'].value) / 100;
+  const montantInitial = toFloat(formTrex['montant-initial']?.value);
+  const cotisationAnnuelle = toFloat(formTrex['cotisation-annuelle']?.value) || 0;
+  const duree = parseInt(formTrex['duree-trex']?.value);
+  const rendementBrut = toFloat(formTrex['rendement-brut']?.value) / 100;
+  const fraisAnnuel = toFloat(formTrex['frais-annuels']?.value) / 100;
 
-    if (!Number.isFinite(montantInitial) || !Number.isFinite(duree) ||
-        !Number.isFinite(rendementBrut) || !Number.isFinite(fraisAnnuel)) {
-      resultatTrex.textContent = 'Veuillez remplir tous les champs correctement.';
-      return;
-    }
+  // Validation des entrées
+  if (!Number.isFinite(montantInitial) || montantInitial <= 0 ||
+      !Number.isFinite(duree) || duree <= 0 ||
+      !Number.isFinite(rendementBrut) || 
+      !Number.isFinite(fraisAnnuel) || fraisAnnuel < 0) {
+    resultatTrex.textContent = 'Veuillez remplir tous les champs correctement avec des valeurs valides.';
+    return;
+  }
 
-    const rendementNet = rendementBrut - fraisAnnuel;
+  const rendementNet = rendementBrut - fraisAnnuel;
 
-    const fv = (P, r, n, C) => {
-      if (Math.abs(r) < 1e-12) return P + C * n;
-      return P * Math.pow(1 + r, n) + C * ((Math.pow(1 + r, n) - 1) / r);
-    };
+  // Fonction valeur future
+  const fv = (P, r, n, C) => {
+    if (Math.abs(r) < 1e-12) return P + C * n;
+    return P * Math.pow(1 + r, n) + C * ((Math.pow(1 + r, n) - 1) / r);
+  };
 
-    const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
-    const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
-    const scoreTrex = capitalAvecFrais / (capitalSansFrais || 1);
-    const perteDueAuxFrais = capitalSansFrais - capitalAvecFrais;
+  const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
+  const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
 
-    resultatTrex.textContent =
-      `Votre score est de ${(scoreTrex * 100).toFixed(1)}%.\nValeur finale avec frais : ${fmtCurrency(capitalAvecFrais)}\nValeur sans frais : ${fmtCurrency(capitalSansFrais)} → Frais payés : ${fmtCurrency(perteDueAuxFrais)}.`;
+  const scoreTrex = capitalSansFrais > 0 ? capitalAvecFrais / capitalSansFrais : 0;
+  const perteDueAuxFrais = capitalSansFrais - capitalAvecFrais;
 
-    if (chartTrex) chartTrex.destroy();
-    chartTrex = new Chart(ctxTrex, {
-      type: 'bar',
-      data: {
-        labels: ['Avec frais', 'Sans frais'],
-        datasets: [{
-          label: 'Valeur finale',
-          data: [capitalAvecFrais, capitalSansFrais],
-          backgroundColor: ['#00a678', '#00c48c']
-        }]
+  // Affichage texte
+  resultatTrex.textContent =
+    `Votre score est de ${(scoreTrex * 100).toFixed(1)}%.\n` +
+    `Valeur finale avec frais : ${fmtCurrency(capitalAvecFrais)}\n` +
+    `Valeur sans frais : ${fmtCurrency(capitalSansFrais)} → ` +
+    `Frais payés : ${fmtCurrency(perteDueAuxFrais)}.`;
+
+  if (!ctxTrex) {
+    console.warn('Canvas du graphique T‑Rex introuvable.');
+    return; // On garde l’affichage du texte sans planter
+  }
+
+  // Création graphique
+  if (chartTrex) chartTrex.destroy();
+  chartTrex = new Chart(ctxTrex, {
+    type: 'bar',
+    data: {
+      labels: ['Avec frais', 'Sans frais'],
+      datasets: [{
+        label: 'Valeur finale',
+        data: [capitalAvecFrais, capitalSansFrais],
+        backgroundColor: ['#00a678', '#00c48c']
+      }]
+    },
+    options: {
+      responsive: true,
+      resizeDelay: 200,
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: "Impact des frais sur la valeur finale" }
       },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false },
-          title: { display: true, text: "Impact des frais sur la valeur finale" }
-        },
-        scales: { y: { beginAtZero: true } }
-      }
-    });
+      scales: { y: { beginAtZero: true } }
+    }
   });
+});  
   // ============================================================================
   // Louer vs Acheter
   // ============================================================================
