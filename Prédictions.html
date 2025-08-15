@@ -1,200 +1,506 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Fonctions utilitaires
-    const fmtNombre = n => new Intl.NumberFormat('fr-FR', { 
-        maximumFractionDigits: 0
-    }).format(n);
-    const toFloat = v => parseFloat(String(v).replace(',', '.')) || 0;
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Finoza</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; }
+    .encadre-texte {
+      font-size: 1.1em;
+      width: 60%;
+      margin: 20px auto;
+      padding: 15px;
+      text-align: center;
+      background-color: #f7f9fa;
+      border-radius: 8px;
+    }
+    .year-selector { text-align: center; margin: 20px 0; }
+    #chartContainer { max-width: 960px; margin: auto; }
+    #chartCanvas { width: 100%; height: 420px; }
+    footer { text-align: center; margin-top: 40px; }
 
-    // Déclaration unique de toutes les variables de graphiques
-    let chartRetraite = null, chartVF = null, chartHypo = null, chartTrex = null, chartAcheterLouer = null;
+    /* Analyse détaillée */
+    .analysis {
+      max-width: 960px;
+      margin: 28px auto 60px;
+      padding-top: 8px;
+      border-top: 1px solid #e5e7eb;
+    }
+    .analysis h3 { margin: 14px 0; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+    .horizon-tabs {
+      display: flex; gap: 8px; margin: 6px 0 12px;
+    }
+    .horizon-tabs button {
+      padding: 8px 12px; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer;
+    }
+    .horizon-tabs button.active {
+      background: #111827; color: #fff; border-color: #111827;
+    }
+    .hint { color: #6b7280; font-size: 0.9em; margin: 6px 0 12px; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 9px 10px; border-bottom: 1px solid #eceff3; text-align: left; }
+    th { background: #f7f9fa; position: sticky; top: 0; z-index: 1; }
+    .table-wrap { max-height: 340px; overflow: auto; border: 1px solid #eceff3; border-radius: 8px; }
+    .rank-badge {
+      display: inline-block; min-width: 26px; text-align: center; padding: 2px 6px; border-radius: 999px;
+      background: #eef2ff; color: #3730a3; font-weight: 600; font-size: 12px;
+    }
+    tr.focused { background: #fff7ed; }
+    tr:hover { background: #f9fafb; cursor: pointer; }
 
-    // --- Navigation entre calculatrices ---
-    const calcCards = document.querySelectorAll('.card-grid .card[data-calc]');
-    const calcSections = document.querySelectorAll('.calculator-card');
+    #predRealContainer { max-width: 960px; margin: 6px auto; }
+    #predRealCanvas { width: 100%; height: 360px; }
+  </style>
+</head>
+<body>
+  <div id="header-placeholder"></div>
 
-    const showCalculator = (key) => {
-        const targetSection = document.getElementById(`calc-${key}`);
-        if (!targetSection) return;
+  <main>
+    <section>
+      <div class="encadre-texte">
+        À chaque début d'année les stratégistes des grandes banques et fonds d'investissement dévoilent leurs prédictions sur le S&P 500 pour l'année à venir. Ils sont payés des millions par année et possèdent des modèles économétriques très avancés. Ils devraient être bons, n'est-ce pas ? Pourtant année après année ils sont toujours à l'emploi de leur firme à attendre leur chèque aux 2 semaines. Charlatants ou experts? Voyez par vous-mêmes !
+      </div>
 
-        calcSections.forEach(sec => sec.classList.remove('active'));
-        targetSection.classList.add('active');
+      <h2 style="text-align:center;">Prédictions du S&P 500</h2>
 
-        calcCards.forEach(card => card.classList.toggle('selected', card.dataset.calc === key));
-        
-        const form = targetSection.querySelector('form');
-        if (form) {
-             form.dispatchEvent(new Event('submit'));
-        }
+      <!-- Analyse détaillée -->
+      <section class="analysis">
+        <h3>Analyse détaillée</h3>
+        <div class="grid-2">
+          <div>
+            <h4>Classement des institutions</h4>
+            <div class="horizon-tabs">
+              <button data-h="1" class="active">1 an</button>
+              <button data-h="3">3 ans</button>
+              <button data-h="5">5 ans</button>
+            </div>
+            <div class="hint">Classement par écart moyen en % sur l’horizon choisi, calculé à partir de la dernière année disponible.</div>
+            <div class="table-wrap">
+              <table id="rankingTable">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Institution</th>
+                    <th>Années (n)</th>
+                    <th>Écart moyen (%)</th>
+                    
+                  </tr>
+                </thead>
+                <tbody><!-- rempli par JS --></tbody>
+              </table>
+            </div>
+          </div>
+          <div>
+            <h4>Prévision vs Réalité par année</h4>
+            <div class="hint">Affiche la trajectoire de l’institution sélectionnée (sélectionne une ligne du classement).</div>
+            <div id="predRealContainer">
+              <canvas id="predRealCanvas"></canvas>
+            </div>
+          </div>
+        </div>
+      </section>
+        <!-- fin Analyse détaillée -->
+      
+      <div class="year-selector">
+        <label for="yearSelect">📅 Année :</label>
+        <select id="yearSelect">
+          <option value="">-- Sélectionner --</option>
+          <option value="2020">2020</option>
+          <option value="2021">2021</option>
+          <option value="2022">2022</option>
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+        </select>
+      </div>
+
+      <div id="chartContainer">
+        <canvas id="chartCanvas"></canvas>
+      </div>
+
+     </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 - Finoza</p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
+  <script>
+    // Injecte le header
+    fetch('header.html')
+      .then(res => res.text())
+      .then(data => { document.getElementById('header-placeholder').innerHTML = data; });
+
+    // Données
+    const chartDataByYear = {
+      "2020": {
+        real: 3756,
+        institutions: [
+          "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
+          "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"
+        ],
+        previsions: [
+          3400, 3400, 3300, 3000, 3000, 3300, 3300, 3350, 3250, 3425, 3400, 3500
+        ]
+      },
+      "2021": {
+        real: 4766,
+        institutions: [
+          "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
+          "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"
+        ],
+        previsions: [
+          4300, 4400, 3800, 3900, 4100, 4000, 4000, 4100, 3950, 4050, 4200, 4300
+        ]
+      },
+      "2022": {
+        real: 3840,
+        institutions: [
+          "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
+          "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"
+        ],
+        previsions: [
+          5100, 5050, 4600, 4400, 4850, 5300, 4800, 5050, 5250, 5200, 5300, 5330
+        ]
+      },
+      "2023": {
+        real: 4770,
+        institutions: [
+          "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
+          "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"
+        ],
+        previsions: [
+          4000, 4200, 4000, 3900, 3900, 4400, 4150, 4300, 4500, 4050, 4300, 4400
+        ]
+      },
+      "2024": {
+        real: 5882,
+        institutions: [
+          "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
+          "Deutsche Bank", "BCA Research", "BMO", "Oppenheimer"
+        ],
+        previsions: [
+          5100, 4200, 5000, 4500, 4700, 4700, 5300, 5000, 5100, 3300, 5100, 5200
+        ]
+      },
     };
 
-    calcCards.forEach(card => card.addEventListener('click', () => showCalculator(card.dataset.calc)));
+    // Utilitaires
+    const yearsSorted = Object.keys(chartDataByYear).sort();
+    const idxByYear = (y) => yearsSorted.indexOf(String(y));
 
-    // --- Calculatrice de Retraite ---
-    document.getElementById('form-retraite')?.addEventListener('submit', e => {
-        e.preventDefault();
-        const resultatRetraite = document.getElementById('resultat-retraite');
-        const ageActuel = toFloat(document.getElementById('age-actuel').value);
-        const ageRetraite = toFloat(document.getElementById('age-retraite').value);
-        const epargneMensuelle = toFloat(document.getElementById('epargne-mensuelle').value);
-        const rendementAnnuel = toFloat(document.getElementById('rendement').value) / 100;
-        if (ageRetraite <= ageActuel) { resultatRetraite.textContent = "L'âge de retraite doit être supérieur."; return; }
-        const annees = ageRetraite - ageActuel;
-        const rMensuel = Math.pow(1 + rendementAnnuel, 1 / 12) - 1;
-        const FV = epargneMensuelle * ((Math.pow(1 + rMensuel, annees * 12) - 1) / rMensuel);
-        resultatRetraite.textContent = `Capital estimé à la retraite : ${fmtNombre(FV)}.`;
-        const ctx = document.getElementById('chart-retraite')?.getContext('2d');
-        if (!ctx) return;
-        if (chartRetraite) chartRetraite.destroy();
-        const labels = [], capitalData = [], interetData = [];
-        for (let i = 0; i <= annees; i++) {
-            labels.push(ageActuel + i);
-            let mois = i * 12, totalInvesti = epargneMensuelle * mois;
-            let valeurTotale = isFinite(rMensuel) && rMensuel !== 0 ? epargneMensuelle * ((Math.pow(1 + rMensuel, mois) - 1) / rMensuel) : totalInvesti;
-            capitalData.push(totalInvesti);
-            interetData.push(valeurTotale - totalInvesti);
-        }
-        chartRetraite = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Capital versé', data: capitalData, backgroundColor: '#86efac' }, { label: 'Intérêts gagnés', data: interetData, backgroundColor: '#16a34a' }] }, options: { maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => fmtNombre(v) } } } } });
-    });
+    function getWindowYears(endYear, horizonYears) {
+      const endIdx = idxByYear(endYear);
+      if (endIdx < 0) return [];
+      const startIdx = Math.max(0, endIdx - (horizonYears - 1));
+      return yearsSorted.slice(startIdx, endIdx + 1);
+    }
 
-    // --- Calculatrice de Valeur Future ---
-    document.getElementById('form-vf')?.addEventListener('submit', e => {
-        e.preventDefault();
-        const resultatVF = document.getElementById('resultat-vf');
-        const montantInitial = toFloat(document.getElementById('vf-montant-initial').value);
-        const duree = toFloat(document.getElementById('vf-duree').value);
-        const taux = toFloat(document.getElementById('vf-taux').value) / 100;
-        const cotisation = toFloat(document.getElementById('vf-cotisation').value);
-        const freq = document.getElementById('vf-frequence').value;
-        const m = freq === 'mensuelle' ? 12 : 1, rP = Math.pow(1 + taux, 1 / m) - 1, nP = duree * m;
-        const fvTotal = (montantInitial * Math.pow(1 + rP, nP)) + (cotisation * ((Math.pow(1 + rP, nP) - 1) / rP));
-        resultatVF.textContent = `Valeur future estimée : ${fmtNombre(fvTotal)}.`;
-        const ctx = document.getElementById('chart-vf')?.getContext('2d');
-        if (!ctx) return;
-        if (chartVF) chartVF.destroy();
-        const labels = [], valeurData = [];
-        for (let i = 0; i <= duree; i++) {
-            labels.push(`Année ${i}`);
-            let nP_i = i * m;
-            valeurData.push((montantInitial * Math.pow(1 + rP, nP_i)) + (cotisation * ((Math.pow(1 + rP, nP_i) - 1) / rP)));
-        }
-        chartVF = new Chart(ctx, { type: 'line', data: { labels, datasets: [{ label: 'Valeur du portefeuille', data: valeurData, borderColor: '#22c55e', fill: true, backgroundColor: 'rgba(34,197,94,0.1)' }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) } } } } });
-    });
+    function computeYearErrorsPct(year) {
+      const d = chartDataByYear[year];
+      const { institutions, previsions, real } = d;
+      const map = new Map();
+      institutions.forEach((inst, i) => {
+        const errPct = Math.abs(previsions[i] - real) / real * 100;
+        const errPts = Math.abs(previsions[i] - real);
+        map.set(inst, { errPct, errPts, pred: previsions[i], real });
+      });
+      return map; // inst -> {errPct, errPts, pred, real}
+    }
 
-    // --- Calculatrice d'Hypothèque ---
-    document.getElementById('form-hypotheque')?.addEventListener('submit', e => {
-        e.preventDefault();
-        const resultatHypo = document.getElementById('resultat-hypotheque');
-        const montantPret = toFloat(document.getElementById('hypo-montant').value);
-        const tauxHypo = toFloat(document.getElementById('hypo-taux').value) / 100;
-        const dureeHypo = toFloat(document.getElementById('hypo-duree').value);
-        const rMensuel = tauxHypo / 12, n = dureeHypo * 12;
-        if (rMensuel <= 0) return; // Empêche la division par zéro
-        const mensualite = montantPret * rMensuel / (1 - Math.pow(1 + rMensuel, -n));
-        resultatHypo.textContent = `Mensualité estimée : ${fmtNombre(mensualite)}.`;
-        const ctx = document.getElementById('chart-hypotheque')?.getContext('2d');
-        if (!ctx) return;
-        if (chartHypo) chartHypo.destroy();
-        const labels = [], capitalRestantData = [], capitalRembourseData = [];
-        let capitalRestant = montantPret;
-        for (let i = 0; i <= dureeHypo; i++) {
-            labels.push(`Année ${i}`);
-            capitalRestantData.push(capitalRestant);
-            capitalRembourseData.push(montantPret - capitalRestant);
-            for (let j = 0; j < 12 && capitalRestant > 0; j++) {
-                let interet = capitalRestant * rMensuel;
-                capitalRestant -= (mensualite - interet);
+    function computeRanking(endYear, horizonYears) {
+      const windowYears = getWindowYears(endYear, horizonYears);
+      // Agrège par institution
+      const stats = new Map(); // inst -> { sumPct, sumPts, n }
+      windowYears.forEach(y => {
+        const errs = computeYearErrorsPct(y);
+        errs.forEach((v, inst) => {
+          if (!stats.has(inst)) stats.set(inst, { sumPct: 0, sumPts: 0, n: 0 });
+          const s = stats.get(inst);
+          s.sumPct += v.errPct;
+          s.sumPts += v.errPts;
+          s.n += 1;
+        });
+      });
+      const rows = [];
+      stats.forEach((s, inst) => {
+        const mape = s.sumPct / s.n;
+        const mae = s.sumPts / s.n;
+        rows.push({ institution: inst, n: s.n, mape, mae });
+      });
+      rows.sort((a, b) => (a.mape - b.mape) || (a.mae - b.mae) || a.institution.localeCompare(b.institution));
+      return { rows, windowYears };
+    }
+
+    // Plugin ligne horizontale (pour le graphe principal)
+    const customLine = {
+      id: 'customLine',
+      afterDatasetsDraw(chart) {
+        const opts = chart.options.plugins?.customLine;
+        if (!opts || typeof opts.y !== 'number') return;
+        const { ctx, chartArea, scales } = chart;
+        const yPix = scales.y.getPixelForValue(opts.y);
+        ctx.save();
+        ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = opts.color || '#888';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(chartArea.left, yPix);
+        ctx.lineTo(chartArea.right, yPix);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        const label = opts.label || `Réalité: ${opts.y} pts`;
+        ctx.fillStyle = opts.labelColor || '#333';
+        ctx.font = '12px Segoe UI';
+        const tw = ctx.measureText(label).width;
+        ctx.fillText(label, chartArea.right - tw - 8, yPix - 6);
+        ctx.restore();
+      }
+    };
+
+    Chart.register(customLine, ChartDataLabels);
+
+    let chartInstance = null;     // graphe principal (barres)
+    let predRealChart = null;     // graphe droite (ligne)
+    let focusedInstitution = null;
+    let currentHorizon = 1;
+
+    function displayTable(year) {
+      const data = chartDataByYear[year];
+      const canvas = document.getElementById('chartCanvas');
+      if (!canvas || !data) {
+        if (chartInstance) chartInstance.destroy();
+        return;
+      }
+
+      const ctx = canvas.getContext('2d');
+      const { institutions, previsions, real } = data;
+
+      const base = previsions.map(p => Math.min(p, real));
+      const ecarts = previsions.map(p => Math.abs(real - p));
+      const signes = previsions.map(p => p - real);
+
+      const pourcentages = signes.map(diff => ((Math.abs(diff) / real) * 100).toFixed(1));
+
+      if (chartInstance) chartInstance.destroy();
+
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: institutions,
+          datasets: [
+            {
+              label: 'Prévision',
+              data: base,
+              backgroundColor: 'rgba(54, 162, 235, 0.85)',
+              borderColor: 'rgba(54, 162, 235, 1)',
+              borderWidth: 1,
+              stack: 'grp',
+              datalabels: { display: false }
+            },
+            {
+              label: 'Écart vs Réalité',
+              data: ecarts,
+              backgroundColor: 'rgba(255, 99, 132, 0.65)',
+              borderColor: 'rgba(255, 99, 132, 1)',
+              borderWidth: 1,
+              stack: 'grp',
+              datalabels: {
+                display: true,
+                anchor: 'center',
+                align: 'center',
+                formatter: (val, ctx) => {
+                  const sym = signes[ctx.dataIndex] < 0 ? '🔻' : '🔺';
+                  return sym + ' ' + pourcentages[ctx.dataIndex] + '%';
+                },
+                color: '#fff',
+                font: { weight: 'bold', size: 12 },
+                clip: true
+              }
             }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: `S&P 500 – ${year} : Prévisions vs Réalité (${real} pts)`,
+              font: { size: 18 }
+            },
+            legend: { position: 'bottom' },
+            customLine: {
+              y: real,
+              color: '#888',
+              label: `Réalité: ${real} pts`
+            },
+            datalabels: { clip: false },
+            tooltip: {
+              callbacks: {
+                afterBody: items => {
+                  const idx = items[0].dataIndex;
+                  const p = previsions[idx];
+                  return `Prévision: ${p} pts | Réalité: ${real} pts`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              stacked: true,
+              title: { display: true, text: 'Institution' }
+            },
+            y: {
+              stacked: true,
+              title: { display: true, text: 'Points S&P 500' }
+            }
+          }
         }
-        chartHypo = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Capital remboursé', data: capitalRembourseData, backgroundColor: '#86efac' }, { label: 'Capital restant dû', data: capitalRestantData, backgroundColor: '#e2e8f0' }] }, options: { maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => fmtNombre(v) } } } } });
-    });
+      });
 
-    // --- Calculatrice de Frais de Gestion ---
-    document.getElementById('form-trex')?.addEventListener('submit', e => {
-        e.preventDefault();
-        const resultatTrex = document.getElementById('resultat-trex');
-        const montantInitial = toFloat(document.getElementById('trex-montant').value);
-        const cotisationAnnuelle = toFloat(document.getElementById('trex-cotisation-annuelle').value);
-        const duree = toFloat(document.getElementById('trex-duree').value);
-        const rendementBrut = toFloat(document.getElementById('trex-rendement-brut').value) / 100;
-        const fraisAnnuel = toFloat(document.getElementById('trex-taux').value) / 100;
-        const rendementNet = rendementBrut - fraisAnnuel;
-        const fv = (P, r, n, C) => P * Math.pow(1 + r, n) + C * ((Math.pow(1 + r, n) - 1) / r);
-        const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
-        const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
-        resultatTrex.textContent = `Impact des frais : ${fmtNombre(capitalSansFrais - capitalAvecFrais)}. Valeur finale : ${fmtNombre(capitalAvecFrais)}.`;
-        const ctx = document.getElementById('chart-trex')?.getContext('2d');
-        if (!ctx) return;
-        if (chartTrex) chartTrex.destroy();
-        chartTrex = new Chart(ctx, { type: 'bar', data: { labels: ['Avec Frais', 'Sans Frais (Potentiel)'], datasets: [{ label: 'Valeur finale', data: [capitalAvecFrais, capitalSansFrais], backgroundColor: ['#16a34a', '#86efac'] }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) } } } } });
-    });
-    
-    // --- Calculatrice Acheter ou Louer ---
-    document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
-        e.preventDefault();
-        const val = id => toFloat(document.getElementById(id).value);
-        const pct = id => val(id) / 100;
-        const sel = id => document.getElementById(id).value;
-        const prixPropriete = val('al-prix-propriete');
-        const miseDeFonds = val('al-mise-de-fonds');
-        const tauxHypoAnnuel = pct('al-taux-hypotheque');
-        const amortissement = val('al-amortissement');
-        const taxesAnnuelles = val('al-taxes-annuelles');
-        const entretienPct = pct('al-entretien-annuel');
-        const assuranceProprioM = val('al-assurance-proprio');
-        const fraisCondoM = val('al-frais-condo');
-        let loyerMensuel = val('al-loyer-mensuel');
-        const assuranceLocM = val('al-assurance-loc');
-        const horizon = val('al-horizon');
-        const croissanceImmo = pct('al-croissance-immo');
-        const augmentationLoyer = pct('al-augmentation-loyer');
-        const rendementPlacement = pct('al-rendement-placement');
-        const typeCompte = sel('al-type-compte');
-        const tauxMarginal = pct('al-taux-marginal');
-        const montantPret = prixPropriete - miseDeFonds;
-        const tauxHypoMensuel = tauxHypoAnnuel / 12;
-        const nbPaiements = amortissement * 12;
-        if (tauxHypoMensuel <= 0) return;
-        const paiementHypothecaire = montantPret * tauxHypoMensuel / (1 - Math.pow(1 + tauxHypoMensuel, -nbPaiements));
-        let valeurPropriete = prixPropriete;
-        let soldeHypotheque = montantPret;
-        let portefeuilleLocataire = miseDeFonds;
-        const labels = ['Année 0'];
-        const dataProprio = [miseDeFonds];
-        const dataLocataire = [portefeuilleLocataire];
-        for (let an = 1; an <= horizon; an++) {
-            for (let mois = 1; mois <= 12; mois++) {
-                let interetMois = soldeHypotheque * tauxHypoMensuel;
-                soldeHypotheque -= (paiementHypothecaire - interetMois);
-            }
-            const coutsProprio = (paiementHypothecaire * 12) + taxesAnnuelles + (prixPropriete * entretienPct) + (assuranceProprioM * 12) + (fraisCondoM * 12);
-            const coutsLocataire = (loyerMensuel * 12) + (assuranceLocM * 12);
-            const investissementAnnuel = Math.max(0, coutsProprio - coutsLocataire);
-            portefeuilleLocataire += investissementAnnuel;
-            let gainPlacement = portefeuilleLocataire * rendementPlacement;
-            if (typeCompte === 'non-enregistre') {
-                gainPlacement *= (1 - (tauxMarginal * 0.5));
-            }
-            portefeuilleLocataire += gainPlacement;
-            valeurPropriete *= (1 + croissanceImmo);
-            labels.push(`Année ${an}`);
-            dataProprio.push(valeurPropriete - soldeHypotheque);
-            if (typeCompte === 'reer') {
-                dataLocataire.push(portefeuilleLocataire * (1 - tauxMarginal));
-            } else {
-                dataLocataire.push(portefeuilleLocataire);
-            }
-            loyerMensuel *= (1 + augmentationLoyer);
+      // Met à jour l’analyse détaillée
+      focusedInstitution = null; // reset
+      //renderRankingAndChart(year, currentHorizon);
+    }
+
+    function renderRankingAndChart(endYear, horizon) {
+      // Boutons d’horizon
+      document.querySelectorAll('.horizon-tabs button').forEach(btn => {
+        btn.classList.toggle('active', Number(btn.dataset.h) === horizon);
+      });
+
+      const { rows, windowYears } = computeRanking(endYear, horizon);
+      const tbody = document.querySelector('#rankingTable tbody');
+      tbody.innerHTML = '';
+
+      // Choisir institution en focus si non définie
+      if (!focusedInstitution && rows.length) focusedInstitution = rows[0].institution;
+
+      rows.forEach((r, idx) => {
+        const tr = document.createElement('tr');
+        if (r.institution === focusedInstitution) tr.classList.add('focused');
+        tr.innerHTML = `
+          <td><span class="rank-badge">${idx + 1}</span></td>
+          <td>${r.institution}</td>
+          <td>${r.n}</td>
+          <td>${r.mape.toFixed(1)}%</td>
+          
+        `;
+        tr.addEventListener('click', () => {
+          focusedInstitution = r.institution;
+          renderRankingAndChart(endYear, horizon); // re-render table to update highlight
+        });
+        tbody.appendChild(tr);
+      });
+
+      // Met à jour le graphique droite: Prévision vs Réalité par année pour l’institution focus
+      renderPredVsRealChart(focusedInstitution);
+    }
+
+    function renderPredVsRealChart(institution) {
+      const canvas = document.getElementById('predRealCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Collecte les années où l’institution a une prévision
+      const labels = [];
+      const preds = [];
+      const reals = [];
+      yearsSorted.forEach(y => {
+        const d = chartDataByYear[y];
+        const i = d.institutions.indexOf(institution);
+        if (i >= 0) {
+          labels.push(y);
+          preds.push(d.previsions[i]);
+          reals.push(d.real);
         }
-        const resultatFinalProprio = dataProprio[dataPropriete.length - 1];
-        const resultatFinalLocataire = dataLocataire[dataLocataire.length - 1];
-        const difference = resultatFinalProprio - resultatFinalLocataire;
-        document.getElementById('resultat-acheter-louer').textContent = `Après ${horizon} ans, l'actif net du propriétaire est de ${fmtNombre(resultatFinalProprio)} et celui du locataire de ${fmtNombre(resultatFinalLocataire)}. Différence : ${fmtNombre(difference)} en faveur du ${difference > 0 ? 'propriétaire' : 'locataire'}.`;
-        const ctx = document.getElementById('chart-acheter-louer')?.getContext('2d');
-        if (!ctx) return;
-        if (chartAcheterLouer) chartAcheterLouer.destroy();
-        chartAcheterLouer = new Chart(ctx, { type: 'line', data: { labels, datasets: [{ label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true }, { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: value => fmtNombre(value) } } } } });
-    });
+      });
 
-    // Affichage initial
-    showCalculator('retraite');
+      if (predRealChart) predRealChart.destroy();
+      predRealChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels,
+          datasets: [
+            {
+              label: `${institution} – Prévision`,
+              data: preds,
+              borderColor: 'rgba(54, 162, 235, 1)',
+              backgroundColor: 'rgba(54, 162, 235, 0.15)',
+              borderWidth: 3,
+              pointRadius: 3,
+              tension: 0.25
+            },
+            {
+              label: 'Réalité',
+              data: reals,
+              borderColor: 'rgba(31, 41, 55, 0.9)',
+              backgroundColor: 'rgba(31, 41, 55, 0.1)',
+              borderWidth: 2,
+              pointRadius: 2,
+              tension: 0.25
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            title: {
+              display: true,
+              text: `Prévision vs Réalité – ${institution}`,
+              font: { size: 16 }
+            },
+            legend: { position: 'bottom' },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.dataset.label}: ${ctx.raw} pts`
+              }
+            },
+            datalabels: { display: false }
+          },
+          scales: {
+            x: { title: { display: true, text: 'Année' } },
+            y: { title: { display: true, text: 'Points S&P 500' } }
+          }
+        }
+      });
+    }
+
+    // Écouteurs UI
+    document.addEventListener('DOMContentLoaded', () => {
+  const sel = document.getElementById('yearSelect');
+  sel.value = sel.value || '2020';
+
+  // Le graphique principal dépend toujours du sélecteur
+  sel.addEventListener('change', e => {
+    displayTable(e.target.value);
+  });
+
+  // Affiche le graphique principal pour la valeur par défaut
+  displayTable(sel.value);
+
+  // Classement et prévision vs réalité sont toujours basés sur la dernière année
+  const latestYear = yearsSorted.at(-1);
+  renderRankingAndChart(latestYear, currentHorizon);
+
+  // Boutons d’horizon : toujours basés sur latestYear
+  document.querySelectorAll('.horizon-tabs button').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentHorizon = Number(btn.dataset.h);
+      const latestYear = yearsSorted.at(-1);
+      renderRankingAndChart(latestYear, currentHorizon);
+    });
+  });
 });
+  </script>
+</body>
+</html>
