@@ -219,4 +219,151 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Affichage initial
     showCalculator('retraite');
+    
+    // À ajouter à la fin de votre fichier calculatrices.js, à l'intérieur de l'événement DOMContentLoaded
+
+let chartAcheterLouer = null; // Variable pour le graphique
+
+document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
+    e.preventDefault();
+
+    // --- Fonctions d'aide pour la lecture des valeurs ---
+    const val = id => toFloat(document.getElementById(id).value);
+    const pct = id => val(id) / 100;
+    const sel = id => document.getElementById(id).value;
+
+    // --- Récupération de toutes les valeurs ---
+    // Propriétaire
+    const prixPropriete = val('al-prix-propriete');
+    const miseDeFonds = val('al-mise-de-fonds');
+    const tauxHypoAnnuel = pct('al-taux-hypotheque');
+    const amortissement = val('al-amortissement');
+    const taxesAnnuelles = val('al-taxes-annuelles');
+    const entretienPct = pct('al-entretien-annuel');
+    const assuranceProprioM = val('al-assurance-proprio');
+    const fraisCondoM = val('al-frais-condo');
+
+    // Locataire
+    let loyerMensuel = val('al-loyer-mensuel');
+    const assuranceLocM = val('al-assurance-loc');
+
+    // Paramètres communs
+    const horizon = val('al-horizon');
+    const croissanceImmo = pct('al-croissance-immo');
+    const augmentationLoyer = pct('al-augmentation-loyer');
+    const rendementPlacement = pct('al-rendement-placement');
+    const typeCompte = sel('al-type-compte');
+    const tauxMarginal = pct('al-taux-marginal');
+    
+    // --- Calculs initiaux ---
+    const montantPret = prixPropriete - miseDeFonds;
+    const tauxHypoMensuel = tauxHypoAnnuel / 12;
+    const nbPaiements = amortissement * 12;
+    const paiementHypothecaire = montantPret * tauxHypoMensuel / (1 - Math.pow(1 + tauxHypoMensuel, -nbPaiements));
+
+    // --- Initialisation de la simulation ---
+    let actifNetProprio = miseDeFonds;
+    let actifNetLocataire = 0;
+    let valeurPropriete = prixPropriete;
+    let soldeHypotheque = montantPret;
+    let portefeuilleLocataire = miseDeFonds; // Le locataire investit la mise de fonds au départ
+
+    const labels = ['Année 0'];
+    const dataProprio = [actifNetProprio];
+    const dataLocataire = [portefeuilleLocataire];
+
+    // --- Simulation année par année ---
+    for (let an = 1; an <= horizon; an++) {
+        let interetAnnuel = 0;
+        let capitalRembourse = 0;
+        
+        // Calcul hypothèque pour l'année
+        for (let mois = 1; mois <= 12; mois++) {
+            let interetMois = soldeHypotheque * tauxHypoMensuel;
+            let capitalMois = paiementHypothecaire - interetMois;
+            interetAnnuel += interetMois;
+            capitalRembourse += capitalMois;
+            soldeHypotheque -= capitalMois;
+        }
+
+        // Coûts annuels du propriétaire
+        const coutsProprio = (paiementHypothecaire * 12) + taxesAnnuelles + (prixPropriete * entretienPct) + (assuranceProprioM * 12) + (fraisCondoM * 12);
+        
+        // Coûts annuels du locataire
+        const coutsLocataire = (loyerMensuel * 12) + (assuranceLocM * 12);
+        
+        // Le locataire investit la différence
+        const investissementAnnuel = Math.max(0, coutsProprio - coutsLocataire);
+        portefeuilleLocataire += investissementAnnuel;
+
+        // Croissance du portefeuille du locataire (avec impôts si applicable)
+        let gainPlacement = portefeuilleLocataire * rendementPlacement;
+        if (typeCompte === 'non-enregistre') {
+            gainPlacement *= (1 - (tauxMarginal * 0.5)); // Impôt sur 50% du gain en capital
+        }
+        portefeuilleLocataire += gainPlacement;
+
+        // Mise à jour de la valeur de la propriété
+        valeurPropriete *= (1 + croissanceImmo);
+        
+        // Mise à jour de l'actif net du propriétaire
+        actifNetProprio = valeurPropriete - soldeHypotheque;
+        
+        // On stocke les données pour le graphique
+        labels.push(`Année ${an}`);
+        dataProprio.push(actifNetProprio);
+
+        // Actif net final du locataire selon le compte
+        if (typeCompte === 'reer') {
+            dataLocataire.push(portefeuilleLocataire * (1 - tauxMarginal)); // Imposé au retrait
+        } else {
+            dataLocataire.push(portefeuilleLocataire); // CELI ou déjà imposé
+        }
+
+        // Augmentation du loyer pour l'année suivante
+        loyerMensuel *= (1 + augmentationLoyer);
+    }
+    
+    // --- Affichage du résultat final ---
+    const resultatFinalProprio = dataProprio[dataProprio.length - 1];
+    const resultatFinalLocataire = dataLocataire[dataLocataire.length - 1];
+    const difference = resultatFinalProprio - resultatFinalLocataire;
+    
+    document.getElementById('resultat-acheter-louer').textContent = 
+        `Après ${horizon} ans, l'actif net du propriétaire est de ${fmtCurrency(resultatFinalProprio)} et celui du locataire est de ${fmtCurrency(resultatFinalLocataire)}. Différence : ${fmtCurrency(difference)} en faveur du ${difference > 0 ? 'propriétaire' : 'locataire'}.`;
+
+    // --- Création du graphique ---
+    const ctx = document.getElementById('chart-acheter-louer')?.getContext('2d');
+    if (!ctx) return;
+    if (chartAcheterLouer) chartAcheterLouer.destroy();
+    
+    chartAcheterLouer = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Actif Net Propriétaire',
+                    data: dataProprio,
+                    borderColor: '#16a34a',
+                    backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                    fill: true
+                },
+                {
+                    label: 'Actif Net Locataire (Investisseur)',
+                    data: dataLocataire,
+                    borderColor: '#f97316',
+                    backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: { ticks: { callback: value => fmtCurrency(value) } }
+            }
+        }
+    });
+});
 });
