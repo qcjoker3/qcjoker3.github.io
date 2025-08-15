@@ -103,9 +103,122 @@
             <p class="resultat" id="resultat-trex"></p>
 <div class="chart-container">
     <canvas id="chart-trex"></canvas>
-</div>
+</div>      
         </section>
+<section id="calc-acheter-louer" class="calculator-card">
+    <h2>Calculatrice : Acheter ou Louer ?</h2>
+    <form id="form-acheter-louer">
+
+        <div class="form-columns">
+            <div class="form-column">
+                <h3>Scénario Propriétaire</h3>
+                <div class="form-group">
+                    <label for="al-prix-propriete">Prix d'achat de la propriété</label>
+                    <input type="number" id="al-prix-propriete" value="450000">
+                </div>
+                <div class="form-group">
+                    <label for="al-mise-de-fonds">Mise de fonds</label>
+                    <input type="number" id="al-mise-de-fonds" value="90000">
+                </div>
+                <div class="form-group">
+                    <label for="al-taux-hypotheque">Taux d'intérêt hypothécaire annuel (%)</label>
+                    <input type="number" id="al-taux-hypotheque" value="4.5">
+                </div>
+                 <div class="form-group">
+                    <label for="al-amortissement">Amortissement de l'hypothèque (années)</label>
+                    <input type="number" id="al-amortissement" value="25">
+                </div>
+                <div class="form-group">
+                    <label for="al-taxes-annuelles">Taxes (municipales, scolaires) annuelles</label>
+                    <input type="number" id="al-taxes-annuelles" value="4000">
+                </div>
+                <div class="form-group">
+                    <label for="al-entretien-annuel">Entretien annuel (% du prix d'achat)</label>
+                    <input type="number" id="al-entretien-annuel" value="1">
+                </div>
+                <div class="form-group">
+                    <label for="al-assurance-proprio">Assurance habitation mensuelle</label>
+                    <input type="number" id="al-assurance-proprio" value="100">
+                </div>
+                 <div class="form-group">
+                    <label for="al-frais-condo">Frais de condo mensuels (0 si aucun)</label>
+                    <input type="number" id="al-frais-condo" value="0">
+                </div>
+            </div>
+
+            <div class="form-column">
+                <h3>Scénario Locataire</h3>
+                <div class="form-group">
+                    <label for="al-loyer-mensuel">Loyer mensuel équivalent</label>
+                    <input type="number" id="al-loyer-mensuel" value="1800">
+                </div>
+                <div class="form-group">
+                    <label for="al-assurance-loc">Assurance locataire mensuelle</label>
+                    <input type="number" id="al-assurance-loc" value="30">
+                </div>
+                
+                <h3 class="form-divider">Paramètres Communs</h3>
+                <div class="form-group">
+                    <label for="al-horizon">Horizon d'analyse (années)</label>
+                    <input type="number" id="al-horizon" value="25">
+                </div>
+                <div class="form-group">
+                    <label for="al-croissance-immo">Croissance annuelle de l'immobilier (%)</label>
+                    <input type="number" id="al-croissance-immo" value="3">
+                </div>
+                 <div class="form-group">
+                    <label for="al-augmentation-loyer">Augmentation annuelle du loyer (%)</label>
+                    <input type="number" id="al-augmentation-loyer" value="2">
+                </div>
+                <div class="form-group">
+                    <label for="al-rendement-placement">Rendement annuel des placements (%)</label>
+                    <input type="number" id="al-rendement-placement" value="7">
+                </div>
+                <div class="form-group">
+                    <label for="al-type-compte">Type de compte pour l'investissement</label>
+                    <select id="al-type-compte">
+                        <option value="celi">CELI (non imposable)</option>
+                        <option value="reer">REER (imposable au retrait)</option>
+                        <option value="non-enregistre">Non-enregistré (imposable annuellement)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="al-taux-marginal">Taux d'imposition marginal (%)</label>
+                    <input type="number" id="al-taux-marginal" value="40">
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn-primary">Comparer les scénarios</button>
+    </form>
+
+    <p class="resultat" id="resultat-acheter-louer"></p>
+    <canvas id="chart-acheter-louer" class="chart-canvas"></canvas>
+</section>
+
+<style>
+    .form-columns {
+        display: grid;
+        grid-template-columns: 1fr; /* Une seule colonne par défaut pour les mobiles */
+        gap: 2rem;
+    }
+    .form-divider {
+        margin-top: 2rem;
+        border-top: 1px solid #e2e8f0;
+        padding-top: 1.5rem;
+    }
+    /* Sur les écrans plus larges, passer à deux colonnes */
+    @media (min-width: 768px) {
+        .form-columns {
+            grid-template-columns: 1fr 1fr;
+        }
+    }
+</style>
+        
     </section>
+
+
+    
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
