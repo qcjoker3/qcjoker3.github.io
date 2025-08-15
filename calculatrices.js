@@ -1,7 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Fonctions utilitaires
     const fmtNombre = n => new Intl.NumberFormat('fr-FR', { 
-        maximumFractionDigits: 0
+        maximumFractionDigits: 2,
+        maximumFractionDigits: 2  // N'affiche jamais plus de 2 décimales
+}).format(n);
     }).format(n);
     const toFloat = v => parseFloat(String(v).replace(',', '.')) || 0;
 
