@@ -55,7 +55,7 @@ x:<!DOCTYPE html>
                 <div class="form-group"><label for="age-actuel">Âge actuel</label><input type="number" id="age-actuel" placeholder="ex:30"></div>
                 <div class="form-group"><label for="age-retraite">Âge de la retraite</label><input type="number" id="age-retraite" placeholder="ex:65"></div>
                 <div class="form-group"><label for="epargne-mensuelle">Épargne mensuelle</label><input type="number" id="epargne-mensuelle" placeholder="ex:500"></div>
-                <div class="form-group"><label for="rendement">Rendement annuel attendu (%)</label><input type="number" id="rendement" placeholder="ex:5"></div>
+                <div class="form-group"><label for="rendement">Rendement annuel attendu (%)</label><input type="number" id="rendement" placeholder="ex:5" step="any"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-retraite"></p>
@@ -67,11 +67,11 @@ x:<!DOCTYPE html>
         <section id="calc-valeur-future" class="calculator-card">
             <h2>Calculatrice de Valeur Future</h2>
             <form id="form-vf">
-                <div class="form-group"><label for="vf-montant-initial">Montant initial</label><input type="number" id="vf-montant-initial" placeholder="ex:10000"></div>
-                <div class="form-group"><label for="vf-cotisation">Cotisation additionnelle</label><input type="number" id="vf-cotisation" placeholder="ex:200"></div>
+                <div class="form-group"><label for="vf-montant-initial">Montant initial</label><input type="number" id="vf-montant-initial" placeholder="ex:10000" step="any"></div>
+                <div class="form-group"><label for="vf-cotisation">Cotisation additionnelle</label><input type="number" id="vf-cotisation" placeholder="ex:200" step="any"></div>
                 <div class="form-group"><label for="vf-frequence">Fréquence</label><select id="vf-frequence"><option value="mensuelle">Mensuelle</option><option placeholder="ex:annuelle">Annuelle</option></select></div>
                 <div class="form-group"><label for="vf-duree">Durée (années)</label><input type="number" id="vf-duree" placeholder="ex:10"></div>
-                <div class="form-group"><label for="vf-taux">Taux d'intérêt annuel (%)</label><input type="number" id="vf-taux" placeholder="ex:7"></div>
+                <div class="form-group"><label for="vf-taux">Taux d'intérêt annuel (%)</label><input type="number" id="vf-taux" placeholder="ex:7" step="any"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
            <p class="resultat" id="resultat-vf"></p>
@@ -83,9 +83,9 @@ x:<!DOCTYPE html>
         <section id="calc-hypotheque" class="calculator-card">
             <h2>Calculatrice d'Hypothèque</h2>
             <form id="form-hypotheque">
-                <div class="form-group"><label for="hypo-montant">Montant du prêt</label><input type="number" id="hypo-montant" placeholder="ex:200000"></div>
-                <div class="form-group"><label for="hypo-taux">Taux d'intérêt annuel (%)</label><input type="number" id="hypo-taux" placeholder="ex:3.5"></div>
-                <div class="form-group"><label for="hypo-duree">Durée du prêt (années)</label><input type="number" id="hypo-duree" placeholder="ex:25"></div>
+                <div class="form-group"><label for="hypo-montant">Montant du prêt</label><input type="number" id="hypo-montant" placeholder="ex:200000" step="any"></div>
+                <div class="form-group"><label for="hypo-taux">Taux d'intérêt annuel (%)</label><input type="number" id="hypo-taux" placeholder="ex:3.5" step="any"></div>
+                <div class="form-group"><label for="hypo-duree">Durée du prêt (années)</label><input type="number" id="hypo-duree" placeholder="ex:25" step="any"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-hypotheque"></p>
@@ -97,11 +97,11 @@ x:<!DOCTYPE html>
         <section id="calc-trex" class="calculator-card">
             <h2>Calculatrice de Frais de Gestion</h2>
             <form id="form-trex">
-                <div class="form-group"><label for="trex-montant">Montant initial</label><input type="number" id="trex-montant" placeholder="ex:10000"></div>
-                <div class="form-group"><label for="trex-cotisation-annuelle">Cotisation annuelle</label><input type="number" id="trex-cotisation-annuelle" placeholder="ex:1200"></div>
-                <div class="form-group"><label for="trex-rendement-brut">Rendement brut annuel (%)</label><input type="number" id="trex-rendement-brut" placeholder="ex:7"></div>
-                <div class="form-group"><label for="trex-taux">Taux de frais annuel (%)</label><input type="number" id="trex-taux" placeholder="ex:2"></div>
-                <div class="form-group"><label for="trex-duree">Durée (années)</label><input type="number" id="trex-duree" placeholder="ex:20"></div>
+                <div class="form-group"><label for="trex-montant">Montant initial</label><input type="number" id="trex-montant" placeholder="ex:10000" step="any"></div>
+                <div class="form-group"><label for="trex-cotisation-annuelle">Cotisation annuelle</label><input type="number" id="trex-cotisation-annuelle" placeholder="ex:1200" step="any"></div>
+                <div class="form-group"><label for="trex-rendement-brut">Rendement brut annuel (%)</label><input type="number" id="trex-rendement-brut" placeholder="ex:7" step="any"></div>
+                <div class="form-group"><label for="trex-taux">Taux de frais annuel (%)</label><input type="number" id="trex-taux" placeholder="ex:2" step="any"></div>
+                <div class="form-group"><label for="trex-duree">Durée (années)</label><input type="number" id="trex-duree" placeholder="ex:20" step="any"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-trex"></p>
@@ -126,15 +126,15 @@ x:<!DOCTYPE html>
                 </div>
                 <div class="form-group">
                     <label for="al-taux-hypotheque">Taux d'intérêt hypothécaire annuel (%)</label>
-                    <input type="number" id="al-taux-hypotheque" placeholder="ex:4.5">
+                    <input type="number" id="al-taux-hypotheque" placeholder="ex:4.5" step="any">
                 </div>
                  <div class="form-group">
                     <label for="al-amortissement">Amortissement de l'hypothèque (années)</label>
-                    <input type="number" id="al-amortissement" placeholder="ex:25">
+                    <input type="number" id="al-amortissement" placeholder="ex:25" step="any">
                 </div>
                 <div class="form-group">
                     <label for="al-taxes-annuelles">Taxes (municipales, scolaires) annuelles</label>
-                    <input type="number" id="al-taxes-annuelles" placeholder="ex:4000">
+                    <input type="number" id="al-taxes-annuelles" placeholder="ex:4000" step="any">
                 </div>
                 <div class="form-group">
                     <label for="al-entretien-annuel">Entretien annuel (% du prix d'achat)</label>
@@ -150,7 +150,7 @@ x:<!DOCTYPE html>
                 </div>
                 <div class="form-group">
                     <label for="al-croissance-immo">Croissance annuelle de l'immobilier (%)</label>
-                    <input type="number" id="al-croissance-immo" placeholder="ex:3">
+                    <input type="number" id="al-croissance-immo" placeholder="ex:3" step="any">
                 </div>
             </div>
 
@@ -162,7 +162,7 @@ x:<!DOCTYPE html>
                 </div>
                 <div class="form-group">
                     <label for="al-augmentation-loyer">Augmentation annuelle du loyer (%)</label>
-                    <input type="number" id="al-augmentation-loyer" placeholder="ex:2">
+                    <input type="number" id="al-augmentation-loyer" placeholder="ex:2" step="any">
                 </div>
                 <div class="form-group">
                     <label for="al-assurance-loc">Assurance locataire mensuelle</label>
@@ -177,7 +177,7 @@ x:<!DOCTYPE html>
 
                 <div class="form-group">
                     <label for="al-rendement-placement">Rendement annuel des placements (%)</label>
-                    <input type="number" id="al-rendement-placement" placeholder="ex:7">
+                    <input type="number" id="al-rendement-placement" placeholder="ex:7" step="any">
                 </div>
                 <div class="form-group">
                     <label for="al-type-compte">Type de compte pour l'investissement</label>
@@ -189,7 +189,7 @@ x:<!DOCTYPE html>
                 </div>
                 <div class="form-group">
                     <label for="al-taux-marginal">Taux d'imposition marginal (%)</label>
-                    <input type="number" id="al-taux-marginal" placeholder="ex:40">
+                    <input type="number" id="al-taux-marginal" placeholder="ex:40" step="any">
                 </div>
             </div>
         </div>
