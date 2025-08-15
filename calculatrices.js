@@ -77,7 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     { label: 'Intérêts gagnés', data: interetData, backgroundColor: '#00a678' }
                 ]
             },
-            options: { scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: value => fmtCurrency(value) } } } }
+            options: { 
+                maintainAspectRatio: false, // <-- AJOUTEZ CETTE LIGNE
+                scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => fmtCurrency(v) } } } 
+            } 
         });
     });
 
