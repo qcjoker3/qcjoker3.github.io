@@ -83,9 +83,9 @@
         <section id="calc-hypotheque" class="calculator-card">
             <h2>Calculatrice d'Hypothèque</h2>
             <form id="form-hypotheque">
-                <div class="form-group"><label for="hypo-montant">Montant du prêt</label><input type="number" id="hypo-montant" value="200000"></div>
-                <div class="form-group"><label for="hypo-taux">Taux d'intérêt annuel (%)</label><input type="number" id="hypo-taux" value="3.5"></div>
-                <div class="form-group"><label for="hypo-duree">Durée du prêt (années)</label><input type="number" id="hypo-duree" value="25"></div>
+                <div class="form-group"><label for="hypo-montant">Montant du prêt</label><input type="number" id="hypo-montant" placeholder="200000"></div>
+                <div class="form-group"><label for="hypo-taux">Taux d'intérêt annuel (%)</label><input type="number" id="hypo-taux" placeholder="3.5"></div>
+                <div class="form-group"><label for="hypo-duree">Durée du prêt (années)</label><input type="number" id="hypo-duree" placeholder="25"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-hypotheque"></p>
@@ -97,11 +97,11 @@
         <section id="calc-trex" class="calculator-card">
             <h2>Calculatrice de Frais de Gestion</h2>
             <form id="form-trex">
-                <div class="form-group"><label for="trex-montant">Montant initial</label><input type="number" id="trex-montant" value="10000"></div>
-                <div class="form-group"><label for="trex-cotisation-annuelle">Cotisation annuelle</label><input type="number" id="trex-cotisation-annuelle" value="1200"></div>
-                <div class="form-group"><label for="trex-rendement-brut">Rendement brut annuel (%)</label><input type="number" id="trex-rendement-brut" value="7"></div>
-                <div class="form-group"><label for="trex-taux">Taux de frais annuel (%)</label><input type="number" id="trex-taux" value="2"></div>
-                <div class="form-group"><label for="trex-duree">Durée (années)</label><input type="number" id="trex-duree" value="20"></div>
+                <div class="form-group"><label for="trex-montant">Montant initial</label><input type="number" id="trex-montant" placeholder="10000"></div>
+                <div class="form-group"><label for="trex-cotisation-annuelle">Cotisation annuelle</label><input type="number" id="trex-cotisation-annuelle" placeholder="1200"></div>
+                <div class="form-group"><label for="trex-rendement-brut">Rendement brut annuel (%)</label><input type="number" id="trex-rendement-brut" placeholder="7"></div>
+                <div class="form-group"><label for="trex-taux">Taux de frais annuel (%)</label><input type="number" id="trex-taux" placeholder="2"></div>
+                <div class="form-group"><label for="trex-duree">Durée (années)</label><input type="number" id="trex-duree" placeholder="20"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-trex"></p>
@@ -118,39 +118,39 @@
                 <h3>Scénario Propriétaire</h3>
                 <div class="form-group">
                     <label for="al-prix-propriete">Prix d'achat de la propriété</label>
-                    <input type="number" id="al-prix-propriete" value="450000">
+                    <input type="number" id="al-prix-propriete" placeholder="450000">
                 </div>
                 <div class="form-group">
                     <label for="al-mise-de-fonds">Mise de fonds</label>
-                    <input type="number" id="al-mise-de-fonds" value="90000">
+                    <input type="number" id="al-mise-de-fonds" placeholder="90000">
                 </div>
                 <div class="form-group">
                     <label for="al-taux-hypotheque">Taux d'intérêt hypothécaire annuel (%)</label>
-                    <input type="number" id="al-taux-hypotheque" value="4.5">
+                    <input type="number" id="al-taux-hypotheque" placeholder="4.5">
                 </div>
                  <div class="form-group">
                     <label for="al-amortissement">Amortissement de l'hypothèque (années)</label>
-                    <input type="number" id="al-amortissement" value="25">
+                    <input type="number" id="al-amortissement" placeholder="25">
                 </div>
                 <div class="form-group">
                     <label for="al-taxes-annuelles">Taxes (municipales, scolaires) annuelles</label>
-                    <input type="number" id="al-taxes-annuelles" value="4000">
+                    <input type="number" id="al-taxes-annuelles" placeholder="4000">
                 </div>
                 <div class="form-group">
                     <label for="al-entretien-annuel">Entretien annuel (% du prix d'achat)</label>
-                    <input type="number" id="al-entretien-annuel" value="1">
+                    <input type="number" id="al-entretien-annuel" placeholder="1">
                 </div>
                 <div class="form-group">
                     <label for="al-assurance-proprio">Assurance habitation mensuelle</label>
-                    <input type="number" id="al-assurance-proprio" value="100">
+                    <input type="number" id="al-assurance-proprio" placeholder="100">
                 </div>
                  <div class="form-group">
                     <label for="al-frais-condo">Frais de condo mensuels (0 si aucun)</label>
-                    <input type="number" id="al-frais-condo" value="0">
+                    <input type="number" id="al-frais-condo" placeholder="0">
                 </div>
                 <div class="form-group">
                     <label for="al-croissance-immo">Croissance annuelle de l'immobilier (%)</label>
-                    <input type="number" id="al-croissance-immo" value="3">
+                    <input type="number" id="al-croissance-immo" placeholder="3">
                 </div>
             </div>
 
@@ -158,26 +158,26 @@
                 <h3>Scénario Locataire</h3>
                 <div class="form-group">
                     <label for="al-loyer-mensuel">Loyer mensuel équivalent</label>
-                    <input type="number" id="al-loyer-mensuel" value="1800">
+                    <input type="number" id="al-loyer-mensuel" placeholder="1800">
                 </div>
                 <div class="form-group">
                     <label for="al-augmentation-loyer">Augmentation annuelle du loyer (%)</label>
-                    <input type="number" id="al-augmentation-loyer" value="2">
+                    <input type="number" id="al-augmentation-loyer" placeholder="2">
                 </div>
                 <div class="form-group">
                     <label for="al-assurance-loc">Assurance locataire mensuelle</label>
-                    <input type="number" id="al-assurance-loc" value="30">
+                    <input type="number" id="al-assurance-loc" placeholder="30">
                 </div>
                 
                 <h3 class="form-divider">Paramètres Communs</h3>
                 <div class="form-group">
                     <label for="al-horizon">Horizon d'analyse (années)</label>
-                    <input type="number" id="al-horizon" value="25">
+                    <input type="number" id="al-horizon" placeholder="25">
                 </div>
 
                 <div class="form-group">
                     <label for="al-rendement-placement">Rendement annuel des placements (%)</label>
-                    <input type="number" id="al-rendement-placement" value="7">
+                    <input type="number" id="al-rendement-placement" placeholder="7">
                 </div>
                 <div class="form-group">
                     <label for="al-type-compte">Type de compte pour l'investissement</label>
@@ -189,7 +189,7 @@
                 </div>
                 <div class="form-group">
                     <label for="al-taux-marginal">Taux d'imposition marginal (%)</label>
-                    <input type="number" id="al-taux-marginal" value="40">
+                    <input type="number" id="al-taux-marginal" placeholder="40">
                 </div>
             </div>
         </div>
