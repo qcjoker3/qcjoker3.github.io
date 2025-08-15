@@ -399,9 +399,10 @@ formTrex?.addEventListener('submit', e => {
     }
   });
 });  
-  // ============================================================================
-  // Louer vs Acheter
-  // ============================================================================
+
+// ============================================================================
+// Louer vs Acheter — corrigé et renforcé
+// ============================================================================
 const formAVL = document.getElementById('form-avl');
 const resAVL = document.getElementById('resultat-avl');
 const ctxAVL = document.getElementById('chart-avl')?.getContext('2d');
@@ -410,62 +411,74 @@ let chartAVL = null;
 formAVL?.addEventListener('submit', (e) => {
   e.preventDefault();
 
-  // Paramètres de base
-  const years = parseNum(document.getElementById('avl-horizon').value);
+  // --------- Helpers d'extraction sûrs ----------
+  const num = (id) => parseNum(document.getElementById(id)?.value);
+  const pct = (id) => (num(id) / 100) || 0;
+  const chk = (id, fallback = true) => document.getElementById(id)?.checked ?? fallback;
+
+  // --------- Paramètres de base ----------
+  const years = num('avl-horizon');
   const months = Math.max(1, Math.round(years * 12));
 
-  const price = parseNum(document.getElementById('avl-prix').value);
-  const down = parseNum(document.getElementById('avl-mise-fonds').value);
-  const rateHypoM = annualToMonthlyRate(document.getElementById('avl-taux-hypo').value);
-  const amortYears = parseNum(document.getElementById('avl-amortissement').value);
+  const price = num('avl-prix');
+  const down = num('avl-mise-fonds');
+  const rateHypoM = annualToMonthlyRate(document.getElementById('avl-taux-hypo')?.value || 0);
+  const amortYears = num('avl-amortissement');
   const amortMonths = Math.max(1, Math.round(amortYears * 12));
 
-  // Propriétaire — coûts
-  const fraisAchatPct = (parseNum(document.getElementById('avl-frais-achat').value) / 100) || 0;
-  const taxesFoncieresPctA = (parseNum(document.getElementById('avl-taxes-foncieres').value) / 100) || 0;
-  const entretienPctA = (parseNum(document.getElementById('avl-entretien').value) / 100) || 0;
-  const assurMaisonM = parseNum(document.getElementById('avl-assurance-maison').value) || 0;
-  const coproM = parseNum(document.getElementById('avl-copro').value) || 0;
-  const growthImmoM = pctToMonthly(document.getElementById('avl-croissance-immobilier').value) || 0;
-  const fraisVentePct = (parseNum(document.getElementById('avl-frais-vente').value) / 100) || 0;
+  // --------- Propriétaire — coûts ----------
+  const fraisAchatPct = pct('avl-frais-achat');
+  const taxesFoncieresPctA = pct('avl-taxes-foncieres');
+  const entretienPctA = pct('avl-entretien');
+  const assurMaisonM = num('avl-assurance-maison') || 0;
+  const coproM = num('avl-copro') || 0;
+  const growthImmoM = pctToMonthly(document.getElementById('avl-croissance-immobilier')?.value || 0) || 0;
+  const fraisVentePct = pct('avl-frais-vente');
 
-  // Locataire
-  let loyerM = parseNum(document.getElementById('avl-loyer').value);
-  const growthLoyerM = pctToMonthly(document.getElementById('avl-croissance-loyer').value) || 0;
-  const assurLocM = parseNum(document.getElementById('avl-assurance-loc').value) || 0;
+  // --------- Locataire ----------
+  let loyerM = num('avl-loyer');
+  const growthLoyerM = pctToMonthly(document.getElementById('avl-croissance-loyer')?.value || 0) || 0;
+  const assurLocM = num('avl-assurance-loc') || 0;
 
-  // Investissements/fiscalité
-  const rInvM = annualToMonthlyRate(document.getElementById('avl-rendement').value) || 0;
-  let allocTFSA = (parseNum(document.getElementById('avl-alloc-tfsa').value) / 100) || 0;
-  let allocRRSP = (parseNum(document.getElementById('avl-alloc-rrsp').value) / 100) || 0;
+  // --------- Investissements / fiscalité ----------
+  const rInvM = annualToMonthlyRate(document.getElementById('avl-rendement')?.value || 0) || 0;
+  let allocTFSA = (num('avl-alloc-tfsa') / 100) || 0;
+  let allocRRSP = (num('avl-alloc-rrsp') / 100) || 0;
   if (allocTFSA + allocRRSP <= 0) { allocTFSA = 1; allocRRSP = 0; }
   const totalAlloc = allocTFSA + allocRRSP;
   allocTFSA /= totalAlloc;
   allocRRSP /= totalAlloc;
 
-  const tauxMarg = (parseNum(document.getElementById('avl-taux-marginal').value) / 100) || 0;
-  const tauxRetrait = (parseNum(document.getElementById('avl-taux-retrait').value) / 100) || 0;
-  const reinvestRefund = document.getElementById('avl-reinvest-remboursement')?.checked ?? true;
+  const tauxMarg = (num('avl-taux-marginal') / 100) || 0;
+  const tauxRetrait = (num('avl-taux-retrait') / 100) || 0;
+  const reinvestRefund = chk('avl-reinvest-remboursement', true);
 
-  // Validations
+  // --------- Validations ----------
+  if (!Number.isFinite(years) || years <= 0 ||
+      !Number.isFinite(price) || price <= 0 ||
+      !Number.isFinite(down) || down < 0 ||
+      !Number.isFinite(amortYears) || amortYears <= 0) {
+    resAVL.textContent = "Veuillez remplir les champs essentiels correctement.";
+    return;
+  }
   if (down > price) {
     resAVL.textContent = "La mise de fonds ne peut pas excéder le prix d’achat.";
     return;
   }
-  if (years <= 0 || price <= 0 || amortYears <= 0) {
-    resAVL.textContent = "Veuillez remplir les champs essentiels correctement.";
+  if (!Number.isFinite(loyerM) || loyerM < 0) {
+    resAVL.textContent = "Veuillez fournir un loyer valide (>= 0).";
     return;
   }
 
-  // Hypothèque
-  const principal0 = price - down;
+  // --------- Hypothèque ----------
+  const principal0 = Math.max(0, price - down);
   const r = rateHypoM;
   const n = amortMonths;
   const paymentM = Math.abs(r) < 1e-12
     ? (principal0 / n)
     : principal0 * (r / (1 - Math.pow(1 + r, -n)));
 
-  // États initiaux
+  // --------- États initiaux ----------
   let valeurMaison = price;
   let soldeHypo = principal0;
 
@@ -489,6 +502,7 @@ formAVL?.addEventListener('submit', (e) => {
   const dataBuyer = [];
   const dataRenter = [];
 
+  // --------- Simulation mois par mois ----------
   for (let m = 1; m <= months; m++) {
     // Valeur maison et coûts proportionnels
     valeurMaison *= (1 + growthImmoM);
@@ -499,13 +513,15 @@ formAVL?.addEventListener('submit', (e) => {
     const interetM = soldeHypo > 0 ? soldeHypo * r : 0;
     let principalM = 0;
     let versementHypo = 0;
+
     if (soldeHypo > 0) {
       if (Math.abs(r) < 1e-12) {
         principalM = Math.min(paymentM, soldeHypo);
         versementHypo = principalM;
       } else {
+        // Paiement constant, mais protège la dernière échéance
         versementHypo = Math.min(paymentM, soldeHypo + interetM);
-        principalM = versementHypo - interetM;
+        principalM = Math.max(0, versementHypo - interetM);
       }
       soldeHypo = Math.max(0, soldeHypo - principalM);
     }
@@ -561,7 +577,7 @@ formAVL?.addEventListener('submit', (e) => {
     }
   }
 
-  // Valeurs finales
+  // --------- Valeurs finales ----------
   const valeurNetMaisonFinale = (valeurMaison * (1 - fraisVentePct)) - soldeHypo;
   const buyerAfterTaxRRSPF = rrspBuyer * (1 - (tauxRetrait || 0));
   const renterAfterTaxRRSPF = rrspRenter * (1 - (tauxRetrait || 0));
@@ -575,41 +591,42 @@ formAVL?.addEventListener('submit', (e) => {
     `Actif net locataire: ${fmtCurrency(renterNWFinal)} | ` +
     `Écart: ${fmtCurrency(ecart)} (positif = avantage à l’achat).`;
 
-  // Graphe
-  if (ctxAVL) {
-    if (chartAVL) chartAVL.destroy();
-    chartAVL = new Chart(ctxAVL, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Acheter - Actif net (après impôt REER)',
-            data: dataBuyer,
-            borderColor: '#00c48c',
-            backgroundColor: 'rgba(0, 196, 140, 0.15)',
-            fill: true,
-            tension: 0.25
-          },
-          {
-            label: 'Louer - Actif net (après impôt REER)',
-            data: dataRenter,
-            borderColor: '#4f5d75',
-            backgroundColor: 'rgba(79, 93, 117, 0.15)',
-            fill: true,
-            tension: 0.25
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: true, text: 'Évolution de l’actif net — Acheter vs Louer' }
+  // --------- Graphe ----------
+  if (!ctxAVL) return;
+
+  if (chartAVL) chartAVL.destroy();
+  chartAVL = new Chart(ctxAVL, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Acheter - Actif net (après impôt REER)',
+          data: dataBuyer,
+          borderColor: '#00c48c',
+          backgroundColor: 'rgba(0, 196, 140, 0.15)',
+          fill: true,
+          tension: 0.25
         },
-        scales: { y: { beginAtZero: false } }
-      }
-    });
-  }
+        {
+          label: 'Louer - Actif net (après impôt REER)',
+          data: dataRenter,
+          borderColor: '#4f5d75',
+          backgroundColor: 'rgba(79, 93, 117, 0.15)',
+          fill: true,
+          tension: 0.25
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      resizeDelay: 200,
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: true, text: 'Évolution de l’actif net — Acheter vs Louer' }
+      },
+      scales: { y: { beginAtZero: false } }
+    }
+  });
 });
- 
+
