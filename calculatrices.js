@@ -208,7 +208,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     backgroundColor: ['#00a678', '#00c48c']
                 }]
             },
-            options: { scales: { y: { ticks: { callback: value => fmtCurrency(value) } } } }
+            options: { 
+                maintainAspectRatio: false, // <-- AJOUTEZ CETTE LIGNE
+                scales: { y: { ticks: { callback: v => fmtCurrency(v) } } } 
+            } 
         });
     });
     
