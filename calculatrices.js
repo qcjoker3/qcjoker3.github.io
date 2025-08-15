@@ -232,82 +232,99 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
   // ==========================================================
-  // 🏠 Calculatrice — Hypothèque
-  // ==========================================================
-  const formHypo = document.getElementById('form-hypo');
-  const resultatHypo = document.getElementById('resultat-hypo');
-  const ctxHypo = document.getElementById('chart-hypo')?.getContext('2d');
+// 🏠 Calculatrice — Hypothèque
+// ==========================================================
+const formHypo = document.getElementById('form-hypo');
+const resultatHypo = document.getElementById('resultat-hypo');
+const ctxHypo = document.getElementById('chart-hypo')?.getContext('2d');
 
-  formHypo?.addEventListener('submit', e => {
-    e.preventDefault();
+formHypo?.addEventListener('submit', e => {
+  e.preventDefault();
 
-    const montantPret = toFloat(formHypo['montant-pret'].value);
-    const tauxHypo = toFloat(formHypo['taux-hypo'].value) / 100;
-    const dureeHypo = parseInt(formHypo['duree-hypo'].value);
+  const montantPret = toFloat(formHypo['montant-pret']?.value);
+  const tauxHypo = toFloat(formHypo['taux-hypo']?.value) / 100;
+  const dureeHypo = parseInt(formHypo['duree-hypo']?.value);
 
-    if (!Number.isFinite(montantPret) || !Number.isFinite(tauxHypo) || !Number.isFinite(dureeHypo)) {
-      resultatHypo.textContent = 'Veuillez remplir tous les champs correctement.';
-      return;
-    }
+  // Validation de base
+  if (!Number.isFinite(montantPret) || !Number.isFinite(tauxHypo) || !Number.isFinite(dureeHypo)) {
+    resultatHypo.textContent = 'Veuillez remplir tous les champs correctement.';
+    return;
+  }
+  if (montantPret <= 0 || dureeHypo <= 0) {
+    resultatHypo.textContent = 'Le montant du prêt et la durée doivent être positifs.';
+    return;
+  }
 
-    const rMensuel = tauxHypo / 12;
-    const n = dureeHypo * 12;
-    const mensualite = Math.abs(rMensuel) < 1e-12
-      ? montantPret / n
-      : montantPret * (rMensuel * Math.pow(1 + rMensuel, n)) / (Math.pow(1 + rMensuel, n) - 1);
+  const rMensuel = tauxHypo / 12;
+  const n = dureeHypo * 12;
 
-    resultatHypo.textContent = `Mensualité estimée: ${fmtCurrency(mensualite)} sur ${dureeHypo} ans.`;
+  // Calcul de la mensualité
+  const mensualite = Math.abs(rMensuel) < 1e-12
+    ? montantPret / n
+    : montantPret * (rMensuel * Math.pow(1 + rMensuel, n)) /
+      (Math.pow(1 + rMensuel, n) - 1);
 
-    let capitalRestant = montantPret;
-    const labels = [], dataInteretsCumul = [], dataCapitalPayes = [];
-    let interetsCumules = 0;
+  resultatHypo.textContent =
+    `Mensualité estimée : ${fmtCurrency(mensualite)} sur ${dureeHypo} ans.`;
 
-    for (let mois = 0; mois <= n; mois++) {
-      labels.push((mois / 12).toFixed(1));
+  if (!ctxHypo) {
+    console.warn('Canvas pour le graphique hypothécaire introuvable.');
+    return; // On garde au moins l’affichage du texte
+  }
 
-      const interetMois = capitalRestant * rMensuel;
-      const capitalMois = Math.min(mensualite - interetMois, capitalRestant);
-      interetsCumules += Math.max(0, interetMois);
-      capitalRestant = Math.max(0, capitalRestant - capitalMois);
+  // Génération des données pour le graphique
+  let capitalRestant = montantPret;
+  const labels = [], dataInteretsCumul = [], dataCapitalPayes = [];
+  let interetsCumules = 0;
 
-      dataInteretsCumul.push(interetsCumules);
-      dataCapitalPayes.push(montantPret - capitalRestant);
-    }
+  for (let mois = 0; mois <= n; mois++) {
+    labels.push((mois / 12).toFixed(1)); // axe X en années avec décimales
 
-    if (chartHypo) chartHypo.destroy();
-    chartHypo = new Chart(ctxHypo, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [
-          {
-            label: 'Capital remboursé',
-            data: dataCapitalPayes,
-            borderColor: '#00c48c',
-            backgroundColor: 'rgba(0,196,140,0.4)',
-            fill: true,
-            tension: 0.3
-          },
-          {
-            label: 'Intérêts cumulés',
-            data: dataInteretsCumul,
-            borderColor: '#00a678',
-            backgroundColor: 'rgba(0,166,120,0.4)',
-            fill: true,
-            tension: 0.3
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: true, text: 'Évolution du prêt hypothécaire' }
+    const interetMois = capitalRestant * rMensuel;
+    const capitalMois = Math.min(mensualite - interetMois, capitalRestant);
+    interetsCumules += Math.max(0, interetMois);
+    capitalRestant = Math.max(0, capitalRestant - capitalMois);
+
+    dataInteretsCumul.push(interetsCumules);
+    dataCapitalPayes.push(montantPret - capitalRestant);
+  }
+
+  if (chartHypo) chartHypo.destroy();
+  chartHypo = new Chart(ctxHypo, {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Capital remboursé',
+          data: dataCapitalPayes,
+          borderColor: '#00c48c',
+          backgroundColor: 'rgba(0,196,140,0.4)',
+          fill: true,
+          tension: 0.3
         },
-        scales: { y: { beginAtZero: true } }
-      }
-    });
+        {
+          label: 'Intérêts cumulés',
+          data: dataInteretsCumul,
+          borderColor: '#00a678',
+          backgroundColor: 'rgba(0,166,120,0.4)',
+          fill: true,
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      resizeDelay: 200,
+      plugins: {
+        legend: { position: 'top' },
+        title: { display: true, text: 'Évolution du prêt hypothécaire' }
+      },
+      scales: { y: { beginAtZero: true } }
+    }
   });
+});
+
   // ==========================================================
   // 🦖 Calculatrice — T‑Rex Score
   // ==========================================================
