@@ -134,373 +134,215 @@
   <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
 
   <script>
-    // Injecte le header
-    fetch('header.html')
-      .then(res => res.text())
-      .then(data => { document.getElementById('header-placeholder').innerHTML = data; });
+  // ==========================================================
+// SETUP INITIAL
+// ==========================================================
 
-    // Données
-    const chartDataByYear = {
-      "2020": {
-        real: 3756,
-        institutions: [
-          "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
-          "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"
-        ],
-        previsions: [
-          3400, 3400, 3300, 3000, 3000, 3300, 3300, 3350, 3250, 3425, 3400, 3500
-        ]
-      },
-      "2021": {
-        real: 4766,
-        institutions: [
-          "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
-          "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"
-        ],
-        previsions: [
-          4300, 4400, 3800, 3900, 4100, 4000, 4000, 4100, 3950, 4050, 4200, 4300
-        ]
-      },
-      "2022": {
-        real: 3840,
-        institutions: [
-          "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
-          "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"
-        ],
-        previsions: [
-          5100, 5050, 4600, 4400, 4850, 5300, 4800, 5050, 5250, 5200, 5300, 5330
-        ]
-      },
-      "2023": {
-        real: 4770,
-        institutions: [
-          "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
-          "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"
-        ],
-        previsions: [
-          4000, 4200, 4000, 3900, 3900, 4400, 4150, 4300, 4500, 4050, 4300, 4400
-        ]
-      },
-      "2024": {
-        real: 5882,
-        institutions: [
-          "Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC",
-          "Deutsche Bank", "BCA Research", "BMO", "Oppenheimer"
-        ],
-        previsions: [
-          5100, 4200, 5000, 4500, 4700, 4700, 5300, 5000, 5100, 3300, 5100, 5200
-        ]
-      },
-    };
+// Données (inchangées)
+const chartDataByYear = {
+  "2020": { real: 3756, institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"], previsions: [3400, 3400, 3300, 3000, 3000, 3300, 3300, 3350, 3250, 3425, 3400, 3500] },
+  "2021": { real: 4766, institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"], previsions: [4300, 4400, 3800, 3900, 4100, 4000, 4000, 4100, 3950, 4050, 4200, 4300] },
+  "2022": { real: 3840, institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"], previsions: [5100, 5050, 4600, 4400, 4850, 5300, 4800, 5050, 5250, 5200, 5300, 5330] },
+  "2023": { real: 4770, institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"], previsions: [4000, 4200, 4000, 3900, 3900, 4400, 4150, 4300, 4500, 4050, 4300, 4400] },
+  "2024": { real: 5882, institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "BCA Research", "BMO", "Oppenheimer"], previsions: [5100, 4200, 5000, 4500, 4700, 4700, 5300, 5000, 5100, 3300, 5100, 5200] },
+};
 
-    // Utilitaires
-    const yearsSorted = Object.keys(chartDataByYear).sort();
-    const idxByYear = (y) => yearsSorted.indexOf(String(y));
+// Références aux éléments de la page
+const yearSelect = document.getElementById('yearSelect');
+const rankingTbody = document.querySelector('#rankingTable tbody');
+const horizonTabs = document.querySelectorAll('.horizon-tabs button');
 
-    function getWindowYears(endYear, horizonYears) {
-      const endIdx = idxByYear(endYear);
-      if (endIdx < 0) return [];
-      const startIdx = Math.max(0, endIdx - (horizonYears - 1));
-      return yearsSorted.slice(startIdx, endIdx + 1);
-    }
+// État de l'application
+let chartInstance = null;
+let predRealChart = null;
+let focusedInstitution = null;
+let currentHorizon = 1;
 
-    function computeYearErrorsPct(year) {
-      const d = chartDataByYear[year];
-      const { institutions, previsions, real } = d;
-      const map = new Map();
-      institutions.forEach((inst, i) => {
-        const errPct = Math.abs(previsions[i] - real) / real * 100;
-        const errPts = Math.abs(previsions[i] - real);
-        map.set(inst, { errPct, errPts, pred: previsions[i], real });
-      });
-      return map; // inst -> {errPct, errPts, pred, real}
-    }
-
-    function computeRanking(endYear, horizonYears) {
-      const windowYears = getWindowYears(endYear, horizonYears);
-      // Agrège par institution
-      const stats = new Map(); // inst -> { sumPct, sumPts, n }
-      windowYears.forEach(y => {
-        const errs = computeYearErrorsPct(y);
-        errs.forEach((v, inst) => {
-          if (!stats.has(inst)) stats.set(inst, { sumPct: 0, sumPts: 0, n: 0 });
-          const s = stats.get(inst);
-          s.sumPct += v.errPct;
-          s.sumPts += v.errPts;
-          s.n += 1;
-        });
-      });
-      const rows = [];
-      stats.forEach((s, inst) => {
-        const mape = s.sumPct / s.n;
-        const mae = s.sumPts / s.n;
-        rows.push({ institution: inst, n: s.n, mape, mae });
-      });
-      rows.sort((a, b) => (a.mape - b.mape) || (a.mae - b.mae) || a.institution.localeCompare(b.institution));
-      return { rows, windowYears };
-    }
-
-    // Plugin ligne horizontale (pour le graphe principal)
-    const customLine = {
-      id: 'customLine',
-      afterDatasetsDraw(chart) {
-        const opts = chart.options.plugins?.customLine;
-        if (!opts || typeof opts.y !== 'number') return;
+// Plugin pour la ligne "Réalité"
+const realityLinePlugin = {
+    id: 'realityLine',
+    afterDatasetsDraw(chart) {
         const { ctx, chartArea, scales } = chart;
-        const yPix = scales.y.getPixelForValue(opts.y);
+        const yValue = chart.options.plugins?.realityLine?.y;
+        if (typeof yValue !== 'number') return;
+        
+        const yPixel = scales.y.getPixelForValue(yValue);
         ctx.save();
-        ctx.setLineDash([6, 4]);
-        ctx.strokeStyle = opts.color || '#888';
+        ctx.strokeStyle = '#4b5563';
         ctx.lineWidth = 2;
+        ctx.setLineDash([6, 6]);
         ctx.beginPath();
-        ctx.moveTo(chartArea.left, yPix);
-        ctx.lineTo(chartArea.right, yPix);
+        ctx.moveTo(chartArea.left, yPixel);
+        ctx.lineTo(chartArea.right, yPixel);
         ctx.stroke();
-        ctx.setLineDash([]);
-        const label = opts.label || `Réalité: ${opts.y} pts`;
-        ctx.fillStyle = opts.labelColor || '#333';
-        ctx.font = '12px Segoe UI';
-        const tw = ctx.measureText(label).width;
-        ctx.fillText(label, chartArea.right - tw - 8, yPix - 6);
         ctx.restore();
-      }
-    };
 
-    Chart.register(customLine, ChartDataLabels);
+        ctx.font = 'bold 12px "Segoe UI"';
+        ctx.fillStyle = '#4b5563';
+        ctx.textAlign = 'right';
+        ctx.fillText(`Réalité: ${yValue}`, chartArea.right - 5, yPixel - 8);
+    }
+};
+Chart.register(realityLinePlugin, ChartDataLabels);
 
-    let chartInstance = null;     // graphe principal (barres)
-    let predRealChart = null;     // graphe droite (ligne)
-    let focusedInstitution = null;
-    let currentHorizon = 1;
 
-    function displayTable(year) {
-      const data = chartDataByYear[year];
-      const canvas = document.getElementById('chartCanvas');
-      if (!canvas || !data) {
-        if (chartInstance) chartInstance.destroy();
-        return;
-      }
+// ==========================================================
+// FONCTIONS DE MISE À JOUR DE L'INTERFACE
+// ==========================================================
 
-      const ctx = canvas.getContext('2d');
-      const { institutions, previsions, real } = data;
+function updateMainChart(year) {
+    const data = chartDataByYear[year];
+    const canvas = document.getElementById('chartCanvas');
+    if (!canvas || !data) return;
 
-      const base = previsions.map(p => Math.min(p, real));
-      const ecarts = previsions.map(p => Math.abs(real - p));
-      const signes = previsions.map(p => p - real);
+    if (chartInstance) chartInstance.destroy();
+    
+    const { institutions, previsions, real } = data;
+    const base = previsions.map(p => Math.min(p, real));
+    const ecarts = previsions.map(p => Math.abs(real - p));
+    const signes = previsions.map(p => p >= real); // true si au-dessus, false si en-dessous
 
-      const pourcentages = signes.map(diff => ((Math.abs(diff) / real) * 100).toFixed(1));
-
-      if (chartInstance) chartInstance.destroy();
-
-      chartInstance = new Chart(ctx, {
+    chartInstance = new Chart(canvas.getContext('2d'), {
         type: 'bar',
         data: {
-          labels: institutions,
-          datasets: [
-            {
-              label: 'Prévision',
-              data: base,
-              backgroundColor: 'rgba(54, 162, 235, 0.85)',
-              borderColor: 'rgba(54, 162, 235, 1)',
-              borderWidth: 1,
-              stack: 'grp',
-              datalabels: { display: false }
-            },
-            {
-              label: 'Écart vs Réalité',
-              data: ecarts,
-              backgroundColor: 'rgba(255, 99, 132, 0.65)',
-              borderColor: 'rgba(255, 99, 132, 1)',
-              borderWidth: 1,
-              stack: 'grp',
-              datalabels: {
-                display: true,
-                anchor: 'center',
-                align: 'center',
-                formatter: (val, ctx) => {
-                  const sym = signes[ctx.dataIndex] < 0 ? '🔻' : '🔺';
-                  return sym + ' ' + pourcentages[ctx.dataIndex] + '%';
-                },
-                color: '#fff',
-                font: { weight: 'bold', size: 12 },
-                clip: true
-              }
-            }
-          ]
+            labels: institutions,
+            datasets: [
+                { label: 'Prévision', data: base, backgroundColor: 'rgba(54, 162, 235, 0.85)', stack: 'group' },
+                { label: 'Écart vs Réalité', data: ecarts, backgroundColor: 'rgba(255, 99, 132, 0.65)', stack: 'group' }
+            ]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            title: {
-              display: true,
-              text: `S&P 500 – ${year} : Prévisions vs Réalité (${real} pts)`,
-              font: { size: 18 }
-            },
-            legend: { position: 'bottom' },
-            customLine: {
-              y: real,
-              color: '#888',
-              label: `Réalité: ${real} pts`
-            },
-            datalabels: { clip: false },
-            tooltip: {
-              callbacks: {
-                afterBody: items => {
-                  const idx = items[0].dataIndex;
-                  const p = previsions[idx];
-                  return `Prévision: ${p} pts | Réalité: ${real} pts`;
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: { display: true, text: `S&P 500 – ${year} : Prévisions vs Réalité (${real} pts)`, font: { size: 18 } },
+                legend: { position: 'bottom' },
+                realityLine: { y: real },
+                datalabels: {
+                    display: (context) => context.datasetIndex === 1, // Affiche seulement pour le dataset 'Écart'
+                    anchor: 'center',
+                    align: 'center',
+                    color: 'white',
+                    font: { weight: 'bold' },
+                    formatter: (value, context) => {
+                        const percent = (value / real * 100).toFixed(1);
+                        return (signes[context.dataIndex] ? '🔺' : '🔻') + ` ${percent}%`;
+                    }
                 }
-              }
-            }
-          },
-          scales: {
-            x: {
-              stacked: true,
-              title: { display: true, text: 'Institution' }
             },
-            y: {
-              stacked: true,
-              title: { display: true, text: 'Points S&P 500' }
-            }
-          }
+            scales: { x: { stacked: true }, y: { stacked: true, title: { display: true, text: 'Points S&P 500' } } }
         }
-      });
+    });
+}
 
-      // Met à jour l’analyse détaillée
-      focusedInstitution = null; // reset
-      //renderRankingAndChart(year, currentHorizon);
-    }
+function updateRankingAndDetail(endYear, horizon) {
+    // 1. Calculer et afficher le classement
+    const years = Object.keys(chartDataByYear).sort();
+    const endIdx = years.indexOf(String(endYear));
+    const startIdx = Math.max(0, endIdx - (horizon - 1));
+    const windowYears = years.slice(startIdx, endIdx + 1);
 
-    function renderRankingAndChart(endYear, horizon) {
-      // Boutons d’horizon
-      document.querySelectorAll('.horizon-tabs button').forEach(btn => {
-        btn.classList.toggle('active', Number(btn.dataset.h) === horizon);
-      });
-
-      const { rows, windowYears } = computeRanking(endYear, horizon);
-      const tbody = document.querySelector('#rankingTable tbody');
-      tbody.innerHTML = '';
-
-      // Choisir institution en focus si non définie
-      if (!focusedInstitution && rows.length) focusedInstitution = rows[0].institution;
-
-      rows.forEach((r, idx) => {
-        const tr = document.createElement('tr');
-        if (r.institution === focusedInstitution) tr.classList.add('focused');
-        tr.innerHTML = `
-          <td><span class="rank-badge">${idx + 1}</span></td>
-          <td>${r.institution}</td>
-          <td>${r.n}</td>
-          <td>${r.mape.toFixed(1)}%</td>
-          
-        `;
-        tr.addEventListener('click', () => {
-          focusedInstitution = r.institution;
-          renderRankingAndChart(endYear, horizon); // re-render table to update highlight
+    const stats = {};
+    windowYears.forEach(y => {
+        const d = chartDataByYear[y];
+        d.institutions.forEach((inst, i) => {
+            if (!stats[inst]) stats[inst] = { sumErr: 0, count: 0 };
+            stats[inst].sumErr += Math.abs(d.previsions[i] - d.real) / d.real * 100;
+            stats[inst].count++;
         });
-        tbody.appendChild(tr);
-      });
+    });
 
-      // Met à jour le graphique droite: Prévision vs Réalité par année pour l’institution focus
-      renderPredVsRealChart(focusedInstitution);
-    }
+    const ranking = Object.entries(stats).map(([institution, data]) => ({
+        institution,
+        avgErr: data.sumErr / data.count,
+        n: data.count
+    })).sort((a, b) => a.avgErr - b.avgErr);
 
-    function renderPredVsRealChart(institution) {
-      const canvas = document.getElementById('predRealCanvas');
-      const ctx = canvas.getContext('2d');
+    rankingTbody.innerHTML = '';
+    if (!focusedInstitution && ranking.length > 0) focusedInstitution = ranking[0].institution;
 
-      // Collecte les années où l’institution a une prévision
-      const labels = [];
-      const preds = [];
-      const reals = [];
-      yearsSorted.forEach(y => {
+    ranking.forEach((r, i) => {
+        const tr = document.createElement('tr');
+        tr.className = r.institution === focusedInstitution ? 'focused' : '';
+        tr.innerHTML = `<td><span class="rank-badge">${i + 1}</span></td><td>${r.institution}</td><td>${r.n}</td><td>${r.avgErr.toFixed(1)}%</td>`;
+        tr.onclick = () => {
+            focusedInstitution = r.institution;
+            updateRankingAndDetail(endYear, horizon); // Relance pour mettre à jour le focus et le graphique de droite
+        };
+        rankingTbody.appendChild(tr);
+    });
+
+    // 2. Mettre à jour le graphique de droite (Prévision vs Réalité)
+    updatePredVsRealChart(focusedInstitution);
+}
+
+function updatePredVsRealChart(institution) {
+    if (!institution) return;
+    const canvas = document.getElementById('predRealCanvas');
+    if (predRealChart) predRealChart.destroy();
+    
+    const labels = [], preds = [], reals = [];
+    Object.keys(chartDataByYear).sort().forEach(y => {
         const d = chartDataByYear[y];
         const i = d.institutions.indexOf(institution);
-        if (i >= 0) {
-          labels.push(y);
-          preds.push(d.previsions[i]);
-          reals.push(d.real);
+        if (i > -1) {
+            labels.push(y);
+            preds.push(d.previsions[i]);
+            reals.push(d.real);
         }
-      });
+    });
 
-      if (predRealChart) predRealChart.destroy();
-      predRealChart = new Chart(ctx, {
+    predRealChart = new Chart(canvas.getContext('2d'), {
         type: 'line',
         data: {
-          labels,
-          datasets: [
-            {
-              label: `${institution} – Prévision`,
-              data: preds,
-              borderColor: 'rgba(54, 162, 235, 1)',
-              backgroundColor: 'rgba(54, 162, 235, 0.15)',
-              borderWidth: 3,
-              pointRadius: 3,
-              tension: 0.25
-            },
-            {
-              label: 'Réalité',
-              data: reals,
-              borderColor: 'rgba(31, 41, 55, 0.9)',
-              backgroundColor: 'rgba(31, 41, 55, 0.1)',
-              borderWidth: 2,
-              pointRadius: 2,
-              tension: 0.25
-            }
-          ]
+            labels,
+            datasets: [
+                { label: `${institution} – Prévision`, data: preds, borderColor: 'rgba(54, 162, 235, 1)', tension: 0.1 },
+                { label: 'Réalité', data: reals, borderColor: 'rgba(31, 41, 55, 0.9)', tension: 0.1 }
+            ]
         },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            title: {
-              display: true,
-              text: `Prévision vs Réalité – ${institution}`,
-              font: { size: 16 }
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                title: { display: true, text: `Prévision vs Réalité – ${institution}`, font: { size: 16 } },
+                legend: { position: 'bottom' },
+                datalabels: { display: false }
             },
-            legend: { position: 'bottom' },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => `${ctx.dataset.label}: ${ctx.raw} pts`
-              }
-            },
-            datalabels: { display: false }
-          },
-          scales: {
-            x: { title: { display: true, text: 'Année' } },
-            y: { title: { display: true, text: 'Points S&P 500' } }
-          }
+            scales: { y: { title: { display: true, text: 'Points S&P 500' } } }
         }
-      });
-    }
-
-    // Écouteurs UI
-    document.addEventListener('DOMContentLoaded', () => {
-  const sel = document.getElementById('yearSelect');
-  sel.value = sel.value || '2020';
-
-  // Le graphique principal dépend toujours du sélecteur
-  sel.addEventListener('change', e => {
-    displayTable(e.target.value);
-  });
-
-  // Affiche le graphique principal pour la valeur par défaut
-  displayTable(sel.value);
-
-  // Classement et prévision vs réalité sont toujours basés sur la dernière année
-  const latestYear = yearsSorted.at(-1);
-  renderRankingAndChart(latestYear, currentHorizon);
-
-  // Boutons d’horizon : toujours basés sur latestYear
-  document.querySelectorAll('.horizon-tabs button').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentHorizon = Number(btn.dataset.h);
-      const latestYear = yearsSorted.at(-1);
-      renderRankingAndChart(latestYear, currentHorizon);
     });
-  });
+}
+
+// ==========================================================
+// ÉVÉNEMENTS ET INITIALISATION
+// ==========================================================
+
+// Quand on change l'année dans le menu déroulant
+yearSelect.addEventListener('change', (e) => {
+    updateMainChart(e.target.value);
 });
+
+// Quand on change l'horizon (1, 3, 5 ans)
+horizonTabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+        horizonTabs.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentHorizon = Number(btn.dataset.h);
+        const latestYear = Object.keys(chartDataByYear).sort().pop();
+        updateRankingAndDetail(latestYear, currentHorizon);
+    });
+});
+
+// État initial au chargement de la page
+function initialize() {
+    const latestYear = Object.keys(chartDataByYear).sort().pop();
+    yearSelect.value = latestYear; // Sélectionne la dernière année par défaut
+    updateMainChart(latestYear);
+    updateRankingAndDetail(latestYear, currentHorizon);
+}
+
+initialize(); // Lance l'application
   </script>
 </body>
 </html>
