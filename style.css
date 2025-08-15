@@ -247,5 +247,5 @@ nav a {
     padding: 2rem 0;
 }
 #selection-calculatrices {
-    padding-bottom: 1rem; /* Réduit l'espacement en bas */
+    padding-bottom: 0rem; /* Réduit l'espacement en bas */
 }
