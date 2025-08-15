@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const annees = ageRetraite - ageActuel;
         const rMensuel = Math.pow(1 + rendementAnnuel, 1 / 12) - 1;
         const FV = epargneMensuelle * ((Math.pow(1 + rMensuel, annees * 12) - 1) / rMensuel);
-        resultatRetraite.textContent = `Capital estimé à la retraite : ${fmtCurrency(FV)}.`;
+        resultatRetraite.textContent = `Capital estimé à la retraite : ${fmtNombre(FV)}.`;
 
         // Logique du graphique
         const ctx = document.getElementById('chart-retraite').getContext('2d');
@@ -81,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: { 
                 maintainAspectRatio: false, // <-- AJOUTEZ CETTE LIGNE
-                scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => fmtCurrency(v) } } } 
+                scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => fmtNombre(v) } } } 
             } 
         });
     });
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const nP = duree * m;
         const FV_initial = montantInitial * Math.pow(1 + rP, nP);
         const FV_cot = cotisation * ((Math.pow(1 + rP, nP) - 1) / rP);
-        resultatVF.textContent = `Valeur future estimée : ${fmtCurrency(FV_initial + FV_cot)}.`;
+        resultatVF.textContent = `Valeur future estimée : ${fmtNombre(FV_initial + FV_cot)}.`;
 
         // Logique du graphique
         const ctx = document.getElementById('chart-vf').getContext('2d');
@@ -126,7 +126,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: { 
                 maintainAspectRatio: false, // <-- AJOUTEZ CETTE LIGNE
-                scales: { y: { ticks: { callback: v => fmtCurrency(v) } } } 
+                scales: { y: { ticks: { callback: v => fmtNombre(v) } } } 
             } 
         });
     });
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const rMensuel = tauxHypo / 12;
         const n = dureeHypo * 12;
         const mensualite = montantPret * (rMensuel * Math.pow(1 + rMensuel, n)) / (Math.pow(1 + rMensuel, n) - 1);
-        resultatHypo.textContent = `Mensualité estimée : ${fmtCurrency(mensualite)}.`;
+        resultatHypo.textContent = `Mensualité estimée : ${fmtNombre(mensualite)}.`;
 
         // Logique du graphique
         const ctx = document.getElementById('chart-hypotheque').getContext('2d');
@@ -174,7 +174,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: { 
                 maintainAspectRatio: false, // <-- AJOUTEZ CETTE LIGNE
-                scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => fmtCurrency(v) } } } 
+                scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => fmtNombre(v) } } } 
             } 
         });
     });
@@ -194,7 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
         const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
-        resultatTrex.textContent = `Impact des frais : ${fmtCurrency(capitalSansFrais - capitalAvecFrais)}. Valeur finale : ${fmtCurrency(capitalAvecFrais)}.`;
+        resultatTrex.textContent = `Impact des frais : ${fmtNombre(capitalSansFrais - capitalAvecFrais)}. Valeur finale : ${fmtNombre(capitalAvecFrais)}.`;
         
         // Logique du graphique
         const ctx = document.getElementById('chart-trex').getContext('2d');
@@ -212,7 +212,7 @@ document.addEventListener('DOMContentLoaded', () => {
             },
             options: { 
                 maintainAspectRatio: false, // <-- AJOUTEZ CETTE LIGNE
-                scales: { y: { ticks: { callback: v => fmtCurrency(v) } } } 
+                scales: { y: { ticks: { callback: v => fmtNombre(v) } } } 
             } 
         });
     });
