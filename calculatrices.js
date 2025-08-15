@@ -1,4 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Charge le footer de manière dynamique
+    fetch('footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-placeholder').innerHTML = data;
+        });
+    
     // Fonctions utilitaires (CORRIGÉES)
     const fmtNombre = n => new Intl.NumberFormat('fr-FR', { 
         minimumFractionDigits: 2,
