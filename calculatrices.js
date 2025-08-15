@@ -118,6 +118,8 @@ document.addEventListener('DOMContentLoaded', () => {
     resultatRetraite.textContent =
       `En économisant ${fmtCurrency(epargneMensuelle)} par mois pendant ${annees} ans avec un rendement annuel moyen de ${(rendementAnnuel * 100).toFixed(2)}%, vous aurez environ ${fmtCurrency(FV)}.`;
 
+    if (!ctxRetraite) return; // Pas de canvas dispo
+
     const labels = [], dataEpargne = [], dataInteret = [];
     for (let year = 0; year <= annees; year++) {
       const mois = year * 12;
@@ -150,6 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+
   // ==========================================================
   // 📈 Calculatrice — Valeur future
   // ==========================================================
@@ -173,8 +176,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const m = freq === 'mensuelle' ? 12 : freq === 'hebdomadaire' ? 52 : 1;
     const rP = Math.pow(1 + taux, 1 / m) - 1;
+    const nP = duree * m; // 🔹 défini AVANT utilisation
+
     const FV_initial = montantInitial * Math.pow(1 + rP, nP);
-    const nP = duree * m;
     const FV_cot = Math.abs(rP) < 1e-12
       ? cotisation * nP
       : cotisation * ((Math.pow(1 + rP, nP) - 1) / rP);
@@ -186,6 +190,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     resultatVF.textContent =
       `Après ${duree} ans, votre investissement de ${fmtCurrency(montantInitial)} avec une cotisation ${labelFreq} de ${fmtCurrency(cotisation)} vaudra environ ${fmtCurrency(FV_total)}. (${fmtCurrency(totalCotisations)} de cotisations)`;
+ 
+    if (!ctxVF) return; // Pas de canvas dispo
 
     const labels = [], dataCapital = [];
     for (let year = 0; year <= duree; year++) {
