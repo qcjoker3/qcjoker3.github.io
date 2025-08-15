@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Fonctions utilitaires
+    // Fonctions utilitaires (CORRIGÉES)
     const fmtNombre = n => new Intl.NumberFormat('fr-FR', { 
-        maximumFractionDigits: 2,
-        maximumFractionDigits: 2  // N'affiche jamais plus de 2 décimales
-}).format(n);
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
     }).format(n);
+    
     const toFloat = v => parseFloat(String(v).replace(',', '.')) || 0;
 
     // Déclaration unique de toutes les variables de graphiques
@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const tauxHypo = toFloat(document.getElementById('hypo-taux').value) / 100;
         const dureeHypo = toFloat(document.getElementById('hypo-duree').value);
         const rMensuel = tauxHypo / 12, n = dureeHypo * 12;
-        if (rMensuel <= 0) return; // Empêche la division par zéro
+        if (rMensuel <= 0) return;
         const mensualite = montantPret * rMensuel / (1 - Math.pow(1 + rMensuel, -n));
         resultatHypo.textContent = `Mensualité estimée : ${fmtNombre(mensualite)}.`;
         const ctx = document.getElementById('chart-hypotheque')?.getContext('2d');
@@ -131,90 +131,89 @@ document.addEventListener('DOMContentLoaded', () => {
     });
     
     // --- Calculatrice Acheter ou Louer ---
-document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
-    e.preventDefault();
-    const val = id => toFloat(document.getElementById(id).value);
-    const pct = id => val(id) / 100;
-    const sel = id => document.getElementById(id).value;
-    const prixPropriete = val('al-prix-propriete');
-    const miseDeFonds = val('al-mise-de-fonds');
-    const tauxHypoAnnuel = pct('al-taux-hypotheque');
-    const amortissement = val('al-amortissement');
-    const taxesAnnuelles = val('al-taxes-annuelles');
-    const entretienPct = pct('al-entretien-annuel');
-    const assuranceProprioM = val('al-assurance-proprio');
-    const fraisCondoM = val('al-frais-condo');
-    let loyerMensuel = val('al-loyer-mensuel');
-    const assuranceLocM = val('al-assurance-loc');
-    const horizon = val('al-horizon');
-    const croissanceImmo = pct('al-croissance-immo');
-    const augmentationLoyer = pct('al-augmentation-loyer');
-    const rendementPlacement = pct('al-rendement-placement');
-    const typeCompte = sel('al-type-compte');
-    const tauxMarginal = pct('al-taux-marginal');
-    const montantPret = prixPropriete - miseDeFonds;
-    const tauxHypoMensuel = tauxHypoAnnuel / 12;
-    const nbPaiements = amortissement * 12;
-    if (tauxHypoMensuel <= 0) return;
-    const paiementHypothecaire = montantPret * tauxHypoMensuel / (1 - Math.pow(1 + tauxHypoMensuel, -nbPaiements));
-    let valeurPropriete = prixPropriete;
-    let soldeHypotheque = montantPret;
-    let portefeuilleLocataire = miseDeFonds;
-    const labels = ['Année 0'];
-    const dataProprio = [miseDeFonds];
-    const dataLocataire = [portefeuilleLocataire];
-    for (let an = 1; an <= horizon; an++) {
-        for (let mois = 1; mois <= 12; mois++) {
-            let interetMois = soldeHypotheque * tauxHypoMensuel;
-            soldeHypotheque -= (paiementHypothecaire - interetMois);
+    document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
+        e.preventDefault();
+        const val = id => toFloat(document.getElementById(id).value);
+        const pct = id => val(id) / 100;
+        const sel = id => document.getElementById(id).value;
+        const prixPropriete = val('al-prix-propriete');
+        const miseDeFonds = val('al-mise-de-fonds');
+        const tauxHypoAnnuel = pct('al-taux-hypotheque');
+        const amortissement = val('al-amortissement');
+        const taxesAnnuelles = val('al-taxes-annuelles');
+        const entretienPct = pct('al-entretien-annuel');
+        const assuranceProprioM = val('al-assurance-proprio');
+        const fraisCondoM = val('al-frais-condo');
+        let loyerMensuel = val('al-loyer-mensuel');
+        const assuranceLocM = val('al-assurance-loc');
+        const horizon = val('al-horizon');
+        const croissanceImmo = pct('al-croissance-immo');
+        const augmentationLoyer = pct('al-augmentation-loyer');
+        const rendementPlacement = pct('al-rendement-placement');
+        const typeCompte = sel('al-type-compte');
+        const tauxMarginal = pct('al-taux-marginal');
+        const montantPret = prixPropriete - miseDeFonds;
+        const tauxHypoMensuel = tauxHypoAnnuel / 12;
+        const nbPaiements = amortissement * 12;
+        if (tauxHypoMensuel <= 0) return;
+        const paiementHypothecaire = montantPret * tauxHypoMensuel / (1 - Math.pow(1 + tauxHypoMensuel, -nbPaiements));
+        let valeurPropriete = prixPropriete;
+        let soldeHypotheque = montantPret;
+        let portefeuilleLocataire = miseDeFonds;
+        const labels = ['Année 0'];
+        const dataProprio = [miseDeFonds];
+        const dataLocataire = [portefeuilleLocataire];
+        for (let an = 1; an <= horizon; an++) {
+            for (let mois = 1; mois <= 12; mois++) {
+                let interetMois = soldeHypotheque * tauxHypoMensuel;
+                soldeHypotheque -= (paiementHypothecaire - interetMois);
+            }
+            const coutsProprio = (paiementHypothecaire * 12) + taxesAnnuelles + (prixPropriete * entretienPct) + (assuranceProprioM * 12) + (fraisCondoM * 12);
+            const coutsLocataire = (loyerMensuel * 12) + (assuranceLocM * 12);
+            const investissementAnnuel = Math.max(0, coutsProprio - coutsLocataire);
+            portefeuilleLocataire += investissementAnnuel;
+            let gainPlacement = portefeuilleLocataire * rendementPlacement;
+            if (typeCompte === 'non-enregistre') {
+                gainPlacement *= (1 - (tauxMarginal * 0.5));
+            }
+            portefeuilleLocataire += gainPlacement;
+            valeurPropriete *= (1 + croissanceImmo);
+            labels.push(`Année ${an}`);
+            dataProprio.push(valeurPropriete - soldeHypotheque);
+            if (typeCompte === 'reer') {
+                dataLocataire.push(portefeuilleLocataire * (1 - tauxMarginal));
+            } else {
+                dataLocataire.push(portefeuilleLocataire);
+            }
+            loyerMensuel *= (1 + augmentationLoyer);
         }
-        const coutsProprio = (paiementHypothecaire * 12) + taxesAnnuelles + (prixPropriete * entretienPct) + (assuranceProprioM * 12) + (fraisCondoM * 12);
-        const coutsLocataire = (loyerMensuel * 12) + (assuranceLocM * 12);
-        const investissementAnnuel = Math.max(0, coutsProprio - coutsLocataire);
-        portefeuilleLocataire += investissementAnnuel;
-        let gainPlacement = portefeuilleLocataire * rendementPlacement;
-        if (typeCompte === 'non-enregistre') {
-            gainPlacement *= (1 - (tauxMarginal * 0.5));
-        }
-        portefeuilleLocataire += gainPlacement;
-        valeurPropriete *= (1 + croissanceImmo);
-        labels.push(`Année ${an}`);
-        dataProprio.push(valeurPropriete - soldeHypotheque);
-        if (typeCompte === 'reer') {
-            dataLocataire.push(portefeuilleLocataire * (1 - tauxMarginal));
-        } else {
-            dataLocataire.push(portefeuilleLocataire);
-        }
-        loyerMensuel *= (1 + augmentationLoyer);
-    }
-    const resultatFinalProprio = dataProprio[dataProprio.length - 1];
-    const resultatFinalLocataire = dataLocataire[dataLocataire.length - 1];
-    const difference = resultatFinalProprio - resultatFinalLocataire;
-    
-    // ▼▼▼ CORRECTION 1/2 ICI ▼▼▼
-    document.getElementById('resultat-acheter-louer').textContent = `Après ${horizon} ans, l'actif net du propriétaire est de ${fmtNombre(resultatFinalProprio)} et celui du locataire est de ${fmtNombre(resultatFinalLocataire)}. Différence : ${fmtNombre(difference)} en faveur du ${difference > 0 ? 'propriétaire' : 'locataire'}.`;
-    
-    const ctx = document.getElementById('chart-acheter-louer')?.getContext('2d');
-    if (!ctx) return;
-    if (chartAcheterLouer) chartAcheterLouer.destroy();
-    chartAcheterLouer = new Chart(ctx, { 
-        type: 'line', 
-        data: { 
-            labels, 
-            datasets: [
-                { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true }, 
-                { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true }
-            ] 
-        }, 
-        options: { 
-            maintainAspectRatio: false, 
-            scales: { 
-                // ▼▼▼ CORRECTION 2/2 ICI ▼▼▼
-                y: { ticks: { callback: value => fmtNombre(value) } } 
+        const resultatFinalProprio = dataProprio[dataProprio.length - 1];
+        const resultatFinalLocataire = dataLocataire[dataLocataire.length - 1];
+        const difference = resultatFinalProprio - resultatFinalLocataire;
+        
+        document.getElementById('resultat-acheter-louer').textContent = `Après ${horizon} ans, l'actif net du propriétaire est de ${fmtNombre(resultatFinalProprio)} et celui du locataire de ${fmtNombre(resultatFinalLocataire)}. Différence : ${fmtNombre(difference)} en faveur du ${difference > 0 ? 'propriétaire' : 'locataire'}.`;
+        
+        const ctx = document.getElementById('chart-acheter-louer')?.getContext('2d');
+        if (!ctx) return;
+        if (chartAcheterLouer) chartAcheterLouer.destroy();
+        chartAcheterLouer = new Chart(ctx, { 
+            type: 'line', 
+            data: { 
+                labels, 
+                datasets: [
+                    { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true }, 
+                    { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true }
+                ] 
+            }, 
+            options: { 
+                maintainAspectRatio: false, 
+                scales: { 
+                    y: { ticks: { callback: value => fmtNombre(value) } } 
+                } 
             } 
-        } 
+        });
     });
-});
+
     // Affichage initial
     showCalculator('retraite');
 });
