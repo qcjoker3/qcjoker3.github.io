@@ -170,7 +170,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     { label: 'Capital restant dû', data: capitalRestantData, backgroundColor: '#e2e8f0' }
                 ]
             },
-            options: { scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: value => fmtCurrency(value) } } } }
+            options: { 
+                maintainAspectRatio: false, // <-- AJOUTEZ CETTE LIGNE
+                scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => fmtCurrency(v) } } } 
+            } 
         });
     });
 
