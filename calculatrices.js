@@ -1,6 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Fonctions utilitaires
-    const fmtCurrency = n => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(n);
+    const fmtNombre = n => new Intl.NumberFormat('fr-FR', { 
+    maximumFractionDigits: 0 // On arrondit à l'entier le plus proche
+}).format(n);
     const toFloat = v => parseFloat(String(v).replace(',', '.')) || 0;
 
     // --- Variables pour stocker les instances de graphiques ---
