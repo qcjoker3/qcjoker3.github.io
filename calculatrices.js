@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Navigation entre calculatrices ---
     const calcCards = document.querySelectorAll('.card-grid .card[data-calc]');
     const calcSections = document.querySelectorAll('.calculator-card');
+    const allExplications = document.querySelectorAll('.boite-explication');
 
     const showCalculator = (key) => {
         const targetSection = document.getElementById(`calc-${key}`);
@@ -22,7 +23,14 @@ document.addEventListener('DOMContentLoaded', () => {
         targetSection.classList.add('active');
 
         calcCards.forEach(card => card.classList.toggle('selected', card.dataset.calc === key));
-        
+
+        // Gère l'affichage des boîtes d'explication
+        const targetExplication = document.getElementById(`explication-${key}`);
+        allExplications.forEach(box => box.classList.remove('active')); // Cache toutes les boîtes
+        if (targetExplication) {
+            targetExplication.classList.add('active'); // Affiche la bonne boîte
+        }
+                
         const form = targetSection.querySelector('form');
         if (form) {
              form.dispatchEvent(new Event('submit'));
