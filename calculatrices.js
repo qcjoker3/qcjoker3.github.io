@@ -196,10 +196,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const labels = [], dataCapital = [];
     for (let year = 0; year <= duree; year++) {
       const periodsY = year * m;
-      const FV_init_y = montantInitial * Math.pow(1 + taux, year);
+      const FV_init_y = montantInitial * Math.pow(1 + rP, periodsY);
       const FV_cot_y = Math.abs(rP) < 1e-12
         ? cotisation * periodsY
         : cotisation * ((Math.pow(1 + rP, periodsY) - 1) / rP);
+
       labels.push(year.toString());
       dataCapital.push(FV_init_y + FV_cot_y);
     }
@@ -228,6 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
     });
   });
+});
 
   // ==========================================================
   // 🏠 Calculatrice — Hypothèque
