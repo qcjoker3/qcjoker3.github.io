@@ -195,3 +195,8 @@ nav a {
 nav a:hover {
   color: #00c48c;
 }
+
+.chart-canvas {
+    margin-top: 25px;
+    max-height: 350px;
+}
