@@ -57,12 +57,40 @@ h3 { font-size: 1.5rem; }
   background-color: #ffffff;
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  cursor: pointer; /* Ajout pour indiquer que les cartes sont cliquables */
 }
 
 .card:hover {
   transform: translateY(-4px);
   box-shadow: 0 10px 25px rgba(0,0,0,0.12);
 }
+
+/* Style pour la carte sélectionnée */
+.card.selected {
+  outline: 3px solid #00c48c;
+  outline-offset: 2px;
+}
+
+
+/* ================== */
+/* CALCULATRICES (NOUVEAU) */
+/* ================== */
+
+/* Cacher toutes les calculatrices par défaut */
+.calculator-card {
+  display: none;
+  padding: 24px;
+  margin-top: 24px;
+  border-radius: 16px;
+  background-color: #ffffff;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+}
+
+/* Afficher uniquement la calculatrice active */
+.calculator-card.active {
+  display: block;
+}
+
 
 /* ================== */
 /* FORM GROUPS */
@@ -130,51 +158,18 @@ table tr:hover {
   cursor: pointer;
   font-weight: 700;
   transition: all 0.3s ease;
+  margin-top: 10px; /* Ajout d'un petit espace */
 }
 
 .btn-primary:hover {
   background-color: #00a678;
 }
 
-.scenario-btn {
-  padding: 10px 20px;
-  border-radius: 12px;
-  border: 1px solid #00c48c;
-  background-color: #ffffff;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  margin-right: 8px;
-}
-
-.scenario-btn.active {
-  background-color: #00c48c;
-  color: white;
-}
-
-/* ================== */
-/* TOTAL CAPITAL CARD */
-#totalCapitalCard {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 26px;
-  border-radius: 16px;
-  background-color: #f0fdf8;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-  margin-bottom: 28px;
-}
-
-#totalCapitalCard h2 {
-  font-size: 1.8rem;
-  margin-bottom: 12px;
-}
-
 /* ================== */
 /* GRAPHIQUE */
 canvas {
   display: block;
-  margin: 0 auto 40px;
+  margin: 20px auto 40px;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0,0,0,0.08);
 }
@@ -200,11 +195,3 @@ nav a {
 nav a:hover {
   color: #00c48c;
 }
-
-/* ================== */
-/* RESPONSIVE */
-/*@media (max-width:768px){
-  .card-grid { grid-template-columns: 1fr; }
-  .scenario-btns { flex-direction: column; gap: 12px; }
-  nav { flex-direction: column; gap: 12px; }
-}*/
