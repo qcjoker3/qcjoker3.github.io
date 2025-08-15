@@ -52,10 +52,10 @@
         <section id="calc-retraite" class="calculator-card active">
             <h2>Calculatrice de Retraite</h2>
             <form id="form-retraite">
-                <div class="form-group"><label for="age-actuel">Âge actuel</label><input type="number" id="age-actuel" value="30"></div>
-                <div class="form-group"><label for="age-retraite">Âge de la retraite</label><input type="number" id="age-retraite" value="65"></div>
-                <div class="form-group"><label for="epargne-mensuelle">Épargne mensuelle</label><input type="number" id="epargne-mensuelle" value="500"></div>
-                <div class="form-group"><label for="rendement">Rendement annuel attendu (%)</label><input type="number" id="rendement" value="5"></div>
+                <div class="form-group"><label for="age-actuel">Âge actuel</label><input type="number" id="age-actuel" placeholder="30"></div>
+                <div class="form-group"><label for="age-retraite">Âge de la retraite</label><input type="number" id="age-retraite" placeholder="65"></div>
+                <div class="form-group"><label for="epargne-mensuelle">Épargne mensuelle</label><input type="number" id="epargne-mensuelle" placeholder="500"></div>
+                <div class="form-group"><label for="rendement">Rendement annuel attendu (%)</label><input type="number" id="rendement" placeholder="5"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-retraite"></p>
@@ -67,11 +67,11 @@
         <section id="calc-valeur-future" class="calculator-card">
             <h2>Calculatrice de Valeur Future</h2>
             <form id="form-vf">
-                <div class="form-group"><label for="vf-montant-initial">Montant initial</label><input type="number" id="vf-montant-initial" value="10000"></div>
-                <div class="form-group"><label for="vf-cotisation">Cotisation additionnelle</label><input type="number" id="vf-cotisation" value="200"></div>
-                <div class="form-group"><label for="vf-frequence">Fréquence</label><select id="vf-frequence"><option value="mensuelle">Mensuelle</option><option value="annuelle">Annuelle</option></select></div>
-                <div class="form-group"><label for="vf-duree">Durée (années)</label><input type="number" id="vf-duree" value="10"></div>
-                <div class="form-group"><label for="vf-taux">Taux d'intérêt annuel (%)</label><input type="number" id="vf-taux" value="7"></div>
+                <div class="form-group"><label for="vf-montant-initial">Montant initial</label><input type="number" id="vf-montant-initial" placeholder="10000"></div>
+                <div class="form-group"><label for="vf-cotisation">Cotisation additionnelle</label><input type="number" id="vf-cotisation" placeholder="200"></div>
+                <div class="form-group"><label for="vf-frequence">Fréquence</label><select id="vf-frequence"><option value="mensuelle">Mensuelle</option><option placeholder="annuelle">Annuelle</option></select></div>
+                <div class="form-group"><label for="vf-duree">Durée (années)</label><input type="number" id="vf-duree" placeholder="10"></div>
+                <div class="form-group"><label for="vf-taux">Taux d'intérêt annuel (%)</label><input type="number" id="vf-taux" placeholder="7"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
            <p class="resultat" id="resultat-vf"></p>
