@@ -196,11 +196,10 @@ nav a:hover {
   color: #00c48c;
 }
 
-.chart-canvas {
-    margin-top: 25px;
-    width: 100%;       /* Le graphique prendra toute la largeur disponible */
-    max-width: 700px;  /* Mais pas plus de 700px pour rester lisible */
-    height: 400px;     /* Hauteur fixe de 400px */
-    margin-left: auto; /* Centre le graphique s'il est moins large que le conteneur */
-    margin-right: auto;
+.chart-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px; /* Largeur maximale pour le graphique */
+    height: 400px;      /* Hauteur modérée et définie */
+    margin: 30px auto 0 auto; /* Marge en haut et centrage horizontal */
 }
