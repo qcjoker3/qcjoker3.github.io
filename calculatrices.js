@@ -3,40 +3,38 @@ document.addEventListener('DOMContentLoaded', () => {
     const fmtCurrency = n => new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(n);
     const toFloat = v => parseFloat(String(v).replace(',', '.')) || 0;
 
-    // --- Navigation entre calculatrices (SECTION CORRIGÉE) ---
+    // --- Variables pour stocker les instances de graphiques ---
+    let chartRetraite = null;
+    let chartVF = null;
+    let chartHypo = null;
+    let chartTrex = null;
+
+    // --- Navigation entre calculatrices ---
     const calcCards = document.querySelectorAll('.card-grid .card[data-calc]');
     const calcSections = document.querySelectorAll('.calculator-card');
 
-    // Fonction pour afficher une calculatrice spécifique
     const showCalculator = (key) => {
         const targetSection = document.getElementById(`calc-${key}`);
         if (!targetSection) return;
 
-        // Met à jour la visibilité des sections de calculatrices
-        calcSections.forEach(sec => {
-            sec.classList.remove('active');
-        });
+        calcSections.forEach(sec => sec.classList.remove('active'));
         targetSection.classList.add('active');
 
-        // Met à jour le style des cartes de sélection
         calcCards.forEach(card => {
-            if (card.dataset.calc === key) {
-                card.classList.add('selected');
-            } else {
-                card.classList.remove('selected');
-            }
+            card.classList.toggle('selected', card.dataset.calc === key);
         });
+        
+        // Déclenche le calcul pour afficher le graphique de la section visible
+        targetSection.querySelector('form')?.dispatchEvent(new Event('submit'));
     };
 
-    // Ajoute un écouteur d'événement sur chaque carte
     calcCards.forEach(card => {
         card.addEventListener('click', () => {
-            const calculatorKey = card.dataset.calc;
-            showCalculator(calculatorKey);
+            showCalculator(card.dataset.calc);
         });
     });
-    
-    // --- Logique des calculatrices (inchangée) ---
+
+    // --- Logique des calculatrices ---
 
     // Calculatrice — Retraite
     document.getElementById('form-retraite')?.addEventListener('submit', e => {
@@ -47,21 +45,47 @@ document.addEventListener('DOMContentLoaded', () => {
         const epargneMensuelle = toFloat(document.getElementById('epargne-mensuelle').value);
         const rendementAnnuel = toFloat(document.getElementById('rendement').value) / 100;
 
-        if (ageRetraite <= ageActuel) {
-            resultatRetraite.textContent = "L'âge de retraite doit être supérieur à l'âge actuel.";
-            return;
-        }
+        if (ageRetraite <= ageActuel) { /* ... (validation) ... */ return; }
 
         const annees = ageRetraite - ageActuel;
         const rMensuel = Math.pow(1 + rendementAnnuel, 1 / 12) - 1;
         const FV = epargneMensuelle * ((Math.pow(1 + rMensuel, annees * 12) - 1) / rMensuel);
         resultatRetraite.textContent = `Capital estimé à la retraite : ${fmtCurrency(FV)}.`;
+
+        // Logique du graphique
+        const ctx = document.getElementById('chart-retraite').getContext('2d');
+        if (chartRetraite) chartRetraite.destroy();
+        
+        const labels = [];
+        const capitalData = [];
+        const interetData = [];
+        for (let i = 0; i <= annees; i++) {
+            labels.push(ageActuel + i);
+            let mois = i * 12;
+            let totalInvesti = epargneMensuelle * mois;
+            let valeurTotale = epargneMensuelle * ((Math.pow(1 + rMensuel, mois) - 1) / rMensuel);
+            capitalData.push(totalInvesti);
+            interetData.push(valeurTotale - totalInvesti);
+        }
+        
+        chartRetraite = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Capital versé', data: capitalData, backgroundColor: '#00c48c' },
+                    { label: 'Intérêts gagnés', data: interetData, backgroundColor: '#00a678' }
+                ]
+            },
+            options: { scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: value => fmtCurrency(value) } } } }
+        });
     });
 
     // Calculatrice — Valeur future
     document.getElementById('form-vf')?.addEventListener('submit', e => {
         e.preventDefault();
         const resultatVF = document.getElementById('resultat-vf');
+        // ... (récupération des valeurs) ...
         const montantInitial = toFloat(document.getElementById('vf-montant-initial').value);
         const duree = toFloat(document.getElementById('vf-duree').value);
         const taux = toFloat(document.getElementById('vf-taux').value) / 100;
@@ -74,6 +98,29 @@ document.addEventListener('DOMContentLoaded', () => {
         const FV_initial = montantInitial * Math.pow(1 + rP, nP);
         const FV_cot = cotisation * ((Math.pow(1 + rP, nP) - 1) / rP);
         resultatVF.textContent = `Valeur future estimée : ${fmtCurrency(FV_initial + FV_cot)}.`;
+
+        // Logique du graphique
+        const ctx = document.getElementById('chart-vf').getContext('2d');
+        if (chartVF) chartVF.destroy();
+
+        const labels = [];
+        const valeurData = [];
+        for (let i = 0; i <= duree; i++) {
+            labels.push(`Année ${i}`);
+            let nP_i = i * m;
+            let fv_init_i = montantInitial * Math.pow(1 + rP, nP_i);
+            let fv_cot_i = cotisation * ((Math.pow(1 + rP, nP_i) - 1) / rP);
+            valeurData.push(fv_init_i + fv_cot_i);
+        }
+        
+        chartVF = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{ label: 'Valeur du portefeuille', data: valeurData, borderColor: '#00c48c', fill: true, backgroundColor: 'rgba(0,196,140,0.1)' }]
+            },
+            options: { scales: { y: { ticks: { callback: value => fmtCurrency(value) } } } }
+        });
     });
 
     // Calculatrice — Hypothèque
@@ -88,6 +135,37 @@ document.addEventListener('DOMContentLoaded', () => {
         const n = dureeHypo * 12;
         const mensualite = montantPret * (rMensuel * Math.pow(1 + rMensuel, n)) / (Math.pow(1 + rMensuel, n) - 1);
         resultatHypo.textContent = `Mensualité estimée : ${fmtCurrency(mensualite)}.`;
+
+        // Logique du graphique
+        const ctx = document.getElementById('chart-hypotheque').getContext('2d');
+        if (chartHypo) chartHypo.destroy();
+        
+        const labels = [];
+        const capitalRestantData = [];
+        const capitalRembourseData = [];
+        let capitalRestant = montantPret;
+        for (let i = 0; i <= dureeHypo; i++) {
+            labels.push(`Année ${i}`);
+            capitalRestantData.push(capitalRestant);
+            capitalRembourseData.push(montantPret - capitalRestant);
+            for (let j = 0; j < 12; j++) {
+                let interet = capitalRestant * rMensuel;
+                let principal = mensualite - interet;
+                capitalRestant -= principal;
+            }
+        }
+
+        chartHypo = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: 'Capital remboursé', data: capitalRembourseData, backgroundColor: '#00c48c' },
+                    { label: 'Capital restant dû', data: capitalRestantData, backgroundColor: '#e2e8f0' }
+                ]
+            },
+            options: { scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: value => fmtCurrency(value) } } } }
+        });
     });
 
     // Calculatrice — Frais de gestion
@@ -106,8 +184,25 @@ document.addEventListener('DOMContentLoaded', () => {
         const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
         const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
         resultatTrex.textContent = `Impact des frais : ${fmtCurrency(capitalSansFrais - capitalAvecFrais)}. Valeur finale : ${fmtCurrency(capitalAvecFrais)}.`;
+        
+        // Logique du graphique
+        const ctx = document.getElementById('chart-trex').getContext('2d');
+        if (chartTrex) chartTrex.destroy();
+
+        chartTrex = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Avec Frais', 'Sans Frais (Potentiel)'],
+                datasets: [{
+                    label: 'Valeur finale du portefeuille',
+                    data: [capitalAvecFrais, capitalSansFrais],
+                    backgroundColor: ['#00a678', '#00c48c']
+                }]
+            },
+            options: { scales: { y: { ticks: { callback: value => fmtCurrency(value) } } } }
+        });
     });
     
-    // Déclencher le calcul initial pour la première calculatrice visible
-    document.getElementById('form-retraite')?.dispatchEvent(new Event('submit'));
+    // Affichage initial
+    showCalculator('retraite');
 });
