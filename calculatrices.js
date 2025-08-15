@@ -10,17 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }).format(n);
 
   const toFloat = v => {
-    const n = parseFloat(v);
+    const n = parseFloat(String(v).replace(',', '.'));
     return Number.isFinite(n) ? n : NaN;
   };
 
   const parseNum = v =>
     parseFloat(String(v ?? '').replace(/\s/g, '').replace(',', '.')) || 0;
-
-  const pctToMonthly = p => {
-    const a = parseNum(p) / 100;
-    return Math.pow(1 + a, 1 / 12) - 1;
-  };
 
   const annualToMonthlyRate = a => {
     const r = parseNum(a) / 100;
@@ -74,7 +69,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Sélection initiale depuis le hash ou localStorage
   const hashKey = location.hash.replace('#', '');
   const storedKey = localStorage.getItem('calc:selected');
   const initialKey = hashKey || storedKey;
@@ -87,19 +81,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // 🧮 Calculatrice — Retraite
   // ==========================================================
   const formRetraite = document.getElementById('form-retraite');
-  const resultatRetraite = document.getElementById('resultat-retraite');
-  const ctxRetraite = document.getElementById('chart-retraite')?.getContext('2d');
-
   formRetraite?.addEventListener('submit', e => {
     e.preventDefault();
+    const resultatRetraite = document.getElementById('resultat-retraite');
+    const ctxRetraite = document.getElementById('chart-retraite')?.getContext('2d');
 
-    const ageActuel = parseInt(formRetraite['age-actuel'].value);
-    const ageRetraite = parseInt(formRetraite['age-retraite'].value);
-    const epargneMensuelle = toFloat(formRetraite['epargne-mensuelle'].value);
-    const rendementAnnuel = toFloat(formRetraite['rendement'].value) / 100;
+    const ageActuel = parseInt(document.getElementById('age-actuel').value);
+    const ageRetraite = parseInt(document.getElementById('age-retraite').value);
+    const epargneMensuelle = toFloat(document.getElementById('epargne-mensuelle').value);
+    const rendementAnnuel = toFloat(document.getElementById('rendement').value) / 100;
 
-    if (!Number.isFinite(ageActuel) || !Number.isFinite(ageRetraite) ||
-        !Number.isFinite(epargneMensuelle) || !Number.isFinite(rendementAnnuel)) {
+    if (!Number.isFinite(ageActuel) || !Number.isFinite(ageRetraite) || !Number.isFinite(epargneMensuelle) || !Number.isFinite(rendementAnnuel)) {
       resultatRetraite.textContent = 'Veuillez remplir tous les champs correctement.';
       return;
     }
@@ -110,46 +102,41 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const annees = ageRetraite - ageActuel;
     const rMensuel = Math.pow(1 + rendementAnnuel, 1 / 12) - 1;
+    const FV = Math.abs(rMensuel) < 1e-12 ?
+      epargneMensuelle * 12 * annees :
+      epargneMensuelle * ((Math.pow(1 + rMensuel, annees * 12) - 1) / rMensuel);
 
-    const FV = Math.abs(rMensuel) < 1e-12
-      ? epargneMensuelle * 12 * annees
-      : epargneMensuelle * ((Math.pow(1 + rMensuel, annees * 12) - 1) / rMensuel);
+    resultatRetraite.textContent = `En économisant ${fmtCurrency(epargneMensuelle)} par mois pendant ${annees} ans avec un rendement annuel de ${(rendementAnnuel * 100).toFixed(2)}%, vous aurez environ ${fmtCurrency(FV)}.`;
 
-    resultatRetraite.textContent =
-      `En économisant ${fmtCurrency(epargneMensuelle)} par mois pendant ${annees} ans avec un rendement annuel moyen de ${(rendementAnnuel * 100).toFixed(2)}%, vous aurez environ ${fmtCurrency(FV)}.`;
-
-    if (!ctxRetraite) return; // Pas de canvas dispo
+    if (!ctxRetraite) return;
 
     const labels = [], dataEpargne = [], dataInteret = [];
-    for (let year = 0; year <= annees; year++) {
-      const mois = year * 12;
-      const fvAnnee = Math.abs(rMensuel) < 1e-12
-        ? epargneMensuelle * mois
-        : epargneMensuelle * ((Math.pow(1 + rMensuel, mois) - 1) / rMensuel);
-      const epargneSansInteret = epargneMensuelle * 12 * year;
-      labels.push(year.toString());
-      dataEpargne.push(epargneSansInteret);
-      dataInteret.push(Math.max(0, fvAnnee - epargneSansInteret));
+    for (let year = 1; year <= annees; year++) {
+        const mois = year * 12;
+        const fvAnnee = Math.abs(rMensuel) < 1e-12 ?
+            epargneMensuelle * mois :
+            epargneMensuelle * ((Math.pow(1 + rMensuel, mois) - 1) / rMensuel);
+        const epargneSansInteret = epargneMensuelle * mois;
+        labels.push(`Année ${year}`);
+        dataEpargne.push(epargneSansInteret);
+        dataInteret.push(Math.max(0, fvAnnee - epargneSansInteret));
     }
 
     if (chartRetraite) chartRetraite.destroy();
     chartRetraite = new Chart(ctxRetraite, {
-      type: 'bar',
-      data: {
-        labels,
-        datasets: [
-          { label: 'Épargne', data: dataEpargne, backgroundColor: '#00c48c' },
-          { label: 'Intérêts', data: dataInteret, backgroundColor: '#00a678' }
-        ]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: true, text: "Épargne avec intérêts" }
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                { label: 'Épargne (Capital)', data: dataEpargne, backgroundColor: '#00c48c', stack: 'stack' },
+                { label: 'Intérêts générés', data: dataInteret, backgroundColor: '#00a678', stack: 'stack' }
+            ]
         },
-        scales: { y: { beginAtZero: true } }
-      }
+        options: {
+            responsive: true,
+            plugins: { legend: { position: 'top' }, title: { display: true, text: "Croissance de l'épargne retraite" } },
+            scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } }
+        }
     });
   });
 
@@ -157,248 +144,160 @@ document.addEventListener('DOMContentLoaded', () => {
   // 📈 Calculatrice — Valeur future
   // ==========================================================
   const formVF = document.getElementById('form-vf');
-  const resultatVF = document.getElementById('resultat-vf');
-  const ctxVF = document.getElementById('chart-vf')?.getContext('2d');
-
   formVF?.addEventListener('submit', e => {
     e.preventDefault();
+    const resultatVF = document.getElementById('resultat-vf');
+    const ctxVF = document.getElementById('chart-vf')?.getContext('2d');
 
-    const montantInitial = toFloat(formVF['montant-initial'].value);
-    const duree = parseInt(formVF['duree-vf'].value);
-    const taux = toFloat(formVF['taux-vf'].value) / 100;
-    const cotisation = toFloat(formVF['cotisation-vf']?.value) || 0;
-    const freq = formVF['frequence-vf']?.value || 'annuelle';
+    const montantInitial = toFloat(document.getElementById('vf-montant-initial').value);
+    const duree = parseInt(document.getElementById('vf-duree').value);
+    const taux = toFloat(document.getElementById('vf-taux').value) / 100;
+    const cotisation = toFloat(document.getElementById('vf-cotisation').value) || 0;
+    const freq = document.getElementById('vf-frequence').value || 'annuelle';
 
     if (!Number.isFinite(montantInitial) || !Number.isFinite(duree) || !Number.isFinite(taux)) {
       resultatVF.textContent = 'Veuillez remplir tous les champs correctement.';
       return;
     }
-
+    
     const m = freq === 'mensuelle' ? 12 : freq === 'hebdomadaire' ? 52 : 1;
     const rP = Math.pow(1 + taux, 1 / m) - 1;
-    const nP = duree * m; // 🔹 défini AVANT utilisation
+    const nP = duree * m;
 
     const FV_initial = montantInitial * Math.pow(1 + rP, nP);
-    const FV_cot = Math.abs(rP) < 1e-12
-      ? cotisation * nP
-      : cotisation * ((Math.pow(1 + rP, nP) - 1) / rP);
+    const FV_cot = Math.abs(rP) < 1e-12 ? cotisation * nP : cotisation * ((Math.pow(1 + rP, nP) - 1) / rP);
 
     const FV_total = FV_initial + FV_cot;
-    const totalCotisations = cotisation * nP;
-    const labelFreq = freq === 'mensuelle' ? 'mensuelle' :
-                      freq === 'hebdomadaire' ? 'hebdomadaire' : 'annuelle';
 
-    resultatVF.textContent =
-      `Après ${duree} ans, votre investissement de ${fmtCurrency(montantInitial)} avec une cotisation ${labelFreq} de ${fmtCurrency(cotisation)} vaudra environ ${fmtCurrency(FV_total)}. (${fmtCurrency(totalCotisations)} de cotisations)`;
- 
-    if (!ctxVF) return; // Pas de canvas dispo
+    resultatVF.textContent = `Après ${duree} ans, votre investissement vaudra environ ${fmtCurrency(FV_total)}.`;
+
+    if (!ctxVF) return;
 
     const labels = [], dataCapital = [];
     for (let year = 0; year <= duree; year++) {
-      const periodsY = year * m;
-      const FV_init_y = montantInitial * Math.pow(1 + rP, periodsY);
-      const FV_cot_y = Math.abs(rP) < 1e-12
-        ? cotisation * periodsY
-        : cotisation * ((Math.pow(1 + rP, periodsY) - 1) / rP);
-
-      labels.push(year.toString());
-      dataCapital.push(FV_init_y + FV_cot_y);
+        const periodsY = year * m;
+        const FV_init_y = montantInitial * Math.pow(1 + rP, periodsY);
+        const FV_cot_y = Math.abs(rP) < 1e-12 ? cotisation * periodsY : cotisation * ((Math.pow(1 + rP, periodsY) - 1) / rP);
+        labels.push(year.toString());
+        dataCapital.push(FV_init_y + FV_cot_y);
     }
 
     if (chartVF) chartVF.destroy();
     chartVF = new Chart(ctxVF, {
-      type: 'line',
-      data: {
-        labels,
-        datasets: [{
-          label: 'Valeur future (avec cotisations)',
-          data: dataCapital,
-          borderColor: '#00c48c',
-          backgroundColor: 'rgba(0,196,140,0.2)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'top' },
-          title: { display: true, text: 'Évolution de la valeur future' }
+        type: 'line',
+        data: {
+            labels,
+            datasets: [{
+                label: 'Valeur future',
+                data: dataCapital,
+                borderColor: '#00c48c',
+                backgroundColor: 'rgba(0,196,140,0.2)',
+                fill: true,
+                tension: 0.3
+            }]
         },
-        scales: { y: { beginAtZero: true } }
-      }
+        options: { responsive: true, plugins: { legend: { position: 'top' }, title: { display: true, text: 'Évolution de la valeur future' } }, scales: { y: { beginAtZero: true } } }
     });
   });
-});
 
   // ==========================================================
-// 🏠 Calculatrice — Hypothèque
-// ==========================================================
-const formHypo = document.getElementById('form-hypo');
-const resultatHypo = document.getElementById('resultat-hypo');
-const ctxHypo = document.getElementById('chart-hypo')?.getContext('2d');
+  // 🏠 Calculatrice — Hypothèque
+  // ==========================================================
+  const formHypo = document.getElementById('form-hypotheque');
+  formHypo?.addEventListener('submit', e => {
+    e.preventDefault();
+    const resultatHypo = document.getElementById('resultat-hypotheque');
+    const ctxHypo = document.getElementById('chart-hypotheque')?.getContext('2d');
 
-formHypo?.addEventListener('submit', e => {
-  e.preventDefault();
+    const montantPret = toFloat(document.getElementById('hypo-montant').value);
+    const tauxHypo = toFloat(document.getElementById('hypo-taux').value) / 100;
+    const dureeHypo = parseInt(document.getElementById('hypo-duree').value);
 
-  const montantPret = toFloat(formHypo['montant-pret']?.value);
-  const tauxHypo = toFloat(formHypo['taux-hypo']?.value) / 100;
-  const dureeHypo = parseInt(formHypo['duree-hypo']?.value);
+    if (!Number.isFinite(montantPret) || !Number.isFinite(tauxHypo) || !Number.isFinite(dureeHypo) || montantPret <= 0 || dureeHypo <= 0) {
+      resultatHypo.textContent = 'Veuillez remplir tous les champs avec des valeurs positives.';
+      return;
+    }
 
-  // Validation de base
-  if (!Number.isFinite(montantPret) || !Number.isFinite(tauxHypo) || !Number.isFinite(dureeHypo)) {
-    resultatHypo.textContent = 'Veuillez remplir tous les champs correctement.';
-    return;
-  }
-  if (montantPret <= 0 || dureeHypo <= 0) {
-    resultatHypo.textContent = 'Le montant du prêt et la durée doivent être positifs.';
-    return;
-  }
+    const rMensuel = tauxHypo / 12;
+    const n = dureeHypo * 12;
+    const mensualite = Math.abs(rMensuel) < 1e-12 ? montantPret / n : montantPret * (rMensuel * Math.pow(1 + rMensuel, n)) / (Math.pow(1 + rMensuel, n) - 1);
 
-  const rMensuel = tauxHypo / 12;
-  const n = dureeHypo * 12;
+    resultatHypo.textContent = `Mensualité estimée : ${fmtCurrency(mensualite)} sur ${dureeHypo} ans.`;
+    
+    if (!ctxHypo) return;
 
-  // Calcul de la mensualité
-  const mensualite = Math.abs(rMensuel) < 1e-12
-    ? montantPret / n
-    : montantPret * (rMensuel * Math.pow(1 + rMensuel, n)) /
-      (Math.pow(1 + rMensuel, n) - 1);
-
-  resultatHypo.textContent =
-    `Mensualité estimée : ${fmtCurrency(mensualite)} sur ${dureeHypo} ans.`;
-
-  if (!ctxHypo) {
-    console.warn('Canvas pour le graphique hypothécaire introuvable.');
-    return; // On garde au moins l’affichage du texte
-  }
-
-  // Génération des données pour le graphique
-  let capitalRestant = montantPret;
-  const labels = [], dataInteretsCumul = [], dataCapitalPayes = [];
-  let interetsCumules = 0;
-
-  for (let mois = 0; mois <= n; mois++) {
-    labels.push((mois / 12).toFixed(1)); // axe X en années avec décimales
-
-    const interetMois = capitalRestant * rMensuel;
-    const capitalMois = Math.min(mensualite - interetMois, capitalRestant);
-    interetsCumules += Math.max(0, interetMois);
-    capitalRestant = Math.max(0, capitalRestant - capitalMois);
-
-    dataInteretsCumul.push(interetsCumules);
-    dataCapitalPayes.push(montantPret - capitalRestant);
-  }
-
-  if (chartHypo) chartHypo.destroy();
-  chartHypo = new Chart(ctxHypo, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [
-        {
-          label: 'Capital remboursé',
-          data: dataCapitalPayes,
-          borderColor: '#00c48c',
-          backgroundColor: 'rgba(0,196,140,0.4)',
-          fill: true,
-          tension: 0.3
-        },
-        {
-          label: 'Intérêts cumulés',
-          data: dataInteretsCumul,
-          borderColor: '#00a678',
-          backgroundColor: 'rgba(0,166,120,0.4)',
-          fill: true,
-          tension: 0.3
+    let capitalRestant = montantPret;
+    const labels = [], dataCapitalRestant = [], dataCapitalPaye = [];
+    for (let an = 0; an <= dureeHypo; an++) {
+        labels.push(an.toString());
+        dataCapitalRestant.push(capitalRestant);
+        dataCapitalPaye.push(montantPret - capitalRestant);
+        for(let mois = 0; mois < 12; mois++){
+            const interetMois = capitalRestant * rMensuel;
+            const capitalMois = Math.min(mensualite - interetMois, capitalRestant);
+            capitalRestant = Math.max(0, capitalRestant - capitalMois);
         }
-      ]
-    },
-    options: {
-      responsive: true,
-      resizeDelay: 200,
-      plugins: {
-        legend: { position: 'top' },
-        title: { display: true, text: 'Évolution du prêt hypothécaire' }
-      },
-      scales: { y: { beginAtZero: true } }
     }
+
+    if (chartHypo) chartHypo.destroy();
+    chartHypo = new Chart(ctxHypo, {
+        type: 'bar',
+        data: {
+            labels,
+            datasets: [
+                { label: 'Capital remboursé', data: dataCapitalPaye, backgroundColor: '#00c48c' },
+                { label: 'Capital restant dû', data: dataCapitalRestant, backgroundColor: '#e6ecf1' }
+            ]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'top' }, title: { display: true, text: 'Amortissement du prêt' } }, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }
+    });
   });
-});
 
-// ==========================================================
-// 🦖 Calculatrice — T‑Rex Score
-// ==========================================================
-const formTrex = document.getElementById('form-trex');
-const resultatTrex = document.getElementById('resultat-trex');
-const ctxTrex = document.getElementById('chart-trex')?.getContext('2d');
+  // ==========================================================
+  // 🦖 Calculatrice — Frais de gestion (T-Rex)
+  // ==========================================================
+  const formTrex = document.getElementById('form-trex');
+  formTrex?.addEventListener('submit', e => {
+    e.preventDefault();
+    const resultatTrex = document.getElementById('resultat-trex');
+    const ctxTrex = document.getElementById('chart-trex')?.getContext('2d');
 
-formTrex?.addEventListener('submit', e => {
-  e.preventDefault();
+    const montantInitial = toFloat(document.getElementById('trex-montant').value);
+    const cotisationAnnuelle = toFloat(document.getElementById('trex-cotisation-annuelle').value) || 0;
+    const duree = parseInt(document.getElementById('trex-duree').value);
+    const rendementBrut = toFloat(document.getElementById('trex-rendement-brut').value) / 100;
+    const fraisAnnuel = toFloat(document.getElementById('trex-taux').value) / 100;
 
-  const montantInitial = toFloat(formTrex['montant-initial']?.value);
-  const cotisationAnnuelle = toFloat(formTrex['cotisation-annuelle']?.value) || 0;
-  const duree = parseInt(formTrex['duree-trex']?.value);
-  const rendementBrut = toFloat(formTrex['rendement-brut']?.value) / 100;
-  const fraisAnnuel = toFloat(formTrex['frais-annuels']?.value) / 100;
-
-  // Validation des entrées
-  if (!Number.isFinite(montantInitial) || montantInitial <= 0 ||
-      !Number.isFinite(duree) || duree <= 0 ||
-      !Number.isFinite(rendementBrut) || 
-      !Number.isFinite(fraisAnnuel) || fraisAnnuel < 0) {
-    resultatTrex.textContent = 'Veuillez remplir tous les champs correctement avec des valeurs valides.';
-    return;
-  }
-
-  const rendementNet = rendementBrut - fraisAnnuel;
-
-  // Fonction valeur future
-  const fv = (P, r, n, C) => {
-    if (Math.abs(r) < 1e-12) return P + C * n;
-    return P * Math.pow(1 + r, n) + C * ((Math.pow(1 + r, n) - 1) / r);
-  };
-
-  const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
-  const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
-
-  const scoreTrex = capitalSansFrais > 0 ? capitalAvecFrais / capitalSansFrais : 0;
-  const perteDueAuxFrais = capitalSansFrais - capitalAvecFrais;
-
-  // Affichage texte
-  resultatTrex.textContent =
-    `Votre score est de ${(scoreTrex * 100).toFixed(1)}%.\n` +
-    `Valeur finale avec frais : ${fmtCurrency(capitalAvecFrais)}\n` +
-    `Valeur sans frais : ${fmtCurrency(capitalSansFrais)} → ` +
-    `Frais payés : ${fmtCurrency(perteDueAuxFrais)}.`;
-
-  if (!ctxTrex) {
-    console.warn('Canvas du graphique T‑Rex introuvable.');
-    return; // On garde l’affichage du texte sans planter
-  }
-
-  // Création graphique
-  if (chartTrex) chartTrex.destroy();
-  chartTrex = new Chart(ctxTrex, {
-    type: 'bar',
-    data: {
-      labels: ['Avec frais', 'Sans frais'],
-      datasets: [{
-        label: 'Valeur finale',
-        data: [capitalAvecFrais, capitalSansFrais],
-        backgroundColor: ['#00a678', '#00c48c']
-      }]
-    },
-    options: {
-      responsive: true,
-      resizeDelay: 200,
-      plugins: {
-        legend: { display: false },
-        title: { display: true, text: "Impact des frais sur la valeur finale" }
-      },
-      scales: { y: { beginAtZero: true } }
+    if (!Number.isFinite(montantInitial) || !Number.isFinite(duree) || !Number.isFinite(rendementBrut) || !Number.isFinite(fraisAnnuel)) {
+      resultatTrex.textContent = 'Veuillez remplir tous les champs correctement.';
+      return;
     }
+
+    const rendementNet = rendementBrut - fraisAnnuel;
+    const fv = (P, r, n, C) => Math.abs(r) < 1e-12 ? P + C * n : P * Math.pow(1 + r, n) + C * ((Math.pow(1 + r, n) - 1) / r);
+
+    const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
+    const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
+    const perteDueAuxFrais = capitalSansFrais - capitalAvecFrais;
+
+    resultatTrex.textContent = `Après ${duree} ans, les frais de ${(fraisAnnuel * 100).toFixed(2)}% vous auront coûté ${fmtCurrency(perteDueAuxFrais)}. Valeur finale: ${fmtCurrency(capitalAvecFrais)}.`;
+    
+    if (!ctxTrex) return;
+
+    if (chartTrex) chartTrex.destroy();
+    chartTrex = new Chart(ctxTrex, {
+        type: 'bar',
+        data: {
+            labels: ['Avec frais', 'Sans frais (potentiel)'],
+            datasets: [{
+                label: 'Valeur finale',
+                data: [capitalAvecFrais, capitalSansFrais],
+                backgroundColor: ['#00a678', '#00c48c']
+            }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false }, title: { display: true, text: "Impact des frais sur la valeur finale" } }, scales: { y: { beginAtZero: true } } }
+    });
   });
-});  
 
 // ============================================================================
 // Louer vs Acheter — corrigé et renforcé
