@@ -1,6 +1,64 @@
 /* --- Importation des polices de caractères pour les deux thèmes --- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500&family=Lora:wght@600&display=swap');
 
+/* --- En-tête & Navigation --- */
+
+/* Règle pour la barre d'en-tête (s'applique partout) */
+.site-header, header.container {
+    background-color: var(--bg-color);
+    padding: 1.5rem 20px;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* --- LOGIQUE DE CENTRAGE UNIVERSELLE --- */
+
+/* CAS 1 : Pour la page d'accueil (cible le .container DANS .site-header) */
+.site-header .container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 0; /* Annule le padding du container général pour éviter les décalages */
+    margin: 0 auto; /* Assure que le container lui-même est centré */
+}
+
+/* CAS 2 : Pour la page des calculatrices (cible directement header.container) */
+header.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Styles pour les logos et navigations (s'appliquent aux deux structures) */
+.logo, header.container h1 {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--heading-color);
+    margin: 0;
+}
+.main-nav, header.container nav {
+    display: flex;
+    gap: 2rem;
+}
+.main-nav a, header.container nav a {
+    color: var(--text-color);
+    font-weight: 500;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+.main-nav a:hover, header.container nav a:hover {
+    color: var(--heading-color);
+    transform: translateY(-2px);
+}
+
+
+
+
 /* --- Animations --- */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
