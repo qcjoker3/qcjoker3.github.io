@@ -210,6 +210,21 @@
                     </select>
                 </div>
                 <div class="form-group">
+                <label for="al-type-compte">Type de compte d'investissement</label>
+                <select id="al-type-compte">
+                <option value="celi">CELI</option>
+                <option value="reer" selected>REER</option>
+                <option value="non-enregistre">Non-enregistré</option>
+            </select>
+        </div>
+
+        <div class="form-group" id="reinvest-reer-option">
+            <label for="al-reinvestir-reer">
+            <input type="checkbox" id="al-reinvestir-reer" checked>
+                    Réinvestir le retour d'impôt du REER
+            </label>
+            </div>
+                <div class="form-group">
                     <label for="al-taux-marginal">Taux d'imposition marginal (%)</label>
                     <input type="number" id="al-taux-marginal" placeholder="ex:40" step="any">
                 </div>
