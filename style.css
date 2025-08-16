@@ -1,5 +1,46 @@
 /* --- Importation des polices de caractères --- */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500&display=swap');
+/* --- En-tête & Navigation --- */
+
+/* Cible directement la balise <header> qui a la classe .container */
+header.container {
+    padding: 1.5rem 20px;
+    border-bottom: 1px solid var(--border-color);
+    
+    /* La logique de centrage qui fonctionnera avec votre HTML */
+    display: flex;
+    flex-direction: column; /* Met le logo au-dessus de la navigation */
+    align-items: center;     /* Centre horizontalement */
+    gap: 1rem;               /* Espace entre le logo et la navigation */
+}
+
+/* Style pour le <h1> qui sert de logo */
+header.container h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--light-text);
+    margin: 0; /* Annule la marge par défaut */
+}
+
+/* Style pour la balise <nav> */
+header.container nav {
+    display: flex;
+    gap: 2rem; /* Espace entre les liens */
+}
+
+/* Style pour les liens dans la nav */
+header.container nav a {
+    color: var(--grey-text);
+    font-weight: 500;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+header.container nav a:hover {
+    color: var(--light-text);
+    transform: translateY(-2px);
+}
+
+
 
 /* --- Animations --- */
 @keyframes fadeIn {
