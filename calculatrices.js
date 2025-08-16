@@ -175,10 +175,12 @@ document.addEventListener('DOMContentLoaded', () => {
         let valeurPropriete = prixPropriete;
         let soldeHypotheque = montantPret;
         let portefeuilleLocataire = miseDeFonds;
+        let retourImpotPrecedent = 0:
         const labels = ['Année 0'];
         const dataProprio = [miseDeFonds];
         const dataLocataire = [portefeuilleLocataire];
         for (let an = 1; an <= horizon; an++) {
+            portefeuilleLocataire += retourImpotPrecedent;
             for (let mois = 1; mois <= 12; mois++) {
                 let interetMois = soldeHypotheque * tauxHypoMensuel;
                 soldeHypotheque -= (paiementHypothecaire - interetMois);
@@ -186,6 +188,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const coutsProprio = (paiementHypothecaire * 12) + taxesAnnuelles + (prixPropriete * entretienPct) + (assuranceProprioM * 12) + (fraisCondoM * 12);
             const coutsLocataire = (loyerMensuel * 12) + (assuranceLocM * 12);
             const investissementAnnuel = Math.max(0, coutsProprio - coutsLocataire);
+            if (typeCompte === 'reer') {
+            retourImpotPrecedent = investissementAnnuel * tauxMarginal;
+            } else {
+            retourImpotPrecedent = 0; // Important: remettre à zéro si le type de compte n'est pas REER
+            }
             portefeuilleLocataire += investissementAnnuel;
             let gainPlacement = portefeuilleLocataire * rendementPlacement;
             if (typeCompte === 'non-enregistre') {
