@@ -1,26 +1,39 @@
 /* --- Importation des polices de caractères --- */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500&display=swap');
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes aurora {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 
 /* --- Variables et Styles de Base --- */
 :root {
-    /* Palette de couleurs moderne et professionnelle */
-    --primary-color: #0D9488; /* Un teal (vert-bleu) sophistiqué */
-    --primary-hover: #0F766E;
-    --dark-color: #111827;    /* Gris très foncé pour les titres */
-    --text-color: #374151;    /* Gris moyen pour le texte courant */
-    --light-color: #F9FAFB;   /* Gris très clair pour les fonds */
-    --border-color: #E5E7EB;  /* Gris subtil pour les bordures */
-    --white-color: #FFFFFF;
+    /* Palette de couleurs vibrante */
+    --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7);
+    --primary-color: #4F46E5; /* Indigo */
+    --accent-color: #10B981;  /* Émeraude */
+    --accent-hover: #059669;
+
+    --dark-bg: #111827;      /* Fond sombre */
+    --dark-card: #1F2937;    /* Fond des cartes */
+    --light-text: #F9FAFB;   /* Texte clair */
+    --grey-text: #9CA3AF;    /* Texte secondaire */
+    --border-color: #374151;  /* Bordures subtiles */
 
     /* Typographie */
-    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
-    --font-heading: 'Lora', serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-heading: 'Poppins', sans-serif;
 
     /* Effets visuels */
-    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --border-radius: 12px; /* Coins plus arrondis */
+    --shadow-glow: 0 0 20px rgba(79, 70, 229, 0.4);
+    --border-radius: 12px;
 }
 
 * {
@@ -32,9 +45,9 @@
 body {
     font-family: var(--font-body);
     line-height: 1.6;
-    color: var(--text-color);
-    background-color: var(--white-color);
-    -webkit-font-smoothing: antialiased; /* Rendu du texte plus doux */
+    color: var(--grey-text);
+    background-color: var(--dark-bg);
+    -webkit-font-smoothing: antialiased;
 }
 
 .container {
@@ -45,89 +58,99 @@ body {
 
 h1, h2, h3 {
     font-family: var(--font-heading);
-    color: var(--dark-color);
+    color: var(--light-text);
     line-height: 1.3;
-    margin-bottom: 1rem;
 }
-
 h2 {
-    font-size: 2.5rem;
+    font-size: 2.8rem;
     text-align: center;
     margin-bottom: 3.5rem;
 }
 
 a {
     text-decoration: none;
-    color: var(--primary-color);
+    color: var(--accent-color);
     transition: color 0.2s ease;
 }
 a:hover {
-    color: var(--primary-hover);
+    color: var(--accent-hover);
 }
 
 section {
-    padding: 5rem 0; /* Plus d'espacement vertical */
+    padding: 5rem 0;
+    animation: fadeIn 0.8s ease-out forwards;
 }
 
 /* --- En-tête & Navigation --- */
 .site-header {
-    background-color: rgba(255, 255, 255, 0.8); /* Effet de verre dépoli */
-    backdrop-filter: blur(10px);
-    padding: 1.25rem 0;
+    background: var(--dark-bg);
+    padding: 1.5rem 0;
     border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 100;
 }
 .site-header .container {
+    /* CORRIGÉ : L'en-tête est maintenant centré */
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    gap: 1rem;
 }
 .logo {
-    font-size: 1.75rem;
-    font-weight: 600;
-    font-family: var(--font-heading);
-    color: var(--dark-color);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--light-text);
+}
+.main-nav {
+    display: flex;
+    gap: 2rem;
 }
 .main-nav a {
-    color: var(--text-color);
-    margin-left: 2rem;
+    color: var(--grey-text);
     font-weight: 500;
-    position: relative;
-    padding-bottom: 4px;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
-.main-nav a::after { /* Soulignement subtil au survol */
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: var(--primary-color);
-    transform: scaleX(0);
-    transform-origin: center;
-    transition: transform 0.3s ease;
-}
-.main-nav a:hover::after {
-    transform: scaleX(1);
+.main-nav a:hover {
+    color: var(--light-text);
+    transform: translateY(-2px);
 }
 
 /* --- Section d'Accueil (Hero) --- */
 .hero {
-    background-color: var(--light-color); /* Fond clair plus invitant */
+    padding: 7rem 0;
     text-align: center;
-    padding: 6rem 0;
+    position: relative;
+    overflow: hidden;
+    background-color: var(--dark-bg);
+}
+/* Effet "Aurora" dynamique en arrière-plan */
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.3), rgba(17, 24, 39, 0) 70%);
+    animation: aurora 20s infinite linear;
+    z-index: 0;
+}
+.hero > .container {
+    position: relative; /* Pour que le contenu soit au-dessus de l'effet aurora */
+    z-index: 1;
 }
 .hero h1 {
-    font-size: 3.5rem;
-    color: var(--dark-color);
-    max-width: 800px;
-    margin: 0 auto 1.5rem auto;
+    font-size: 4rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
 }
 .hero .subtitle {
     font-size: 1.25rem;
-    color: var(--text-color);
+    color: var(--grey-text);
     max-width: 700px;
     margin: 0 auto 2.5rem auto;
 }
@@ -135,22 +158,24 @@ section {
 /* --- Boutons --- */
 .btn-primary {
     display: inline-block;
-    background-color: var(--primary-color);
-    color: var(--white-color);
+    background: var(--primary-gradient);
+    color: var(--light-text);
     border: none;
-    padding: 1rem 2rem;
-    border-radius: var(--border-radius);
+    padding: 1rem 2.5rem;
+    border-radius: 50px; /* Boutons en pilule */
     cursor: pointer;
     font-weight: 700;
-    font-size: 1rem;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
     margin-top: 10px;
-    box-shadow: var(--shadow-md);
-    transition: all 0.2s ease-out;
+    box-shadow: var(--shadow-glow);
+    transition: all 0.3s ease;
+    background-size: 200% auto;
 }
 .btn-primary:hover {
-    background-color: var(--primary-hover);
-    transform: translateY(-2px); /* Effet de lévitation */
-    box-shadow: var(--shadow-lg);
+    background-position: right center; /* Changement de dégradé au survol */
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
 }
 
 /* --- Cartes (Cards) --- */
@@ -160,53 +185,74 @@ section {
     gap: 2rem;
 }
 .card {
-    background-color: var(--white-color);
+    background-color: var(--dark-card);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
-    padding: 2rem;
-    box-shadow: var(--shadow-md);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    padding: 2.5rem;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+/* Effet de lueur subtile sur le bord au survol */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: var(--border-radius);
+    padding: 1px;
+    background: linear-gradient(120deg, var(--primary-color), var(--accent-color));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.3s ease;
 }
 .card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-lg);
+    transform: translateY(-5px);
+    border-color: transparent;
+}
+.card:hover::before {
+    opacity: 1;
 }
 .card h3 {
-    font-size: 1.4rem;
-    color: var(--dark-color);
+    font-size: 1.5rem;
 }
 .card p {
-    margin-top: 0.5rem;
+    margin-top: 1rem;
 }
 .card-link {
     display: block;
     color: inherit;
     text-decoration: none;
 }
+.card.selected {
+    border-color: transparent;
+}
+.card.selected::before {
+    opacity: 1;
+}
 
-/* ============================================= */
+
 /* === STYLES POUR LES CALCULATRICES === */
-/* ============================================= */
 .calculator-card {
     display: none;
     padding: 2.5rem;
     margin-top: 2rem;
     border-radius: 16px;
-    background-color: var(--white-color);
+    background-color: var(--dark-card);
     border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-lg);
 }
 .calculator-card.active {
     display: block;
-}
-.card.card-link.selected {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+    animation: fadeIn 0.5s ease-out;
 }
 .boite-explication {
     display: none;
-    background-color: var(--light-color);
-    color: var(--text-color);
+    background-color: var(--dark-bg);
     border: 1px solid var(--border-color);
     padding: 1.5rem;
     margin: 2rem 0;
@@ -215,24 +261,13 @@ section {
 .boite-explication.active {
     display: block;
 }
-.chart-container {
-    width: 100%;
-    height: 450px;
-    margin-top: 2.5rem;
-}
+
 
 /* --- Formulaires --- */
-.form-group {
-    margin-bottom: 1.5rem;
-}
 .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
-    color: var(--dark-color);
+    color: var(--light-text);
 }
 .form-group input,
-.form-group textarea,
 .form-group select {
     width: 100%;
     padding: 0.9rem 1rem;
@@ -240,24 +275,25 @@ section {
     border-radius: 8px;
     font-size: 1rem;
     font-family: var(--font-body);
-    background-color: var(--white-color);
+    background-color: var(--dark-bg);
+    color: var(--light-text);
     transition: border-color 0.2s, box-shadow 0.2s;
 }
 .form-group input:focus,
-.form-group textarea:focus,
 .form-group select:focus {
     outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.3);
 }
 
 /* --- Pied de Page (Footer) --- */
-.site-footer, footer {
-    background-color: var(--dark-color);
-    color: #e5e7eb;
+footer {
+    background-color: #000;
+    color: var(--grey-text);
     text-align: center;
     padding: 3rem 0;
     margin-top: 5rem;
+    border-top: 1px solid var(--border-color);
 }
 
 /* --- Styles spécifiques à la case à cocher REER --- */
@@ -269,10 +305,10 @@ section {
     align-items: center;
     cursor: pointer;
     font-weight: normal;
-    color: var(--text-color);
+    color: var(--grey-text);
 }
 #reinvest-reer-option input {
     width: auto;
     margin-right: 0.75rem;
-    accent-color: var(--primary-color);
+    accent-color: var(--accent-color);
 }
