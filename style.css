@@ -1,10 +1,79 @@
-/* --- Variables et Styles de Base --- */
-:root {
-    --primary-color: #1f2937; /* Vert pour les accents */
-    --dark-color: #1f2937;    /* Texte principal */
-    --light-color: #f9fafb;   /* Fond des sections */
-    --grey-color: #6b7280;    /* Texte secondaire */
+/* --- Importation des polices de caractères pour les deux thèmes --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500&family=Lora:wght@600&display=swap');
+
+/* --- Animations --- */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
+@keyframes aurora {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* =============================================================== */
+/* === DÉFINITION DES THÈMES LIGHT & DARK === */
+/* =============================================================== */
+
+:root {
+    /* --- THÈME LIGHT (par défaut) : Professionnel & Léché --- */
+    --primary-color: #0D9488;
+    --primary-hover: #0F766E;
+    --primary-gradient: linear-gradient(90deg, #0D9488, #0F766E);
+    --accent-color: #0D9488;
+    --accent-hover: #0F766E;
+
+    --bg-color: #FFFFFF;
+    --section-bg-color: #F9FAFB;
+    --card-bg-color: #FFFFFF;
+    
+    --heading-color: #111827;
+    --text-color: #374151;
+    --subtle-text-color: #6B7280;
+    --light-text-color: #FFFFFF;
+    
+    --border-color: #E5E7EB;
+
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-heading: 'Lora', serif;
+
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-focus-ring: 0 0 0 3px rgba(13, 148, 136, 0.2);
+    --border-radius: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* --- THÈME DARK : Dynamique & Coloré --- */
+        --primary-color: #4F46E5;
+        --primary-hover: #4338CA;
+        --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7);
+        --accent-color: #10B981;
+        --accent-hover: #059669;
+
+        --bg-color: #111827;
+        --section-bg-color: #111827;
+        --card-bg-color: #1F2937;
+
+        --heading-color: #F9FAFB;
+        --text-color: #9CA3AF;
+        --subtle-text-color: #6B7280;
+        
+        --border-color: #374151;
+
+        --font-heading: 'Poppins', sans-serif;
+
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+        --shadow-focus-ring: 0 0 0 3px rgba(16, 185, 129, 0.3);
+    }
+}
+
+/* =============================================================== */
+/* === STYLES GÉNÉRIQUES (s'adaptent aux variables) === */
+/* =============================================================== */
 
 * {
     margin: 0;
@@ -13,10 +82,12 @@
 }
 
 body {
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.7;
-    color: var(--dark-color);
-    background-color: #fff;
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
@@ -26,244 +97,241 @@ body {
 }
 
 h1, h2, h3 {
-    line-height: 1.2;
-    margin-bottom: 1rem;
+    font-family: var(--font-heading);
+    color: var(--heading-color);
+    line-height: 1.3;
 }
 h2 {
-    font-size: 2.2rem;
+    font-size: 2.8rem;
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 3.5rem;
 }
 
 a {
     text-decoration: none;
-    color: var(--primary-color);
+    color: var(--accent-color);
+    transition: color 0.2s ease;
+}
+a:hover {
+    color: var(--accent-hover);
 }
 
 section {
-    padding: 4rem 0;
+    padding: 5rem 0;
+    animation: fadeIn 0.8s ease-out forwards;
+    background-color: var(--section-bg-color);
+    transition: background-color 0.3s ease;
 }
 
 /* --- En-tête & Navigation --- */
-/* S'applique à la page d'accueil */
-.site-header {
-    background-color: #fff;
-    padding: 1rem 0;
-    border-bottom: 1px solid #e5e7eb;
+.site-header, header.container {
+    background-color: var(--bg-color);
+    padding: 1.5rem 20px;
+    border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 100;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
-.site-header .container {
+.site-header .container, header.container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
+    gap: 1rem;
+    padding: 0; /* Annule le padding du container général */
 }
-.logo {
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: var(--dark-color);
+.logo, header.container h1 {
+    font-family: var(--font-heading);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--heading-color);
+    margin: 0;
 }
-.main-nav a {
-    color: var(--dark-color);
-    margin-left: 1.5rem;
+.main-nav, header.container nav {
+    display: flex;
+    gap: 2rem;
+}
+.main-nav a, header.container nav a {
+    color: var(--text-color);
     font-weight: 500;
-    transition: color 0.3s ease;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
-.main-nav a:hover {
-    color: var(--primary-color);
+.main-nav a:hover, header.container nav a:hover {
+    color: var(--heading-color);
+    transform: translateY(-2px);
 }
-/* S'applique à la page des calculatrices */
-header {
-    text-align: center;
-    padding: 2rem 1.5rem 1rem 1.5rem;
-}
-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-}
-nav {
-    background-color: #fff;
-    border-bottom: 1px solid #e5e7eb;
-    border-top: 1px solid #e5e7eb;
-    padding: 1rem 0;
-    text-align: center;
-}
-nav a {
-    color: #374151;
-    margin: 0 1rem;
-    font-weight: 500;
-}
-
 
 /* --- Section d'Accueil (Hero) --- */
 .hero {
-    background-color: var(--dark-color);
+    padding: 7rem 0;
     text-align: center;
-    padding: 6rem 0;
+    position: relative;
+    overflow: hidden;
+}
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 150%;
+    height: 150%;
+    background: radial-gradient(circle, var(--primary-color) 0%, transparent 60%);
+    opacity: 0.15;
+    animation: aurora 20s infinite linear;
+    z-index: 0;
+}
+.hero > .container {
+    position: relative;
+    z-index: 1;
 }
 .hero h1 {
-    font-size: 3rem;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    font-size: 4rem;
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
 }
 .hero .subtitle {
-    font-size: 1.2rem;
-    color: var(--grey-color);
+    font-size: 1.25rem;
+    color: var(--text-color);
     max-width: 700px;
-    margin: 0 auto 2rem auto;
+    margin: 0 auto 2.5rem auto;
 }
 
 /* --- Boutons --- */
-.btn-primary { 
-    background-color: #00c48c; 
-    color: #fff; 
-    border: none; 
-    padding: 12px 24px; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    font-weight: 700; 
-    margin-top: 10px; 
+.btn-primary {
+    display: inline-block;
+    background: var(--primary-gradient);
+    color: var(--light-text-color);
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    cursor: pointer;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    margin-top: 10px;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    background-size: 200% auto;
 }
-.btn-primary:hover { 
-    background-color: #00a678; 
+.btn-primary:hover {
+    background-position: right center;
+    transform: scale(1.05);
+    box-shadow: var(--shadow-lg);
 }
-
-
 
 /* --- Cartes (Cards) --- */
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+    gap: 2rem;
 }
 .card {
-    background-color: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 2.5rem;
+    transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+    position: relative;
 }
 .card:hover {
     transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    border-color: var(--primary-color);
 }
 .card h3 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
+}
+.card p {
+    margin-top: 1rem;
 }
 .card-link {
     display: block;
     color: inherit;
     text-decoration: none;
 }
-.featured-section {
-    background-color: var(--light-color);
+.card.selected {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-focus-ring);
 }
 
-/* ============================================= */
-/* === STYLES AJOUTÉS POUR LES CALCULATRICES === */
-/* ============================================= */
-
+/* === STYLES POUR LES CALCULATRICES === */
 .calculator-card {
     display: none;
-    padding: 24px;
-    margin-top: 20px;
+    padding: 2.5rem;
+    margin-top: 2rem;
     border-radius: 16px;
-    background-color: #ffffff;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
 }
 .calculator-card.active {
     display: block;
-}
-.card.card-link.selected {
-    outline: 3px solid var(--primary-color);
-    outline-offset: 2px;
+    animation: fadeIn 0.5s ease-out;
 }
 .boite-explication {
     display: none;
-    background-color: #ffffff;
-    color: #1f2937;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    padding: 1.25rem;
-    margin: 15px 0;
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    margin: 2rem 0;
     border-radius: 16px;
-    font-size: 1rem;
-    line-height: 1.6;
 }
 .boite-explication.active {
     display: block;
 }
 .chart-container {
-    position: relative;
     width: 100%;
-    max-width: 900px;
     height: 450px;
-    margin: 30px auto 0 auto;
+    margin-top: 2.5rem;
 }
 
-/* --- Section Contact --- */
-.contact-section {
-    background-color: var(--light-color);
-}
-.contact-form {
-    max-width: 600px;
-    margin: 2rem auto 0 auto;
-}
-.form-group {
-    margin-bottom: 1rem;
-}
+/* --- Formulaires --- */
 .form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
+    color: var(--heading-color);
 }
 .form-group input,
-.form-group textarea,
 .form-group select {
     width: 100%;
-    padding: 0.8rem;
-    border: 1px solid #d1d5db;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     font-size: 1rem;
+    font-family: var(--font-body);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 .form-group input:focus,
-.form-group textarea:focus,
 .form-group select:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+    box-shadow: var(--shadow-focus-ring);
 }
 
 /* --- Pied de Page (Footer) --- */
-.site-footer, footer {
-    background-color: var(--dark-color);
-    color: #e5e7eb;
+footer, .site-footer {
+    background-color: #000;
+    color: var(--subtle-text-color);
     text-align: center;
-    padding: 2rem 0;
-}
-#selection-calculatrices {
-    padding-bottom: 2rem; /* Réduit l'espacement en bas */
+    padding: 3rem 0;
+    margin-top: 5rem;
+    border-top: 1px solid var(--border-color);
 }
 
-/* Cache par défaut l'option de réinvestissement REER */
+/* --- Styles spécifiques à la case à cocher REER --- */
 #reinvest-reer-option {
     display: none;
-    padding-left: 10px; /* Petit décalage pour l'alignement */
 }
-
-/* Style pour l'étiquette de la case à cocher */
 #reinvest-reer-option label {
     display: flex;
     align-items: center;
     cursor: pointer;
     font-weight: normal;
+    color: var(--text-color);
 }
-
-/* Style pour la case à cocher elle-même */
 #reinvest-reer-option input {
-    width: auto; /* Annule la largeur de 100% des autres inputs */
-    margin-right: 10px;
+    width: auto;
+    margin-right: 0.75rem;
+    accent-color: var(--primary-color);
 }
