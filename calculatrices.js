@@ -31,6 +31,30 @@ document.addEventListener('DOMContentLoaded', () => {
 
         calcCards.forEach(card => card.classList.toggle('selected', card.dataset.calc === key));
 
+        // Logique pour afficher/cacher la case de réinvestissement REER
+    const typeCompteSelect = document.getElementById('al-type-compte');
+    const reinvestOptionDiv = document.getElementById('reinvest-reer-option');
+
+    function toggleReinvestOption() {
+        // S'assure que les éléments existent avant de les manipuler
+        if (typeCompteSelect && reinvestOptionDiv) {
+            if (typeCompteSelect.value === 'reer') {
+                reinvestOptionDiv.style.display = 'block'; // Affiche la case
+            } else {
+                reinvestOptionDiv.style.display = 'none'; // Cache la case
+            }
+        }
+    }
+
+    // Écouter les changements sur le sélecteur
+    if (typeCompteSelect) {
+        typeCompteSelect.addEventListener('change', toggleReinvestOption);
+    }
+    
+    // Appeler la fonction une fois pour définir l'état initial
+    toggleReinvestOption();
+    
+
         // Gère l'affichage des boîtes d'explication
         const targetExplication = document.getElementById(`explication-${key}`);
         allExplications.forEach(box => box.classList.remove('active')); // Cache toutes les boîtes
