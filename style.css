@@ -334,7 +334,7 @@ header.container nav a:hover {
 
 /* --- Pied de Page (Footer) --- */
 footer, .site-footer {
-    background-color: var(--card-bg-color); /* MODIFIÉ */
+    background-color: #4F46E5 /* MODIFIÉ */
     color: var(--subtle-text-color);
     text-align: center;
     padding: 3rem 0;
