@@ -248,3 +248,23 @@ nav a {
 #selection-calculatrices {
     padding-bottom: 2rem; /* Réduit l'espacement en bas */
 }
+
+/* Cache par défaut l'option de réinvestissement REER */
+#reinvest-reer-option {
+    display: none;
+    padding-left: 10px; /* Petit décalage pour l'alignement */
+}
+
+/* Style pour l'étiquette de la case à cocher */
+#reinvest-reer-option label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+/* Style pour la case à cocher elle-même */
+#reinvest-reer-option input {
+    width: auto; /* Annule la largeur de 100% des autres inputs */
+    margin-right: 10px;
+}
