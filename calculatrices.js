@@ -38,10 +38,10 @@ document.addEventListener('DOMContentLoaded', () => {
             targetExplication.classList.add('active'); // Affiche la bonne boîte
         }
                 
-        const form = targetSection.querySelector('form');
+      /*  const form = targetSection.querySelector('form');
         if (form) {
              form.dispatchEvent(new Event('submit'));
-        }
+        }*/
     };
 
     calcCards.forEach(card => card.addEventListener('click', () => showCalculator(card.dataset.calc)));
