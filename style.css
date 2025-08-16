@@ -358,3 +358,24 @@ footer, .site-footer {
     margin-right: 0.75rem;
     accent-color: var(--primary-color);
 }
+
+/* =============================================================== */
+/* === AJUSTEMENTS D'ESPACEMENT POUR LA PAGE CALCULATRICES === */
+/* =============================================================== */
+
+/* Réduit l'espacement pour la section de sélection des cartes */
+#selection-calculatrices {
+    padding-top: 3rem;    /* Moins d'espace au-dessus */
+    padding-bottom: 1rem;   /* Moins d'espace en dessous */
+}
+
+/* Supprime l'espacement vertical pour le conteneur des explications */
+#explications-container {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* Réduit l'espacement au-dessus du conteneur des calculatrices */
+#calculatrices-container {
+    padding-top: 1rem;
+}
