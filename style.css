@@ -1,9 +1,26 @@
+/* --- Importation des polices de caractères --- */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@600&display=swap');
+
 /* --- Variables et Styles de Base --- */
 :root {
-    --primary-color: #1f2937; /* Vert pour les accents */
-    --dark-color: #1f2937;    /* Texte principal */
-    --light-color: #f9fafb;   /* Fond des sections */
-    --grey-color: #6b7280;    /* Texte secondaire */
+    /* Palette de couleurs moderne et professionnelle */
+    --primary-color: #0D9488; /* Un teal (vert-bleu) sophistiqué */
+    --primary-hover: #0F766E;
+    --dark-color: #111827;    /* Gris très foncé pour les titres */
+    --text-color: #374151;    /* Gris moyen pour le texte courant */
+    --light-color: #F9FAFB;   /* Gris très clair pour les fonds */
+    --border-color: #E5E7EB;  /* Gris subtil pour les bordures */
+    --white-color: #FFFFFF;
+
+    /* Typographie */
+    --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+    --font-heading: 'Lora', serif;
+
+    /* Effets visuels */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --border-radius: 12px; /* Coins plus arrondis */
 }
 
 * {
@@ -13,10 +30,11 @@
 }
 
 body {
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-    line-height: 1.7;
-    color: var(--dark-color);
-    background-color: #fff;
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--white-color);
+    -webkit-font-smoothing: antialiased; /* Rendu du texte plus doux */
 }
 
 .container {
@@ -26,30 +44,37 @@ body {
 }
 
 h1, h2, h3 {
-    line-height: 1.2;
+    font-family: var(--font-heading);
+    color: var(--dark-color);
+    line-height: 1.3;
     margin-bottom: 1rem;
 }
+
 h2 {
-    font-size: 2.2rem;
+    font-size: 2.5rem;
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 3.5rem;
 }
 
 a {
     text-decoration: none;
     color: var(--primary-color);
+    transition: color 0.2s ease;
+}
+a:hover {
+    color: var(--primary-hover);
 }
 
 section {
-    padding: 4rem 0;
+    padding: 5rem 0; /* Plus d'espacement vertical */
 }
 
 /* --- En-tête & Navigation --- */
-/* S'applique à la page d'accueil */
 .site-header {
-    background-color: #fff;
-    padding: 1rem 0;
-    border-bottom: 1px solid #e5e7eb;
+    background-color: rgba(255, 255, 255, 0.8); /* Effet de verre dépoli */
+    backdrop-filter: blur(10px);
+    padding: 1.25rem 0;
+    border-bottom: 1px solid var(--border-color);
     position: sticky;
     top: 0;
     z-index: 100;
@@ -60,181 +85,170 @@ section {
     align-items: center;
 }
 .logo {
-    font-size: 1.5rem;
-    font-weight: bold;
+    font-size: 1.75rem;
+    font-weight: 600;
+    font-family: var(--font-heading);
     color: var(--dark-color);
 }
 .main-nav a {
-    color: var(--dark-color);
-    margin-left: 1.5rem;
+    color: var(--text-color);
+    margin-left: 2rem;
     font-weight: 500;
-    transition: color 0.3s ease;
+    position: relative;
+    padding-bottom: 4px;
 }
-.main-nav a:hover {
-    color: var(--primary-color);
+.main-nav a::after { /* Soulignement subtil au survol */
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform 0.3s ease;
 }
-/* S'applique à la page des calculatrices */
-header {
-    text-align: center;
-    padding: 2rem 1.5rem 1rem 1.5rem;
+.main-nav a:hover::after {
+    transform: scaleX(1);
 }
-header h1 {
-    font-size: 2.5rem;
-    margin-bottom: 0.5rem;
-}
-nav {
-    background-color: #fff;
-    border-bottom: 1px solid #e5e7eb;
-    border-top: 1px solid #e5e7eb;
-    padding: 1rem 0;
-    text-align: center;
-}
-nav a {
-    color: #374151;
-    margin: 0 1rem;
-    font-weight: 500;
-}
-
 
 /* --- Section d'Accueil (Hero) --- */
 .hero {
-    background-color: var(--dark-color);
+    background-color: var(--light-color); /* Fond clair plus invitant */
     text-align: center;
     padding: 6rem 0;
 }
 .hero h1 {
-    font-size: 3rem;
+    font-size: 3.5rem;
+    color: var(--dark-color);
     max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto 1.5rem auto;
 }
 .hero .subtitle {
-    font-size: 1.2rem;
-    color: var(--grey-color);
+    font-size: 1.25rem;
+    color: var(--text-color);
     max-width: 700px;
-    margin: 0 auto 2rem auto;
+    margin: 0 auto 2.5rem auto;
 }
 
 /* --- Boutons --- */
-.btn-primary { 
-    background-color: #00c48c; 
-    color: #fff; 
-    border: none; 
-    padding: 12px 24px; 
-    border-radius: 8px; 
-    cursor: pointer; 
-    font-weight: 700; 
-    margin-top: 10px; 
+.btn-primary {
+    display: inline-block;
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: var(--border-radius);
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-top: 10px;
+    box-shadow: var(--shadow-md);
+    transition: all 0.2s ease-out;
 }
-.btn-primary:hover { 
-    background-color: #00a678; 
+.btn-primary:hover {
+    background-color: var(--primary-hover);
+    transform: translateY(-2px); /* Effet de lévitation */
+    box-shadow: var(--shadow-lg);
 }
-
-
 
 /* --- Cartes (Cards) --- */
 .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
+    gap: 2rem;
 }
 .card {
-    background-color: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
+    background-color: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
     padding: 2rem;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-md);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 15px rgba(0,0,0,0.1);
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-lg);
 }
 .card h3 {
-    font-size: 1.25rem;
+    font-size: 1.4rem;
+    color: var(--dark-color);
+}
+.card p {
+    margin-top: 0.5rem;
 }
 .card-link {
     display: block;
     color: inherit;
     text-decoration: none;
 }
-.featured-section {
-    background-color: var(--light-color);
-}
 
 /* ============================================= */
-/* === STYLES AJOUTÉS POUR LES CALCULATRICES === */
+/* === STYLES POUR LES CALCULATRICES === */
 /* ============================================= */
-
 .calculator-card {
     display: none;
-    padding: 24px;
-    margin-top: 20px;
+    padding: 2.5rem;
+    margin-top: 2rem;
     border-radius: 16px;
-    background-color: #ffffff;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    background-color: var(--white-color);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-lg);
 }
 .calculator-card.active {
     display: block;
 }
 .card.card-link.selected {
-    outline: 3px solid var(--primary-color);
-    outline-offset: 2px;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
 }
 .boite-explication {
     display: none;
-    background-color: #ffffff;
-    color: #1f2937;
-    border: 1px solid #e5e7eb;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
-    padding: 1.25rem;
-    margin: 15px 0;
+    background-color: var(--light-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    padding: 1.5rem;
+    margin: 2rem 0;
     border-radius: 16px;
-    font-size: 1rem;
-    line-height: 1.6;
 }
 .boite-explication.active {
     display: block;
 }
 .chart-container {
-    position: relative;
     width: 100%;
-    max-width: 900px;
     height: 450px;
-    margin: 30px auto 0 auto;
+    margin-top: 2.5rem;
 }
 
-/* --- Section Contact --- */
-.contact-section {
-    background-color: var(--light-color);
-}
-.contact-form {
-    max-width: 600px;
-    margin: 2rem auto 0 auto;
-}
+/* --- Formulaires --- */
 .form-group {
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
 }
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
     font-weight: 500;
+    color: var(--dark-color);
 }
 .form-group input,
 .form-group textarea,
 .form-group select {
     width: 100%;
-    padding: 0.8rem;
-    border: 1px solid #d1d5db;
+    padding: 0.9rem 1rem;
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     font-size: 1rem;
+    font-family: var(--font-body);
+    background-color: var(--white-color);
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
 .form-group input:focus,
 .form-group textarea:focus,
 .form-group select:focus {
     outline: none;
     border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
 }
 
 /* --- Pied de Page (Footer) --- */
@@ -242,28 +256,23 @@ nav a {
     background-color: var(--dark-color);
     color: #e5e7eb;
     text-align: center;
-    padding: 2rem 0;
-}
-#selection-calculatrices {
-    padding-bottom: 2rem; /* Réduit l'espacement en bas */
+    padding: 3rem 0;
+    margin-top: 5rem;
 }
 
-/* Cache par défaut l'option de réinvestissement REER */
+/* --- Styles spécifiques à la case à cocher REER --- */
 #reinvest-reer-option {
     display: none;
-    padding-left: 10px; /* Petit décalage pour l'alignement */
 }
-
-/* Style pour l'étiquette de la case à cocher */
 #reinvest-reer-option label {
     display: flex;
     align-items: center;
     cursor: pointer;
     font-weight: normal;
+    color: var(--text-color);
 }
-
-/* Style pour la case à cocher elle-même */
 #reinvest-reer-option input {
-    width: auto; /* Annule la largeur de 100% des autres inputs */
-    margin-right: 10px;
+    width: auto;
+    margin-right: 0.75rem;
+    accent-color: var(--primary-color);
 }
