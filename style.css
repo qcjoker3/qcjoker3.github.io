@@ -98,7 +98,7 @@ nav a {
 
 /* --- Section d'Accueil (Hero) --- */
 .hero {
-    background-color: var(--light-color);
+    background-color: var(--dark-color);
     text-align: center;
     padding: 6rem 0;
 }
