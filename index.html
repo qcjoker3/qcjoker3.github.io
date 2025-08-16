@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finoza</title>
+    <title>Finoza - Votre partenaire financier</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <header class="container">
     <h1>Finoza</h1>
-    <p>Votre partenaire vers l'indépendance financière</p>
-<header class="container">
-        <nav>
+    <nav>
         <a href="index.html">Accueil</a>
         <a href="#services">Services</a>
         <a href="Prédictions.html">Prédictions</a>
@@ -20,126 +18,109 @@
         <a href="gestionActive.html">Gestion active</a>
         <a href="decaissementRetraite.html">Décaissement retraite</a>
         <a href="#articles">Articles</a>
-        <a href="index.html#contact">Contact</a>
+        <a href="#contact">Contact</a>
     </nav>
 </header>
 
-<section id="accueil" class="hero">
-    <h1>Gérez, planifiez et faites croître votre patrimoine</h1>
-    <p>Découvrez des outils, des conseils et des services pour atteindre vos objectifs financiers plus rapidement.</p>
-    <button onclick="location.href='#contact'">Contactez-nous</button>
-</section>
+<main>
+    <section id="accueil" class="hero">
+        <div class="container">
+            <h1>Gérez, planifiez et faites croître votre patrimoine</h1>
+            <p class="subtitle">Découvrez des outils, des conseils et des services pour atteindre vos objectifs financiers plus rapidement.</p>
+            <a href="#contact" class="btn-primary">Contactez-nous</a>
+        </div>
+    </section>
 
-<section id="services" class="container">
-    <h2>Nos Services</h2>
-    <div class="card-grid">
-        <div class="card">
-            <h3>Planification financière</h3>
-            <p>Des stratégies personnalisées pour bâtir votre avenir financier.</p>
+    <section id="services" class="container">
+        <h2>Nos Services</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h3>Planification financière</h3>
+                <p>Des stratégies personnalisées pour bâtir votre avenir financier.</p>
+            </div>
+            <div class="card">
+                <h3>Investissement</h3>
+                <p>Optimisez vos placements avec nos outils et notre expertise.</p>
+            </div>
+            <div class="card">
+                <h3>Éducation financière</h3>
+                <p>Formations et ateliers pour mieux comprendre vos finances.</p>
+            </div>
         </div>
-        <div class="card">
-            <h3>Investissement</h3>
-            <p>Optimisez vos placements avec nos outils et notre expertise.</p>
-        </div>
-        <div class="card">
-            <h3>Éducation financière</h3>
-            <p>Formations et ateliers pour mieux comprendre vos finances.</p>
-        </div>
-    </div>
-</section>
+    </section>
 
-<section id="calculatrices" class="container">
-    <h2>Calculatrices financières</h2>
-    <div class="card-grid">
-  
-      <a href="calculatrices.html#calc-valeur-future">
-        <div class="card">
-          <h3>Valeur future</h3>
-          <p>Calculez la croissance de vos investissements au fil du temps.</p>
+    <section id="calculatrices" class="container">
+        <h2>Calculatrices financières</h2>
+        <div class="card-grid">
+            <a href="calculatrices.html#calc-valeur-future" class="card card-link">
+                <h3>Valeur future</h3>
+                <p>Calculez la croissance de vos investissements au fil du temps.</p>
+            </a>
+            <a href="calculatrices.html#calc-retraite" class="card card-link">
+                <h3>Retraite</h3>
+                <p>Estimez combien vous aurez besoin et quand vous pourrez arrêter de travailler.</p>
+            </a>
+            <a href="calculatrices.html#calc-hypotheque" class="card card-link">
+                <h3>Hypothèque</h3>
+                <p>Simulez vos paiements hypothécaires mensuels.</p>
+            </a>
+            <a href="calculatrices.html#calc-trex" class="card card-link">
+                <h3>Frais de gestion</h3>
+                <p>Simulez l'impact des frais de gestion sur vos placements.</p>
+            </a>
         </div>
-      </a>
-  
-      <a href="calculatrices.html#calc-retraite">
-        <div class="card">
-          <h3>Retraite</h3>
-          <p>Estimez combien vous aurez besoin et quand vous pourrez arrêter de travailler.</p>
-        </div>
-      </a>
-  
-      <a href="calculatrices.html#calc-hypotheque">
-        <div class="card">
-          <h3>Hypothèque</h3>
-          <p>Simulez vos paiements hypothécaires mensuels.</p>
-        </div>
-      </a>
-
-        <a href="calculatrices.html#calc-trex">
-        <div class="card">
-          <h3>Frais de gestion</h3>
-          <p>Simulez vos paiements de frais de gestion.</p>
-        </div>
-      </a>
-  
-    </div>
-  </section>
+    </section>
 
     <section id="prédictions" class="container">
-    <h2>Prédictions de Wall Street </h2>
-    <div class="card-grid">
-  
-      <a href="Prédictions.html#titre-vf">
-        <div class="card">
-          <h3>Les prévisions des "experts"</h3>
-          <p>Constater l'efficacité des prédictions des gros joueurs de Wall Steet.</p>
+        <h2>Prédictions de Wall Street</h2>
+        <div class="card-grid">
+            <a href="Prédictions.html#titre-vf" class="card card-link">
+                <h3>Les prévisions des "experts"</h3>
+                <p>Constatez l'efficacité des prédictions des gros joueurs de Wall Street.</p>
+            </a>
         </div>
-      </a>
-   
-    </div>
-  </section>
+    </section>
 
-<section id="articles" class="container">
-    <h2>Articles récents</h2>
-    <div class="card-grid">
-        <div class="card">
-            <h3>10 erreurs financières à éviter</h3>
-            <p>Apprenez les pièges les plus communs qui freinent l’enrichissement.</p>
+    <section id="articles" class="container">
+        <h2>Articles récents</h2>
+        <div class="card-grid">
+            <div class="card">
+                <h3>10 erreurs financières à éviter</h3>
+                <p>Apprenez les pièges les plus communs qui freinent l’enrichissement.</p>
+            </div>
+            <div class="card">
+                <h3>Comment bâtir un fonds d’urgence</h3>
+                <p>Les étapes concrètes pour une sécurité financière à long terme.</p>
+            </div>
+            <div class="card">
+                <h3>Investir avec peu d'argent</h3>
+                <p>Stratégies pour faire travailler votre argent, peu importe le montant.</p>
+            </div>
         </div>
-        <div class="card">
-            <h3>Comment bâtir un fonds d’urgence</h3>
-            <p>Les étapes concrètes pour une sécurité financière à long terme.</p>
-        </div>
-        <div class="card">
-            <h3>Investir avec peu d'argent</h3>
-            <p>Stratégies pour faire travailler votre argent, peu importe le montant.</p>
-        </div>
-    </div>
-</section>
+    </section>
 
-<section id="contact" class="contact-section">
-    <div class="container">
-      <h2>Contactez-nous</h2>
-      <p>Des questions? Besoin de conseils? Écrivez-nous!</p>
-  
-      <form class="contact-form">
-        <div class="form-group">
-          <label for="name">Nom</label>
-          <input type="text" id="name" name="name" placeholder="Votre nom" required>
+    <section id="contact" class="contact-section">
+        <div class="container">
+            <h2>Contactez-nous</h2>
+            <p>Des questions? Besoin de conseils? Écrivez-nous!</p>
+            <form class="contact-form">
+                <div class="form-group">
+                    <label for="name">Nom</label>
+                    <input type="text" id="name" name="name" placeholder="Votre nom" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Courriel</label>
+                    <input type="email" id="email" name="email" placeholder="Votre courriel" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message</label>
+                    <textarea id="message" name="message" rows="5" placeholder="Votre message" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Envoyer</button>
+            </form>
         </div>
-  
-        <div class="form-group">
-          <label for="email">Courriel</label>
-          <input type="email" id="email" name="email" placeholder="Votre courriel" required>
-        </div>
-  
-        <div class="form-group">
-          <label for="message">Message</label>
-          <textarea id="message" name="message" rows="5" placeholder="Votre message" required></textarea>
-        </div>
-  
-        <button type="submit" class="btn-primary">Envoyer</button>
-      </form>
-    </div>
-  </section>  
+    </section>
+</main>
 
 <footer>
     <p>&copy; 2025 Finoza – Tous droits réservés.</p>
