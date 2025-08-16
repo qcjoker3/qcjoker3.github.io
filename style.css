@@ -116,23 +116,22 @@ nav a {
 }
 
 /* --- Boutons --- */
-.btn {
-    display: inline-block;
-    padding: 0.8rem 2rem;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    cursor: pointer;
 }
-.btn-primary {
-    background-color: var(--primary-color);
-    color: #fff;
-    border: none;
+.btn-primary { 
+    background-color: #00c48c; 
+    color: #fff; 
+    border: none; 
+    padding: 12px 24px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    font-weight: 700; 
+    margin-top: 10px; 
 }
-.btn-primary:hover {
-    background-color: #15803d;
-    transform: translateY(-2px);
+.btn-primary:hover { 
+    background-color: #00a678; 
 }
+
+
 
 /* --- Cartes (Cards) --- */
 .card-grid {
