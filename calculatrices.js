@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ];
     const champsEntier = [
         'ret-age-actuel', 'ret-age-retraite', // Nouveaux champs Retraite
-        'vf-duree', 'hypo-duree', 'trex-duree', 'al-amortissement', 'al-horizon'
+        //'vf-duree', 'hypo-duree', 'trex-duree', 'al-amortissement', 'al-horizon'
         // 'age-actuel' et 'age-retraite' ont été retirés
     ];
     
