@@ -26,8 +26,8 @@
         <h2>Choisissez une calculatrice</h2>
         <div class="card-grid">
             <div class="card card-link selected" data-calc="retraite">
-                <h3>Retraite</h3>
-                <p>Estimez combien il vous faudra pour la retraite.</p>
+                <h3>Retraite 360°</h3>
+                <p>Estimez votre revenu mensuel net à la retraite.</p>
             </div>
             <div class="card card-link" data-calc="valeur-future">
                 <h3>Valeur future</h3>
@@ -50,7 +50,7 @@
 
     <section id="explications-container">
         <div id="explication-retraite" class="boite-explication">
-            <p><strong>Calculatrice de Retraite :</strong> Estimez le capital que vous pourriez accumuler pour votre retraite en fonction de votre âge, de vos épargnes mensuelles et du rendement attendu de vos placements.</p>
+            <p><strong>Calculatrice de Revenu de Retraite 360° :</strong> Estimez non seulement votre capital, mais surtout le <strong>revenu mensuel NET (après impôt)</strong> dont vous disposerez réellement à la retraite. Cet outil avancé simule l'impact des rentes gouvernementales (RRQ/SV), de la fiscalité et des règles de décaissement (FERR/FRV) pour vous donner le portrait le plus réaliste possible.</p>
         </div>
         <div id="explication-valeur-future" class="boite-explication">
             <p><strong>Calculatrice de Valeur Future :</strong> Projetez la croissance future de vos investissements en tenant compte d'un montant initial, de cotisations régulières et d'un taux d'intérêt composé. Elle calcule aussi la valeur future de vos placement en tenant compte d'une inflation de 2%.</p>
@@ -68,17 +68,112 @@
     
     <section id="calculatrices-container">
         <section id="calc-retraite" class="calculator-card active">
-            <h2>Calculatrice de Retraite</h2>
-            <form id="form-retraite">
-                <div class="form-group"><label for="age-actuel">Âge actuel</label><input type="text" id="age-actuel" placeholder="ex: 30"></div>
-                <div class="form-group"><label for="age-retraite">Âge de la retraite</label><input type="text" id="age-retraite" placeholder="ex: 65"></div>
-                <div class="form-group"><label for="epargne-mensuelle">Épargne mensuelle</label><input type="text" id="epargne-mensuelle" placeholder="ex: 500,00 $"></div>
-                <div class="form-group"><label for="rendement">Rendement annuel attendu (%)</label><input type="number" id="rendement" placeholder="ex: 5" step="any"></div>
-                <button type="submit" class="btn-primary">Calculer</button>
+            <h2>Calculatrice de Revenu de Retraite 360°</h2>
+             <form id="form-retraite-avancee">
+                <div class="form-section">
+                    <h3>Votre Situation Actuelle</h3>
+                    <div class="form-columns">
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="ret-age-actuel">Votre âge actuel</label>
+                                <input type="text" id="ret-age-actuel" value="35">
+                            </div>
+                            <div class="form-group">
+                                <label for="ret-epargne-actuelle">Épargne retraite actuelle</label>
+                                <input type="text" id="ret-epargne-actuelle" value="75000">
+                            </div>
+                        </div>
+                        <div class="form-column">
+                            <div class="form-group">
+                                <label for="ret-age-retraite">Âge de la retraite souhaité</label>
+                                <input type="text" id="ret-age-retraite" value="65">
+                            </div>
+                            <div class="form-group">
+                                <label for="ret-cotisation-mensuelle">Votre cotisation mensuelle</label>
+                                <input type="text" id="ret-cotisation-mensuelle" value="500">
+                            </div>
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label for="ret-rendement">Rendement annuel espéré (phase d'accumulation)</label>
+                        <input type="range" id="ret-rendement" min="3" max="9" value="6" step="0.5">
+                        <div style="text-align: center; font-weight: bold; margin-top: 0.5rem;" id="ret-rendement-valeur">6.0 %</div>
+                    </div>
+                </div>
+
+                <details class="advanced-options">
+                    <summary>Afficher les options avancées pour plus de précision</summary>
+                    <div class="form-section">
+                        <h3>Revenus Gouvernementaux (estimations 2025)</h3>
+                        <div class="form-columns">
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="ret-rrq">Régime de rentes du Québec (RRQ)</label>
+                                    <select id="ret-rrq">
+                                        <option value="moyen" selected>Montant moyen</option>
+                                        <option value="max">Montant maximum</option>
+                                        <option value="aucun">Aucun</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-column">
+                                 <div class="form-group">
+                                    <label for="ret-sv">Sécurité de la vieillesse (SV)</label>
+                                    <select id="ret-sv">
+                                        <option value="oui" selected>Oui</option>
+                                        <option value="non">Non</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <h3>Stratégie de Retraite</h3>
+                        <div class="form-columns">
+                            <div class="form-column">
+                                <div class="form-group">
+                                    <label for="ret-regle-retrait">Taux de retrait annuel de votre capital</label>
+                                    <input type="range" id="ret-regle-retrait" min="2" max="6" value="4" step="0.5">
+                                    <div style="text-align: center; font-weight: bold; margin-top: 0.5rem;" id="ret-regle-retrait-valeur">4.0 %</div>
+                                </div>
+                                 <div class="form-group">
+                                    <label for="ret-rendement-retraite">Rendement annuel (phase de décaissement)</label>
+                                    <input type="range" id="ret-rendement-retraite" min="2" max="7" value="4" step="0.5">
+                                    <div style="text-align: center; font-weight: bold; margin-top: 0.5rem;" id="ret-rendement-retraite-valeur">4.0 %</div>
+                                </div>
+                            </div>
+                            <div class="form-column">
+                               <div class="form-group">
+                                    <label for="ret-compte-immobilise">Une partie de l'épargne est immobilisée (CRI)?</label>
+                                    <input type="checkbox" id="ret-compte-immobilise">
+                               </div>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                     <button type="submit" class="btn-primary">Calculer mon revenu de retraite</button>
+                </div>
             </form>
-            <p class="resultat" id="resultat-retraite"></p>
-            <div class="chart-container">
-                <canvas id="chart-retraite"></canvas>
+
+            <div id="retraite-resultats" class="results-container" style="display: none;">
+                <div class="results-dashboard">
+                    <div class="result-box">
+                        <span class="result-label">Revenu mensuel NET moyen (après impôt)</span>
+                        <span class="result-value" id="resultat-revenu-mensuel"></span>
+                    </div>
+                    <div class="result-box">
+                        <span class="result-label">... en pouvoir d'achat d'aujourd'hui</span>
+                        <span class="result-value" id="resultat-pouvoir-achat"></span>
+                    </div>
+                </div>
+                <h3>Répartition du revenu brut (première année de retraite)</h3>
+                <div class="chart-container-small">
+                    <canvas id="chart-revenu-retraite"></canvas>
+                </div>
+                <h3>Trajectoire de votre patrimoine à la retraite</h3>
+                <div class="chart-container">
+                    <canvas id="chart-trajectoire-retraite"></canvas>
+                </div>
             </div>
         </section>
         <section id="calc-valeur-future" class="calculator-card">
