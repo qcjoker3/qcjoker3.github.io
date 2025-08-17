@@ -44,215 +44,140 @@
             <div class="card card-link" data-calc="acheter-louer">
                 <h3>Acheter ou Louer</h3>
                 <p>Comparez l'enrichissement entre les deux scénarios.</p>
-        </div>
+            </div>
         </div>
     </section>
 
     <section id="explications-container">
-    <div id="explication-retraite" class="boite-explication">
-        <p><strong>Calculatrice de Retraite :</strong> Estimez le capital que vous pourriez accumuler pour votre retraite en fonction de votre âge, de vos épargnes mensuelles et du rendement attendu de vos placements.</p>
-    </div>
-    <div id="explication-valeur-future" class="boite-explication">
-        <p><strong>Calculatrice de Valeur Future :</strong> Projetez la croissance future de vos investissements en tenant compte d'un montant initial, de cotisations régulières et d'un taux d'intérêt composé.</p>
-    </div>
-    <div id="explication-hypotheque" class="boite-explication">
-        <p><strong>Calculatrice d'Hypothèque :</strong> Simulez vos paiements hypothécaires mensuels en fonction du montant du prêt, du taux d'intérêt et de la durée d'amortissement.</p>
-    </div>
-    <div id="explication-trex" class="boite-explication">
-        <p><strong>Calculatrice de Frais de Gestion :</strong> Visualisez l'impact significatif des frais de gestion sur la valeur finale de votre portefeuille d'investissement sur le long terme.</p>
-    </div>
-    <div id="explication-acheter-louer" class="boite-explication">
-        <p><strong>Calculatrice Acheter ou Louer :</strong> Cette calculatrice est un outil de simulation financière conçu pour vous aider à prendre une des plus grandes décisions financières : <strong>acheter une propriété ou continuer à louer.</strong> Plutôt que de simplement comparer un paiement hypothécaire à un loyer, elle compare l'évolution de votre <strong>valeur nette</strong> totale dans les deux scénarios sur plusieurs années. Son hypothèse fondamentale est cruciale : elle suppose que <strong>le locataire investit de façon disciplinée</strong> toute somme d'argent économisée par rapport au propriétaire. Cela inclut la mise de fonds initiale et toute différence dans les frais mensuels (taxes, entretien, etc.). En tenant compte de variables comme l'appréciation immobilière, le rendement de vos placements et l'augmentation du loyer, l'outil projette lequel des deux chemins pourrait vous rendre le plus riche à long terme.</p>
-    </div>
-</section>
-
+        <div id="explication-retraite" class="boite-explication">
+            <p><strong>Calculatrice de Retraite :</strong> Estimez le capital que vous pourriez accumuler pour votre retraite en fonction de votre âge, de vos épargnes mensuelles et du rendement attendu de vos placements.</p>
+        </div>
+        <div id="explication-valeur-future" class="boite-explication">
+            <p><strong>Calculatrice de Valeur Future :</strong> Projetez la croissance future de vos investissements en tenant compte d'un montant initial, de cotisations régulières et d'un taux d'intérêt composé.</p>
+        </div>
+        <div id="explication-hypotheque" class="boite-explication">
+            <p><strong>Calculatrice d'Hypothèque :</strong> Simulez vos paiements hypothécaires mensuels en fonction du montant du prêt, du taux d'intérêt et de la durée d'amortissement.</p>
+        </div>
+        <div id="explication-trex" class="boite-explication">
+            <p><strong>Calculatrice de Frais de Gestion :</strong> Visualisez l'impact significatif des frais de gestion sur la valeur finale de votre portefeuille d'investissement sur le long terme.</p>
+        </div>
+        <div id="explication-acheter-louer" class="boite-explication">
+            <p><strong>Calculatrice Acheter ou Louer :</strong> Cette calculatrice est un outil de simulation financière conçu pour vous aider à prendre une des plus grandes décisions financières : <strong>acheter une propriété ou continuer à louer.</strong> Plutôt que de simplement comparer un paiement hypothécaire à un loyer, elle compare l'évolution de votre <strong>valeur nette</strong> totale dans les deux scénarios sur plusieurs années. Son hypothèse fondamentale est cruciale : elle suppose que <strong>le locataire investit de façon disciplinée</strong> toute somme d'argent économisée par rapport au propriétaire. Cela inclut la mise de fonds initiale et toute différence dans les frais mensuels (taxes, entretien, etc.). En tenant compte de variables comme l'appréciation immobilière, le rendement de vos placements et l'augmentation du loyer, l'outil projette lequel des deux chemins pourrait vous rendre le plus riche à long terme.</p>
+        </div>
+    </section>
     
     <section id="calculatrices-container">
         <section id="calc-retraite" class="calculator-card active">
             <h2>Calculatrice de Retraite</h2>
             <form id="form-retraite">
-                <div class="form-group"><label for="age-actuel">Âge actuel</label><input type="number" id="age-actuel" placeholder="ex:30"></div>
-                <div class="form-group"><label for="age-retraite">Âge de la retraite</label><input type="number" id="age-retraite" placeholder="ex:65"></div>
-                <div class="form-group"><label for="epargne-mensuelle">Épargne mensuelle</label><input type="number" id="epargne-mensuelle" placeholder="ex:500"></div>
-                <div class="form-group"><label for="rendement">Rendement annuel attendu (%)</label><input type="number" id="rendement" placeholder="ex:5" step="any"></div>
+                <div class="form-group"><label for="age-actuel">Âge actuel</label><input type="text" id="age-actuel" placeholder="ex: 30"></div>
+                <div class="form-group"><label for="age-retraite">Âge de la retraite</label><input type="text" id="age-retraite" placeholder="ex: 65"></div>
+                <div class="form-group"><label for="epargne-mensuelle">Épargne mensuelle</label><input type="text" id="epargne-mensuelle" placeholder="ex: 500,00 $"></div>
+                <div class="form-group"><label for="rendement">Rendement annuel attendu (%)</label><input type="number" id="rendement" placeholder="ex: 5" step="any"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-retraite"></p>
-<div class="chart-container">
-    <canvas id="chart-retraite"></canvas>
-</div>
+            <div class="chart-container">
+                <canvas id="chart-retraite"></canvas>
+            </div>
         </section>
-
         <section id="calc-valeur-future" class="calculator-card">
             <h2>Calculatrice de Valeur Future</h2>
             <form id="form-vf">
-                <div class="form-group"><label for="vf-montant-initial">Montant initial</label><input type="number" id="vf-montant-initial" placeholder="ex:10000" step="any"></div>
-                <div class="form-group"><label for="vf-cotisation">Cotisation additionnelle</label><input type="number" id="vf-cotisation" placeholder="ex:200" step="any"></div>
-                <div class="form-group"><label for="vf-frequence">Fréquence</label><select id="vf-frequence"><option value="mensuelle">Mensuelle</option><option placeholder="ex:annuelle">Annuelle</option></select></div>
-                <div class="form-group"><label for="vf-duree">Durée (années)</label><input type="number" id="vf-duree" placeholder="ex:10"></div>
-                <div class="form-group"><label for="vf-taux">Taux d'intérêt annuel (%)</label><input type="number" id="vf-taux" placeholder="ex:7" step="any"></div>
+                <div class="form-group"><label for="vf-montant-initial">Montant initial</label><input type="text" id="vf-montant-initial" placeholder="ex: 10 000,00 $" step="any"></div>
+                <div class="form-group"><label for="vf-cotisation">Cotisation additionnelle</label><input type="text" id="vf-cotisation" placeholder="ex: 200,00 $" step="any"></div>
+                <div class="form-group"><label for="vf-frequence">Fréquence</label><select id="vf-frequence"><option value="mensuelle">Mensuelle</option><option value="annuelle">Annuelle</option></select></div>
+                <div class="form-group"><label for="vf-duree">Durée (années)</label><input type="number" id="vf-duree" placeholder="ex: 10"></div>
+                <div class="form-group"><label for="vf-taux">Taux d'intérêt annuel (%)</label><input type="number" id="vf-taux" placeholder="ex: 7" step="any"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
            <p class="resultat" id="resultat-vf"></p>
-<div class="chart-container">
-    <canvas id="chart-vf"></canvas>
-</div>
+            <div class="chart-container">
+                <canvas id="chart-vf"></canvas>
+            </div>
         </section>
-
         <section id="calc-hypotheque" class="calculator-card">
             <h2>Calculatrice d'Hypothèque</h2>
             <form id="form-hypotheque">
-                <div class="form-group"><label for="hypo-montant">Montant du prêt</label><input type="number" id="hypo-montant" placeholder="ex:200000" step="any"></div>
-                <div class="form-group"><label for="hypo-taux">Taux d'intérêt annuel (%)</label><input type="number" id="hypo-taux" placeholder="ex:3.5" step="any"></div>
-                <div class="form-group"><label for="hypo-duree">Durée du prêt (années)</label><input type="number" id="hypo-duree" placeholder="ex:25" step="any"></div>
+                <div class="form-group"><label for="hypo-montant">Montant du prêt</label><input type="text" id="hypo-montant" placeholder="ex: 200 000,00 $" step="any"></div>
+                <div class="form-group"><label for="hypo-taux">Taux d'intérêt annuel (%)</label><input type="number" id="hypo-taux" placeholder="ex: 3.5" step="any"></div>
+                <div class="form-group"><label for="hypo-duree">Durée du prêt (années)</label><input type="number" id="hypo-duree" placeholder="ex: 25" step="any"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-hypotheque"></p>
-<div class="chart-container">
-    <canvas id="chart-hypotheque"></canvas>
-</div>
+            <div class="chart-container">
+                <canvas id="chart-hypotheque"></canvas>
+            </div>
         </section>
-
         <section id="calc-trex" class="calculator-card">
             <h2>Calculatrice de Frais de Gestion</h2>
             <form id="form-trex">
-                <div class="form-group"><label for="trex-montant">Montant initial</label><input type="number" id="trex-montant" placeholder="ex:10000" step="any"></div>
-                <div class="form-group"><label for="trex-cotisation-annuelle">Cotisation annuelle</label><input type="number" id="trex-cotisation-annuelle" placeholder="ex:1200" step="any"></div>
-                <div class="form-group"><label for="trex-rendement-brut">Rendement brut annuel (%)</label><input type="number" id="trex-rendement-brut" placeholder="ex:7" step="any"></div>
-                <div class="form-group"><label for="trex-taux">Taux de frais annuel (%)</label><input type="number" id="trex-taux" placeholder="ex:2" step="any"></div>
-                <div class="form-group"><label for="trex-duree">Durée (années)</label><input type="number" id="trex-duree" placeholder="ex:20" step="any"></div>
+                <div class="form-group"><label for="trex-montant">Montant initial</label><input type="text" id="trex-montant" placeholder="ex: 10 000,00 $" step="any"></div>
+                <div class="form-group"><label for="trex-cotisation-annuelle">Cotisation annuelle</label><input type="text" id="trex-cotisation-annuelle" placeholder="ex: 1 200,00 $" step="any"></div>
+                <div class="form-group"><label for="trex-rendement-brut">Rendement brut annuel (%)</label><input type="number" id="trex-rendement-brut" placeholder="ex: 7" step="any"></div>
+                <div class="form-group"><label for="trex-taux">Taux de frais annuel (%)</label><input type="number" id="trex-taux" placeholder="ex: 2" step="any"></div>
+                <div class="form-group"><label for="trex-duree">Durée (années)</label><input type="number" id="trex-duree" placeholder="ex: 20" step="any"></div>
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-trex"></p>
-<div class="chart-container">
-    <canvas id="chart-trex"></canvas>
-</div>      
+            <div class="chart-container">
+                <canvas id="chart-trex"></canvas>
+            </div>
         </section>
-<section id="calc-acheter-louer" class="calculator-card">
-    <h2>Calculatrice : Acheter ou Louer ?</h2>
-    <form id="form-acheter-louer">
-        <div class="form-columns">
-            <div class="form-column">
-                <h3>Scénario Propriétaire</h3>
-                <div class="form-group">
-                    <label for="al-prix-propriete">Prix d'achat de la propriété</label>
-                    <input type="number" id="al-prix-propriete" placeholder="ex:450000">
+        <section id="calc-acheter-louer" class="calculator-card">
+            <h2>Calculatrice : Acheter ou Louer ?</h2>
+            <form id="form-acheter-louer">
+                <div class="form-columns">
+                    <div class="form-column">
+                        <h3>Scénario Propriétaire</h3>
+                        <div class="form-group"><label for="al-prix-propriete">Prix d'achat de la propriété</label><input type="text" id="al-prix-propriete" placeholder="ex: 450 000,00 $"></div>
+                        <div class="form-group"><label for="al-mise-de-fonds">Mise de fonds</label><input type="text" id="al-mise-de-fonds" placeholder="ex: 90 000,00 $"></div>
+                        <div class="form-group"><label for="al-taux-hypotheque">Taux d'intérêt hypothécaire annuel (%)</label><input type="number" id="al-taux-hypotheque" placeholder="ex: 4.5" step="any"></div>
+                        <div class="form-group"><label for="al-amortissement">Amortissement de l'hypothèque (années)</label><input type="number" id="al-amortissement" placeholder="ex: 25" step="any"></div>
+                        <div class="form-group"><label for="al-taxes-annuelles">Taxes (municipales, scolaires) annuelles</label><input type="text" id="al-taxes-annuelles" placeholder="ex: 4 000,00 $" step="any"></div>
+                        <div class="form-group"><label for="al-entretien-annuel">Entretien annuel (% du prix d'achat)</label><input type="number" id="al-entretien-annuel" placeholder="ex: 1"></div>
+                        <div class="form-group"><label for="al-assurance-proprio">Assurance habitation mensuelle</label><input type="text" id="al-assurance-proprio" placeholder="ex: 100,00 $"></div>
+                        <div class="form-group"><label for="al-frais-condo">Frais de condo mensuels (0 si aucun)</label><input type="text" id="al-frais-condo" placeholder="ex: 0,00 $"></div>
+                        <div class="form-group"><label for="al-croissance-immo">Croissance annuelle de l'immobilier (%)</label><input type="number" id="al-croissance-immo" placeholder="ex: 3" step="any"></div>
+                    </div>
+                    <div class="form-column">
+                        <h3>Scénario Locataire</h3>
+                        <div class="form-group"><label for="al-loyer-mensuel">Loyer mensuel équivalent</label><input type="text" id="al-loyer-mensuel" placeholder="ex: 1 800,00 $"></div>
+                        <div class="form-group"><label for="al-augmentation-loyer">Augmentation annuelle du loyer (%)</label><input type="number" id="al-augmentation-loyer" placeholder="ex: 2" step="any"></div>
+                        <div class="form-group"><label for="al-assurance-loc">Assurance locataire mensuelle</label><input type="text" id="al-assurance-loc" placeholder="ex: 30,00 $"></div>
+                        <h3 class="form-divider">Paramètres Communs</h3>
+                        <div class="form-group"><label for="al-horizon">Horizon d'analyse (années)</label><input type="number" id="al-horizon" placeholder="ex: 25"></div>
+                        <div class="form-group"><label for="al-rendement-placement">Rendement annuel des placements (%)</label><input type="number" id="al-rendement-placement" placeholder="ex: 7" step="any"></div>
+                        <div class="form-group">
+                            <label for="al-type-compte">Type de compte pour l'investissement</label>
+                            <select id="al-type-compte">
+                                <option value="celi">CELI (non imposable)</option>
+                                <option value="reer" selected>REER (imposable au retrait)</option>
+                                <option value="non-enregistre">Non-enregistré (imposable annuellement)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="reinvest-reer-option">
+                            <label for="al-reinvestir-reer">
+                                <input type="checkbox" id="al-reinvestir-reer" checked>
+                                Réinvestir le retour d'impôt du REER
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="al-taux-marginal">Taux d'imposition marginal (%)</label><input type="number" id="al-taux-marginal" placeholder="ex: 40" step="any">
+                        </div>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="al-mise-de-fonds">Mise de fonds</label>
-                    <input type="number" id="al-mise-de-fonds" placeholder="ex:90000">
-                </div>
-                <div class="form-group">
-                    <label for="al-taux-hypotheque">Taux d'intérêt hypothécaire annuel (%)</label>
-                    <input type="number" id="al-taux-hypotheque" placeholder="ex:4.5" step="any">
-                </div>
-                 <div class="form-group">
-                    <label for="al-amortissement">Amortissement de l'hypothèque (années)</label>
-                    <input type="number" id="al-amortissement" placeholder="ex:25" step="any">
-                </div>
-                <div class="form-group">
-                    <label for="al-taxes-annuelles">Taxes (municipales, scolaires) annuelles</label>
-                    <input type="number" id="al-taxes-annuelles" placeholder="ex:4000" step="any">
-                </div>
-                <div class="form-group">
-                    <label for="al-entretien-annuel">Entretien annuel (% du prix d'achat)</label>
-                    <input type="number" id="al-entretien-annuel" placeholder="ex:1">
-                </div>
-                <div class="form-group">
-                    <label for="al-assurance-proprio">Assurance habitation mensuelle</label>
-                    <input type="number" id="al-assurance-proprio" placeholder="ex:100">
-                </div>
-                 <div class="form-group">
-                    <label for="al-frais-condo">Frais de condo mensuels (0 si aucun)</label>
-                    <input type="number" id="al-frais-condo" placeholder="ex:0">
-                </div>
-                <div class="form-group">
-                    <label for="al-croissance-immo">Croissance annuelle de l'immobilier (%)</label>
-                    <input type="number" id="al-croissance-immo" placeholder="ex:3" step="any">
-                </div>
+                <button type="submit" class="btn-primary">Comparer les scénarios</button>
+            </form>
+            <p class="resultat" id="resultat-acheter-louer"></p>
+            <div class="chart-container">
+                <canvas id="chart-acheter-louer"></canvas>
             </div>
-
-            <div class="form-column">
-                <h3>Scénario Locataire</h3>
-                <div class="form-group">
-                    <label for="al-loyer-mensuel">Loyer mensuel équivalent</label>
-                    <input type="number" id="al-loyer-mensuel" placeholder="ex:1800">
-                </div>
-                <div class="form-group">
-                    <label for="al-augmentation-loyer">Augmentation annuelle du loyer (%)</label>
-                    <input type="number" id="al-augmentation-loyer" placeholder="ex:2" step="any">
-                </div>
-                <div class="form-group">
-                    <label for="al-assurance-loc">Assurance locataire mensuelle</label>
-                    <input type="number" id="al-assurance-loc" placeholder="ex:30">
-                </div>
-                
-                <h3 class="form-divider">Paramètres Communs</h3>
-                <div class="form-group">
-                    <label for="al-horizon">Horizon d'analyse (années)</label>
-                    <input type="number" id="al-horizon" placeholder="ex:25">
-                </div>
-                <div class="form-group">
-                    <label for="al-rendement-placement">Rendement annuel des placements (%)</label>
-                    <input type="number" id="al-rendement-placement" placeholder="ex:7" step="any">
-                </div>
-                <div class="form-group">
-                    <label for="al-type-compte">Type de compte pour l'investissement</label>
-                    <select id="al-type-compte">
-                        <option value="celi">CELI (non imposable)</option>
-                        <option value="reer" selected>REER (imposable au retrait)</option>
-                        <option value="non-enregistre">Non-enregistré (imposable annuellement)</option>
-                    </select>
-                </div>
-                
-                <div class="form-group" id="reinvest-reer-option">
-                    <label for="al-reinvestir-reer">
-                        <input type="checkbox" id="al-reinvestir-reer" checked>
-                        Réinvestir le retour d'impôt du REER
-                    </label>
-                </div>
-                
-                <div class="form-group">
-                    <label for="al-taux-marginal">Taux d'imposition marginal (%)</label>
-                    <input type="number" id="al-taux-marginal" placeholder="ex:40" step="any">
-                </div>
-            </div>
-        </div>
-
-        <button type="submit" class="btn-primary">Comparer les scénarios</button>
-    </form>
-
-    <p class="resultat" id="resultat-acheter-louer"></p>
-    <div class="chart-container">
-        <canvas id="chart-acheter-louer"></canvas>
-    </div>
-</section>
-
-<style>
-    .form-columns {
-        display: grid;
-        grid-template-columns: 1fr; /* Une seule colonne par défaut pour les mobiles */
-        gap: 2rem;
-    }
-    .form-divider {
-        margin-top: 2rem;
-        border-top: 1px solid #e2e8f0;
-        padding-top: 1.5rem;
-    }
-    /* Sur les écrans plus larges, passer à deux colonnes */
-    @media (min-width: 768px) {
-        .form-columns {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
-
-</style>
-        
+        </section>
     </section>
-
-
-    
 </main>
+
+<script src="https://cdn.jsdelivr.net/npm/autonumeric@4.6.0/dist/autoNumeric.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="calculatrices.js"></script>
@@ -261,4 +186,3 @@
     
 </body>
 </html>
-
