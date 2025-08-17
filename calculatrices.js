@@ -175,21 +175,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 capitalRestant -= retraitAnnuel;
                 capitalRestant *= (1 + inputs.rendementRetraite);
-                trajectoire.push({ age: age, capital: capitalDebutAnnee });
-            }
+                 trajectoire.push({ age: age, capital: capitalDebutAnnee, retrait: retraitAnnuel });
+        }
 
             const nbAnneesRetraite = trajectoire.length || 1;
             const revenuMoyenNetMensuel = (sommeRevenusNets / nbAnneesRetraite) / 12;
             const pouvoirAchat = revenuMoyenNetMensuel / Math.pow(1 + 0.02, anneesEpargne);
 
-            const rrqInitial = inputs.rrq === 'moyen' ? CONSTANTES.RRQ_MOYEN_ANNUEL : inputs.rrq === 'max' ? CONSTANTES.RRQ_MAX_ANNUEL : 0;
+             const rrqInitial = inputs.rrq === 'moyen' ? CONSTANTES.RRQ_MOYEN_ANNUEL : inputs.rrq === 'max' ? CONSTANTES.RRQ_MAX_ANNUEL : 0;
             const svInitial = inputs.sv === 'oui' ? CONSTANTES.SV_ANNUEL : 0;
-            let retraitInitialBrut = 0;
-            if (trajectoire.length > 0) {
-                 const premierRevenuNet = trajectoire[0].revenuNet;
-                 const premierImpotEstime = estimerImpot(trajectoire[0].retrait + rrqInitial);
-                 retraitInitialBrut = premierRevenuNet - (rrqInitial + svInitial - premierImpotEstime);
-            }
+            const retraitInitial = (trajectoire.length > 0) ? trajectoire[0].retrait : 0;
+        
             
             const repartition = { epargne: retraitInitialBrut, rrq: rrqInitial, sv: svInitial };
             
