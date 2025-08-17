@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // --- FONCTIONS UTILITAIRES ---
+    // --- FONCTIONS UTILITAIRES ---
     const fmtNombre = (n, isCurrency = true) => {
         if (isNaN(n) || n === null) return isCurrency ? "0,00 $" : "0";
         const options = {
@@ -25,17 +25,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INITIALISATION D'AUTONUMERIC ---
     const anInputs = {};
     const champsArgent = [
-        'ret-epargne-actuelle', 'ret-cotisation-mensuelle', // Nouveaux champs Retraite
+        'ret-epargne-actuelle', 'ret-cotisation-mensuelle',
         'vf-montant-initial', 'vf-cotisation', 'hypo-montant', 'trex-montant', 
         'trex-cotisation-annuelle', 'al-prix-propriete', 'al-mise-de-fonds', 
         'al-taxes-annuelles', 'al-assurance-proprio', 'al-frais-condo', 
         'al-loyer-mensuel', 'al-assurance-loc'
-        // 'epargne-mensuelle' a été retiré car il n'existe plus
     ];
     const champsEntier = [
-        'ret-age-actuel', 'ret-age-retraite', // Nouveaux champs Retraite
-        //'vf-duree', 'hypo-duree', 'trex-duree', 'al-amortissement', 'al-horizon'
-        // 'age-actuel' et 'age-retraite' ont été retirés
+        'ret-age-actuel', 'ret-age-retraite',
+        'vf-duree', 'hypo-duree', 'trex-duree', 'al-amortissement', 'al-horizon'
     ];
     
     const optionsArgent = AutoNumeric.getPredefinedOptions().dollar;
@@ -87,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (typeCompteSelect) typeCompteSelect.addEventListener('change', toggleReinvestOption);
     toggleReinvestOption();
-
+    
     // =========================================================================
     // === NOUVELLE CALCULATRICE DE RETRAITE 360° ===
     // =========================================================================
@@ -138,17 +136,22 @@ document.addEventListener('DOMContentLoaded', () => {
             };
             
             const anneesEpargne = inputs.ageRetraite - inputs.ageActuel;
+            if (anneesEpargne < 0) {
+                alert("L'âge de la retraite doit être supérieur ou égal à l'âge actuel.");
+                return;
+            }
+            
             const moisEpargne = anneesEpargne * 12;
-            const rendementMensuel = Math.pow(1 + inputs.rendement, 1/12) - 1;
+            const rendementMensuel = Math.pow(1 + inputs.rendement, 1 / 12) - 1;
             const fvEpargneActuelle = inputs.epargneActuelle * Math.pow(1 + inputs.rendement, anneesEpargne);
-            const fvCotisations = inputs.cotisationMensuelle * ((Math.pow(1 + rendementMensuel, moisEpargne) - 1) / rendementMensuel);
+            const fvCotisations = (rendementMensuel > 0) ? inputs.cotisationMensuelle * ((Math.pow(1 + rendementMensuel, moisEpargne) - 1) / rendementMensuel) : inputs.cotisationMensuelle * moisEpargne;
             let capitalTotal = fvEpargneActuelle + fvCotisations;
 
             let capitalRestant = capitalTotal;
             const trajectoire = [];
             let sommeRevenusNets = 0;
 
-            for (let age = inputs.ageRetraite; age < 100 && capitalRestant > 0; age++) {
+            for (let age = inputs.ageRetraite; age < 105 && capitalRestant > 0; age++) {
                 const capitalDebutAnnee = capitalRestant;
                 const rrqAnnuel = inputs.rrq === 'moyen' ? CONSTANTES.RRQ_MOYEN_ANNUEL : inputs.rrq === 'max' ? CONSTANTES.RRQ_MAX_ANNUEL : 0;
                 const svAnnuel = inputs.sv === 'oui' ? CONSTANTES.SV_ANNUEL : 0;
@@ -175,23 +178,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 capitalRestant -= retraitAnnuel;
                 capitalRestant *= (1 + inputs.rendementRetraite);
-                 trajectoire.push({ age: age, capital: capitalDebutAnnee, retrait: retraitAnnuel });
-        }
+
+                trajectoire.push({ age: age, capital: capitalDebutAnnee, retrait: retraitAnnuel });
+            }
 
             const nbAnneesRetraite = trajectoire.length || 1;
             const revenuMoyenNetMensuel = (sommeRevenusNets / nbAnneesRetraite) / 12;
             const pouvoirAchat = revenuMoyenNetMensuel / Math.pow(1 + 0.02, anneesEpargne);
-
-             const rrqInitial = inputs.rrq === 'moyen' ? CONSTANTES.RRQ_MOYEN_ANNUEL : inputs.rrq === 'max' ? CONSTANTES.RRQ_MAX_ANNUEL : 0;
+            
+            const rrqInitial = inputs.rrq === 'moyen' ? CONSTANTES.RRQ_MOYEN_ANNUEL : inputs.rrq === 'max' ? CONSTANTES.RRQ_MAX_ANNUEL : 0;
             const svInitial = inputs.sv === 'oui' ? CONSTANTES.SV_ANNUEL : 0;
             const retraitInitial = (trajectoire.length > 0) ? trajectoire[0].retrait : 0;
-        
-            
-            const repartition = { epargne: retraitInitialBrut, rrq: rrqInitial, sv: svInitial };
-            
+            const repartition = { epargne: retraitInitial, rrq: rrqInitial, sv: svInitial };
+
+            const resultsContainer = document.getElementById('retraite-resultats');
             document.getElementById('resultat-revenu-mensuel').textContent = fmtNombre(revenuMoyenNetMensuel);
             document.getElementById('resultat-pouvoir-achat').textContent = fmtNombre(pouvoirAchat);
-            document.getElementById('retraite-resultats').style.display = 'block';
+            resultsContainer.style.display = 'block';
 
             const ctxRevenu = document.getElementById('chart-revenu-retraite').getContext('2d');
             if (chartRevenu) chartRevenu.destroy();
@@ -207,7 +210,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 options: { responsive: true, maintainAspectRatio: false, scales: { x: { title: { display: true, text: 'Âge' } }, y: { title: { display: true, text: 'Capital' }, ticks: { callback: v => fmtNombre(v) } } } }
             });
 
-            document.getElementById('retraite-resultats').scrollIntoView({ behavior: 'smooth' });
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
         });
     }
 // --- Calculatrice de Valeur Future ---
