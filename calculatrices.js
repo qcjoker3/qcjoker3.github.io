@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-    // --- FONCTIONS UTILITAIRES ---
+        // --- FONCTIONS UTILITAIRES ---
     const fmtNombre = (n, isCurrency = true) => {
         if (isNaN(n) || n === null) return isCurrency ? "0,00 $" : "0";
         const options = {
@@ -25,20 +25,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INITIALISATION D'AUTONUMERIC ---
     const anInputs = {};
     const champsArgent = [
-        'ret-epargne-actuelle', 'ret-cotisation-mensuelle', // NOUVEAUX CHAMPS RETRAITE
+        'ret-epargne-actuelle', 'ret-cotisation-mensuelle', // Nouveaux champs Retraite
         'vf-montant-initial', 'vf-cotisation', 'hypo-montant', 'trex-montant', 
         'trex-cotisation-annuelle', 'al-prix-propriete', 'al-mise-de-fonds', 
         'al-taxes-annuelles', 'al-assurance-proprio', 'al-frais-condo', 
         'al-loyer-mensuel', 'al-assurance-loc'
+        // 'epargne-mensuelle' a été retiré car il n'existe plus
     ];
     const champsEntier = [
-        'ret-age-actuel', 'ret-age-retraite', // NOUVEAUX CHAMPS RETRAITE
+        'ret-age-actuel', 'ret-age-retraite', // Nouveaux champs Retraite
         'vf-duree', 'hypo-duree', 'trex-duree', 'al-amortissement', 'al-horizon'
+        // 'age-actuel' et 'age-retraite' ont été retirés
     ];
     
-    // Options pour les montants monétaires
     const optionsArgent = AutoNumeric.getPredefinedOptions().dollar;
-    // Options pour les nombres entiers sans décimales
     const optionsEntier = { decimalPlaces: 0, digitGroupSeparator: '' };
 
     champsArgent.forEach(id => {
@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Variables globales pour les graphiques
     let chartVF = null, chartHypo = null, chartTrex = null, chartAcheterLouer = null;
-    let chartRevenu = null, chartTrajectoire = null; // NOUVEAUX GRAPHIQUES RETRAITE
+    let chartRevenu = null, chartTrajectoire = null;
 
     // --- SYSTÈME DE NAVIGATION ENTRE CALCULATRICES ---
     const calcCards = document.querySelectorAll('.card-grid .card[data-calc]');
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (typeCompteSelect) typeCompteSelect.addEventListener('change', toggleReinvestOption);
     toggleReinvestOption();
-    
+
     // =========================================================================
     // === NOUVELLE CALCULATRICE DE RETRAITE 360° ===
     // =========================================================================
@@ -184,13 +184,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const rrqInitial = inputs.rrq === 'moyen' ? CONSTANTES.RRQ_MOYEN_ANNUEL : inputs.rrq === 'max' ? CONSTANTES.RRQ_MAX_ANNUEL : 0;
             const svInitial = inputs.sv === 'oui' ? CONSTANTES.SV_ANNUEL : 0;
-            const retraitInitial = trajectoire.length > 0 ? (trajectoire[0].revenuNet - (rrqInitial + svInitial - estimerImpot(trajectoire[0].retrait + rrqInitial))) : 0;
+            let retraitInitialBrut = 0;
+            if (trajectoire.length > 0) {
+                 const premierRevenuNet = trajectoire[0].revenuNet;
+                 const premierImpotEstime = estimerImpot(trajectoire[0].retrait + rrqInitial);
+                 retraitInitialBrut = premierRevenuNet - (rrqInitial + svInitial - premierImpotEstime);
+            }
             
-            const repartition = { epargne: retraitInitial, rrq: rrqInitial, sv: svInitial };
+            const repartition = { epargne: retraitInitialBrut, rrq: rrqInitial, sv: svInitial };
             
             document.getElementById('resultat-revenu-mensuel').textContent = fmtNombre(revenuMoyenNetMensuel);
             document.getElementById('resultat-pouvoir-achat').textContent = fmtNombre(pouvoirAchat);
-            resultsContainer.style.display = 'block';
+            document.getElementById('retraite-resultats').style.display = 'block';
 
             const ctxRevenu = document.getElementById('chart-revenu-retraite').getContext('2d');
             if (chartRevenu) chartRevenu.destroy();
@@ -206,7 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 options: { responsive: true, maintainAspectRatio: false, scales: { x: { title: { display: true, text: 'Âge' } }, y: { title: { display: true, text: 'Capital' }, ticks: { callback: v => fmtNombre(v) } } } }
             });
 
-            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('retraite-resultats').scrollIntoView({ behavior: 'smooth' });
         });
     }
 // --- Calculatrice de Valeur Future ---
