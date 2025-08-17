@@ -122,29 +122,96 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Calculatrice de Valeur Future ---
-    document.getElementById('form-vf')?.addEventListener('submit', e => {
-        e.preventDefault();
-        const resultatVF = document.getElementById('resultat-vf');
-        const montantInitial = getVal('vf-montant-initial');
-        const duree = getVal('vf-duree');
-        const taux = getVal('vf-taux') / 100;
-        const cotisation = getVal('vf-cotisation');
-        const freq = document.getElementById('vf-frequence').value;
-        
-        const m = freq === 'mensuelle' ? 12 : 1, rP = Math.pow(1 + taux, 1 / m) - 1, nP = duree * m;
-        const fvTotal = (montantInitial * Math.pow(1 + rP, nP)) + (cotisation * ((Math.pow(1 + rP, nP) - 1) / rP));
-        resultatVF.textContent = `Valeur future estimée : ${fmtNombre(fvTotal)} $`;
-        const ctx = document.getElementById('chart-vf')?.getContext('2d');
-        if (!ctx || !isFinite(fvTotal)) return;
-        if (chartVF) chartVF.destroy();
-        const labels = [], valeurData = [];
-        for (let i = 0; i <= duree; i++) {
-            labels.push(`Année ${i}`);
-            let nP_i = i * m;
-            valeurData.push((montantInitial * Math.pow(1 + rP, nP_i)) + (cotisation * ((Math.pow(1 + rP, nP_i) - 1) / rP)));
+// --- Calculatrice de Valeur Future ---
+document.getElementById('form-vf')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const resultatVF = document.getElementById('resultat-vf');
+    const montantInitial = getVal('vf-montant-initial');
+    const duree = getVal('vf-duree');
+    const taux = getVal('vf-taux') / 100;
+    const cotisation = getVal('vf-cotisation');
+    const freq = document.getElementById('vf-frequence').value;
+
+    // AJOUT : Taux d'inflation annuel fixe
+    const tauxInflation = 0.02;
+    
+    const m = freq === 'mensuelle' ? 12 : 1;
+    const nP = duree * m;
+    // Pour éviter une division par zéro si le taux est de 0%
+    const rP = taux > 0 ? Math.pow(1 + taux, 1 / m) - 1 : 0;
+    
+    let fvTotal;
+    if (taux > 0) {
+        fvTotal = (montantInitial * Math.pow(1 + rP, nP)) + (cotisation * ((Math.pow(1 + rP, nP) - 1) / rP));
+    } else {
+        // Si le taux est 0, la valeur future est simplement le montant initial + les cotisations
+        fvTotal = montantInitial + (cotisation * nP);
+    }
+
+    // AJOUT : Calcul de la valeur future ajustée pour l'inflation (en dollars courants)
+    const fvReelle = fvTotal / Math.pow(1 + tauxInflation, duree);
+
+    // MODIFIÉ : Affichage des deux résultats
+    resultatVF.innerHTML = `Valeur future estimée : <strong>${fmtNombre(fvTotal)} $</strong><br>
+                           En dollars d'aujourd'hui (inflation 2%) : <strong>${fmtNombre(fvReelle)} $</strong>`;
+    
+    const ctx = document.getElementById('chart-vf')?.getContext('2d');
+    if (!ctx || !isFinite(fvTotal)) return;
+    if (chartVF) chartVF.destroy();
+    
+    // MODIFIÉ : Préparation des données pour les deux courbes du graphique
+    const labels = [];
+    const valeurNominaleData = [];
+    const valeurReelleData = [];
+
+    for (let i = 0; i <= duree; i++) {
+        labels.push(`Année ${i}`);
+        let nP_i = i * m;
+        let valeurNominaleAnnee;
+
+        if (taux > 0) {
+            valeurNominaleAnnee = (montantInitial * Math.pow(1 + rP, nP_i)) + (cotisation * ((Math.pow(1 + rP, nP_i) - 1) / rP));
+        } else {
+            valeurNominaleAnnee = montantInitial + (cotisation * nP_i);
         }
-        chartVF = new Chart(ctx, { type: 'line', data: { labels, datasets: [{ label: 'Valeur du portefeuille', data: valeurData, borderColor: '#22c55e', fill: true, backgroundColor: 'rgba(34,197,94,0.1)' }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) + ' $' } } } } });
+        
+        valeurNominaleData.push(valeurNominaleAnnee);
+        // AJOUT : Calcul de la valeur réelle pour chaque année du graphique
+        valeurReelleData.push(valeurNominaleAnnee / Math.pow(1 + tauxInflation, i));
+    }
+    
+    // MODIFIÉ : Création du graphique avec deux lignes de données
+    chartVF = new Chart(ctx, { 
+        type: 'line', 
+        data: { 
+            labels, 
+            datasets: [
+                { 
+                    label: 'Valeur Future (Nominale)', 
+                    data: valeurNominaleData, 
+                    borderColor: '#22c55e', 
+                    fill: true, 
+                    backgroundColor: 'rgba(34, 197, 94, 0.1)' 
+                },
+                {
+                    label: "Valeur en dollars d'aujourd'hui",
+                    data: valeurReelleData,
+                    borderColor: '#A855F7', // Une couleur distincte
+                    fill: false, // Ligne simple pour une meilleure lisibilité
+                    borderDash: [5, 5] // Ligne en pointillé
+                }
+            ] 
+        }, 
+        options: { 
+            maintainAspectRatio: false, 
+            scales: { 
+                y: { 
+                    ticks: { callback: v => fmtNombre(v) + ' $' } 
+                } 
+            } 
+        } 
     });
+});
 
     // --- Calculatrice d'Hypothèque ---
     document.getElementById('form-hypotheque')?.addEventListener('submit', e => {
