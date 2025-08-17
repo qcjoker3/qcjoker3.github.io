@@ -9,60 +9,59 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
     // --- FONCTIONS UTILITAIRES ---
-
-    // Fonction pour AFFICHER les résultats formatés
-    const fmtNombre = (n) => {
-        if (isNaN(n) || n === null) return "0,00";
-        return new Intl.NumberFormat('fr-FR', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        }).format(n);
+    const fmtNombre = (n, isCurrency = true) => {
+        if (isNaN(n) || n === null) return isCurrency ? "0,00 $" : "0";
+        const options = {
+            minimumFractionDigits: isCurrency ? 2 : 0,
+            maximumFractionDigits: isCurrency ? 2 : 0
+        };
+        if (isCurrency) {
+            options.style = 'currency';
+            options.currency = 'CAD';
+        }
+        return new Intl.NumberFormat('fr-CA', options).format(n);
     };
 
     // --- INITIALISATION D'AUTONUMERIC ---
-
-    const champsFormates = [
-        'epargne-mensuelle', 'vf-montant-initial', 'vf-cotisation', 
-        'hypo-montant', 'trex-montant', 'trex-cotisation-annuelle', 
-        'al-prix-propriete', 'al-mise-de-fonds', 'al-taxes-annuelles', 
-        'al-assurance-proprio', 'al-frais-condo', 'al-loyer-mensuel', 'al-assurance-loc'
+    const anInputs = {};
+    const champsArgent = [
+        'ret-epargne-actuelle', 'ret-cotisation-mensuelle', // NOUVEAUX CHAMPS RETRAITE
+        'vf-montant-initial', 'vf-cotisation', 'hypo-montant', 'trex-montant', 
+        'trex-cotisation-annuelle', 'al-prix-propriete', 'al-mise-de-fonds', 
+        'al-taxes-annuelles', 'al-assurance-proprio', 'al-frais-condo', 
+        'al-loyer-mensuel', 'al-assurance-loc'
+    ];
+    const champsEntier = [
+        'ret-age-actuel', 'ret-age-retraite', // NOUVEAUX CHAMPS RETRAITE
+        'vf-duree', 'hypo-duree', 'trex-duree', 'al-amortissement', 'al-horizon'
     ];
     
-    const champsEntiers = ['age-actuel', 'age-retraite'];
+    // Options pour les montants monétaires
+    const optionsArgent = AutoNumeric.getPredefinedOptions().dollar;
+    // Options pour les nombres entiers sans décimales
+    const optionsEntier = { decimalPlaces: 0, digitGroupSeparator: '' };
 
-    const optionsArgent = {
-        digitGroupSeparator: ' ', decimalCharacter: ',', decimalCharacterAlternative: '.',
-        currencySymbol: '\u00a0$', currencySymbolPlacement: 's', minimumValue: '0'
-    };
-    
-    const optionsEntier = {
-        digitGroupSeparator: ' ', decimalPlaces: 0, minimumValue: '0'
-    };
-
-    const anInputs = {};
-    champsFormates.forEach(id => {
+    champsArgent.forEach(id => {
         const el = document.getElementById(id);
         if (el) anInputs[id] = new AutoNumeric(el, optionsArgent);
     });
-    champsEntiers.forEach(id => {
+    champsEntier.forEach(id => {
         const el = document.getElementById(id);
         if (el) anInputs[id] = new AutoNumeric(el, optionsEntier);
     });
 
-    // NOUVELLE FONCTION UNIVERSELLE pour LIRE les valeurs des champs
     const getVal = (id) => {
-        if (anInputs[id]) return anInputs[id].getNumber(); // Pour les champs AutoNumeric
-        
-        const el = document.getElementById(id); // Pour les champs non formatés
+        if (anInputs[id]) return anInputs[id].getNumber();
+        const el = document.getElementById(id);
         if (el) return parseFloat(String(el.value).replace(',', '.')) || 0;
-        
         return 0;
     };
-    
-    // Le reste de votre code est ci-dessous, maintenant mis à jour pour utiliser getVal()
 
-    let chartRetraite = null, chartVF = null, chartHypo = null, chartTrex = null, chartAcheterLouer = null;
+    // Variables globales pour les graphiques
+    let chartVF = null, chartHypo = null, chartTrex = null, chartAcheterLouer = null;
+    let chartRevenu = null, chartTrajectoire = null; // NOUVEAUX GRAPHIQUES RETRAITE
 
+    // --- SYSTÈME DE NAVIGATION ENTRE CALCULATRICES ---
     const calcCards = document.querySelectorAll('.card-grid .card[data-calc]');
     const calcSections = document.querySelectorAll('.calculator-card');
     const allExplications = document.querySelectorAll('.boite-explication');
@@ -70,21 +69,17 @@ document.addEventListener('DOMContentLoaded', () => {
     const showCalculator = (key) => {
         const targetSection = document.getElementById(`calc-${key}`);
         if (!targetSection) return;
-
         calcSections.forEach(sec => sec.classList.remove('active'));
         targetSection.classList.add('active');
         calcCards.forEach(card => card.classList.toggle('selected', card.dataset.calc === key));
-
         const targetExplication = document.getElementById(`explication-${key}`);
         allExplications.forEach(box => box.classList.remove('active'));
         if (targetExplication) targetExplication.classList.add('active');
     };
-
     calcCards.forEach(card => card.addEventListener('click', () => showCalculator(card.dataset.calc)));
 
     const typeCompteSelect = document.getElementById('al-type-compte');
     const reinvestOptionDiv = document.getElementById('reinvest-reer-option');
-
     function toggleReinvestOption() {
         if (typeCompteSelect && reinvestOptionDiv) {
             reinvestOptionDiv.style.display = (typeCompteSelect.value === 'reer') ? 'block' : 'none';
@@ -92,36 +87,128 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (typeCompteSelect) typeCompteSelect.addEventListener('change', toggleReinvestOption);
     toggleReinvestOption();
+    
+    // =========================================================================
+    // === NOUVELLE CALCULATRICE DE RETRAITE 360° ===
+    // =========================================================================
+    const formRetraiteAvancee = document.getElementById('form-retraite-avancee');
+    if(formRetraiteAvancee) {
+        // Mise à jour visuelle des sliders
+        ['ret-rendement', 'ret-regle-retrait', 'ret-rendement-retraite'].forEach(id => {
+            const slider = document.getElementById(id);
+            const valeurDisplay = document.getElementById(`${id}-valeur`);
+            if(slider && valeurDisplay) {
+                slider.addEventListener('input', () => valeurDisplay.textContent = `${parseFloat(slider.value).toFixed(1)} %`);
+            }
+        });
 
-    // --- Calculatrice de Retraite ---
-    document.getElementById('form-retraite')?.addEventListener('submit', e => {
-        e.preventDefault();
-        const resultatRetraite = document.getElementById('resultat-retraite');
-        const ageActuel = getVal('age-actuel');
-        const ageRetraite = getVal('age-retraite');
-        const epargneMensuelle = getVal('epargne-mensuelle');
-        const rendementAnnuel = getVal('rendement') / 100;
-        
-        if (ageRetraite <= ageActuel) { resultatRetraite.textContent = "L'âge de retraite doit être supérieur."; return; }
-        const annees = ageRetraite - ageActuel;
-        const rMensuel = Math.pow(1 + rendementAnnuel, 1 / 12) - 1;
-        const FV = epargneMensuelle * ((Math.pow(1 + rMensuel, annees * 12) - 1) / rMensuel);
-        resultatRetraite.textContent = `Capital estimé à la retraite : ${fmtNombre(FV)} $`;
-        const ctx = document.getElementById('chart-retraite')?.getContext('2d');
-        if (!ctx || !isFinite(FV)) return;
-        if (chartRetraite) chartRetraite.destroy();
-        const labels = [], capitalData = [], interetData = [];
-        for (let i = 0; i <= annees; i++) {
-            labels.push(ageActuel + i);
-            let mois = i * 12, totalInvesti = epargneMensuelle * mois;
-            let valeurTotale = (isFinite(rMensuel) && rMensuel !== 0) ? epargneMensuelle * ((Math.pow(1 + rMensuel, mois) - 1) / rMensuel) : totalInvesti;
-            capitalData.push(totalInvesti);
-            interetData.push(valeurTotale - totalInvesti);
-        }
-        chartRetraite = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Capital versé', data: capitalData, backgroundColor: '#86efac' }, { label: 'Intérêts gagnés', data: interetData, backgroundColor: '#16a34a' }] }, options: { maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => fmtNombre(v) + ' $' } } } } });
-    });
+        formRetraiteAvancee.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-    // --- Calculatrice de Valeur Future ---
+            const CONSTANTES = {
+                ANNEE_FISCAL: 2025, RRQ_MAX_ANNUEL: 16370, RRQ_MOYEN_ANNUEL: 9200, SV_ANNUEL: 8560,
+                SEUIL_RECUPERATION_SV: 90997, TAUX_RECUPERATION_SV: 0.15,
+                PALIERS_FED: [{ l: 55867, t: 0.15, b: 15705 },{ l: 111733, t: 0.205, b: 15705 },{ l: 173205, t: 0.26, b: 15705 },{ l: 246752, t: 0.29, b: 15705 },{ l: Infinity, t: 0.33, b: 15705 }],
+                PALIERS_QC: [{ l: 51780, t: 0.14, b: 18056 },{ l: 103545, t: 0.19, b: 18056 },{ l: 126000, t: 0.24, b: 18056 },{ l: Infinity, t: 0.2575, b: 18056 }],
+                POURCENTAGES_FERR: { 71: 5.28, 72: 5.40, 73: 5.53, 74: 5.67, 75: 5.82, 76: 5.98, 77: 6.17, 78: 6.36, 79: 6.58, 80: 6.82, 81: 7.08, 82: 7.38, 83: 7.71, 84: 8.08, 85: 8.51, 86: 8.99, 87: 9.55, 88: 10.21, 89: 10.99, 90: 11.92, 91: 13.06, 92: 14.49, 93: 16.34, 94: 18.79, 95: 20.00 },
+            };
+
+            const estimerImpot = (revenu) => {
+                const calc = (paliers, revenuImposable) => {
+                    let impot = 0, dernierPalier = 0;
+                    for (const p of paliers) {
+                        if (revenuImposable > dernierPalier) {
+                            const montantDansPalier = Math.min(revenuImposable - dernierPalier, p.l - dernierPalier);
+                            impot += montantDansPalier * p.t;
+                        }
+                        dernierPalier = p.l;
+                    }
+                    const creditBase = paliers[0].b * paliers[0].t;
+                    return Math.max(0, impot - creditBase);
+                };
+                return calc(CONSTANTES.PALIERS_FED, revenu) + calc(CONSTANTES.PALIERS_QC, revenu);
+            };
+            
+            const inputs = {
+                ageActuel: getVal('ret-age-actuel'), ageRetraite: getVal('ret-age-retraite'),
+                epargneActuelle: getVal('ret-epargne-actuelle'), cotisationMensuelle: getVal('ret-cotisation-mensuelle'),
+                rendement: getVal('ret-rendement') / 100, rendementRetraite: getVal('ret-rendement-retraite') / 100,
+                rrq: document.getElementById('ret-rrq').value, sv: document.getElementById('ret-sv').value,
+                regleRetrait: getVal('ret-regle-retrait') / 100, compteImmobilise: document.getElementById('ret-compte-immobilise').checked
+            };
+            
+            const anneesEpargne = inputs.ageRetraite - inputs.ageActuel;
+            const moisEpargne = anneesEpargne * 12;
+            const rendementMensuel = Math.pow(1 + inputs.rendement, 1/12) - 1;
+            const fvEpargneActuelle = inputs.epargneActuelle * Math.pow(1 + inputs.rendement, anneesEpargne);
+            const fvCotisations = inputs.cotisationMensuelle * ((Math.pow(1 + rendementMensuel, moisEpargne) - 1) / rendementMensuel);
+            let capitalTotal = fvEpargneActuelle + fvCotisations;
+
+            let capitalRestant = capitalTotal;
+            const trajectoire = [];
+            let sommeRevenusNets = 0;
+
+            for (let age = inputs.ageRetraite; age < 100 && capitalRestant > 0; age++) {
+                const capitalDebutAnnee = capitalRestant;
+                const rrqAnnuel = inputs.rrq === 'moyen' ? CONSTANTES.RRQ_MOYEN_ANNUEL : inputs.rrq === 'max' ? CONSTANTES.RRQ_MAX_ANNUEL : 0;
+                const svAnnuel = inputs.sv === 'oui' ? CONSTANTES.SV_ANNUEL : 0;
+
+                const retraitStrategique = capitalDebutAnnee * inputs.regleRetrait;
+                const facteurMinFERR = (age >= 71) ? (CONSTANTES.POURCENTAGES_FERR[age] || 20) / 100 : (age >= inputs.ageRetraite ? 1 / (90 - age) : 0);
+                const retraitMinFERR = capitalDebutAnnee * facteurMinFERR;
+                let retraitAnnuel = Math.max(retraitStrategique, retraitMinFERR);
+
+                if (inputs.compteImmobilise) {
+                    const facteurMaxFRV = 1 / (90 - age);
+                    const plafondFRV = capitalDebutAnnee * facteurMaxFRV;
+                    retraitAnnuel = Math.min(retraitAnnuel, plafondFRV);
+                }
+                retraitAnnuel = Math.min(retraitAnnuel, capitalDebutAnnee);
+                
+                const revenuImposable = retraitAnnuel + rrqAnnuel;
+                const revenuBrutTotal = revenuImposable + svAnnuel;
+                const recuperationSV = Math.max(0, (revenuBrutTotal - CONSTANTES.SEUIL_RECUPERATION_SV) * CONSTANTES.TAUX_RECUPERATION_SV);
+                const svNette = Math.max(0, svAnnuel - recuperationSV);
+                const impotEstime = estimerImpot(revenuImposable);
+                const revenuNetAnnuel = revenuImposable + svNette - impotEstime;
+                sommeRevenusNets += revenuNetAnnuel;
+
+                capitalRestant -= retraitAnnuel;
+                capitalRestant *= (1 + inputs.rendementRetraite);
+                trajectoire.push({ age: age, capital: capitalDebutAnnee });
+            }
+
+            const nbAnneesRetraite = trajectoire.length || 1;
+            const revenuMoyenNetMensuel = (sommeRevenusNets / nbAnneesRetraite) / 12;
+            const pouvoirAchat = revenuMoyenNetMensuel / Math.pow(1 + 0.02, anneesEpargne);
+
+            const rrqInitial = inputs.rrq === 'moyen' ? CONSTANTES.RRQ_MOYEN_ANNUEL : inputs.rrq === 'max' ? CONSTANTES.RRQ_MAX_ANNUEL : 0;
+            const svInitial = inputs.sv === 'oui' ? CONSTANTES.SV_ANNUEL : 0;
+            const retraitInitial = trajectoire.length > 0 ? (trajectoire[0].revenuNet - (rrqInitial + svInitial - estimerImpot(trajectoire[0].retrait + rrqInitial))) : 0;
+            
+            const repartition = { epargne: retraitInitial, rrq: rrqInitial, sv: svInitial };
+            
+            document.getElementById('resultat-revenu-mensuel').textContent = fmtNombre(revenuMoyenNetMensuel);
+            document.getElementById('resultat-pouvoir-achat').textContent = fmtNombre(pouvoirAchat);
+            resultsContainer.style.display = 'block';
+
+            const ctxRevenu = document.getElementById('chart-revenu-retraite').getContext('2d');
+            if (chartRevenu) chartRevenu.destroy();
+            chartRevenu = new Chart(ctxRevenu, {
+                type: 'doughnut', data: { labels: ['Vos économies', 'RRQ', 'Sécurité de la Vieillesse (SV)'], datasets: [{ data: [repartition.epargne, repartition.rrq, repartition.sv], backgroundColor: ['#4F46E5', '#A855F7', '#10B981'], borderColor: '#1F2937' }] },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            const ctxTrajectoire = document.getElementById('chart-trajectoire-retraite').getContext('2d');
+            if (chartTrajectoire) chartTrajectoire.destroy();
+            chartTrajectoire = new Chart(ctxTrajectoire, {
+                type: 'line', data: { labels: trajectoire.map(d => d.age), datasets: [{ label: 'Évolution du capital à la retraite', data: trajectoire.map(d => d.capital), borderColor: '#4F46E5', backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: true, tension: 0.1 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { title: { display: true, text: 'Âge' } }, y: { title: { display: true, text: 'Capital' }, ticks: { callback: v => fmtNombre(v) } } } }
+            });
+
+            resultsContainer.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
 // --- Calculatrice de Valeur Future ---
 document.getElementById('form-vf')?.addEventListener('submit', e => {
     e.preventDefault();
