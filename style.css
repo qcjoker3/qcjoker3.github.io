@@ -106,6 +106,12 @@ h2 {
     text-align: center;
     margin-bottom: 3.5rem;
 }
+p.subtitle {
+    text-align: center;
+    max-width: 800px;
+    margin: -2rem auto 3rem auto;
+    color: var(--text-color);
+}
 
 a {
     text-decoration: none;
@@ -124,284 +130,159 @@ section {
 }
 
 /* --- En-tête & Navigation --- */
-
-/* Règle pour la barre d'en-tête (s'applique partout) */
 .site-header, header.container {
     background-color: var(--bg-color);
     padding: 1.5rem 20px;
     border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    position: sticky; top: 0; z-index: 100;
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
-
-/* --- LOGIQUE DE CENTRAGE UNIVERSELLE --- */
-
-/* --- En-tête & Navigation --- */
-
-/* Règle unique et universelle pour l'en-tête */
-header.container {
-    background-color: var(--bg-color);
-    padding: 1.5rem 20px;
-    border-bottom: 1px solid var(--border-color);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
-    
-    /* Logique de centrage qui fonctionnera partout */
-    display: flex;
-    flex-direction: column; /* Met le logo au-dessus de la navigation */
-    align-items: center;     /* Centre horizontalement */
-    gap: 1rem;               /* Espace entre le logo et la navigation */
+.site-header .container { /* Pour la page d'accueil */
+    display: flex; flex-direction: row; justify-content: space-between; align-items: center;
+    padding: 0; margin: 0 auto; width: 100%;
 }
-
-/* Styles pour le logo (h1) et la navigation (nav) */
-header.container h1 {
-    font-family: var(--font-heading);
-    font-size: 2.2rem;
-    font-weight: 700;
-    color: var(--heading-color);
-    margin: 0;
+header.container { /* Pour les autres pages */
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
 }
-
-header.container nav {
-    display: flex;
-    flex-wrap: wrap; /* Permet aux liens de passer à la ligne sur petits écrans */
-    justify-content: center; /* Centre les liens */
-    gap: 1.5rem; /* Espace entre les liens */
+.logo, header.container h1 {
+    font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700;
+    color: var(--heading-color); margin: 0;
 }
-
-header.container nav a {
-    color: var(--text-color);
-    font-weight: 500;
+.main-nav, header.container nav {
+    display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;
+}
+.main-nav a, header.container nav a {
+    color: var(--text-color); font-weight: 500;
     transition: color 0.2s ease, transform 0.2s ease;
 }
-
-header.container nav a:hover {
-    color: var(--heading-color);
-    transform: translateY(-2px);
+.main-nav a:hover, header.container nav a:hover {
+    color: var(--heading-color); transform: translateY(-2px);
 }
+
 
 /* --- Section d'Accueil (Hero) --- */
-.hero {
-    padding: 7rem 0;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-}
+.hero { padding: 7rem 0; text-align: center; position: relative; overflow: hidden; }
 .hero::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 150%;
-    height: 150%;
+    content: ''; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); width: 150%; height: 150%;
     background: radial-gradient(circle, var(--primary-color) 0%, transparent 60%);
-    opacity: 0.15;
-    animation: aurora 20s infinite linear;
-    z-index: 0;
+    opacity: 0.15; animation: aurora 20s infinite linear; z-index: 0;
 }
-.hero > .container {
-    position: relative;
-    z-index: 1;
-}
+.hero > .container { position: relative; z-index: 1; }
 .hero h1 {
-    font-size: 4rem;
-    background: var(--primary-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    font-size: 4rem; background: var(--primary-gradient);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     margin-bottom: 1.5rem;
 }
-.hero .subtitle {
-    font-size: 1.25rem;
-    color: var(--text-color);
-    max-width: 700px;
-    margin: 0 auto 2.5rem auto;
-}
+.hero .subtitle { font-size: 1.25rem; color: var(--text-color); max-width: 700px; margin: 0 auto 2.5rem auto; }
 
 /* --- Boutons --- */
 .btn-primary {
-    display: inline-block;
-    background: var(--primary-gradient);
-    color: var(--light-text-color);
-    border: none;
-    padding: 1rem 2.5rem;
-    border-radius: 50px;
-    cursor: pointer;
-    font-weight: 700;
-    font-family: var(--font-heading);
-    font-size: 1.1rem;
-    margin-top: 10px;
-    box-shadow: var(--shadow-md);
-    transition: all 0.3s ease;
+    display: inline-block; background: var(--primary-gradient); color: var(--light-text-color);
+    border: none; padding: 1rem 2.5rem; border-radius: 50px; cursor: pointer;
+    font-weight: 700; font-family: var(--font-heading); font-size: 1.1rem;
+    margin-top: 10px; box-shadow: var(--shadow-md); transition: all 0.3s ease;
     background-size: 200% auto;
 }
-.btn-primary:hover {
-    background-position: right center;
-    transform: scale(1.05);
-    box-shadow: var(--shadow-lg);
-}
+.btn-primary:hover { background-position: right center; transform: scale(1.05); box-shadow: var(--shadow-lg); }
 
 /* --- Cartes (Cards) --- */
-.card-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-}
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
 .card {
-    background-color: var(--card-bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 2.5rem;
+    background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+    border-radius: var(--border-radius); padding: 2.5rem;
     transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
     position: relative;
 }
-.card:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary-color);
-}
-.card h3 {
-    font-size: 1.5rem;
-}
-.card p {
-    margin-top: 1rem;
-}
-.card-link {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-}
-.card.selected {
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow-focus-ring);
-}
+.card:hover { transform: translateY(-5px); border-color: var(--primary-color); }
+.card h3 { font-size: 1.5rem; }
+.card p { margin-top: 1rem; }
+.card-link { display: block; color: inherit; text-decoration: none; }
+.card.selected { border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring); }
 
 /* === STYLES POUR LES CALCULATRICES === */
 .calculator-card {
-    display: none;
-    padding: 2.5rem;
-    margin-top: 2rem;
-    border-radius: 16px;
-    background-color: var(--card-bg-color);
-    border: 1px solid var(--border-color);
+    display: none; padding: 2.5rem; margin-top: 2rem;
+    border-radius: 16px; background-color: var(--card-bg-color); border: 1px solid var(--border-color);
 }
-.calculator-card.active {
-    display: block;
-    animation: fadeIn 0.5s ease-out;
-}
+.calculator-card.active { display: block; animation: fadeIn 0.5s ease-out; }
 .boite-explication {
-    display: none;
-    background-color: var(--bg-color);
-    border: 1px solid var(--border-color);
-    padding: 1.5rem;
-    margin: 2rem 0;
-    border-radius: 16px;
+    display: none; background-color: var(--bg-color); border: 1px solid var(--border-color);
+    padding: 1.5rem; margin: 2rem 0; border-radius: 16px;
 }
-.boite-explication.active {
-    display: block;
-}
-.chart-container {
-    width: 100%;
-    height: 450px;
-    margin-top: 2.5rem;
-}
+.boite-explication.active { display: block; }
+.chart-container { width: 100%; height: 450px; margin-top: 2.5rem; }
 
 /* --- Formulaires --- */
-.form-group label {
-    color: var(--heading-color);
-}
-.form-group input,
-.form-group select {
-    width: 100%;
-    padding: 0.9rem 1rem;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: var(--font-body);
-    background-color: var(--bg-color);
-    color: var(--text-color);
+.form-group label { color: var(--heading-color); }
+.form-group input, .form-group select {
+    width: 100%; padding: 0.9rem 1rem; border: 1px solid var(--border-color);
+    border-radius: 8px; font-size: 1rem; font-family: var(--font-body);
+    background-color: var(--bg-color); color: var(--text-color);
     transition: border-color 0.2s, box-shadow 0.2s;
 }
-.form-group input:focus,
-.form-group select:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow-focus-ring);
+.form-group input:focus, .form-group select:focus {
+    outline: none; border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring);
 }
+
+/* === STYLES SPÉCIFIQUES À LA NOUVELLE CALCULATRICE DE RETRAITE === */
+.form-section {
+    padding: 2rem; background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color); border-radius: var(--border-radius);
+    margin-bottom: 2rem; transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.advanced-options {
+    margin-top: 2rem; border-radius: var(--border-radius);
+    border: 1px solid var(--border-color); overflow: hidden;
+}
+.advanced-options summary {
+    padding: 1rem 1.5rem; font-family: var(--font-heading); font-weight: 600;
+    color: var(--heading-color); background-color: var(--section-bg-color); cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+.advanced-options[open] > summary { border-bottom: 1px solid var(--border-color); }
+.advanced-options .form-section { border: none; margin-bottom: 0; }
+.results-container {
+    margin-top: 3rem; padding: 2rem; background-color: var(--section-bg-color);
+    border: 1px solid var(--border-color); border-radius: var(--border-radius);
+    animation: fadeIn 0.5s ease-out;
+}
+.results-dashboard { display: grid; grid-template-columns: 1fr; gap: 1.5rem; text-align: center; margin-bottom: 3rem; }
+@media(min-width: 768px) { .results-dashboard { grid-template-columns: 1fr 1fr; } }
+.result-box {
+    padding: 1.5rem; background-color: var(--card-bg-color);
+    border-radius: var(--border-radius); box-shadow: var(--shadow-md);
+}
+.result-label { display: block; font-size: 1rem; color: var(--text-color); margin-bottom: 0.5rem; }
+.result-value {
+    display: block; font-size: 2.5rem; font-weight: 700;
+    color: var(--heading-color); font-family: var(--font-heading);
+}
+.chart-container-small { max-width: 400px; height: 300px; margin: 1.5rem auto; }
+input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: var(--border-color); border-radius: 5px; outline: none; }
+input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--primary-color); cursor: pointer; border-radius: 50%; }
+input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: var(--primary-color); cursor: pointer; border-radius: 50%; }
+
 
 /* --- Pied de Page (Footer) --- */
 footer, .site-footer {
-    background-color: #4F46E5 /* MODIFIÉ */
-    color: var(--subtle-text-color);
-    text-align: center;
-    padding: 3rem 0;
-    margin-top: 5rem;
+    background-color: #000; color: var(--subtle-text-color);
+    text-align: center; padding: 3rem 0; margin-top: 5rem;
     border-top: 1px solid var(--border-color);
 }
 
-/* --- Styles spécifiques à la case à cocher REER --- */
-#reinvest-reer-option {
-    display: none;
-}
-#reinvest-reer-option label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    font-weight: normal;
-    color: var(--text-color);
-}
-#reinvest-reer-option input {
-    width: auto;
-    margin-right: 0.75rem;
-    accent-color: var(--primary-color);
-}
+/* --- Ajustements d'espacement pour la page des calculatrices --- */
+#selection-calculatrices { padding-top: 3rem; padding-bottom: 1rem; }
+#explications-container { padding-top: 0; padding-bottom: 0; }
+#calculatrices-container { padding-top: 1rem; }
 
-/* =============================================================== */
-/* === AJUSTEMENTS D'ESPACEMENT POUR LA PAGE CALCULATRICES === */
-/* =============================================================== */
-
-/* Réduit l'espacement pour la section de sélection des cartes */
-#selection-calculatrices {
-    padding-top: 3rem;    /* Moins d'espace au-dessus */
-    padding-bottom: 1rem;   /* Moins d'espace en dessous */
-}
-
-/* Supprime l'espacement vertical pour le conteneur des explications */
-#explications-container {
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
-/* Réduit l'espacement au-dessus du conteneur des calculatrices */
-#calculatrices-container {
-    padding-top: 1rem;
-}
-
-/* =============================================================== */
-/* === MISE EN PAGE EN COLONNES (CALCULATRICE ACHETER/LOUER) === */
-/* =============================================================== */
-
+/* --- Mise en page en colonnes (Calculatrice Acheter/Louer) --- */
 .form-columns {
-    display: grid;
-    /* Par défaut : une seule colonne sur mobile pour une meilleure lisibilité */
-    grid-template-columns: 1fr;
-    gap: 2.5rem; /* Espace entre les colonnes */
-    margin-top: 2rem;
+    display: grid; grid-template-columns: 1fr;
+    gap: 2.5rem; margin-top: 2rem;
 }
-
-/* Passe à deux colonnes sur les écrans plus larges (768px et plus) */
-@media (min-width: 768px) {
-    .form-columns {
-        grid-template-columns: 1fr 1fr; /* Deux colonnes de taille égale */
-    }
-}
-
+@media (min-width: 768px) { .form-columns { grid-template-columns: 1fr 1fr; } }
 .form-column h3 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-    font-family: var(--font-heading);
-    color: var(--heading-color);
+    font-size: 1.5rem; margin-bottom: 1.5rem;
+    font-family: var(--font-heading); color: var(--heading-color);
 }
