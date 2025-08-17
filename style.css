@@ -379,3 +379,29 @@ footer, .site-footer {
 #calculatrices-container {
     padding-top: 1rem;
 }
+
+/* =============================================================== */
+/* === MISE EN PAGE EN COLONNES (CALCULATRICE ACHETER/LOUER) === */
+/* =============================================================== */
+
+.form-columns {
+    display: grid;
+    /* Par défaut : une seule colonne sur mobile pour une meilleure lisibilité */
+    grid-template-columns: 1fr;
+    gap: 2.5rem; /* Espace entre les colonnes */
+    margin-top: 2rem;
+}
+
+/* Passe à deux colonnes sur les écrans plus larges (768px et plus) */
+@media (min-width: 768px) {
+    .form-columns {
+        grid-template-columns: 1fr 1fr; /* Deux colonnes de taille égale */
+    }
+}
+
+.form-column h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-heading);
+    color: var(--heading-color);
+}
