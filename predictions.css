@@ -8,7 +8,7 @@
         .analysis { max-width: 1050px; margin: 28px auto 60px; padding-top: 8px; border-top: 1px solid #e5e7eb; }
         .analysis h3 { margin: 14px 0; }
         .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 28px; }
-        .horizon-tabs { display: flex; gap: 8px; margin: 6px 0 12px; }
+        /*.horizon-tabs { display: flex; gap: 8px; margin: 6px 0 12px; }*/
         .horizon-tabs button { padding: 8px 12px; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer; }
         .horizon-tabs button.active { background: #111827; color: #fff; border-color: #111827; }
         .hint { color: #6b7280; font-size: 0.9em; margin: 6px 0 12px; }
