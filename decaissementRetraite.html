@@ -22,7 +22,7 @@
     <div class="card-grid">
       <!-- Bloc 1: Infos personne -->
       <div class="card">
-        <h3>1) Profil & inflation</h3>
+        <h3>Profil & inflation</h3>
         <div class="form-group"><label>Âge actuel</label><input type="number" id="ageActuel" value="40" /></div>
         <div class="form-group"><label>Âge de retraite</label><input type="number" id="ageRetraite" value="65" /></div>
         <div class="form-group"><label>Salaire actuel ($/an)</label><input type="number" id="salaireActuel" value="80000" /></div>
@@ -40,7 +40,7 @@
           <input type="number" id="revenuManuel" placeholder="Ex. 55000" />
         </div>
         <div class="form-group">
-          <label>Espérance de vie cible (scénario 3)</label>
+          <label>Espérance de vie cible</label>
           <select id="esperanceVie">
             <option value="70">Courte (70 ans)</option>
             <option value="85" selected>Moyenne (85 ans)</option>
@@ -51,26 +51,25 @@
 
       <!-- Bloc 2: Soldes & cotisations -->
       <div class="card">
-        <h3>2) Soldes & cotisations</h3>
+        <h3>Soldes actuels</h3>
         <div class="form-group"><label>CELI actuel</label><input type="number" id="celiActuel" value="50000" /></div>
         <div class="form-group"><label>REER actuel</label><input type="number" id="reerActuel" value="120000" /></div>
         <div class="form-group"><label>CRI actuel</label><input type="number" id="criActuel" value="60000" /></div>
         <div class="form-group"><label>Non-enregistré actuel</label><input type="number" id="nonActuel" value="40000" /></div>
-
-        <div class="form-group"><label>Cotisation annuelle CELI</label><input type="number" id="celiCot" value="6000" /></div>
-        <div class="form-group"><label>Cotisation annuelle REER</label><input type="number" id="reerCot" value="10000" /></div>
-        <div class="form-group"><label>Cotisation annuelle CRI</label><input type="number" id="criCot" value="5000" /></div>
-        <div class="form-group"><label>Cotisation annuelle Non-enreg.</label><input type="number" id="nonCot" value="0" /></div>
-
-        <div class="form-group">
-          <label>Répartition dépôts évènement (+) (CRI/REER/CELI/Non, somme=100)</label>
-          <input id="splitDeposits" value="25/35/25/15" />
-        </div>
       </div>
 
       <!-- Bloc 3: Rendements -->
       <div class="card">
-        <h3>3) Rendements</h3>
+        <h3>Cotisations</h3>
+        <div class="form-group"><label>Cotisation annuelle CELI</label><input type="number" id="celiCot" value="6000" /></div>
+        <div class="form-group"><label>Cotisation annuelle REER</label><input type="number" id="reerCot" value="10000" /></div>
+        <div class="form-group"><label>Cotisation annuelle CRI</label><input type="number" id="criCot" value="5000" /></div>
+        <div class="form-group"><label>Cotisation annuelle Non-enreg.</label><input type="number" id="nonCot" value="0" /></div>
+      </div>
+      
+      <!-- Bloc 4: Rendements -->
+      <div class="card">
+        <h3>Rendements</h3>
         <div class="form-group"><label>Rendement CELI (%)</label><input type="number" id="celiRend" value="5" /></div>
         <div class="form-group"><label>Rendement REER (%)</label><input type="number" id="reerRend" value="6" /></div>
         <div class="form-group"><label>Rendement CRI (%)</label><input type="number" id="criRend" value="5.5" /></div>
@@ -81,9 +80,9 @@
         </div>
       </div>
 
-      <!-- Bloc 4: RRQ & PSV -->
+      <!-- Bloc 5: RRQ & PSV -->
       <div class="card">
-        <h3>4) RRQ & PSV</h3>
+        <h3>RRQ & PSV</h3>
         <div class="form-group"><label>RRQ à 65 ans (mensuel)</label><input type="number" id="rrq65" value="1000" /></div>
         <div class="form-group"><label>PSV à 65 ans (mensuel)</label><input type="number" id="psv65" value="800" /></div>
         <div class="form-group"><label>Âge de retrait RRQ</label><input type="number" id="ageRRQ" value="65" /></div>
@@ -134,6 +133,11 @@
       <div id="evenementsContainer"></div>
       <button id="ajoutEvenement" class="btn-primary" type="button">Ajouter un événement</button>
       <p class="helper">Un événement = âge (année) et montant +/-. Dépôts répartis selon “Répartition dépôts”.</p>
+      
+      <div class="form-group">
+        <label>Répartition dépôts évènement (+) (CRI/REER/CELI/Non, somme=100)</label>
+        <input id="splitDeposits" value="25/35/25/15" />
+      </div>
     </div>
 
     <!-- Scénarios -->
