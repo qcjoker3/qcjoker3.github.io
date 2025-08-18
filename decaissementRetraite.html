@@ -3,17 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculatrice Retraite Optimisée (net d’impôt)</title>
+  <title>Calculatrice - Planification financière</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
   <header class="container">
-    <h1>Calculatrice Retraite Optimisée (net d’impôt)</h1>
+    <h1>Planification financière</h1>
     <nav>
       <a href="index.html">Accueil</a>
       <a href="#">Ressources</a>
-      <a href="#">Contact</a>
+      <a href="index.html#Contact">Contact</a>
     </nav>
   </header>
 
@@ -101,7 +101,7 @@
                 <option value="0">Non</option>
               </select>
             </div>
-            <div class="form-group"><label>Taux de référence FRV/LIF (%)</label><input type="number" id="lifRefRate" value="6" /></div>
+            <div class="form-group"><label>Taux de référence FRV (%)</label><input type="number" id="lifRefRate" value="6" /></div>
           </div>
         </details>
       </div>
@@ -146,7 +146,7 @@
       <div style="display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn-primary scenario" data-s="durée">Maximiser durée du capital</button>
         <button class="btn-primary scenario" data-s="impot">Minimiser l’impôt total</button>
-        <button class="btn-primary scenario" data-s="espvie">Respecter l’espérance (arriver à 0)</button>
+        <button class="btn-primary scenario" data-s="espvie">Maximiser les retraits</button>
       </div>
       <p id="bestOrders" class="helper" style="margin-top:10px"></p>
     </div>
@@ -156,13 +156,13 @@
       <div class="card">
         <h3>Indicateurs</h3>
         <div class="results-dashboard">
-          <div class="result-box"><span class="result-label">Total actifs fin</span><span class="result-value" id="totalRestant">$0</span></div>
+          <div class="result-box"><span class="result-label">Total actifs</span><span class="result-value" id="totalRestant">$0</span></div>
           <div class="result-box"><span class="result-label">Impôt cumulé</span><span class="result-value" id="totalImpot">$0</span></div>
-          <div class="result-box"><span class="result-label">Dépenses financées (cumul)</span><span class="result-value" id="depensesCumulees">$0</span></div>
+          <div class="result-box"><span class="result-label">Dépenses financées</span><span class="result-value" id="depensesCumulees">$0</span></div>
         </div>
       </div>
       <div class="card">
-        <h3>Graphique des retraits (empilé par compte)</h3>
+        <h3>Valeurs des comptes</h3>
         <div class="chart-container">
           <canvas id="graphiqueRetraits" height="380"></canvas>
         </div>
@@ -184,7 +184,7 @@
               <th>Dépenses (besoin + évén.-)</th>
               <th>Retraits bruts</th>
               <th>Impôt</th>
-              <th>Total actifs fin</th>
+              <th>Total actifs</th>
             </tr>
           </thead>
           <tbody></tbody>
