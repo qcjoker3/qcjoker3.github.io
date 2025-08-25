@@ -1,656 +1,401 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculatrice - Planification financière</title>
-  <link rel="stylesheet" href="style.css" />
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calculatrice Retraite — Compact</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 </head>
 <body>
-  <header class="container">
-    <h1>Planification financière</h1>
-    <nav>
-      <a href="index.html">Accueil</a>
-      <a href="#">Ressources</a>
-      <a href="index.html#Contact">Contact</a>
-    </nav>
-  </header>
-
-  <div class="container">
-    <!-- ===== 4 BLOCS HORIZONTAUX ===== -->
-    <div class="card-grid">
-      <!-- Bloc 1: Infos personne -->
-      <div class="card">
-        <h3>Profil & inflation</h3>
-        <div class="form-group"><label>Âge actuel</label><input type="number" id="ageActuel" value="40" /></div>
-        <div class="form-group"><label>Âge de retraite</label><input type="number" id="ageRetraite" value="65" /></div>
-        <div class="form-group"><label>Salaire actuel ($/an)</label><input type="number" id="salaireActuel" value="80000" /></div>
-        <div class="form-group"><label>Inflation annuelle (%)</label><input type="number" id="inflation" value="2.0" /></div>
-        <div class="form-group">
-          <label>Revenu désiré à la retraite</label>
-          <select id="revenuChoix">
-            <option value="70" selected>70% du salaire (indexé)</option>
-            <option value="80">80% du salaire (indexé)</option>
-            <option value="manuel">Montant manuel (indexé)</option>
-          </select>
-        </div>
-        <div id="revenuManuelGroup" class="form-group" style="display:none">
-          <label>Montant manuel ($/an, valeur d’aujourd’hui)</label>
-          <input type="number" id="revenuManuel" placeholder="Ex. 55000" />
-        </div>
-        <div class="form-group">
-          <label>Espérance de vie cible</label>
-          <select id="esperanceVie">
-            <option value="70">Courte (70 ans)</option>
-            <option value="85" selected>Moyenne (85 ans)</option>
-            <option value="100">Longue (100 ans)</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Bloc 2: Soldes & cotisations -->
-      <div class="card">
-        <h3>Soldes actuels</h3>
-        <div class="form-group"><label>CELI actuel</label><input type="number" id="celiActuel" value="50000" /></div>
-        <div class="form-group"><label>REER actuel</label><input type="number" id="reerActuel" value="120000" /></div>
-        <div class="form-group"><label>CRI actuel</label><input type="number" id="criActuel" value="60000" /></div>
-        <div class="form-group"><label>Non-enregistré actuel</label><input type="number" id="nonActuel" value="40000" /></div>
-      </div>
-
-      <!-- Bloc 3: Rendements -->
-      <div class="card">
-        <h3>Cotisations</h3>
-        <div class="form-group"><label>Cotisation annuelle CELI</label><input type="number" id="celiCot" value="6000" /></div>
-        <div class="form-group"><label>Cotisation annuelle REER</label><input type="number" id="reerCot" value="10000" /></div>
-        <div class="form-group"><label>Cotisation annuelle CRI</label><input type="number" id="criCot" value="5000" /></div>
-        <div class="form-group"><label>Cotisation annuelle Non-enreg.</label><input type="number" id="nonCot" value="0" /></div>
-      </div>
-      
-      <!-- Bloc 4: Rendements -->
-      <div class="card">
-        <h3>Rendements</h3>
-        <div class="form-group"><label>Rendement CELI (%)</label><input type="number" id="celiRend" value="5" /></div>
-        <div class="form-group"><label>Rendement REER (%)</label><input type="number" id="reerRend" value="6" /></div>
-        <div class="form-group"><label>Rendement CRI (%)</label><input type="number" id="criRend" value="5.5" /></div>
-        <div class="form-group"><label>Rendement Non-enreg. (%)</label><input type="number" id="nonRend" value="4" /></div>
-        <div class="form-group">
-          <label>Inclusion des gains en capital (non-enreg., %)</label>
-          <input type="number" id="inclusionGC" value="50" />
-        </div>
-      </div>
-
-      <!-- Bloc 5: RRQ & PSV -->
-      <div class="card">
-        <h3>RRQ & PSV</h3>
-        <div class="form-group"><label>RRQ à 65 ans (mensuel)</label><input type="number" id="rrq65" value="1000" /></div>
-        <div class="form-group"><label>PSV à 65 ans (mensuel)</label><input type="number" id="psv65" value="800" /></div>
-        <div class="form-group"><label>Âge de retrait RRQ</label><input type="number" id="ageRRQ" value="65" /></div>
-        <div class="form-group"><label>Âge de retrait PSV</label><input type="number" id="agePSV" value="65" /></div>
-
-        <details class="advanced-options" style="margin-top:10px">
-          <summary>Options avancées RRQ/PSV & FRV/FERR</summary>
-          <div class="form-section">
-            <div class="form-group"><label>RRQ : réduction/mois avant 65 (%)</label><input type="number" id="rrqRedPct" value="0.6" /></div>
-            <div class="form-group"><label>RRQ : bonification/mois après 65 (%)</label><input type="number" id="rrqBonPct" value="0.7" /></div>
-            <div class="form-group"><label>PSV : seuil de récupération de départ ($)</label><input type="number" id="oasThresholdBase" value="93454" /></div>
-            <div class="form-group"><label>Taux de récupération PSV (%)</label><input type="number" id="oasClawRate" value="15" /></div>
-            <div class="form-group"><label>Appliquer règles FERR/FRV dès 71 ans</label>
-              <select id="applyRrifLif">
-                <option value="1" selected>Oui</option>
-                <option value="0">Non</option>
-              </select>
-            </div>
-            <div class="form-group"><label>Taux de référence FRV (%)</label><input type="number" id="lifRefRate" value="6" /></div>
-          </div>
-        </details>
-      </div>
+<header>
+  <div class="bar">
+    <h1>Planification financière — Décaissement</h1>
+    <div class="row noprint">
+      <button class="btn" id="btnRunDuree">Optimiser: Durée</button>
+      <button class="btn" id="btnRunImpot">Optimiser: Impôt</button>
+      <button class="btn" id="btnRunEsp">Optimiser: Espérance</button>
+      <button class="btn btn-secondary" onclick="window.print()">Imprimer</button>
     </div>
+  </div>
+</header>
 
-    <!-- Fiscalité -->
+<div class="container">
+  <!-- Blocs d’intrants -->
+  <div class="grid">
     <div class="card">
-      <h3>Fiscalité (paliers éditables, indexés par inflation)</h3>
-      <p class="helper">Listes JSON <code>[[plafond, taux], ...]</code> — plafonds indexés chaque année.</p>
-      <div class="card-grid">
-        <div class="form-group">
-          <label>Fédéral 2025</label>
-          <input id="fedBrackets" value='[[55867,0.15],[111733,0.205],[173206,0.26],[246752,0.29],[Infinity,0.33]]' />
-        </div>
-        <div class="form-group">
-          <label>Québec 2025</label>
-          <input id="qcBrackets" value='[[51780,0.145],[103545,0.20],[126000,0.24],[Infinity,0.2575]]' />
-        </div>
-        <div class="form-group">
-          <label>Crédit de base combiné ($, optionnel)</label>
-          <input id="basicCredit" value="0" />
-        </div>
+      <h3>1) Profil</h3>
+      <div class="fg"><label>Âge actuel</label><input id="ageActuel" type="number" value="40"></div>
+      <div class="fg"><label>Âge retraite</label><input id="ageRetraite" type="number" value="65"></div>
+      <div class="fg"><label>Salaire actuel ($)</label><input id="salaireActuel" type="number" value="80000"></div>
+      <div class="fg"><label>Revenu désiré (base aujourd’hui)</label>
+        <select id="revenuChoix"><option value="70" selected>70% du salaire</option><option value="80">80% du salaire</option><option value="manuel">Montant manuel</option></select>
       </div>
-    </div>
-
-    <!-- Événements -->
-    <div class="card">
-      <h3>Événements financiers</h3>
-      <div id="evenementsContainer"></div>
-      <button id="ajoutEvenement" class="btn-primary" type="button">Ajouter un événement</button>
-      <p class="helper">Un événement = âge (année) et montant +/-. Dépôts répartis selon “Répartition dépôts”.</p>
-      
-      <div class="form-group">
-        <label>Répartition dépôts évènement (+) (CRI/REER/CELI/Non, somme=100)</label>
-        <input id="splitDeposits" value="25/35/25/15" />
+      <div class="fg" id="revenuManuelWrap" style="display:none"><label>Montant manuel ($)</label><input id="revenuManuel" type="number" placeholder="ex. 55 000"></div>
+      <div class="fg"><label>Espérance de vie</label>
+        <select id="esperanceVie"><option value="70">Courte (70)</option><option value="85" selected>Moyenne (85)</option><option value="100">Longue (100)</option></select>
       </div>
-    </div>
-
-    <!-- Scénarios -->
-    <div class="card">
-      <h3>Scénarios de décaissement</h3>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn-primary scenario" data-s="durée">Maximiser durée du capital</button>
-        <button class="btn-primary scenario" data-s="impot">Minimiser l’impôt total</button>
-        <button class="btn-primary scenario" data-s="espvie">Maximiser les retraits</button>
-      </div>
-      <p id="bestOrders" class="helper" style="margin-top:10px"></p>
-    </div>
-
-    <!-- Résultats & Graphique -->
-    <div class="card-grid">
-      <div class="card">
-        <h3>Indicateurs</h3>
-        <div class="results-dashboard">
-          <div class="result-box"><span class="result-label">Total actifs</span><span class="result-value" id="totalRestant">$0</span></div>
-          <div class="result-box"><span class="result-label">Impôt cumulé</span><span class="result-value" id="totalImpot">$0</span></div>
-          <div class="result-box"><span class="result-label">Dépenses financées</span><span class="result-value" id="depensesCumulees">$0</span></div>
-        </div>
-      </div>
-      <div class="card">
-        <h3>Valeurs des comptes</h3>
-        <div class="chart-container">
-          <canvas id="graphiqueRetraits" height="380"></canvas>
-        </div>
-      </div>
+      <small>Inflation fixe appliquée : 2%/an (cachée)</small>
     </div>
 
     <div class="card">
-      <h3>Tableau annuel</h3>
-      <div style="max-height:420px;overflow:auto;border-radius:12px">
-        <table id="tableauAnnuel">
-          <thead>
-            <tr>
-              <th>Âge</th>
-              <th>CELI</th>
-              <th>REER</th>
-              <th>CRI</th>
-              <th>Non-enreg.</th>
-              <th>Revenus (RRQ+PSV+évén.+)</th>
-              <th>Dépenses (besoin + évén.-)</th>
-              <th>Retraits bruts</th>
-              <th>Impôt</th>
-              <th>Total actifs</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
+      <h3>2) Soldes actuels</h3>
+      <div class="fg"><label>CELI</label><input id="celiActuel" type="number" value="50000"></div>
+      <div class="fg"><label>REER</label><input id="reerActuel" type="number" value="120000"></div>
+      <div class="fg"><label>CRI</label><input id="criActuel" type="number" value="60000"></div>
+      <div class="fg"><label>Non-enregistré</label><input id="nonActuel" type="number" value="40000"></div>
     </div>
 
+    <div class="card">
+      <h3>3) Cotisations annuelles</h3>
+      <div class="fg"><label>CELI</label><input id="celiCot" type="number" value="6000"></div>
+      <div class="fg"><label>REER</label><input id="reerCot" type="number" value="10000"></div>
+      <div class="fg"><label>CRI</label><input id="criCot" type="number" value="5000"></div>
+      <div class="fg"><label>Non-enreg.</label><input id="nonCot" type="number" value="0"></div>
+    </div>
+
+    <div class="card">
+      <h3>4) Rendements (%)</h3>
+      <div class="fg"><label>CELI</label><input id="celiRend" type="number" value="5"></div>
+      <div class="fg"><label>REER</label><input id="reerRend" type="number" value="6"></div>
+      <div class="fg"><label>CRI</label><input id="criRend" type="number" value="5.5"></div>
+      <div class="fg"><label>Non-enreg.</label><input id="nonRend" type="number" value="4"></div>
+      <div class="fg"><label>Inclusion gains en capital (%)</label><input id="inclusionGC" type="number" value="50"></div>
+    </div>
+
+    <div class="card">
+      <h3>5) RRQ & PSV</h3>
+      <div class="fg"><label>RRQ à 65 ans (mensuel)</label><input id="rrq65" type="number" value="1000"></div>
+      <div class="fg"><label>PSV à 65 ans (mensuel)</label><input id="psv65" type="number" value="800"></div>
+      <div class="fg"><label>Âge début RRQ</label><input id="ageRRQ" type="number" value="65"></div>
+      <div class="fg"><label>Âge début PSV</label><input id="agePSV" type="number" value="65"></div>
+      <details style="margin-top:8px">
+        <summary>Options avancées (RRQ/PSV/FRV)</summary>
+        <div class="row">
+          <div class="fg"><label>RRQ: réduction/mois &lt;65 (%)</label><input id="rrqRedPct" type="number" value="0.6"></div>
+          <div class="fg"><label>RRQ: bonification/mois &gt;65 (%)</label><input id="rrqBonPct" type="number" value="0.7"></div>
+          <div class="fg"><label>PSV: seuil récupération (base $)</label><input id="oasThresholdBase" type="number" value="93454"></div>
+          <div class="fg"><label>PSV: taux récupération (%)</label><input id="oasClawRate" type="number" value="15"></div>
+          <div class="fg"><label>Appliquer FERR/FRV dès 71</label><select id="applyRrifLif"><option value="1" selected>Oui</option><option value="0">Non</option></select></div>
+          <div class="fg"><label>Taux de référence FRV (%)</label><input id="lifRefRate" type="number" value="6"></div>
+        </div>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>6) Fonds de pension</h3>
+      <div class="fg"><label>Détention d’un fonds de pension ?</label>
+        <select id="hasPension"><option value="0" selected>Non</option><option value="1">Oui</option></select>
+      </div>
+      <div class="row" id="pensionWrap" style="display:none">
+        <div class="fg"><label>Salaire garanti ($/an)</label><input id="pensionAmount" type="number" value="20000"></div>
+        <div class="fg"><label>Indexation du salaire garanti (%)</label><input id="pensionInfl" type="number" value="2"></div>
+      </div>
+      <small>Si « Non », les deux champs restent masqués.</small>
+    </div>
   </div>
 
-  <script>
-    // ===== Utilitaires UI =====
-    const $ = (id)=>document.getElementById(id);
-    const money = (v)=>'$'+Math.round(v||0).toLocaleString('fr-CA');
+  <div class="card">
+    <h3>Fiscalité (indexée 2%)</h3>
+    <small>JSON [[plafond, taux], …] — plafonds indexés annuellement</small>
+    <div class="row">
+      <div class="fg"><label>Fédéral 2025</label>
+        <input id="fedBrackets" value='[[55867,0.15],[111733,0.205],[173206,0.26],[246752,0.29],[Infinity,0.33]]'>
+      </div>
+      <div class="fg"><label>Québec 2025</label>
+        <input id="qcBrackets" value='[[51780,0.145],[103545,0.20],[126000,0.24],[Infinity,0.2575]]'>
+      </div>
+      <div class="fg"><label>Crédit de base combiné ($)</label><input id="basicCredit" value="0"></div>
+      <div class="fg"><label>Répartition dépôts (+) CRI/REER/CELI/Non</label><input id="splitDeposits" value="0/0/0/100"></div>
+    </div>
+  </div>
 
-    const revenuChoix = $('revenuChoix');
-    const revenuManuelGroup = $('revenuManuelGroup');
-    revenuChoix.addEventListener('change',()=>{
-      revenuManuelGroup.style.display = revenuChoix.value==='manuel'?'block':'none';
-      calculer();
-    });
-    $('ajoutEvenement').addEventListener('click', ()=>{
-      const box = document.createElement('div');
-      box.className = 'row'; box.style.marginBottom = '8px';
-      box.innerHTML = `
-        <div class="form-group"><label>Âge (année)</label><input type="number" class="evt-age" placeholder="ex. 55" /></div>
-        <div class="form-group"><label>Montant (+ dépôt / - retrait)</label><input type="number" class="evt-montant" placeholder="ex. -15000" /></div>
-      `;
-      $('evenementsContainer').appendChild(box);
-      box.querySelectorAll('input').forEach(i=>i.addEventListener('input', calculer));
-    });
-    document.querySelectorAll('input, select').forEach(el=>el.addEventListener('input', calculer));
-    document.querySelectorAll('.scenario').forEach(b=>b.addEventListener('click', ()=>runScenario(b.dataset.s)));
+  <div class="card">
+    <h3>Événements financiers</h3>
+    <div id="evenementsContainer" class="row"></div>
+    <button class="btn noprint" id="ajoutEvenement" type="button">Ajouter un événement (+/−)</button>
+    <small>Ex.: Âge 55, montant −15000 (retrait) ou +20000 (héritage)</small>
+  </div>
 
-    // ===== Helpers =====
-    function parseJSONInput(id, fallback){ try{ return JSON.parse($(id).value);}catch(e){ return fallback; } }
-    function splitDeposits(){
-      const [cri,reer,celi,non] = $('splitDeposits').value.split('/').map(x=>parseFloat(x)||0);
-      const s = (cri+reer+celi+non)||1; return { cri:cri/s, reer:reer/s, celi:celi/s, non:non/s };
-    }
+  <div class="card">
+    <h3>Scénarios & affichage</h3>
+    <div class="row noprint" style="gap:6px">
+      <button class="btn" id="btnCalc">Calculer</button>
+      <select id="scenarioView">
+        <option value="durée">Afficher: Durée (max années)</option>
+        <option value="impot">Afficher: Impôt (min)</option>
+        <option value="espvie">Afficher: Espérance (pile à l’âge)</option>
+      </select>
+    </div>
+    <small id="bestOrders"></small>
+  </div>
 
-    // ===== Fiscalité =====
-    function indexBrackets(brackets, inflFactor){
-      return brackets.map(([cap, rate])=>[cap===Infinity?Infinity:cap*inflFactor, rate]);
-    }
-    function taxFromBrackets(taxable, fedB, qcB, basicCredit=0){
-      taxable = Math.max(0, taxable);
-      const fed = calcPiecewise(taxable, fedB);
-      const qc  = calcPiecewise(taxable, qcB);
-      return Math.max(0, fed + qc - basicCredit);
-    }
-    function calcPiecewise(amount, brackets){
-      let tax=0, prev=0, remain=amount;
-      for(const [cap, rate] of brackets){
-        const upper = (cap===Infinity)?Infinity:cap;
-        const band = Math.min(remain, upper - prev);
-        if(band>0){ tax += band*rate; remain -= band; prev = upper; }
-        if(remain<=0) break;
+  <div class="dash">
+    <div class="kpi"><span>Capital à 100 ans / fin</span><b id="kpiRestant">$0</b></div>
+    <div class="kpi"><span>Âge d’épuisement</span><b id="kpiEpuisement">—</b></div>
+    <div class="kpi"><span>Impôt cumulé</span><b id="kpiImpot">$0</b></div>
+    <div class="kpi"><span>Coût du train de vie</span><b id="kpiDepenses">$0</b></div>
+  </div>
+
+  <div class="grid" style="margin-top:12px">
+    <div class="chart-wrap"><h3>Valeur des comptes</h3><canvas id="chartComptes" height="280"></canvas></div>
+    <div class="chart-wrap"><h3>Retraits (empilé)</h3><canvas id="chartRetraits" height="280"></canvas></div>
+  </div>
+
+  <div class="card">
+    <h3>Tableau annuel — Soldes</h3>
+    <div style="max-height:420px;overflow:auto;border-radius:12px">
+      <table id="tableSoldes"><thead><tr><th>Âge</th><th>CELI</th><th>REER</th><th>CRI</th><th>Non-enreg.</th><th>Total actifs</th><th>Impôt</th></tr></thead><tbody></tbody></table>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Tableau — Décomposition du revenu</h3>
+    <div style="max-height:420px;overflow:auto;border-radius:12px">
+      <table id="tableRevenu"><thead>
+        <tr><th>Âge</th><th>Revenu brut désiré</th><th>Revenu net</th><th>Retrait N-E</th><th>Retrait CELI</th><th>Retrait REER</th><th>Retrait CRI</th><th>Fonds pension</th><th>PSV</th><th>RRQ</th></tr>
+      </thead><tbody></tbody></table>
+    </div>
+  </div>
+</div>
+
+<!-- Loader -->
+<div id="loader"><div id="spinner"></div></div>
+
+<script>
+const $=id=>document.getElementById(id), money=v=>'$'+Math.round(v||0).toLocaleString('fr-CA');
+const INFL=0.02; // inflation FIXE
+// UI toggles
+$('revenuChoix').addEventListener('change',e=>{ $('revenuManuelWrap').style.display=e.target.value==='manuel'?'block':'none'; });
+$('hasPension').addEventListener('change',e=>{ $('pensionWrap').style.display=e.target.value==='1'?'flex':'none'; });
+$('ajoutEvenement').addEventListener('click',()=>{
+  const box=document.createElement('div'); box.className='row'; box.style.margin='6px 0';
+  box.innerHTML=`<div class="fg"><label>Âge</label><input type="number" class="evt-age" placeholder="ex. 55"></div>
+                 <div class="fg"><label>Montant</label><input type="number" class="evt-montant" placeholder="+/- 10000"></div>`;
+  $('evenementsContainer').appendChild(box);
+});
+
+['btnRunDuree','btnRunImpot','btnRunEsp'].forEach(id=>{
+  $(id).addEventListener('click',()=>runScenario(id==='btnRunImpot'?'impot':id==='btnRunEsp'?'espvie':'durée'));
+});
+$('btnCalc').addEventListener('click',()=>{ const kind=$('scenarioView').value; runScenario(kind); });
+
+// helpers
+const parseJSON=(id,f)=>{ try{return JSON.parse($(id).value)}catch{ return f } };
+const splitDeposits=()=>{ const [cri,reer,celi,non]=$('splitDeposits').value.split('/').map(x=>+x||0); const s=(cri+reer+celi+non)||1; return {cri:cri/s,reer:reer/s,celi:celi/s,non:non/s} };
+const RRIF_MIN={71:.0528,72:.054,73:.0553,74:.0567,75:.0582,76:.0598,77:.0617,78:.0636,79:.0658,80:.0682,81:.0708,82:.0738,83:.0771,84:.0808,85:.0851,86:.0899,87:.0955,88:.1021,89:.1099,90:.1192,91:.1306,92:.1449,93:.1634,94:.1879};
+const rrifMin=a=>a<71?0:(a>=95?0.20:(RRIF_MIN[a]||0.20));
+const lifMaxPct=(a,ref)=> a<71?1: (1/(90-Math.min(89.999,Math.max(18,a))) + ref);
+const permutations=a=> a.length<=1?[a]: a.flatMap((v,i)=>permutations([...a.slice(0,i),...a.slice(i+1)]).map(p=>[v,...p]));
+const ORDERS=permutations(['non','celi','reer','cri']);
+function indexBrackets(br, infl){ return br.map(([cap,rate])=>[cap===Infinity?Infinity:cap*infl, rate]); }
+function piecewiseTax(amount, brackets){ let tax=0,prev=0,remain=Math.max(0,amount); for(const [cap,rate] of brackets){ const up=(cap===Infinity)?Infinity:cap; const band=Math.min(remain,up-prev); if(band>0){ tax+=band*rate; remain-=band; prev=up; } if(remain<=0) break; } return tax; }
+function totalTaxQCFEDE(taxable,fedB,qcB,credit){ return Math.max(0, piecewiseTax(taxable,fedB)+piecewiseTax(taxable,qcB)-(credit||0)); }
+
+// pensions
+function rrqAnnual(age,rrq65,ageRRQ,red,bon){ if(age<ageRRQ) return 0; let base=rrq65*12,adj=1; if(ageRRQ<65) adj=1-red*((65-ageRRQ)*12); else if(ageRRQ>65) adj=1+bon*((ageRRQ-65)*12); return base*adj*Math.pow(1+INFL, Math.max(0,age-65)); }
+function psvAnnual(age,psv65,agePSV){ if(age<agePSV) return 0; let v=psv65*12*Math.pow(1+INFL, Math.max(0,age-65)); if(age>=75) v*=1.10; return v; }
+
+// main simulation for a given withdrawal order
+function simulate(order, targetKind='durée'){
+  const age0=+$('ageActuel').value, retireAge=+$('ageRetraite').value;
+  const salaire=+$('salaireActuel').value;
+  const baseNeedToday= $('revenuChoix').value==='70'? salaire*0.70 : $('revenuChoix').value==='80'? salaire*0.80 : (+$('revenuManuel').value||0);
+  let S={ celi:+$('celiActuel').value, reer:+$('reerActuel').value, cri:+$('criActuel').value, non:+$('nonActuel').value, nonACB:+$('nonActuel').value, tax:0, deps:0 };
+  const C={ celi:+$('celiCot').value, reer:+$('reerCot').value, cri:+$('criCot').value, non:+$('nonCot').value };
+  const R={ celi:(+$('celiRend').value||0)/100, reer:(+$('reerRend').value||0)/100, cri:(+$('criRend').value||0)/100, non:(+$('nonRend').value||0)/100 };
+  const incl=(+$('inclusionGC').value||50)/100;
+  const rrq65=+$('rrq65').value, psv65=+$('psv65').value, ageRRQ=+$('ageRRQ').value, agePSV=+$('agePSV').value;
+  const rrqRed=(+$('rrqRedPct').value||0.6)/100, rrqBon=(+$('rrqBonPct').value||0.7)/100;
+  const oasBase=+$('oasThresholdBase').value||93454, oasRate=(+$('oasClawRate').value||15)/100;
+  const applyRrif=$('applyRrifLif').value==='1', lifRef=((+$('lifRefRate').value||6)/100);
+  const fedBase = parseJSON('fedBrackets', [[55867,0.15],[111733,0.205],[173206,0.26],[246752,0.29],[Infinity,0.33]]);
+  const qcBase  = parseJSON('qcBrackets',  [[51780,0.145],[103545,0.20],[126000,0.24],[Infinity,0.2575]]);
+  const basicCredit= +$('basicCredit').value||0;
+  const evts=[]; document.querySelectorAll('.evt-age').forEach((a,i)=>{ const age=+a.value, m=+document.querySelectorAll('.evt-montant')[i].value; if(!isNaN(age)&&!isNaN(m)) evts.push({age,m});});
+  const split=splitDeposits();
+  const hasPens=$('hasPension').value==='1', pensAmt=+$('pensionAmount').value||0, pensInfl=(+$('pensionInfl').value||2)/100;
+  const endAge=100;
+
+  const rows=[], rowsInc=[];
+  let epuisementAge='—';
+
+  function year(age){
+    let {celi,reer,cri,non,nonACB,tax,deps}=S; const yrs=age-age0;
+    // contributions + croissance avant retraite
+    if(age<retireAge){ celi=(celi+C.celi)*(1+R.celi); reer=(reer+C.reer)*(1+R.reer); cri=(cri+C.cri)*(1+R.cri); non=(non+C.non)*(1+R.non); nonACB += C.non; }
+    else { celi*=1+R.celi; reer*=1+R.reer; cri*=1+R.cri; non*=1+R.non; }
+    // événements
+    const pos=evts.filter(e=>e.age===age&&e.m>0).reduce((s,e)=>s+e.m,0);
+    const neg=evts.filter(e=>e.age===age&&e.m<0).reduce((s,e)=>s+e.m,0);
+    if(pos>0){ celi+=pos*split.celi; reer+=pos*split.reer; cri+=pos*split.cri; non+=pos*split.non; nonACB+=pos*split.non; }
+
+    const rrq=rrqAnnual(age,rrq65,ageRRQ,rrqRed,rrqBon);
+    let oas=psvAnnual(age,psv65,agePSV);
+    const pens = (hasPens && age>=retireAge)? (pensAmt*Math.pow(1+pensInfl, age-retireAge)) : 0;
+
+    const need = age>=retireAge ? (baseNeedToday*Math.pow(1+INFL, age-age0)) : 0;
+    const expenses = need + Math.abs(Math.min(0,neg));
+
+    // FRV/FERR règles
+    let ferrMin=0, lifMin=0, lifMax=Infinity;
+    if(applyRrif && age>=71){ ferrMin=rrifMin(age)*reer; lifMin=rrifMin(age)*cri; lifMax=lifMaxPct(age,lifRef)*cri; }
+
+    let taxable = rrq + oas + pens;
+    const withdraws={celi:0,reer:0,cri:0,non:0};
+
+    function addTaxable(src,amt,preVal,preACB){
+      if(src==='reer'||src==='cri'){ taxable+=amt; }
+      else if(src==='non'){
+        const gainRatio = preVal>0? Math.max(0,(preVal-preACB)/preVal):0;
+        taxable += amt*gainRatio*incl;
       }
-      return tax;
     }
 
-    // ===== FERR/FRV tables =====
-    // Table CRA de base pour le minimum FERR/LIF (âges >=71)
-    const RRIF_MIN_TABLE = {
-      71:0.0528, 72:0.054, 73:0.0553, 74:0.0567, 75:0.0582,
-      76:0.0598, 77:0.0617, 78:0.0636, 79:0.0658, 80:0.0682,
-      81:0.0708, 82:0.0738, 83:0.0771, 84:0.0808, 85:0.0851,
-      86:0.0899, 87:0.0955, 88:0.1021, 89:0.1099, 90:0.1192,
-      91:0.1306, 92:0.1449, 93:0.1634, 94:0.1879
-      // 95+ = 20%
-    };
-    function rrifMinPct(age){
-      if(age<71) return 0;
-      if(age>=95) return 0.20;
-      return RRIF_MIN_TABLE[age] || 0.20;
-    }
-    // FRV/LIF : max = solde_début × [ 1/(90 - âge) + refRate ]
-    function lifMaxPct(age, refRate){
-      if(age<71) return 1; // pas de plafond FRV avant 71 (souvent en pratique on reste sous LIRA/LIF — on libère ici)
-      const a = Math.min(89.999, Math.max(18, age)); // éviter div/0 à 90
-      return (1/(90 - a)) + refRate; // refRate en fraction (ex. 0.06)
+    // minimums obligatoires
+    if(ferrMin>0){ const t=Math.min(ferrMin,reer); reer-=t; withdraws.reer+=t; addTaxable('reer',t); }
+    let criTaken=0, criRoom=Infinity; if(lifMin>0){ const t=Math.min(lifMin,cri); cri-=t; criTaken+=t; withdraws.cri+=t; addTaxable('cri',t); }
+    if(isFinite(lifMax)) criRoom=Math.max(0,lifMax-criTaken);
+
+    // brackets indexés
+    const inflF=Math.pow(1+INFL, Math.max(0,age-age0));
+    const fedB=indexBrackets(fedBase,inflF), qcB=indexBrackets(qcBase,inflF);
+    const oasTh=oasBase*inflF;
+
+    function taxFor(x, oasAmt){
+      let claw=0; if(x>oasTh && oasAmt>0) claw=Math.min(oasAmt, (x-oasTh)*oasRate);
+      return { tax: totalTaxQCFEDE(x, fedB, qcB, basicCredit), claw };
     }
 
-    // ===== Permutations (24 ordres) =====
-    const ACC = ['non','celi','reer','cri'];
-    function permutations(arr){
-      if(arr.length<=1) return [arr];
-      const out=[];
-      for(let i=0;i<arr.length;i++){
-        const rest = arr.slice(0,i).concat(arr.slice(i+1));
-        for(const p of permutations(rest)) out.push([arr[i], ...p]);
+    function tryExtraGross(g){
+      let lc={celi,reer,cri,non,nonACB,criRoomS:criRoom}, t=taxable, rem=g;
+      for(const k of order){
+        if(rem<=0) break; if(k==='cri' && lc.criRoomS<=0) continue;
+        let can=k==='celi'?lc.celi: k==='reer'?lc.reer: k==='cri'?Math.min(lc.cri,lc.criRoomS):lc.non;
+        let take=Math.min(rem,can); if(take<=0) continue;
+        if(k==='celi'){ lc.celi-=take; }
+        else if(k==='reer'){ lc.reer-=take; t+=take; }
+        else if(k==='cri'){ lc.cri-=take; lc.criRoomS-=take; t+=take; }
+        else{ const preV=lc.non, preA=lc.nonACB; const acbW=take*(preV>0?preA/preV:0); lc.nonACB=Math.max(0,preA-acbW); lc.non-=take; const gainRatio=preV>0?Math.max(0,(preV-preA)/preV):0; t+=take*gainRatio*incl; }
+        rem-=take;
       }
-      return out;
-    }
-    const ALL_ORDERS = permutations(ACC);
-
-    // ===== Simulation =====
-    let chartWithdrawals;
-
-    function calculer(orderOverride=null, scenario='durée'){
-      const age0 = +$('ageActuel').value;
-      const retireAge = +$('ageRetraite').value;
-      const infl = (+$('inflation').value||0)/100;
-      const applyRrif = $('applyRrifLif').value==='1';
-      const lifRef = ((+$('lifRefRate').value||6)/100);
-
-      const salaireActuel = +$('salaireActuel').value;
-      const baseNeedToday = (()=>{
-        if($('revenuChoix').value==='70') return salaireActuel*0.70;
-        if($('revenuChoix').value==='80') return salaireActuel*0.80;
-        return +$('revenuManuel').value||0;
-      })();
-
-      let balances = {
-        celi: +$('celiActuel').value,
-        reer: +$('reerActuel').value,
-        cri:  +$('criActuel').value,
-        non:  +$('nonActuel').value,
-        nonACB: +$('nonActuel').value
-      };
-      const contrib = {
-        celi:+$('celiCot').value, reer:+$('reerCot').value, cri:+$('criCot').value, non:+$('nonCot').value
-      };
-      const r = {
-        celi:(+$('celiRend').value||0)/100,
-        reer:(+$('reerRend').value||0)/100,
-        cri:(+$('criRend').value||0)/100,
-        non:(+$('nonRend').value||0)/100
-      };
-      const inclusion = (+$('inclusionGC').value||50)/100;
-
-      // RRQ/PSV
-      const rrq65 = +$('rrq65').value, psv65 = +$('psv65').value;
-      const ageRRQ = +$('ageRRQ').value, agePSV = +$('agePSV').value;
-      const rrqRed = (+$('rrqRedPct').value||0.6)/100;
-      const rrqBon = (+$('rrqBonPct').value||0.7)/100;
-      const oasBase = +$('oasThresholdBase').value||93454;
-      const oasRate = (+$('oasClawRate').value||15)/100;
-
-      // Brackets
-      const fedBase = parseJSONInput('fedBrackets', [[55867,0.15],[111733,0.205],[173206,0.26],[246752,0.29],[Infinity,0.33]]);
-      const qcBase  = parseJSONInput('qcBrackets',  [[51780,0.145],[103545,0.20],[126000,0.24],[Infinity,0.2575]]);
-      const basicCredit = +$('basicCredit').value||0;
-
-      // Evènements
-      const events=[];
-      document.querySelectorAll('.evt-age').forEach((a,i)=>{
-        const age = parseInt(a.value);
-        const m = parseFloat(document.querySelectorAll('.evt-montant')[i].value);
-        if(!isNaN(age) && !isNaN(m)) events.push({age, montant:m});
-      });
-      const depositSplit = splitDeposits();
-
-      // RRQ/PSV helpers
-      function rrqAnnualAtAge(age){
-        let base = rrq65*12, adj = 1;
-        if(ageRRQ<65){ adj = 1 - rrqRed * ((65-ageRRQ)*12); }
-        else if(ageRRQ>65){ adj = 1 + rrqBon * ((ageRRQ-65)*12); }
-        if(age < ageRRQ) return 0;
-        return base * adj * Math.pow(1+infl, Math.max(0, age - 65));
-      }
-      function oasAnnualAtAge(age){
-        if(age < agePSV) return 0;
-        let annual = psv65*12 * Math.pow(1+infl, Math.max(0, age - 65));
-        if(age >= 75) annual *= 1.10;
-        return annual;
-      }
-
-      // Année
-      function yearStep(state, age, order){
-        let {celi,reer,cri,non,nonACB,totalTax,depenseNetCum,withdrawsByAcc} = state;
-
-        // contributions avant retraite
-        if(age < retireAge){
-          celi += contrib.celi; reer += contrib.reer; cri += contrib.cri; non += contrib.non; nonACB += contrib.non;
-        }
-        // rendements (solde début pour min/max juste après)
-        celi *= (1+r.celi); reer*=(1+r.reer); cri*=(1+r.cri); non*=(1+r.non);
-
-        // évènements
-        const posEvents = events.filter(e=>e.age===age && e.montant>0).reduce((s,e)=>s+e.montant,0);
-        const negEvents = events.filter(e=>e.age===age && e.montant<0).reduce((s,e)=>s+e.montant,0);
-        if(posEvents>0){
-          celi += posEvents*depositSplit.celi;
-          reer += posEvents*depositSplit.reer;
-          cri  += posEvents*depositSplit.cri;
-          non  += posEvents*depositSplit.non; nonACB += posEvents*depositSplit.non;
-        }
-
-        // pensions
-        const rrq = rrqAnnualAtAge(age);
-        let oas = oasAnnualAtAge(age);
-
-        // besoin de dépense net (valeur future)
-        const baseNeedToday = (()=>{
-          const sal = +$('salaireActuel').value;
-          if($('revenuChoix').value==='70') return sal*0.70;
-          if($('revenuChoix').value==='80') return sal*0.80;
-          return +$('revenuManuel').value||0;
-        })();
-        const need = (age>=retireAge) ? (baseNeedToday * Math.pow(1+infl, age - +$('ageActuel').value)) : 0;
-        const expenses = need + Math.abs(negEvents);
-
-        // FERR/FRV min & max (basés sur solde d'après rendement, approximation)
-        let ferrMin = 0, lifMin = 0, lifMax = Infinity;
-        if(applyRrif && age>=71){
-          ferrMin = rrifMinPct(age) * reer;
-          lifMin  = rrifMinPct(age) * cri;
-          lifMax  = lifMaxPct(age, lifRef) * cri; // plafond total
-        }
-
-        // Gestion des retraits & fiscalité
-        let taxBaseIncome = rrq + oas; // revenu imposable (base)
-        function addTaxable(from, amt, preNON, preACB){
-          if(from==='reer' || from==='cri'){ taxBaseIncome += amt; }
-          else if(from==='non'){
-            const pre = preNON;
-            const gainRatio = pre>0 ? Math.max(0, (pre - preACB)/pre) : 0;
-            const realized = amt * gainRatio * ((+$('inclusionGC').value||50)/100);
-            taxBaseIncome += realized;
-          }
-        }
-
-        // Retirer d'abord les minimums obligatoires
-        let takenCRI = 0;
-        if(ferrMin>0){
-          const pre = {non, nonACB};
-          const take = Math.min(ferrMin, reer);
-          reer -= take; addTaxable('reer', take);
-          withdrawsByAcc.reer = (withdrawsByAcc.reer||0) + take;
-        }
-        if(lifMin>0){
-          const take = Math.min(lifMin, cri);
-          cri -= take; takenCRI += take; addTaxable('cri', take);
-          withdrawsByAcc.cri = (withdrawsByAcc.cri||0) + take;
-        }
-        // Cap disponible restant sur CRI pour retraits additionnels (max)
-        let criRoom = (isFinite(lifMax) ? Math.max(0, lifMax - takenCRI) : Infinity);
-
-        // Fonction de retrait avec limite FRV
-        function take(from, amt){
-          let takeAmt = 0;
-          if(from==='celi'){ takeAmt = Math.min(amt, celi); celi -= takeAmt; }
-          else if(from==='reer'){ takeAmt = Math.min(amt, reer); reer -= takeAmt; addTaxable('reer', takeAmt); }
-          else if(from==='cri'){
-            const cap = Math.min(amt, cri, criRoom);
-            takeAmt = cap; cri -= takeAmt; criRoom = Math.max(0, criRoom - takeAmt); addTaxable('cri', takeAmt);
-          } else {
-            // non-enregistré, gérer ACB
-            const preVal = non, preACB = nonACB;
-            takeAmt = Math.min(amt, non);
-            if(takeAmt>0){
-              const acbW = takeAmt * (preVal>0 ? (preACB/preVal) : 0);
-              nonACB = Math.max(0, preACB - acbW);
-              non -= takeAmt;
-              addTaxable('non', takeAmt, preVal, preACB);
-            }
-          }
-          withdrawsByAcc[from] = (withdrawsByAcc[from]||0) + takeAmt;
-          return takeAmt;
-        }
-
-        // On doit maintenant financer "expenses" net après impôt.
-        // On estime par bissection le brut supplémentaire requis (en plus des min FERR/FRV déjà pris).
-        // Pour la recherche, on respecte la limite CRI.
-        const yearsSinceNow = (age - +$('ageActuel').value);
-        const bInfl = Math.pow(1+infl, Math.max(0, yearsSinceNow));
-        const fedB = indexBrackets(parseJSONInput('fedBrackets', []), bInfl);
-        const qcB  = indexBrackets(parseJSONInput('qcBrackets',  []), bInfl);
-        const oasThreshold = (+$('oasThresholdBase').value||93454) * bInfl;
-
-        function taxFor(taxable, oasAmt){
-          // OAS clawback
-          let oasClaw = 0;
-          if(taxable > oasThreshold && oasAmt>0){
-            oasClaw = Math.min(oasAmt, (taxable - oasThreshold) * ((+$('oasClawRate').value||15)/100));
-          }
-          const tax = taxFromBrackets(taxable, fedB, qcB, (+$('basicCredit').value||0));
-          return {tax, oasClaw};
-        }
-
-        function simulateExtraGross(g){
-          // snapshot
-          let lc={celi, reer, cri, non, nonACB, criRoomS:criRoom};
-          let taxable = taxBaseIncome;
-          let remaining = g;
-          for(const k of (order||ACC)){
-            if(remaining<=0) break;
-            if(k==='cri' && lc.criRoomS<=0) continue;
-            let can = (k==='celi'?lc.celi: k==='reer'?lc.reer: k==='cri'?Math.min(lc.cri, lc.criRoomS):lc.non);
-            let take = Math.min(remaining, can);
-            if(take<=0) continue;
-            if(k==='celi'){ lc.celi -= take; }
-            else if(k==='reer'){ lc.reer -= take; taxable += take; }
-            else if(k==='cri'){ lc.cri -= take; lc.criRoomS -= take; taxable += take; }
-            else {
-              const preVal = lc.non, preACB = lc.nonACB;
-              const acbW = take * (preVal>0 ? (preACB/preVal) : 0);
-              lc.nonACB = Math.max(0, preACB - acbW); lc.non -= take;
-              const gainRatio = preVal>0 ? Math.max(0, (preVal - preACB)/preVal) : 0;
-              taxable += take * gainRatio * ((+$('inclusionGC').value||50)/100);
-            }
-            remaining -= take;
-          }
-          const {tax, oasClaw} = taxFor(taxable, oas);
-          const net = rrq + (oas - oasClaw) + (withdrawsByAcc.reer||0) + (withdrawsByAcc.cri||0) + g + (withdrawsByAcc.celi||0) + (withdrawsByAcc.non||0) - tax;
-          return {net, tax};
-        }
-
-        let lo=0, hi=(celi+reer+cri+non)*1.2 + expenses + 1, best={net:rrq+oas, tax:0};
-        for(let it=0; it<26; it++){
-          const mid=(lo+hi)/2;
-          const sim = simulateExtraGross(mid);
-          if(sim.net < expenses){ lo=mid; best=sim; } else { hi=mid; best=sim; }
-        }
-
-        // Appliquer les retraits supplémentaires (moyenne lo/hi)
-        let addGross = (lo+hi)/2, remaining = addGross;
-        for(const k of (order||ACC)){
-          if(remaining<=0) break;
-          if(k==='cri' && criRoom<=0) continue;
-          const can = (k==='celi'?celi: k==='reer'?reer: k==='cri'?Math.min(cri, criRoom):non);
-          const got = Math.min(remaining, can);
-          if(got<=0) continue;
-          take(k, got);
-          remaining -= got;
-        }
-
-        // Calcul final impôt de l'année
-        let taxableFinal = taxBaseIncome;
-        // taxBaseIncome déjà accumulé (min + extra), recalculer OAS clawback:
-        const {tax:taxYear, oasClaw} = taxFor(taxableFinal, oas);
-        const netOAS = oas - oasClaw;
-
-        // Net dépense financée (si retraité)
-        const depenseNette = (age>=retireAge) ? (rrq + netOAS + (withdrawsByAcc.celi||0) + (withdrawsByAcc.reer||0) + (withdrawsByAcc.cri||0) + (withdrawsByAcc.non||0) - taxYear) : 0;
-
-        totalTax += taxYear; depenseNetCum += depenseNette;
-
-        const totalActifs = celi+reer+cri+non;
-        const revenus = rrq + netOAS + Math.max(0, posEvents);
-        const depenses = (age>=retireAge ? (baseNeedToday * Math.pow(1+infl, age - +$('ageActuel').value)) : 0) + Math.abs(Math.min(0, negEvents));
-
-        return {
-          state: {celi,reer,cri,non,nonACB,totalTax,depenseNetCum,withdrawsByAcc},
-          row: {age, celi, reer, cri, non, revenus, depenses,
-                retraitsBruts: (withdrawsByAcc.celi||0)+(withdrawsByAcc.reer||0)+(withdrawsByAcc.cri||0)+(withdrawsByAcc.non||0),
-                impots: taxYear, totalActifs}
-        };
-      }
-
-      // Boucle âge..100 (toujours jusqu'à 100 ans)
-      const endAge = 100;
-      const order = orderOverride || ['non','celi','reer','cri'];
-      let s = { ...balances, totalTax:0, depenseNetCum:0, withdrawsByAcc:{} };
-      const rows=[];
-      const withdrawalsPerYear = [];
-      for(let age=age0; age<=endAge; age++){
-        s.withdrawsByAcc = {};
-        const {state, row} = yearStep(s, age, order);
-        s = state; rows.push(row);
-        withdrawalsPerYear.push({age,
-          celi: s.withdrawsByAcc.celi||0,
-          reer: s.withdrawsByAcc.reer||0,
-          cri:  s.withdrawsByAcc.cri||0,
-          non:  s.withdrawsByAcc.non||0
-        });
-      }
-
-      // Sorties
-      const last = rows[rows.length-1];
-      $('totalRestant').textContent = money(last.totalActifs||0);
-      $('totalImpot').textContent = money(s.totalTax||0);
-      $('depensesCumulees').textContent = money(s.depenseNetCum||0);
-
-      // Tableau
-      const tbody = document.querySelector('#tableauAnnuel tbody');
-      tbody.innerHTML='';
-      for(const r of rows){
-        const tr=document.createElement('tr');
-        tr.innerHTML = `
-          <td>${r.age}</td>
-          <td>${Math.round(r.celi).toLocaleString('fr-CA')}</td>
-          <td>${Math.round(r.reer).toLocaleString('fr-CA')}</td>
-          <td>${Math.round(r.cri).toLocaleString('fr-CA')}</td>
-          <td>${Math.round(r.non).toLocaleString('fr-CA')}</td>
-          <td>${money(r.revenus)}</td>
-          <td>${money(r.depenses)}</td>
-          <td>${money(r.retraitsBruts)}</td>
-          <td>${money(r.impots)}</td>
-          <td>${Math.round(r.totalActifs).toLocaleString('fr-CA')}</td>`;
-        tbody.appendChild(tr);
-      }
-
-      // Graphique empilé des retraits
-      const labels = withdrawalsPerYear.map(r=>r.age);
-      const ds = [
-        {label:'CELI', data:withdrawalsPerYear.map(r=>Math.round(r.celi))},
-        {label:'REER (FERR dès 71)', data:withdrawalsPerYear.map(r=>Math.round(r.reer))},
-        {label:'CRI (FRV dès 71)',  data:withdrawalsPerYear.map(r=>Math.round(r.cri))},
-        {label:'Non-enreg.', data:withdrawalsPerYear.map(r=>Math.round(r.non))}
-      ];
-      if(chartWithdrawals) chartWithdrawals.destroy();
-      chartWithdrawals = new Chart(document.getElementById('graphiqueRetraits'), {
-        type:'bar',
-        data:{ labels, datasets: ds },
-        options:{
-          responsive:true,
-          interaction:{mode:'index',intersect:false},
-          scales:{ x:{ stacked:true }, y:{ stacked:true, beginAtZero:true } },
-          plugins:{ legend:{ position:'top' } }
-        }
-      });
-
-      return {rows, totals:{tax:s.totalTax, assets:last.totalActifs}};
+      const {tax,claw}=taxFor(t,oas); const net=rrq+(oas-claw)+pens+(withdraws.reer+withdraws.cri+withdraws.celi+withdraws.non)+g-tax;
+      return {net,tax};
     }
 
-    // ===== Scénarios (24 ordres) =====
-    function runScenario(kind){
-      function scoreForOrder(order){
-        const sim = calculer(order, kind);
-        if(kind==='impot') return {order, score:-sim.totals.tax, sim};
-        if(kind==='durée'){
-          const retireAge = +$('ageRetraite').value;
-          const years = sim.rows.filter(r=>r.age>=retireAge && r.totalActifs>100).length;
-          return {order, score:years, sim};
-        }
-        // espérance : maximiser le facteur de dépenses supportable
-        const baseNeedToday = (()=>{
-          const sal = +$('salaireActuel').value;
-          if($('revenuChoix').value==='70') return sal*0.70;
-          if($('revenuChoix').value==='80') return sal*0.80;
-          return +$('revenuManuel').value||0;
-        })();
-        const targetAge = +$('esperanceVie').value;
-        let lo=0.1, hi=3.0, best=1.0;
-        for(let it=0; it<20; it++){
-          const mid=(lo+hi)/2;
-          const savedChoice = $('revenuChoix').value, savedManual = $('revenuManuel').value;
-          $('revenuChoix').value='manuel'; $('revenuManuel').value = Math.max(0, baseNeedToday*mid);
-          const simMid = calculer(order, kind);
-          $('revenuChoix').value=savedChoice; $('revenuManuel').value=savedManual;
-          const at = simMid.rows.find(r=>r.age===targetAge);
-          const assetsAt = at ? at.totalActifs : 0;
-          if(assetsAt>1000){ lo=mid; best=mid; } else { hi=mid; }
-        }
-        return {order, score:best};
+    // bisection pour financer expenses nettes
+    const baseNet = rrq+oas+pens+(withdraws.reer+withdraws.cri+withdraws.celi+withdraws.non);
+    let lo=0, hi=(celi+reer+cri+non)*1.2+expenses+1, add=0, best={net:baseNet,tax:0};
+    if(age>=retireAge){
+      for(let i=0;i<24;i++){ const mid=(lo+hi)/2; const s=tryExtraGross(mid); if(s.net<expenses){ lo=mid; best=s; } else { hi=mid; best=s; } }
+      add=(lo+hi)/2;
+      // appliquer retraits
+      let rem=add;
+      for(const k of order){
+        if(rem<=0) break; if(k==='cri' && criRoom<=0) continue;
+        const can=k==='celi'?celi: k==='reer'?reer: k==='cri'?Math.min(cri,criRoom):non;
+        const t=Math.min(rem,can); if(t<=0) continue;
+        if(k==='celi'){ celi-=t; } else if(k==='reer'){ reer-=t; addTaxable('reer',t); }
+        else if(k==='cri'){ const tk=Math.min(t,criRoom); cri-=tk; criRoom-=tk; addTaxable('cri',tk); }
+        else { const preV=non, preA=nonACB; const acbW=t*(preV>0?preA/preV:0); nonACB=Math.max(0,preA-acbW); non-=t; addTaxable('non',t,preV,preA); }
+        withdraws[k]+=t; rem-=t;
       }
-
-      const results = permutations(['non','celi','reer','cri']).map(o=>scoreForOrder(o))
-                        .sort((a,b)=>b.score-a.score)
-                        .slice(0,3);
-      const fmt = (ord)=>ord.map(x=>x.toUpperCase()).join(' → ');
-      let html = '<strong>Meilleurs ordres (top 3):</strong><br>';
-      results.forEach((r,i)=>{
-        if(kind==='espvie') html += `${i+1}. ${fmt(r.order)} — facteur de dépenses ≈ ${(r.score*100).toFixed(1)}%<br>`;
-        else if(kind==='impot') html += `${i+1}. ${fmt(r.order)} — impôt cumulé (plus bas)<br>`;
-        else html += `${i+1}. ${fmt(r.order)} — années financées (plus long)<br>`;
-      });
-      $('bestOrders').innerHTML = html;
-      // Affiche la #1
-      calculer(results[0].order, kind);
     }
 
-    // Init
-    calculer();
-  </script>
+    // impôts de l’année (final)
+    const {tax:taxYear, claw} = taxFor(taxable,oas); const netOAS=oas-claw;
+    const netIncome = age>=retireAge ? (rrq+netOAS+pens+withdraws.celi+withdraws.reer+withdraws.cri+withdraws.non-taxYear) : 0;
+    tax += taxYear; deps += Math.max(0,netIncome);
+
+    const total=celi+reer+cri+non;
+    if(age>=retireAge && total<=100 && epuisementAge==='—') epuisementAge=age;
+
+    rows.push({age,celi,reer,cri,non,total,impot:taxYear});
+    rowsInc.push({age, brut: (age>=retireAge? (baseNeedToday*Math.pow(1+INFL,age-age0)) : 0), net: netIncome, non:withdraws.non, celi:withdraws.celi, reer:withdraws.reer, cri:withdraws.cri, pension:pens, psv:netOAS, rrq:rrq});
+    S={celi,reer,cri,non,nonACB,tax,deps};
+  }
+
+  for(let a=age0;a<=endAge;a++) year(a);
+
+  // scores scénarios
+  let score=0;
+  if(targetKind==='impot') score = -S.tax;
+  else if(targetKind==='durée'){ const yrs=rows.filter(r=>r.age>=retireAge && r.total>100).length; score=yrs; }
+  else { // espérance : facteur x du besoin
+    const target=+$('esperanceVie').value; const at=rows.find(r=>r.age===target); score = at ? (at.total>1000?1:0) : 0;
+  }
+  return {rows, rowsInc, totals:{tax:S.tax, assets:rows.at(-1).total, deps:S.deps}, epuisement:epuisementAge, score};
+}
+
+// run scenario search
+let chartA=null, chartB=null, lastBest={durée:null, impot:null, espvie:null};
+function runScenario(kind){
+  $('loader').style.display='grid';
+  setTimeout(()=>{
+    const results=ORDERS.map(o=>({o, ...simulate(o,kind)})).sort((a,b)=>b.score-a.score);
+    lastBest[kind]=results[0];
+    // maj affichage selon select
+    $('scenarioView').value=kind;
+    render(results[0]);
+    // top-3 text
+    const top=results.slice(0,3).map((r,i)=>`${i+1}. ${r.o.map(x=>x.toUpperCase()).join(' → ')}`).join(' | ');
+    $('bestOrders').innerHTML = `<b>Meilleurs ordres (${kind})</b> : ${top}`;
+    $('loader').style.display='none';
+  }, 50);
+}
+
+function render(best){
+  const {rows, rowsInc, totals, epuisement}=best;
+  // KPIs
+  $('kpiRestant').textContent = money(totals.assets);
+  $('kpiEpuisement').textContent = (epuisement==='—'?'Jamais':epuisement);
+  $('kpiImpot').textContent = money(totals.tax);
+  $('kpiDepenses').textContent = money(totals.deps);
+
+  // Table soldes
+  const tb1=$('tableSoldes').querySelector('tbody'); tb1.innerHTML='';
+  rows.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.age}</td><td>${Math.round(r.celi).toLocaleString('fr-CA')}</td><td>${Math.round(r.reer).toLocaleString('fr-CA')}</td><td>${Math.round(r.cri).toLocaleString('fr-CA')}</td><td>${Math.round(r.non).toLocaleString('fr-CA')}</td><td>${Math.round(r.total).toLocaleString('fr-CA')}</td><td>${money(r.impot)}</td>`;
+    tb1.appendChild(tr);
+  });
+
+  // Table revenu
+  const tb2=$('tableRevenu').querySelector('tbody'); tb2.innerHTML='';
+  rowsInc.forEach(r=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td>${r.age}</td><td>${money(r.brut)}</td><td>${money(r.net)}</td><td>${money(r.non)}</td><td>${money(r.celi)}</td><td>${money(r.reer)}</td><td>${money(r.cri)}</td><td>${money(r.pension)}</td><td>${money(r.psv)}</td><td>${money(r.rrq)}</td>`;
+    tb2.appendChild(tr);
+  });
+
+  // Graph comptes
+  const labels=rows.map(r=>r.age);
+  const dsA=[
+    {label:'Total',data:rows.map(r=>Math.round(r.total))},
+    {label:'CELI',data:rows.map(r=>Math.round(r.celi))},
+    {label:'REER',data:rows.map(r=>Math.round(r.reer))},
+    {label:'CRI', data:rows.map(r=>Math.round(r.cri))},
+    {label:'Non-enreg.', data:rows.map(r=>Math.round(r.non))}
+  ];
+  if(chartA) chartA.destroy();
+  chartA=new Chart($('chartComptes'),{type:'line',data:{labels,datasets:dsA},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top'}}}});
+
+  // Graph retraits
+  const dsB=[
+    {label:'N-E',data:rowsInc.map(r=>Math.round(r.non))},
+    {label:'CELI',data:rowsInc.map(r=>Math.round(r.celi))},
+    {label:'REER',data:rowsInc.map(r=>Math.round(r.reer))},
+    {label:'CRI',data:rowsInc.map(r=>Math.round(r.cri))}
+  ];
+  if(chartB) chartB.destroy();
+  chartB=new Chart($('chartRetraits'),{type:'bar',data:{labels,datasets:dsB},options:{responsive:true,scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}},plugins:{legend:{position:'top'}}}});
+}
+
+// init + affichage scénario choisi
+$('scenarioView').addEventListener('change',()=>{
+  const k=$('scenarioView').value; if(lastBest[k]) render(lastBest[k]); else runScenario(k);
+});
+
+// auto-calcul initial
+runScenario('durée');
+</script>
 </body>
 </html>
