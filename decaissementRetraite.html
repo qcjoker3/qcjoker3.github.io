@@ -152,19 +152,17 @@
       </div>
     </div>
 
-    <!-- Scénarios -->
-    <div class="card">
-      <h3>Scénarios de décaissement</h3>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn-primary scenario" data-s="durée">Maximiser durée du capital</button>
-        <button class="btn-primary scenario" data-s="impot">Minimiser l’impôt total</button>
-        <button class="btn-primary scenario" data-s="espvie">Maximiser les retraits</button>
-      </div>
-      <p id="bestOrders" class="helper" style="margin-top:10px"></p>
-    </div>
-
     <!-- Résultats & Graphique -->
     <div class="card-grid">
+      <div class="card">
+        <h3>Scénarios de décaissement</h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn-primary scenario" data-s="durée">Maximiser durée du capital</button>
+          <button class="btn-primary scenario" data-s="impot">Minimiser l’impôt total</button>
+          <button class="btn-primary scenario" data-s="espvie">Maximiser les retraits</button>
+        </div>
+        <p id="bestOrders" class="helper" style="margin-top:10px"></p>
+      </div>
       <div class="card">
         <h3>Indicateurs</h3>
         <div class="results-dashboard">
@@ -173,11 +171,12 @@
           <div class="result-box"><span class="result-label">Dépenses financées</span><span class="result-value" id="depensesCumulees">$0</span></div>
         </div>
       </div>
-      <div class="card">
-        <h3>Valeurs des comptes</h3>
-        <div class="chart-container">
-          <canvas id="graphiqueRetraits" height="380"></canvas>
-        </div>
+    </div>
+    
+    <div class="card">
+      <h3>Valeurs des comptes</h3>
+      <div class="chart-container">
+        <canvas id="graphiqueRetraits" height="380"></canvas>
       </div>
     </div>
 
