@@ -1,402 +1,172 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Finoza - Planification financière</title>
-<link rel="stylesheet" href="style.css" />
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculatrice Retraite</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin:20px; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .card {
+      border: 1px solid #ccc;
+      padding: 12px;
+      border-radius: 8px;
+      background: #f9f9f9;
+    }
+    .row { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+    label { flex:1 0 120px; }
+    input { flex:1 0 100px; padding:4px; }
+    .btn { padding:8px 14px; border:none; border-radius:6px; cursor:pointer; background:#eee; }
+    .btn:hover { background:#ddd; }
+    .scenario-btn.active { background:#007bff; color:white; }
+    table { width:100%; border-collapse:collapse; margin-top:12px; }
+    th, td { border:1px solid #ccc; padding:6px; text-align:center; }
+    th { background:#f0f0f0; }
+    canvas { max-width:100%; height:300px; }
+    @media(max-width:900px){ .grid{ grid-template-columns:repeat(2,1fr);} }
+    @media(max-width:600px){ .grid{ grid-template-columns:1fr;} }
+  </style>
 </head>
 <body>
-<header>
-  <div class="bar">
-    <h1>Finoza</h1>
-    <div class="row noprint">
-      <button class="btn" id="btnRunDuree">Optimiser: Durée</button>
-      <button class="btn" id="btnRunImpot">Optimiser: Impôt</button>
-      <button class="btn" id="btnRunEsp">Optimiser: Espérance</button>
-      <button class="btn btn-secondary" onclick="window.print()">Imprimer</button>
-    </div>
-  </div>
-</header>
+  <h1>Calculatrice d'Épargne et Décaissement Retraite</h1>
 
-<div class="container">
-  <!-- Blocs d’intrants -->
+  <!-- 6 cartes en 2x3 -->
   <div class="grid">
-    <div class="card">
-      <h3>1) Profil</h3>
-      <div class="fg"><label>Âge actuel</label><input id="ageActuel" type="number" value="40"></div>
-      <div class="fg"><label>Âge retraite</label><input id="ageRetraite" type="number" value="65"></div>
-      <div class="fg"><label>Salaire actuel ($)</label><input id="salaireActuel" type="number" value="80000"></div>
-      <div class="fg"><label>Revenu désiré (base aujourd’hui)</label>
-        <select id="revenuChoix"><option value="70" selected>70% du salaire</option><option value="80">80% du salaire</option><option value="manuel">Montant manuel</option></select>
-      </div>
-      <div class="fg" id="revenuManuelWrap" style="display:none"><label>Montant manuel ($)</label><input id="revenuManuel" type="number" placeholder="ex. 55 000"></div>
-      <div class="fg"><label>Espérance de vie</label>
-        <select id="esperanceVie"><option value="70">Courte (70)</option><option value="85" selected>Moyenne (85)</option><option value="100">Longue (100)</option></select>
-      </div>
-      <small>Inflation fixe appliquée : 2%/an (cachée)</small>
+    <div class="card"><h3>Profil</h3>
+      <div class="row"><label>Âge actuel :</label><input type="number" id="age" value="40"></div>
+      <div class="row"><label>Âge retraite :</label><input type="number" id="ageRet" value="65"></div>
+      <div class="row"><label>Espérance de vie :</label><input type="number" id="espVie" value="90"></div>
     </div>
-
-    <div class="card">
-      <h3>2) Soldes actuels</h3>
-      <div class="fg"><label>CELI</label><input id="celiActuel" type="number" value="50000"></div>
-      <div class="fg"><label>REER</label><input id="reerActuel" type="number" value="120000"></div>
-      <div class="fg"><label>CRI</label><input id="criActuel" type="number" value="60000"></div>
-      <div class="fg"><label>Non-enregistré</label><input id="nonActuel" type="number" value="40000"></div>
+    <div class="card"><h3>Soldes actuels</h3>
+      <div class="row"><label>REER :</label><input type="number" id="soldeReer" value="50000"></div>
+      <div class="row"><label>CELI :</label><input type="number" id="soldeCeli" value="20000"></div>
+      <div class="row"><label>Non enregistré :</label><input type="number" id="soldeNonReg" value="10000"></div>
     </div>
-
-    <div class="card">
-      <h3>3) Cotisations annuelles</h3>
-      <div class="fg"><label>CELI</label><input id="celiCot" type="number" value="6000"></div>
-      <div class="fg"><label>REER</label><input id="reerCot" type="number" value="10000"></div>
-      <div class="fg"><label>CRI</label><input id="criCot" type="number" value="5000"></div>
-      <div class="fg"><label>Non-enreg.</label><input id="nonCot" type="number" value="0"></div>
+    <div class="card"><h3>Cotisations annuelles</h3>
+      <div class="row"><label>REER :</label><input type="number" id="cotReer" value="6000"></div>
+      <div class="row"><label>CELI :</label><input type="number" id="cotCeli" value="6000"></div>
+      <div class="row"><label>Non enregistré :</label><input type="number" id="cotNonReg" value="2000"></div>
     </div>
-
-    <div class="card">
-      <h3>4) Rendements (%)</h3>
-      <div class="fg"><label>CELI</label><input id="celiRend" type="number" value="5"></div>
-      <div class="fg"><label>REER</label><input id="reerRend" type="number" value="6"></div>
-      <div class="fg"><label>CRI</label><input id="criRend" type="number" value="5.5"></div>
-      <div class="fg"><label>Non-enreg.</label><input id="nonRend" type="number" value="4"></div>
-      <div class="fg"><label>Inclusion gains en capital (%)</label><input id="inclusionGC" type="number" value="50"></div>
+    <div class="card"><h3>Rendements</h3>
+      <div class="row"><label>Rendement annuel (%) :</label><input type="number" id="tauxRend" value="5"></div>
+      <div class="row"><label>Inflation (%) :</label><input type="number" id="inflation" value="2"></div>
     </div>
-
-    <div class="card">
-      <h3>5) RRQ & PSV</h3>
-      <div class="fg"><label>RRQ à 65 ans (mensuel)</label><input id="rrq65" type="number" value="1000"></div>
-      <div class="fg"><label>PSV à 65 ans (mensuel)</label><input id="psv65" type="number" value="800"></div>
-      <div class="fg"><label>Âge début RRQ</label><input id="ageRRQ" type="number" value="65"></div>
-      <div class="fg"><label>Âge début PSV</label><input id="agePSV" type="number" value="65"></div>
-      <details style="margin-top:8px">
-        <summary>Options avancées (RRQ/PSV/FRV)</summary>
-        <div class="row">
-          <div class="fg"><label>RRQ: réduction/mois &lt;65 (%)</label><input id="rrqRedPct" type="number" value="0.6"></div>
-          <div class="fg"><label>RRQ: bonification/mois &gt;65 (%)</label><input id="rrqBonPct" type="number" value="0.7"></div>
-          <div class="fg"><label>PSV: seuil récupération (base $)</label><input id="oasThresholdBase" type="number" value="93454"></div>
-          <div class="fg"><label>PSV: taux récupération (%)</label><input id="oasClawRate" type="number" value="15"></div>
-          <div class="fg"><label>Appliquer FERR/FRV dès 71</label><select id="applyRrifLif"><option value="1" selected>Oui</option><option value="0">Non</option></select></div>
-          <div class="fg"><label>Taux de référence FRV (%)</label><input id="lifRefRate" type="number" value="6"></div>
-        </div>
-      </details>
+    <div class="card"><h3>RRQ & PSV</h3>
+      <div class="row"><label>RRQ/mois :</label><input type="number" id="rrq" value="900"></div>
+      <div class="row"><label>PSV/mois :</label><input type="number" id="psv" value="600"></div>
     </div>
-
-    <div class="card">
-      <h3>6) Fonds de pension</h3>
-      <div class="fg"><label>Détention d’un fonds de pension ?</label>
-        <select id="hasPension"><option value="0" selected>Non</option><option value="1">Oui</option></select>
-      </div>
-      <div class="row" id="pensionWrap" style="display:none">
-        <div class="fg"><label>Salaire garanti ($/an)</label><input id="pensionAmount" type="number" value="20000"></div>
-        <div class="fg"><label>Indexation du salaire garanti (%)</label><input id="pensionInfl" type="number" value="2"></div>
-      </div>
-      <small>Si « Non », les deux champs restent masqués.</small>
+    <div class="card"><h3>Fonds de pension</h3>
+      <div class="row"><label>Rente annuelle :</label><input type="number" id="pension" value="8000"></div>
     </div>
   </div>
 
-  <div class="card">
-    <h3>Fiscalité (indexée 2%)</h3>
-    <small>JSON [[plafond, taux], …] — plafonds indexés annuellement</small>
-    <div class="row">
-      <div class="fg"><label>Fédéral 2025</label>
-        <input id="fedBrackets" value='[[55867,0.15],[111733,0.205],[173206,0.26],[246752,0.29],[Infinity,0.33]]'>
-      </div>
-      <div class="fg"><label>Québec 2025</label>
-        <input id="qcBrackets" value='[[51780,0.145],[103545,0.20],[126000,0.24],[Infinity,0.2575]]'>
-      </div>
-      <div class="fg"><label>Crédit de base combiné ($)</label><input id="basicCredit" value="0"></div>
-      <div class="fg"><label>Répartition dépôts (+) CRI/REER/CELI/Non</label><input id="splitDeposits" value="0/0/0/100"></div>
+  <!-- boutons -->
+  <div class="row" style="margin-top:16px">
+    <button class="btn" id="btnCalc">Calculer</button>
+    <div id="scenarioButtons" style="display:flex;gap:6px">
+      <button class="btn scenario-btn active" data-scenario="duree">Durée (max années)</button>
+      <button class="btn scenario-btn" data-scenario="impot">Impôt min</button>
+      <button class="btn scenario-btn" data-scenario="espvie">Espérance de vie</button>
     </div>
   </div>
 
-  <div class="card">
-    <h3>Événements financiers</h3>
-    <div id="evenementsContainer" class="row"></div>
-    <button class="btn noprint" id="ajoutEvenement" type="button">Ajouter un événement (+/−)</button>
-    <small>Ex.: Âge 55, montant −15000 (retrait) ou +20000 (héritage)</small>
+  <!-- résultats -->
+  <div id="results" style="margin-top:20px">
+    <h2>Résultats</h2>
+    <div id="tables"></div>
+    <canvas id="chart"></canvas>
   </div>
-
-  <div class="card">
-    <h3>Scénarios & affichage</h3>
-    <div class="row noprint" style="gap:6px">
-      <button class="btn" id="btnCalc">Calculer</button>
-      <select id="scenarioView">
-        <option value="durée">Afficher: Durée (max années)</option>
-        <option value="impot">Afficher: Impôt (min)</option>
-        <option value="espvie">Afficher: Espérance (pile à l’âge)</option>
-      </select>
-    </div>
-    <small id="bestOrders"></small>
-  </div>
-
-  <div class="dash">
-    <div class="kpi"><span>Capital à 100 ans / fin</span><b id="kpiRestant">$0</b></div>
-    <div class="kpi"><span>Âge d’épuisement</span><b id="kpiEpuisement">—</b></div>
-    <div class="kpi"><span>Impôt cumulé</span><b id="kpiImpot">$0</b></div>
-    <div class="kpi"><span>Coût du train de vie</span><b id="kpiDepenses">$0</b></div>
-  </div>
-
-  <div class="grid" style="margin-top:12px">
-    <div class="chart-wrap"><h3>Valeur des comptes</h3><canvas id="chartComptes" height="280"></canvas></div>
-    <div class="chart-wrap"><h3>Retraits (empilé)</h3><canvas id="chartRetraits" height="280"></canvas></div>
-  </div>
-
-  <div class="card">
-    <h3>Tableau annuel — Soldes</h3>
-    <div style="max-height:420px;overflow:auto;border-radius:12px">
-      <table id="tableSoldes"><thead><tr><th>Âge</th><th>CELI</th><th>REER</th><th>CRI</th><th>Non-enreg.</th><th>Total actifs</th><th>Impôt</th></tr></thead><tbody></tbody></table>
-    </div>
-  </div>
-
-  <div class="card">
-    <h3>Tableau — Décomposition du revenu</h3>
-    <div style="max-height:420px;overflow:auto;border-radius:12px">
-      <table id="tableRevenu"><thead>
-        <tr><th>Âge</th><th>Revenu brut désiré</th><th>Revenu net</th><th>Retrait N-E</th><th>Retrait CELI</th><th>Retrait REER</th><th>Retrait CRI</th><th>Fonds pension</th><th>PSV</th><th>RRQ</th></tr>
-      </thead><tbody></tbody></table>
-    </div>
-  </div>
-</div>
-
-<!-- Loader -->
-<div id="loader"><div id="spinner"></div></div>
 
 <script>
-const $=id=>document.getElementById(id), money=v=>'$'+Math.round(v||0).toLocaleString('fr-CA');
-const INFL=0.02; // inflation FIXE
-// UI toggles
-$('revenuChoix').addEventListener('change',e=>{ $('revenuManuelWrap').style.display=e.target.value==='manuel'?'block':'none'; });
-$('hasPension').addEventListener('change',e=>{ $('pensionWrap').style.display=e.target.value==='1'?'flex':'none'; });
-$('ajoutEvenement').addEventListener('click',()=>{
-  const box=document.createElement('div'); box.className='row'; box.style.margin='6px 0';
-  box.innerHTML=`<div class="fg"><label>Âge</label><input type="number" class="evt-age" placeholder="ex. 55"></div>
-                 <div class="fg"><label>Montant</label><input type="number" class="evt-montant" placeholder="+/- 10000"></div>`;
-  $('evenementsContainer').appendChild(box);
-});
+const $ = id=>document.getElementById(id);
+let currentScenario="duree"; 
+let chart;
 
-['btnRunDuree','btnRunImpot','btnRunEsp'].forEach(id=>{
-  $(id).addEventListener('click',()=>runScenario(id==='btnRunImpot'?'impot':id==='btnRunEsp'?'espvie':'durée'));
-});
-$('btnCalc').addEventListener('click',()=>{ const kind=$('scenarioView').value; runScenario(kind); });
-
-// helpers
-const parseJSON=(id,f)=>{ try{return JSON.parse($(id).value)}catch{ return f } };
-const splitDeposits=()=>{ const [cri,reer,celi,non]=$('splitDeposits').value.split('/').map(x=>+x||0); const s=(cri+reer+celi+non)||1; return {cri:cri/s,reer:reer/s,celi:celi/s,non:non/s} };
-const RRIF_MIN={71:.0528,72:.054,73:.0553,74:.0567,75:.0582,76:.0598,77:.0617,78:.0636,79:.0658,80:.0682,81:.0708,82:.0738,83:.0771,84:.0808,85:.0851,86:.0899,87:.0955,88:.1021,89:.1099,90:.1192,91:.1306,92:.1449,93:.1634,94:.1879};
-const rrifMin=a=>a<71?0:(a>=95?0.20:(RRIF_MIN[a]||0.20));
-const lifMaxPct=(a,ref)=> a<71?1: (1/(90-Math.min(89.999,Math.max(18,a))) + ref);
-const permutations=a=> a.length<=1?[a]: a.flatMap((v,i)=>permutations([...a.slice(0,i),...a.slice(i+1)]).map(p=>[v,...p]));
-const ORDERS=permutations(['non','celi','reer','cri']);
-function indexBrackets(br, infl){ return br.map(([cap,rate])=>[cap===Infinity?Infinity:cap*infl, rate]); }
-function piecewiseTax(amount, brackets){ let tax=0,prev=0,remain=Math.max(0,amount); for(const [cap,rate] of brackets){ const up=(cap===Infinity)?Infinity:cap; const band=Math.min(remain,up-prev); if(band>0){ tax+=band*rate; remain-=band; prev=up; } if(remain<=0) break; } return tax; }
-function totalTaxQCFEDE(taxable,fedB,qcB,credit){ return Math.max(0, piecewiseTax(taxable,fedB)+piecewiseTax(taxable,qcB)-(credit||0)); }
-
-// pensions
-function rrqAnnual(age,rrq65,ageRRQ,red,bon){ if(age<ageRRQ) return 0; let base=rrq65*12,adj=1; if(ageRRQ<65) adj=1-red*((65-ageRRQ)*12); else if(ageRRQ>65) adj=1+bon*((ageRRQ-65)*12); return base*adj*Math.pow(1+INFL, Math.max(0,age-65)); }
-function psvAnnual(age,psv65,agePSV){ if(age<agePSV) return 0; let v=psv65*12*Math.pow(1+INFL, Math.max(0,age-65)); if(age>=75) v*=1.10; return v; }
-
-// main simulation for a given withdrawal order
-function simulate(order, targetKind='durée'){
-  const age0=+$('ageActuel').value, retireAge=+$('ageRetraite').value;
-  const salaire=+$('salaireActuel').value;
-  const baseNeedToday= $('revenuChoix').value==='70'? salaire*0.70 : $('revenuChoix').value==='80'? salaire*0.80 : (+$('revenuManuel').value||0);
-  let S={ celi:+$('celiActuel').value, reer:+$('reerActuel').value, cri:+$('criActuel').value, non:+$('nonActuel').value, nonACB:+$('nonActuel').value, tax:0, deps:0 };
-  const C={ celi:+$('celiCot').value, reer:+$('reerCot').value, cri:+$('criCot').value, non:+$('nonCot').value };
-  const R={ celi:(+$('celiRend').value||0)/100, reer:(+$('reerRend').value||0)/100, cri:(+$('criRend').value||0)/100, non:(+$('nonRend').value||0)/100 };
-  const incl=(+$('inclusionGC').value||50)/100;
-  const rrq65=+$('rrq65').value, psv65=+$('psv65').value, ageRRQ=+$('ageRRQ').value, agePSV=+$('agePSV').value;
-  const rrqRed=(+$('rrqRedPct').value||0.6)/100, rrqBon=(+$('rrqBonPct').value||0.7)/100;
-  const oasBase=+$('oasThresholdBase').value||93454, oasRate=(+$('oasClawRate').value||15)/100;
-  const applyRrif=$('applyRrifLif').value==='1', lifRef=((+$('lifRefRate').value||6)/100);
-  const fedBase = parseJSON('fedBrackets', [[55867,0.15],[111733,0.205],[173206,0.26],[246752,0.29],[Infinity,0.33]]);
-  const qcBase  = parseJSON('qcBrackets',  [[51780,0.145],[103545,0.20],[126000,0.24],[Infinity,0.2575]]);
-  const basicCredit= +$('basicCredit').value||0;
-  const evts=[]; document.querySelectorAll('.evt-age').forEach((a,i)=>{ const age=+a.value, m=+document.querySelectorAll('.evt-montant')[i].value; if(!isNaN(age)&&!isNaN(m)) evts.push({age,m});});
-  const split=splitDeposits();
-  const hasPens=$('hasPension').value==='1', pensAmt=+$('pensionAmount').value||0, pensInfl=(+$('pensionInfl').value||2)/100;
-  const endAge=100;
-
-  const rows=[], rowsInc=[];
-  let epuisementAge='—';
-
-  function year(age){
-    let {celi,reer,cri,non,nonACB,tax,deps}=S; const yrs=age-age0;
-    // contributions + croissance avant retraite
-    if(age<retireAge){ celi=(celi+C.celi)*(1+R.celi); reer=(reer+C.reer)*(1+R.reer); cri=(cri+C.cri)*(1+R.cri); non=(non+C.non)*(1+R.non); nonACB += C.non; }
-    else { celi*=1+R.celi; reer*=1+R.reer; cri*=1+R.cri; non*=1+R.non; }
-    // événements
-    const pos=evts.filter(e=>e.age===age&&e.m>0).reduce((s,e)=>s+e.m,0);
-    const neg=evts.filter(e=>e.age===age&&e.m<0).reduce((s,e)=>s+e.m,0);
-    if(pos>0){ celi+=pos*split.celi; reer+=pos*split.reer; cri+=pos*split.cri; non+=pos*split.non; nonACB+=pos*split.non; }
-
-    const rrq=rrqAnnual(age,rrq65,ageRRQ,rrqRed,rrqBon);
-    let oas=psvAnnual(age,psv65,agePSV);
-    const pens = (hasPens && age>=retireAge)? (pensAmt*Math.pow(1+pensInfl, age-retireAge)) : 0;
-
-    const need = age>=retireAge ? (baseNeedToday*Math.pow(1+INFL, age-age0)) : 0;
-    const expenses = need + Math.abs(Math.min(0,neg));
-
-    // FRV/FERR règles
-    let ferrMin=0, lifMin=0, lifMax=Infinity;
-    if(applyRrif && age>=71){ ferrMin=rrifMin(age)*reer; lifMin=rrifMin(age)*cri; lifMax=lifMaxPct(age,lifRef)*cri; }
-
-    let taxable = rrq + oas + pens;
-    const withdraws={celi:0,reer:0,cri:0,non:0};
-
-    function addTaxable(src,amt,preVal,preACB){
-      if(src==='reer'||src==='cri'){ taxable+=amt; }
-      else if(src==='non'){
-        const gainRatio = preVal>0? Math.max(0,(preVal-preACB)/preVal):0;
-        taxable += amt*gainRatio*incl;
-      }
-    }
-
-    // minimums obligatoires
-    if(ferrMin>0){ const t=Math.min(ferrMin,reer); reer-=t; withdraws.reer+=t; addTaxable('reer',t); }
-    let criTaken=0, criRoom=Infinity; if(lifMin>0){ const t=Math.min(lifMin,cri); cri-=t; criTaken+=t; withdraws.cri+=t; addTaxable('cri',t); }
-    if(isFinite(lifMax)) criRoom=Math.max(0,lifMax-criTaken);
-
-    // brackets indexés
-    const inflF=Math.pow(1+INFL, Math.max(0,age-age0));
-    const fedB=indexBrackets(fedBase,inflF), qcB=indexBrackets(qcBase,inflF);
-    const oasTh=oasBase*inflF;
-
-    function taxFor(x, oasAmt){
-      let claw=0; if(x>oasTh && oasAmt>0) claw=Math.min(oasAmt, (x-oasTh)*oasRate);
-      return { tax: totalTaxQCFEDE(x, fedB, qcB, basicCredit), claw };
-    }
-
-    function tryExtraGross(g){
-      let lc={celi,reer,cri,non,nonACB,criRoomS:criRoom}, t=taxable, rem=g;
-      for(const k of order){
-        if(rem<=0) break; if(k==='cri' && lc.criRoomS<=0) continue;
-        let can=k==='celi'?lc.celi: k==='reer'?lc.reer: k==='cri'?Math.min(lc.cri,lc.criRoomS):lc.non;
-        let take=Math.min(rem,can); if(take<=0) continue;
-        if(k==='celi'){ lc.celi-=take; }
-        else if(k==='reer'){ lc.reer-=take; t+=take; }
-        else if(k==='cri'){ lc.cri-=take; lc.criRoomS-=take; t+=take; }
-        else{ const preV=lc.non, preA=lc.nonACB; const acbW=take*(preV>0?preA/preV:0); lc.nonACB=Math.max(0,preA-acbW); lc.non-=take; const gainRatio=preV>0?Math.max(0,(preV-preA)/preV):0; t+=take*gainRatio*incl; }
-        rem-=take;
-      }
-      const {tax,claw}=taxFor(t,oas); const net=rrq+(oas-claw)+pens+(withdraws.reer+withdraws.cri+withdraws.celi+withdraws.non)+g-tax;
-      return {net,tax};
-    }
-
-    // bisection pour financer expenses nettes
-    const baseNet = rrq+oas+pens+(withdraws.reer+withdraws.cri+withdraws.celi+withdraws.non);
-    let lo=0, hi=(celi+reer+cri+non)*1.2+expenses+1, add=0, best={net:baseNet,tax:0};
-    if(age>=retireAge){
-      for(let i=0;i<24;i++){ const mid=(lo+hi)/2; const s=tryExtraGross(mid); if(s.net<expenses){ lo=mid; best=s; } else { hi=mid; best=s; } }
-      add=(lo+hi)/2;
-      // appliquer retraits
-      let rem=add;
-      for(const k of order){
-        if(rem<=0) break; if(k==='cri' && criRoom<=0) continue;
-        const can=k==='celi'?celi: k==='reer'?reer: k==='cri'?Math.min(cri,criRoom):non;
-        const t=Math.min(rem,can); if(t<=0) continue;
-        if(k==='celi'){ celi-=t; } else if(k==='reer'){ reer-=t; addTaxable('reer',t); }
-        else if(k==='cri'){ const tk=Math.min(t,criRoom); cri-=tk; criRoom-=tk; addTaxable('cri',tk); }
-        else { const preV=non, preA=nonACB; const acbW=t*(preV>0?preA/preV:0); nonACB=Math.max(0,preA-acbW); non-=t; addTaxable('non',t,preV,preA); }
-        withdraws[k]+=t; rem-=t;
-      }
-    }
-
-    // impôts de l’année (final)
-    const {tax:taxYear, claw} = taxFor(taxable,oas); const netOAS=oas-claw;
-    const netIncome = age>=retireAge ? (rrq+netOAS+pens+withdraws.celi+withdraws.reer+withdraws.cri+withdraws.non-taxYear) : 0;
-    tax += taxYear; deps += Math.max(0,netIncome);
-
-    const total=celi+reer+cri+non;
-    if(age>=retireAge && total<=100 && epuisementAge==='—') epuisementAge=age;
-
-    rows.push({age,celi,reer,cri,non,total,impot:taxYear});
-    rowsInc.push({age, brut: (age>=retireAge? (baseNeedToday*Math.pow(1+INFL,age-age0)) : 0), net: netIncome, non:withdraws.non, celi:withdraws.celi, reer:withdraws.reer, cri:withdraws.cri, pension:pens, psv:netOAS, rrq:rrq});
-    S={celi,reer,cri,non,nonACB,tax,deps};
-  }
-
-  for(let a=age0;a<=endAge;a++) year(a);
-
-  // scores scénarios
-  let score=0;
-  if(targetKind==='impot') score = -S.tax;
-  else if(targetKind==='durée'){ const yrs=rows.filter(r=>r.age>=retireAge && r.total>100).length; score=yrs; }
-  else { // espérance : facteur x du besoin
-    const target=+$('esperanceVie').value; const at=rows.find(r=>r.age===target); score = at ? (at.total>1000?1:0) : 0;
-  }
-  return {rows, rowsInc, totals:{tax:S.tax, assets:rows.at(-1).total, deps:S.deps}, epuisement:epuisementAge, score};
-}
-
-// run scenario search
-let chartA=null, chartB=null, lastBest={durée:null, impot:null, espvie:null};
-function runScenario(kind){
-  $('loader').style.display='grid';
-  setTimeout(()=>{
-    const results=ORDERS.map(o=>({o, ...simulate(o,kind)})).sort((a,b)=>b.score-a.score);
-    lastBest[kind]=results[0];
-    // maj affichage selon select
-    $('scenarioView').value=kind;
-    render(results[0]);
-    // top-3 text
-    const top=results.slice(0,3).map((r,i)=>`${i+1}. ${r.o.map(x=>x.toUpperCase()).join(' → ')}`).join(' | ');
-    $('bestOrders').innerHTML = `<b>Meilleurs ordres (${kind})</b> : ${top}`;
-    $('loader').style.display='none';
-  }, 50);
-}
-
-function render(best){
-  const {rows, rowsInc, totals, epuisement}=best;
-  // KPIs
-  $('kpiRestant').textContent = money(totals.assets);
-  $('kpiEpuisement').textContent = (epuisement==='—'?'Jamais':epuisement);
-  $('kpiImpot').textContent = money(totals.tax);
-  $('kpiDepenses').textContent = money(totals.deps);
-
-  // Table soldes
-  const tb1=$('tableSoldes').querySelector('tbody'); tb1.innerHTML='';
-  rows.forEach(r=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${r.age}</td><td>${Math.round(r.celi).toLocaleString('fr-CA')}</td><td>${Math.round(r.reer).toLocaleString('fr-CA')}</td><td>${Math.round(r.cri).toLocaleString('fr-CA')}</td><td>${Math.round(r.non).toLocaleString('fr-CA')}</td><td>${Math.round(r.total).toLocaleString('fr-CA')}</td><td>${money(r.impot)}</td>`;
-    tb1.appendChild(tr);
+// écouteur boutons scénario
+document.querySelectorAll('.scenario-btn').forEach(btn=>{
+  btn.addEventListener('click', e=>{
+    currentScenario=e.target.dataset.scenario;
+    document.querySelectorAll('.scenario-btn').forEach(b=>b.classList.remove('active'));
+    e.target.classList.add('active');
+    renderScenario(currentScenario);
   });
-
-  // Table revenu
-  const tb2=$('tableRevenu').querySelector('tbody'); tb2.innerHTML='';
-  rowsInc.forEach(r=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${r.age}</td><td>${money(r.brut)}</td><td>${money(r.net)}</td><td>${money(r.non)}</td><td>${money(r.celi)}</td><td>${money(r.reer)}</td><td>${money(r.cri)}</td><td>${money(r.pension)}</td><td>${money(r.psv)}</td><td>${money(r.rrq)}</td>`;
-    tb2.appendChild(tr);
-  });
-
-  // Graph comptes
-  const labels=rows.map(r=>r.age);
-  const dsA=[
-    {label:'Total',data:rows.map(r=>Math.round(r.total))},
-    {label:'CELI',data:rows.map(r=>Math.round(r.celi))},
-    {label:'REER',data:rows.map(r=>Math.round(r.reer))},
-    {label:'CRI', data:rows.map(r=>Math.round(r.cri))},
-    {label:'Non-enreg.', data:rows.map(r=>Math.round(r.non))}
-  ];
-  if(chartA) chartA.destroy();
-  chartA=new Chart($('chartComptes'),{type:'line',data:{labels,datasets:dsA},options:{responsive:true,interaction:{mode:'index',intersect:false},plugins:{legend:{position:'top'}}}});
-
-  // Graph retraits
-  const dsB=[
-    {label:'N-E',data:rowsInc.map(r=>Math.round(r.non))},
-    {label:'CELI',data:rowsInc.map(r=>Math.round(r.celi))},
-    {label:'REER',data:rowsInc.map(r=>Math.round(r.reer))},
-    {label:'CRI',data:rowsInc.map(r=>Math.round(r.cri))}
-  ];
-  if(chartB) chartB.destroy();
-  chartB=new Chart($('chartRetraits'),{type:'bar',data:{labels,datasets:dsB},options:{responsive:true,scales:{x:{stacked:true},y:{stacked:true,beginAtZero:true}},plugins:{legend:{position:'top'}}}});
-}
-
-// init + affichage scénario choisi
-$('scenarioView').addEventListener('change',()=>{
-  const k=$('scenarioView').value; if(lastBest[k]) render(lastBest[k]); else runScenario(k);
 });
 
-// auto-calcul initial
-runScenario('durée');
+$('btnCalc').addEventListener('click', ()=>simulate());
+
+// ---- Simulation principale ----
+function simulate(){
+  const age=+$('age').value, ageRet=+$('ageRet').value, esp=+$('espVie').value;
+  const soldeReer=+$('soldeReer').value, soldeCeli=+$('soldeCeli').value, soldeNonReg=+$('soldeNonReg').value;
+  const cotReer=+$('cotReer').value, cotCeli=+$('cotCeli').value, cotNonReg=+$('cotNonReg').value;
+  const taux=(+$('tauxRend').value)/100, infl=(+$('inflation').value)/100;
+  const rrq=+$('rrq').value*12, psv=+$('psv').value*12, pension=+$('pension').value;
+
+  let years=[];
+  let balances=[];
+  let soldeR=soldeReer, soldeC=soldeCeli, soldeN=soldeNonReg;
+
+  for(let an=age; an<=esp; an++){
+    // capitalisation
+    if(an<ageRet){
+      soldeR = (soldeR+cotReer)*(1+taux);
+      soldeC = (soldeC+cotCeli)*(1+taux);
+      soldeN = (soldeN+cotNonReg)*(1+taux);
+    }else{
+      // retraits = besoins - revenus fixes
+      let revenusFixes=rrq+psv+pension;
+      let besoin=40000*Math.pow(1+infl, an-ageRet);
+      let retrait=Math.max(0, besoin-revenusFixes);
+      // retirer dans ordre REER, puis CELI, puis non-reg
+      let rest=retrait;
+      if(soldeR>0){ let r=Math.min(soldeR,rest); soldeR-=r; rest-=r; }
+      if(rest>0 && soldeC>0){ let r=Math.min(soldeC,rest); soldeC-=r; rest-=r; }
+      if(rest>0 && soldeN>0){ let r=Math.min(soldeN,rest); soldeN-=r; rest-=r; }
+      // croissance résiduelle
+      soldeR*=(1+taux);
+      soldeC*=(1+taux);
+      soldeN*=(1+taux);
+    }
+    years.push(an);
+    balances.push({an, soldeR, soldeC, soldeN});
+  }
+  window.simData={years, balances};
+  renderScenario(currentScenario);
+}
+
+// ---- Rendu selon scénario ----
+function renderScenario(scn){
+  if(!window.simData) return;
+  const {years, balances}=window.simData;
+  const tables=$('tables');
+  tables.innerHTML="";
+  let table="<table><thead><tr><th>Âge</th><th>REER</th><th>CELI</th><th>Non enregistré</th><th>Total</th></tr></thead><tbody>";
+  balances.forEach(b=>{
+    table+=`<tr><td>${b.an}</td><td>${b.soldeR.toFixed(0)}</td><td>${b.soldeC.toFixed(0)}</td><td>${b.soldeN.toFixed(0)}</td><td>${(b.soldeR+b.soldeC+b.soldeN).toFixed(0)}</td></tr>`;
+  });
+  table+="</tbody></table>";
+  tables.innerHTML=table;
+
+  // chart
+  if(chart) chart.destroy();
+  const ctx=$('chart').getContext('2d');
+  chart=new Chart(ctx,{
+    type:'line',
+    data:{
+      labels:years,
+      datasets:[
+        {label:"REER", data:balances.map(b=>b.soldeR), borderColor:"red", fill:false},
+        {label:"CELI", data:balances.map(b=>b.soldeC), borderColor:"green", fill:false},
+        {label:"Non-reg", data:balances.map(b=>b.soldeN), borderColor:"blue", fill:false}
+      ]
+    }
+  });
+}
 </script>
 </body>
 </html>
