@@ -165,44 +165,50 @@
       </div>
       <div class="card">
         <h3>Indicateurs</h3>
-        <div class="results-dashboard">
-          <div class="result-box"><span class="result-label">Total actifs</span><span class="result-value" id="totalRestant">$0</span></div>
-          <div class="result-box"><span class="result-label">Impôt cumulé</span><span class="result-value" id="totalImpot">$0</span></div>
-          <div class="result-box"><span class="result-label">Dépenses financées</span><span class="result-value" id="depensesCumulees">$0</span></div>
+        <div class="dash">
+          <div class="kpi"><span>Capital à 100 ans / fin</span><b id="kpiRestant">$0</b></div>
+          <div class="kpi"><span>Âge d’épuisement</span><b id="kpiEpuisement">—</b></div>
+          <div class="kpi"><span>Impôt cumulé</span><b id="kpiImpot">$0</b></div>
+          <div class="kpi"><span>Coût du train de vie</span><b id="kpiDepenses">$0</b></div>
         </div>
       </div>
     </div>
-    
-    <div class="card">
-      <h3>Valeurs des comptes</h3>
-      <div class="chart-container">
-        <canvas id="graphiqueRetraits" height="380"></canvas>
-      </div>
+      
+    <!-- Graphiques -->
+    <div class="grid" style="margin-top:12px">
+      <div class="chart-wrap"><h3>Valeur des comptes</h3><canvas id="chartComptes" height="280"></canvas></div>
+      <div class="chart-wrap"><h3>Retraits (empilé)</h3><canvas id="chartRetraits" height="280"></canvas></div>
     </div>
 
+    <!-- Tableau Soldes -->
     <div class="card">
-      <h3>Tableau annuel</h3>
+      <h3>Tableau annuel — Soldes</h3>
       <div style="max-height:420px;overflow:auto;border-radius:12px">
-        <table id="tableauAnnuel">
+        <table id="tableSoldes">
+          <colgroup>
+            <col span="7" style="width:14.28%">
+          </colgroup>
+          <thead><tr><th>Âge</th><th>CELI</th><th>REER</th><th>CRI</th><th>Non-enreg.</th><th>Total actifs</th><th>Impôt</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  
+    <!-- Tableau Revenu -->
+    <div class="card">
+      <h3>Tableau — Décomposition du revenu</h3>
+      <div style="max-height:420px;overflow:auto;border-radius:12px">
+        <table id="tableRevenu">
+          <colgroup>
+            <col span="10" style="width:10%">
+          </colgroup>
           <thead>
-            <tr>
-              <th>Âge</th>
-              <th>CELI</th>
-              <th>REER</th>
-              <th>CRI</th>
-              <th>Non-enreg.</th>
-              <th>Revenus (RRQ+PSV+évén.+)</th>
-              <th>Dépenses (besoin + évén.-)</th>
-              <th>Retraits bruts</th>
-              <th>Impôt</th>
-              <th>Total actifs</th>
-            </tr>
+            <tr><th>Âge</th><th>Revenu brut désiré</th><th>Revenu net</th><th>Retrait N-E</th><th>Retrait CELI</th><th>Retrait REER</th><th>Retrait CRI</th><th>Fonds pension</th><th>PSV</th><th>RRQ</th></tr>
           </thead>
           <tbody></tbody>
         </table>
       </div>
     </div>
-
   </div>
 
   <script>
