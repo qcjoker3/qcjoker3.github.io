@@ -698,7 +698,7 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
 
         if (chartTrex) chartTrex.destroy();
 
-        chartTrex = new Chart(ctx, { type: 'bar', data: { labels: ['Avec Frais', 'Sans Frais (Potentiel)'], datasets: [{ label: 'Valeur finale', data: [capitalAvecFrais, capitalSansFrais], backgroundColor: ['#16a34a', '#86efac'] }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) + ' $' } } } } });
+        chartTrex = new Chart(ctx, { type: 'bar', data: { labels: ['Avec Frais', 'Sans Frais'], datasets: [{ label: 'Valeur finale', data: [capitalAvecFrais, capitalSansFrais], backgroundColor: ['#16a34a', '#86efac'] }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) + ' $' } } } } });
 
     });
 
