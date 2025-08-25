@@ -105,6 +105,18 @@
           </div>
         </details>
       </div>
+
+      <!-- Bloc 6: Fonds de pension -->
+      <div class="card">
+        <h3>Fonds de pension</h3>
+        <div class="fg"><label>Détention d’un fonds de pension ?</label>
+          <select id="hasPension"><option value="0" selected>Non</option><option value="1">Oui</option></select>
+        </div>
+        <div class="row" id="pensionWrap" style="display:none">
+          <div class="fg"><label>Salaire garanti ($/an)</label><input id="pensionAmount" type="number" value="20000"></div>
+          <div class="fg"><label>Indexation du salaire garanti (%)</label><input id="pensionInfl" type="number" value="2"></div>
+        </div>
+      </div>
     </div>
 
     <!-- Fiscalité -->
