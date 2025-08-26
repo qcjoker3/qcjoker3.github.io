@@ -286,3 +286,9 @@ footer, .site-footer {
     font-size: 1.5rem; margin-bottom: 1.5rem;
     font-family: var(--font-heading); color: var(--heading-color);
 }
+
+/* --- Ajustements d'espacement pour la page de la planification financière (retraite) --- */
+.card {
+  padding: 16px;   /* 👈 ajoute du padding interne */
+  gap: 8px;
+}
