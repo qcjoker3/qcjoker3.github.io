@@ -607,59 +607,102 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
 
     // --- Calculatrice d'Hypothèque ---
 
-    document.getElementById('form-hypotheque')?.addEventListener('submit', e => {
+const formHypotheque = document.getElementById('form-hypotheque');
+if (formHypotheque) {
+    const prixProprieteInput = document.getElementById('hypo-prix-propriete');
+    const miseDeFondsInput = document.getElementById('hypo-mise-de-fonds');
+    const montantPretInput = document.getElementById('hypo-montant');
 
-        e.preventDefault();
+    // Fonction pour mettre à jour le montant du prêt automatiquement
+    const updateMontantPret = () => {
+        const prixPropriete = getVal('hypo-prix-propriete');
+        const miseDeFonds = getVal('hypo-mise-de-fonds');
+        const montantPret = Math.max(0, prixPropriete - miseDeFonds);
+        
+        // Met à jour la valeur visuelle du champ avec AutoNumeric
+        if (anInputs['hypo-montant']) {
+            anInputs['hypo-montant'].set(montantPret);
+        } else {
+            montantPretInput.value = montantPret;
+        }
+    };
 
-        const resultatHypo = document.getElementById('resultat-hypotheque');
+    // Ajoute des écouteurs pour mettre à jour en temps réel
+    prixProprieteInput.addEventListener('input', updateMontantPret);
+    miseDeFondsInput.addEventListener('input', updateMontantPret);
 
-        const montantPret = getVal('hypo-montant');
+    formHypotheque.addEventListener('submit', e => {
+        e.preventDefault();
+        
+        // S'assure que le montant du prêt est à jour avant de calculer
+        updateMontantPret(); 
 
-        const tauxHypo = getVal('hypo-taux') / 100;
+        const resultatHypo = document.getElementById('resultat-hypotheque');
+        
+        // Utilise la valeur calculée pour le reste de la logique
+        const montantPret = getVal('hypo-montant'); 
+        const tauxHypo = getVal('hypo-taux') / 100;
+        const dureeHypo = getVal('hypo-duree');
+        
+        const rMensuel = tauxHypo / 12;
+        const n = dureeHypo * 12;
+        
+        if (rMensuel <= 0 || montantPret <= 0) {
+            resultatHypo.textContent = 'Veuillez entrer des valeurs valides.';
+            return;
+        }
 
-        const dureeHypo = getVal('hypo-duree');
+        const mensualite = montantPret * rMensuel / (1 - Math.pow(1 + rMensuel, -n));
+        resultatHypo.textContent = `Mensualité estimée : ${fmtNombre(mensualite)}`;
 
-        
+        const ctx = document.getElementById('chart-hypotheque')?.getContext('2d');
+        if (!ctx || !isFinite(mensualite)) return;
+        if (chartHypo) chartHypo.destroy();
+        
+        const labels = [], capitalRestantData = [], capitalRembourseData = [];
+        let capitalRestant = montantPret;
 
-        const rMensuel = tauxHypo / 12, n = dureeHypo * 12;
+        for (let i = 0; i <= dureeHypo; i++) {
+            labels.push(`Année ${i}`);
+            capitalRestantData.push(capitalRestant);
+            capitalRembourseData.push(montantPret - capitalRestant);
+            
+            for (let j = 0; j < 12 && capitalRestant > 0; j++) {
+                let interet = capitalRestant * rMensuel;
+                capitalRestant -= (mensualite - interet);
+            }
+            capitalRestant = Math.max(0, capitalRestant); // Empêche le capital de devenir négatif
+        }
+        
+        chartHypo = new Chart(ctx, { 
+            type: 'bar', 
+            data: { 
+                labels, 
+                datasets: [
+                    { label: 'Capital remboursé', data: capitalRembourseData, backgroundColor: '#86efac' }, 
+                    { label: 'Capital restant dû', data: capitalRestantData, backgroundColor: '#e2e8f0' }
+                ] 
+            }, 
+            options: { 
+                maintainAspectRatio: false, 
+                scales: { 
+                    x: { stacked: true }, 
+                    y: { stacked: true, ticks: { callback: v => fmtNombre(v) } } 
+                } 
+            } 
+        });
+    });
 
-        if (rMensuel <= 0) return;
+    // Ajoute les nouveaux champs à AutoNumeric pour le formatage
+    const nouveauxChampsArgent = ['hypo-prix-propriete', 'hypo-mise-de-fonds'];
+    nouveauxChampsArgent.forEach(id => {
+        const el = document.getElementById(id);
+        if (el && !anInputs[id]) { // Vérifie s'il n'est pas déjà initialisé
+            anInputs[id] = new AutoNumeric(el, AutoNumeric.getPredefinedOptions().dollar);
+        }
+    });
+}
 
-        const mensualite = montantPret * rMensuel / (1 - Math.pow(1 + rMensuel, -n));
-
-        resultatHypo.textContent = `Mensualité estimée : ${fmtNombre(mensualite)} $`;
-
-        const ctx = document.getElementById('chart-hypotheque')?.getContext('2d');
-
-        if (!ctx || !isFinite(mensualite)) return;
-
-        if (chartHypo) chartHypo.destroy();
-
-        const labels = [], capitalRestantData = [], capitalRembourseData = [];
-
-        let capitalRestant = montantPret;
-
-        for (let i = 0; i <= dureeHypo; i++) {
-
-            labels.push(`Année ${i}`);
-
-            capitalRestantData.push(capitalRestant);
-
-            capitalRembourseData.push(montantPret - capitalRestant);
-
-            for (let j = 0; j < 12 && capitalRestant > 0; j++) {
-
-                let interet = capitalRestant * rMensuel;
-
-                capitalRestant -= (mensualite - interet);
-
-            }
-
-        }
-
-        chartHypo = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Capital remboursé', data: capitalRembourseData, backgroundColor: '#86efac' }, { label: 'Capital restant dû', data: capitalRestantData, backgroundColor: '#e2e8f0' }] }, options: { maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => fmtNombre(v) + ' $' } } } } });
-
-    });
 
 
 
