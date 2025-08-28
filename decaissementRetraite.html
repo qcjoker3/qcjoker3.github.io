@@ -573,47 +573,72 @@
       $('totalImpot').textContent = money(s.totalTax||0);
       $('depensesCumulees').textContent = money(s.depenseNetCum||0);
 
+      // âge où le capital tombe à zéro
+      let ageFin = currentAge;
+      for (let an of s.annees) {
+        if (an.soldeTotal <= 0) { 
+          ageFin = an.age; 
+          break; 
+        }
+      }
+      $('ageFin').textContent = ageFin;
       // Tableau
-      const tbody = document.querySelector('#tableauAnnuel tbody');
+      const tbody = $('tableauAnnuel').querySelector('tbody');
       tbody.innerHTML='';
-      for(const r of rows){
+      s.annees.forEach(an => {
         const tr=document.createElement('tr');
         tr.innerHTML = `
-          <td>${r.age}</td>
-          <td>${money(r.depenses)}</td>
-          <td>${money(r.revenus)}</td>
-          td>${money(r.depenses-r.revenus)}</td>
-          <td>${money(r.impots)}</td>
-          <td>${money(r.retraitsBruts)}</td>
-          <td>${Math.round(r.celi).toLocaleString('fr-CA')}</td>
-          <td>${Math.round(r.reer).toLocaleString('fr-CA')}</td>
-          <td>${Math.round(r.cri).toLocaleString('fr-CA')}</td>
-          <td>${Math.round(r.non).toLocaleString('fr-CA')}</td>`;
+          <td>${an.age}</td>
+          <td>${money(an.depenses)}</td>
+          <td>${money(an.revenus)}</td>
+          td>${money(an.depenses-r.revenus)}</td>
+          <td>${money(an.impots)}</td>
+          <td>${money(an.retraitsBruts)}</td>
+          <td>${Math.round(an.celi).toLocaleString('fr-CA')}</td>
+          <td>${Math.round(an.reer).toLocaleString('fr-CA')}</td>
+          <td>${Math.round(an.cri).toLocaleString('fr-CA')}</td>
+          <td>${Math.round(an.non).toLocaleString('fr-CA')}</td>`;
         tbody.appendChild(tr);
       }
 
       // Graphique empilé des retraits
-      const labels = balances.map(r=>r.age);
-      const ds = [
-        {label:'CELI', data:balances.map(r=>Math.round(r.celi))},
-        {label:'REER (FERR dès 71)', data:balances.map(r=>Math.round(r.reer))},
-        {label:'CRI (FRV dès 71)',  data:balances.map(r=>Math.round(r.cri))},
-        {label:'Non-enreg.', data:balances.map(r=>Math.round(r.non))},
-        {label:'Total', data:balances.map(r=>Math.round(r.celi+r.reer+r.cri+r.non))}
-      ];
-      if(chartBalances) chartBalances.destroy();
-      chartBalances = new Chart(document.getElementById('graphiqueSoldes'), {
-        type:'line',
-        data:{ labels, datasets: ds },
-        options:{
-          responsive:true,
-          interaction:{mode:'index',intersect:false},
-          scales:{ x:{ stacked:true }, y:{ stacked:true, beginAtZero:true } },
-          plugins:{ legend:{ position:'right' } }
+      const ctx = document.getElementById('graphiqueSoldes').getContext('2d');
+      if (window.graphique) window.graphique.destroy();
+      window.graphique = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: s.annees.map(an => an.age),
+          datasets: [
+            {
+              label: 'Capital total',
+              data: s.annees.map(an => an.soldeTotal),
+              borderWidth: 2,
+              borderColor: 'blue',
+              fill: false
+            },
+            {
+              label: 'Revenus',
+              data: s.annees.map(an => an.revenus),
+              borderWidth: 1,
+              borderColor: 'green',
+              fill: false
+            },
+            {
+              label: 'Dépenses',
+              data: s.annees.map(an => an.depenses),
+              borderWidth: 1,
+              borderColor: 'red',
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          scales: {
+            y: { beginAtZero: true }
+          }
         }
       });
-
-      return {rows, totals:{tax:s.totalTax, assets:last.totalActifs}};
     }
 
     // ===== Scénarios (24 ordres) =====
