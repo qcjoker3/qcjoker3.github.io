@@ -74,10 +74,6 @@
         <div class="form-group"><label>Rendement REER (%)</label><input type="number" id="reerRend" value="6" /></div>
         <div class="form-group"><label>Rendement CRI (%)</label><input type="number" id="criRend" value="5.5" /></div>
         <div class="form-group"><label>Rendement Non-enreg. (%)</label><input type="number" id="nonRend" value="4" /></div>
-        <div class="form-group">
-          <label>Inclusion des gains en capital (non-enreg., %)</label>
-          <input type="number" id="inclusionGC" value="50" />
-        </div>
       </div>
 
       <!-- Bloc 5: RRQ & PSV -->
@@ -214,6 +210,7 @@
     const $ = (id)=>document.getElementById(id);
     const money = (v)=>'$'+Math.round(v||0).toLocaleString('fr-CA');
     const splitDeposits => "0/0/0/100"
+    const inclusionGC => 50
 
     const revenuChoix = $('revenuChoix');
     const revenuManuelGroup = $('revenuManuelGroup');
