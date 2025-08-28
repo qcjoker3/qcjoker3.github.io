@@ -714,7 +714,7 @@ if (formHypotheque) {
 
         const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
 
-        resultatTrex.textContent = `Impact des frais : ${fmtNombre(capitalSansFrais - capitalAvecFrais)} $. Valeur finale : ${fmtNombre(capitalAvecFrais)} $.`;
+        resultatTrex.textContent = `Valeur finale (avec frais) : ${fmtNombre(capitalAvecFrais)}. Valeur sans frais : ${fmtNombre(capitalSansFrais)}. Impact total des frais : ${fmtNombre(capitalSansFrais - capitalAvecFrais)}.`;
 
         const ctx = document.getElementById('chart-trex')?.getContext('2d');
 
