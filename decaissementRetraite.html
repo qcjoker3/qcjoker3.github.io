@@ -36,7 +36,7 @@
           </select>
         </div>
         <div id="revenuManuelGroup" class="form-group" style="display:none">
-          <label>Montant manuel ($/an, valeur d’aujourd’hui)</label>
+          <label>Montant annuel (valeur actuelle)</label>
           <input type="number" id="revenuManuel" placeholder="Ex. 55000" />
         </div>
         <div class="form-group">
@@ -108,10 +108,17 @@
 
       <!-- Bloc 6: Fonds de pension -->
       <div class="card">
+        <div class="form-group">
         <h3>Fonds de pension</h3>
-        <div class="form-group"><label>Salaire garanti à la retraite (actuel)</label><input type="number" id="salairePension" value="35000" /></div>
-        <div class="form-group"><label>Indexation annuelle (%)</label><input type="number" id="indexFondPension" value="2" /></div>
-      </div>
+          <select id="pensionChoix">
+            <option value="Oui" selected>Oui</option>
+            <option value="Non">Non</option>
+          </select>
+        </div>
+        <div id="fondPensionGroup" class="form-group" style="display:none">
+          <label>Salaire garanti ($ actuel)</label><input type="number" id="salairePension" value="35000" />
+          <label>Indexation annuelle (%)</label><input type="number" id="indexPension" value="2" />
+        </div>
     </div>
 
     <!-- Fiscalité -->
@@ -177,24 +184,6 @@
       </div>
     </div>
 
-    <div class="card">
-      <h3>Soldes des comptes</h3>
-      <div style="max-height:420px;overflow:auto;border-radius:12px">
-        <table id="tableauAnnuel">
-          <thead>
-            <tr>
-              <th>Âge</th>
-              <th>CELI</th>
-              <th>REER</th>
-              <th>CRI</th>
-              <th>Non-enreg.</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
 
     <div class="card">
       <h3>Table des retraits</h3>
@@ -224,6 +213,7 @@
     // ===== Utilitaires UI =====
     const $ = (id)=>document.getElementById(id);
     const money = (v)=>'$'+Math.round(v||0).toLocaleString('fr-CA');
+    const splitDeposits => "0/0/0/100"
 
     const revenuChoix = $('revenuChoix');
     const revenuManuelGroup = $('revenuManuelGroup');
@@ -231,6 +221,14 @@
       revenuManuelGroup.style.display = revenuChoix.value==='manuel'?'block':'none';
       calculer();
     });
+
+    const pensionChoix = $('revenuChoix');
+    const pensionGroup = $('revenuManuelGroup');
+    pensionChoix.addEventListener('change',()=>{
+      pensionGroup.style.display = pensionChoix.value==='Oui'?'block':'none';
+      calculer();
+    });
+    
     $('ajoutEvenement').addEventListener('click', ()=>{
       const box = document.createElement('div');
       box.className = 'row'; box.style.marginBottom = '8px';
@@ -247,7 +245,7 @@
     // ===== Helpers =====
     function parseJSONInput(id, fallback){ try{ return JSON.parse($(id).value);}catch(e){ return fallback; } }
     function splitDeposits(){
-      const [cri,reer,celi,non] = $('splitDeposits').value.split('/').map(x=>parseFloat(x)||0);
+      const [cri,reer,celi,non] = '0/0/0/100'.split('/').map(x=>parseFloat(x)||0);
       const s = (cri+reer+celi+non)||1; return { cri:cri/s, reer:reer/s, celi:celi/s, non:non/s };
     }
 
