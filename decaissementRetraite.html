@@ -203,8 +203,7 @@
     // ===== Utilitaires UI =====
     const $ = (id)=>document.getElementById(id);
     const money = (v)=>'$'+Math.round(v||0).toLocaleString('fr-CA');
-    const splitDeposits => "0/0/0/100"
-    const inclusionGC => 50
+    const inclusionGC = 50;
 
     const revenuChoix = $('revenuChoix');
     const revenuManuelGroup = $('revenuManuelGroup');
@@ -327,7 +326,7 @@
         cri:(+$('criRend').value||0)/100,
         non:(+$('nonRend').value||0)/100
       };
-      const inclusion = (+$('inclusionGC').value||50)/100;
+      const inclusion = 0.5;
 
       // RRQ/PSV
       const rrq65 = +$('rrq65').value, psv65 = +$('psv65').value;
