@@ -20,9 +20,9 @@
     /* --- THÈME LIGHT (par défaut) : Professionnel & Léché --- */
     --primary-color: #0D9488;
     --primary-hover: #0F766E;
-    --primary-gradient: linear-gradient(90deg, #0D9488, #0F766E);
+    --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7);
     --accent-color: #0D9488;
-    --accent-hover: #0F766E;
+    --accent-hover: #A855F7;
 
     --bg-color: #FFFFFF;
     --section-bg-color: #F9FAFB;
@@ -51,7 +51,7 @@
         --primary-hover: #4338CA;
         --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7);
         --accent-color: #10B981;
-        --accent-hover: #059669;
+        --accent-hover: #A855F7;
 
         --bg-color: #111827;
         --section-bg-color: #111827;
