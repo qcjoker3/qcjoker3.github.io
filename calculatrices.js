@@ -151,6 +151,7 @@ document.addEventListener('DOMContentLoaded', () => {
         allExplications.forEach(box => box.classList.remove('active'));
 
         if (targetExplication) targetExplication.classList.add('active');
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     };
 
