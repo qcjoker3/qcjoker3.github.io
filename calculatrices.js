@@ -683,43 +683,68 @@ if (formHypotheque) {
 
     // --- Calculatrice de Frais de Gestion ---
 
-    document.getElementById('form-trex')?.addEventListener('submit', e => {
+document.getElementById('form-trex')?.addEventListener('submit', e => {
+    e.preventDefault();
 
-        e.preventDefault();
+    const resultatTrex = document.getElementById('resultat-trex');
+    const montantInitial = getVal('trex-montant');
+    const cotisationAnnuelle = getVal('trex-cotisation-annuelle');
+    const duree = getVal('trex-duree');
+    const rendementBrut = getVal('trex-rendement-brut') / 100;
+    const fraisAnnuel = getVal('trex-taux') / 100;
+    
+    // Vérification pour s'assurer que la durée est un nombre valide
+    if (isNaN(duree) || duree < 0) {
+        resultatTrex.textContent = "Veuillez entrer une durée valide.";
+        if (chartTrex) chartTrex.destroy(); // Nettoie le graphique
+        return;
+    }
 
-        const resultatTrex = document.getElementById('resultat-trex');
+    const rendementNet = rendementBrut - fraisAnnuel;
 
-        const montantInitial = getVal('trex-montant');
+    // ▼▼▼ FONCTION CORRIGÉE ▼▼▼
+    // Gère le cas où le rendement (r) est de 0%
+    const fv = (P, r, n, C) => {
+        if (r === 0) {
+            // Si le rendement est nul, la valeur est simplement le capital + les cotisations
+            return P + (C * n);
+        }
+        // Formule standard si le rendement est non nul
+        return P * Math.pow(1 + r, n) + (C * ((Math.pow(1 + r, n) - 1) / r));
+    };
 
-        const cotisationAnnuelle = getVal('trex-cotisation-annuelle');
+    const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
+    const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
 
-        const duree = getVal('trex-duree');
+    resultatTrex.textContent = `Valeur finale (avec frais) : ${fmtNombre(capitalAvecFrais)}. Valeur sans frais : ${fmtNombre(capitalSansFrais)}. Impact total des frais : ${fmtNombre(capitalSansFrais - capitalAvecFrais)}.`;
 
-        const rendementBrut = getVal('trex-rendement-brut') / 100;
+    const ctx = document.getElementById('chart-trex')?.getContext('2d');
+    if (!ctx) return;
 
-        const fraisAnnuel = getVal('trex-taux') / 100;
-
-        
-
-        const rendementNet = rendementBrut - fraisAnnuel;
-
-        const fv = (P, r, n, C) => P * Math.pow(1 + r, n) + (C * ((Math.pow(1 + r, n) - 1) / r));
-
-        const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
-
-        const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
-
-        resultatTrex.textContent = `Valeur finale (avec frais) : ${fmtNombre(capitalAvecFrais)}. Valeur sans frais : ${fmtNombre(capitalSansFrais)}. Impact total des frais : ${fmtNombre(capitalSansFrais - capitalAvecFrais)}.`;
-
-        const ctx = document.getElementById('chart-trex')?.getContext('2d');
-
-        if (!ctx) return;
-
-        if (chartTrex) chartTrex.destroy();
-
-        chartTrex = new Chart(ctx, { type: 'bar', data: { labels: ['Avec Frais', 'Sans Frais'], datasets: [{ label: 'Valeur finale', data: [capitalAvecFrais, capitalSansFrais], backgroundColor: ['#16a34a', '#86efac'] }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) + ' $' } } } } });
-
-    });
+    if (chartTrex) chartTrex.destroy();
+    
+    chartTrex = new Chart(ctx, { 
+        type: 'bar', 
+        data: { 
+            labels: ['Avec Frais', 'Sans Frais'], 
+            datasets: [{ 
+                label: 'Valeur finale', 
+                data: [capitalAvecFrais, capitalSansFrais], 
+                backgroundColor: ['#16a34a', '#86efac'] 
+            }] 
+        }, 
+        options: { 
+            maintainAspectRatio: false, 
+            scales: { 
+                y: { 
+                    ticks: { 
+                        callback: v => fmtNombre(v) 
+                    } 
+                } 
+            } 
+        } 
+    });
+});
 
     
 
