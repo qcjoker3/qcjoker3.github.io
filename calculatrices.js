@@ -144,7 +144,10 @@ document.addEventListener('DOMContentLoaded', () => {
         allExplications.forEach(box => box.classList.remove('active'));
 
         if (targetExplication) targetExplication.classList.add('active');
-        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+         targetExplication.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            // Fallback au cas où une explication n'existerait pas
+            targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
     };
 
