@@ -116,92 +116,91 @@
           <label>Indexation annuelle (%)</label><input type="number" id="indexPension" value="2" />
         </div>
     </div>
-
-    <!-- Fiscalité -->
-    <div class="card" style="display:none">
-      <h3>Fiscalité (paliers éditables, indexés par inflation)</h3>
-      <p class="helper">Listes JSON <code>[[plafond, taux], ...]</code> — plafonds indexés chaque année.</p>
-      <div class="card-grid">
-        <div class="form-group">
-          <label>Fédéral 2025</label>
-          <input id="fedBrackets" value='[[55867,0.15],[111733,0.205],[173206,0.26],[246752,0.29],[Infinity,0.33]]' />
-        </div>
-        <div class="form-group">
-          <label>Québec 2025</label>
-          <input id="qcBrackets" value='[[51780,0.145],[103545,0.20],[126000,0.24],[Infinity,0.2575]]' />
-        </div>
-        <div class="form-group">
-          <label>Crédit de base combiné ($, optionnel)</label>
-          <input id="basicCredit" value="0" />
-        </div>
-      </div>
-    </div>
-
-    <!-- Événements -->
-    <div class="card">
-      <h3>Événements financiers</h3>
-      <div id="evenementsContainer"></div>
-      <button id="ajoutEvenement" class="btn-primary" type="button">Ajouter un événement</button>
-      <p class="helper">Un événement = âge (année) et montant +/-. Dépôts répartis selon “Répartition dépôts”.</p>
-      
+  </div>
+  <!-- Fiscalité -->
+  <div class="card" style="display:none">
+    <h3>Fiscalité (paliers éditables, indexés par inflation)</h3>
+    <p class="helper">Listes JSON <code>[[plafond, taux], ...]</code> — plafonds indexés chaque année.</p>
+    <div class="card-grid">
       <div class="form-group">
-        <label>Répartition dépôts évènement (+) (CRI/REER/CELI/Non, somme=100)</label>
-        <input id="splitDeposits" value="25/35/25/15" />
+        <label>Fédéral 2025</label>
+        <input id="fedBrackets" value='[[55867,0.15],[111733,0.205],[173206,0.26],[246752,0.29],[Infinity,0.33]]' />
+      </div>
+      <div class="form-group">
+        <label>Québec 2025</label>
+        <input id="qcBrackets" value='[[51780,0.145],[103545,0.20],[126000,0.24],[Infinity,0.2575]]' />
+      </div>
+      <div class="form-group">
+        <label>Crédit de base combiné ($, optionnel)</label>
+        <input id="basicCredit" value="0" />
       </div>
     </div>
+  </div>
 
-    <!-- Scénarios -->
-    <div class="card">
-      <h3>Scénarios de décaissement</h3>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn-primary scenario" data-s="durée">Maximiser durée du capital</button>
-        <button class="btn-primary scenario" data-s="impot">Minimiser l’impôt total</button>
-        <button class="btn-primary scenario" data-s="espvie">Maximiser les retraits</button>
-      </div>
-      <p id="bestOrders" class="helper" style="margin-top:10px"></p>
-    </div>
-
-    <!-- Résultats & Graphique -->
-
-    <div class="card">
-      <h3>Indicateurs</h3>
-      <div class="results-dashboard">
-        <div class="result-box"><span class="result-label">Capital de fin</span><span class="result-value" id="totalRestant">$0</span></div>
-        <div class="result-box"><span class="result-label">Âge d'épuisement du capital</span><span class="result-value" id="ageFin">0</span></div>
-        <div class="result-box"><span class="result-label">Impôt cumulé</span><span class="result-value" id="totalImpot">$0</span></div>
-        <div class="result-box"><span class="result-label">Dépenses totales</span><span class="result-value" id="depensesCumulees">$0</span></div>
-      </div>
-    </div>
+  <!-- Événements -->
+  <div class="card">
+    <h3>Événements financiers</h3>
+    <div id="evenementsContainer"></div>
+    <button id="ajoutEvenement" class="btn-primary" type="button">Ajouter un événement</button>
+    <p class="helper">Un événement = âge (année) et montant +/-. Dépôts répartis selon “Répartition dépôts”.</p>
     
-    <div class="card">
-      <h3>Valeurs des comptes</h3>
-      <div class="chart-container">
-        <canvas id="graphiqueSoldes" height="380"></canvas>
-      </div>
+    <div class="form-group">
+      <label>Répartition dépôts évènement (+) (CRI/REER/CELI/Non, somme=100)</label>
+      <input id="splitDeposits" value="25/35/25/15" />
     </div>
+  </div>
+
+  <!-- Scénarios -->
+  <div class="card">
+    <h3>Scénarios de décaissement</h3>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn-primary scenario" data-s="durée">Maximiser durée du capital</button>
+      <button class="btn-primary scenario" data-s="impot">Minimiser l’impôt total</button>
+      <button class="btn-primary scenario" data-s="espvie">Maximiser les retraits</button>
+    </div>
+    <p id="bestOrders" class="helper" style="margin-top:10px"></p>
+  </div>
+
+  <!-- Résultats & Graphique -->
+
+  <div class="card">
+    <h3>Indicateurs</h3>
+    <div class="results-dashboard">
+      <div class="result-box"><span class="result-label">Capital de fin</span><span class="result-value" id="totalRestant">$0</span></div>
+      <div class="result-box"><span class="result-label">Âge d'épuisement du capital</span><span class="result-value" id="ageFin">0</span></div>
+      <div class="result-box"><span class="result-label">Impôt cumulé</span><span class="result-value" id="totalImpot">$0</span></div>
+      <div class="result-box"><span class="result-label">Dépenses totales</span><span class="result-value" id="depensesCumulees">$0</span></div>
+    </div>
+  </div>
+  
+  <div class="card">
+    <h3>Valeurs des comptes</h3>
+    <div class="chart-container">
+      <canvas id="graphiqueSoldes" height="380"></canvas>
+    </div>
+  </div>
 
 
-    <div class="card">
-      <h3>Table des retraits</h3>
-      <div style="max-height:420px;overflow:auto;border-radius:12px">
-        <table id="tableauAnnuel">
-          <thead>
-            <tr>
-              <th>Âge</th>
-              <th>Salaire désiré</th>
-              <th>Revenus (RRQ+PSV+évén.+)</th>
-              <th>Retraits nets</th>
-              <th>Impôt</th>
-              <th>Retraits bruts</th>
-              <th>CELI</th>
-              <th>REER</th>
-              <th>CRI</th>
-              <th>Non-enreg.</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
-      </div>
+  <div class="card">
+    <h3>Table des retraits</h3>
+    <div style="max-height:420px;overflow:auto;border-radius:12px">
+      <table id="tableauAnnuel">
+        <thead>
+          <tr>
+            <th>Âge</th>
+            <th>Salaire désiré</th>
+            <th>Revenus (RRQ+PSV+évén.+)</th>
+            <th>Retraits nets</th>
+            <th>Impôt</th>
+            <th>Retraits bruts</th>
+            <th>CELI</th>
+            <th>REER</th>
+            <th>CRI</th>
+            <th>Non-enreg.</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </div>
 
