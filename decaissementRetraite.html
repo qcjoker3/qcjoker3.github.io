@@ -213,8 +213,8 @@
       calculer();
     });
 
-    const pensionChoix = $('revenuChoix');
-    const pensionGroup = $('revenuManuelGroup');
+    const pensionChoix = $('pensionChoix');
+    const pensionGroup = $('pensionGroup');
     pensionChoix.addEventListener('change',()=>{
       pensionGroup.style.display = pensionChoix.value==='Oui'?'block':'none';
       calculer();
