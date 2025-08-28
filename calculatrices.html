@@ -195,11 +195,33 @@
         <section id="calc-hypotheque" class="calculator-card">
             <h2>Calculatrice d'Hypothèque</h2>
             <form id="form-hypotheque">
-                <div class="form-group"><label for="hypo-montant">Montant du prêt</label><input type="text" id="hypo-montant" placeholder="ex: 200 000,00 $" step="any"></div>
-                <div class="form-group"><label for="hypo-taux">Taux d'intérêt annuel (%)</label><input type="number" id="hypo-taux" placeholder="ex: 3.5" step="any"></div>
-                <div class="form-group"><label for="hypo-duree">Durée du prêt (années)</label><input type="number" id="hypo-duree" placeholder="ex: 25" step="any"></div>
-                <button type="submit" class="btn-primary">Calculer</button>
-            </form>
+        <div class="form-group">
+            <label for="hypo-prix-propriete">Prix de la propriété</label>
+            <input type="text" id="hypo-prix-propriete" placeholder="ex: 500 000,00 $">
+        </div>
+
+        <div class="form-group">
+            <label for="hypo-mise-de-fonds">Mise de fonds</label>
+            <input type="text" id="hypo-mise-de-fonds" placeholder="ex: 100 000,00 $">
+        </div>
+        
+        <div class="form-group">
+            <label for="hypo-montant">Montant du prêt (calculé)</label>
+            <input type="text" id="hypo-montant" readonly class="readonly-input">
+        </div>
+
+        <div class="form-group">
+            <label for="hypo-taux">Taux d'intérêt annuel (%)</label>
+            <input type="number" id="hypo-taux" placeholder="ex: 4.5" step="any">
+        </div>
+
+        <div class="form-group">
+            <label for="hypo-duree">Durée de l'amortissement (années)</label>
+            <input type="number" id="hypo-duree" placeholder="ex: 25">
+        </div>
+
+        <button type="submit" class="btn-primary">Calculer la mensualité</button>
+    </form>
             <p class="resultat" id="resultat-hypotheque"></p>
             <div class="chart-container">
                 <canvas id="chart-hypotheque"></canvas>
