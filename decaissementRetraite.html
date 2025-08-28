@@ -214,7 +214,7 @@
     });
 
     const pensionChoix = $('pensionChoix');
-    const pensionGroup = $('pensionGroup');
+    const pensionGroup = $('fondPensionGroup');
     pensionChoix.addEventListener('change',()=>{
       pensionGroup.style.display = pensionChoix.value==='Oui'?'block':'none';
       calculer();
