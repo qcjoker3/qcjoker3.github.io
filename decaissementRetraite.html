@@ -214,9 +214,9 @@
     });
 
     const pensionChoix = $('pensionChoix');
-    const pensionGroup = $('fondPensionGroup');
+    const fondPensionGroup = $('fondPensionGroup');
     pensionChoix.addEventListener('change',()=>{
-      pensionGroup.style.display = pensionChoix.value==='Oui'?'block':'none';
+      fondPensionGroup.style.display = pensionChoix.value==='Oui'?'block':'none';
       calculer();
     });
     
