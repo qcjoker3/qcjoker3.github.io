@@ -111,8 +111,8 @@
             <option value="non" selected>Non</option>
           </select>
         </div>
-        <div id="fondPensionGroup" class="form-group" style="display:none">
-          <label>Salaire garanti ($ actuel)</label><input type="number" id="salairePension" value="35000" />
+        <div id="fondPensionGroup" class="form-group">
+          <label>Salaire garanti ($ actuel)</label><input type="number" id="salairePension" value="0" />
           <label>Indexation annuelle (%)</label><input type="number" id="indexPension" value="2" />
         </div>
     </div>
@@ -209,12 +209,6 @@
     const revenuManuelGroup = $('revenuManuelGroup');
     revenuChoix.addEventListener('change',()=>{
       revenuManuelGroup.style.display = revenuChoix.value==='manuel'?'block':'none';
-    });
-
-    const pensionChoix = $('pensionChoix');
-    const fondPensionGroup = $('fondPensionGroup');
-    pensionChoix.addEventListener('change',()=>{
-      fondPensionGroup.style.display = pensionChoix.value==='oui'?'block':'none';
     });
     
     $('ajoutEvenement').addEventListener('click', ()=>{
