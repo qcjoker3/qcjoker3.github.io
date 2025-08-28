@@ -107,8 +107,8 @@
         <div class="form-group">
         <h3>Fonds de pension</h3>
           <select id="pensionChoix">
-            <option value="Oui">Oui</option>
-            <option value="Non" selected>Non</option>
+            <option value="oui">Oui</option>
+            <option value="non" selected>Non</option>
           </select>
         </div>
         <div id="fondPensionGroup" class="form-group" style="display:none">
@@ -210,14 +210,12 @@
     const revenuManuelGroup = $('revenuManuelGroup');
     revenuChoix.addEventListener('change',()=>{
       revenuManuelGroup.style.display = revenuChoix.value==='manuel'?'block':'none';
-      calculer();
     });
 
     const pensionChoix = $('pensionChoix');
     const fondPensionGroup = $('fondPensionGroup');
     pensionChoix.addEventListener('change',()=>{
-      fondPensionGroup.style.display = pensionChoix.value==='Oui'?'block':'none';
-      calculer();
+      fondPensionGroup.style.display = pensionChoix.value==='oui'?'block':'none';
     });
     
     $('ajoutEvenement').addEventListener('click', ()=>{
