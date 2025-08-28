@@ -176,7 +176,7 @@
     <div class="card">
       <h3>Valeurs des comptes</h3>
       <div class="chart-container">
-        <canvas id="graphiqueRetraits" height="380"></canvas>
+        <canvas id="graphiqueSoldes" height="380"></canvas>
       </div>
     </div>
 
@@ -303,7 +303,7 @@
     const ALL_ORDERS = permutations(ACC);
 
     // ===== Simulation =====
-    let chartWithdrawals;
+    let chartBalances;
 
     function calculer(orderOverride=null, scenario='durée'){
       const age0 = +$('ageActuel').value;
@@ -324,7 +324,7 @@
         reer: +$('reerActuel').value,
         cri:  +$('criActuel').value,
         non:  +$('nonActuel').value,
-        nonACB: +$('nonActuel').value
+        nonACB: +$('nonActuel').value,
       };
       const contrib = {
         celi:+$('celiCot').value, reer:+$('reerCot').value, cri:+$('criCot').value, non:+$('nonCot').value
@@ -578,6 +578,7 @@
       // Sorties
       const last = rows[rows.length-1];
       $('totalRestant').textContent = money(last.totalActifs||0);
+      
       $('totalImpot').textContent = money(s.totalTax||0);
       $('depensesCumulees').textContent = money(s.depenseNetCum||0);
 
@@ -588,35 +589,36 @@
         const tr=document.createElement('tr');
         tr.innerHTML = `
           <td>${r.age}</td>
+          <td>${money(r.depenses)}</td>
+          <td>${money(r.revenus)}</td>
+          td>${money(r.depenses-r.revenus)}</td>
+          <td>${money(r.impots)}</td>
+          <td>${money(r.retraitsBruts)}</td>
           <td>${Math.round(r.celi).toLocaleString('fr-CA')}</td>
           <td>${Math.round(r.reer).toLocaleString('fr-CA')}</td>
           <td>${Math.round(r.cri).toLocaleString('fr-CA')}</td>
-          <td>${Math.round(r.non).toLocaleString('fr-CA')}</td>
-          <td>${money(r.revenus)}</td>
-          <td>${money(r.depenses)}</td>
-          <td>${money(r.retraitsBruts)}</td>
-          <td>${money(r.impots)}</td>
-          <td>${Math.round(r.totalActifs).toLocaleString('fr-CA')}</td>`;
+          <td>${Math.round(r.non).toLocaleString('fr-CA')}</td>`;
         tbody.appendChild(tr);
       }
 
       // Graphique empilé des retraits
-      const labels = withdrawalsPerYear.map(r=>r.age);
+      const labels = balances.map(r=>r.age);
       const ds = [
-        {label:'CELI', data:withdrawalsPerYear.map(r=>Math.round(r.celi))},
-        {label:'REER (FERR dès 71)', data:withdrawalsPerYear.map(r=>Math.round(r.reer))},
-        {label:'CRI (FRV dès 71)',  data:withdrawalsPerYear.map(r=>Math.round(r.cri))},
-        {label:'Non-enreg.', data:withdrawalsPerYear.map(r=>Math.round(r.non))}
+        {label:'CELI', data:balances.map(r=>Math.round(r.celi))},
+        {label:'REER (FERR dès 71)', data:balances.map(r=>Math.round(r.reer))},
+        {label:'CRI (FRV dès 71)',  data:balances.map(r=>Math.round(r.cri))},
+        {label:'Non-enreg.', data:balances.map(r=>Math.round(r.non))},
+        {label:'Total', data:balances.map(r=>Math.round(r.celi+r.reer+r.cri+r.non))}
       ];
-      if(chartWithdrawals) chartWithdrawals.destroy();
-      chartWithdrawals = new Chart(document.getElementById('graphiqueRetraits'), {
-        type:'bar',
+      if(chartBalances) chartBalances.destroy();
+      chartBalances = new Chart(document.getElementById('graphiqueSoldes'), {
+        type:'line',
         data:{ labels, datasets: ds },
         options:{
           responsive:true,
           interaction:{mode:'index',intersect:false},
           scales:{ x:{ stacked:true }, y:{ stacked:true, beginAtZero:true } },
-          plugins:{ legend:{ position:'top' } }
+          plugins:{ legend:{ position:'right' } }
         }
       });
 
