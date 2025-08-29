@@ -305,8 +305,33 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
     });
 });
 
-    // --- Calculatrice d'Hypothèque ---
-    document.getElementById('form-hypotheque')?.addEventListener('submit', e => {
+// --- Calculatrice d'Hypothèque ---
+const formHypotheque = document.getElementById('form-hypotheque');
+if (formHypotheque) {
+    // On récupère les éléments qui vont déclencher le calcul
+    const prixProprieteInput = document.getElementById('hypo-prix-propriete');
+    const miseDeFondsInput = document.getElementById('hypo-mise-de-fonds');
+
+    // La fonction qui met à jour le montant du prêt
+    const updateMontantPret = () => {
+        const prixPropriete = getVal('hypo-prix-propriete');
+        const miseDeFonds = getVal('hypo-mise-de-fonds');
+        const montantPret = Math.max(0, prixPropriete - miseDeFonds);
+        
+        // On utilise l'instance AutoNumeric pour mettre à jour le champ formaté
+        if (anInputs['hypo-montant']) {
+            anInputs['hypo-montant'].set(montantPret);
+        }
+    };
+
+    // On attache un "écouteur" à chaque champ pour détecter les changements en temps réel
+    if (prixProprieteInput && miseDeFondsInput) {
+        prixProprieteInput.addEventListener('input', updateMontantPret);
+        miseDeFondsInput.addEventListener('input', updateMontantPret);
+    }
+    
+    // On conserve la logique existante pour le bouton "Calculer"
+    formHypotheque.addEventListener('submit', e => {
         e.preventDefault();
         const resultatHypo = document.getElementById('resultat-hypotheque');
         const montantPret = getVal('hypo-montant');
@@ -314,12 +339,18 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
         const dureeHypo = getVal('hypo-duree');
         
         const rMensuel = tauxHypo / 12, n = dureeHypo * 12;
-        if (rMensuel <= 0) return;
+        if (rMensuel <= 0 || montantPret <= 0) {
+            resultatHypo.textContent = "Veuillez entrer des valeurs valides.";
+            if(chartHypo) chartHypo.destroy();
+            return;
+        }
         const mensualite = montantPret * rMensuel / (1 - Math.pow(1 + rMensuel, -n));
         resultatHypo.textContent = `Mensualité estimée : ${fmtNombre(mensualite)} $`;
+        
         const ctx = document.getElementById('chart-hypotheque')?.getContext('2d');
         if (!ctx || !isFinite(mensualite)) return;
         if (chartHypo) chartHypo.destroy();
+        
         const labels = [], capitalRestantData = [], capitalRembourseData = [];
         let capitalRestant = montantPret;
         for (let i = 0; i <= dureeHypo; i++) {
@@ -333,6 +364,7 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
         }
         chartHypo = new Chart(ctx, { type: 'bar', data: { labels, datasets: [{ label: 'Capital remboursé', data: capitalRembourseData, backgroundColor: '#86efac' }, { label: 'Capital restant dû', data: capitalRestantData, backgroundColor: '#e2e8f0' }] }, options: { maintainAspectRatio: false, scales: { x: { stacked: true }, y: { stacked: true, ticks: { callback: v => fmtNombre(v) + ' $' } } } } });
     });
+}
 
     // --- Calculatrice de Frais de Gestion ---
     document.getElementById('form-trex')?.addEventListener('submit', e => {
