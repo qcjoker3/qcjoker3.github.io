@@ -476,5 +476,5 @@ if (formHypotheque) {
     });
 
     // Affichage initial
-    showCalculator('retraite');
+    //showCalculator('retraite');
 });
