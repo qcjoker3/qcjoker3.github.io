@@ -355,3 +355,7 @@ footer, .site-footer {
 .contenu-article {
     margin-top: 3rem; /* ou 48px, 2em, etc. */
 }
+
+.en-tete-article {
+    margin-bottom: 2.5rem; /* ou 40px, la valeur que vous préférez */
+}
