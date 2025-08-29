@@ -293,3 +293,57 @@ footer, .site-footer {
   padding: 16px;   /* 👈 ajoute du padding interne */
   gap: 8px;
 }
+
+/* Style pour les cartes d'articles */
+.carte-article {
+    background-color: #2d3748; /* Fond sombre */
+    border: 1px solid #4a5568;
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.carte-article h3 {
+    margin-top: 0;
+}
+
+.carte-article .categorie {
+    display: inline-block;
+    background-color: #4a5568;
+    color: #e2e8f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8em;
+    margin-bottom: 1rem;
+}
+
+.carte-article p {
+    flex-grow: 1; /* Pousse le bouton "Lire la suite" vers le bas */
+}
+
+/* Style pour les filtres */
+#filtres-categories {
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.filtre-btn {
+    background-color: #4a5568;
+    color: #e2e8f0;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.filtre-btn:hover {
+    background-color: #2d3748;
+}
+
+.filtre-btn.active {
+    background-color: #4f46e5; /* Couleur principale pour le filtre actif */
+    color: white;
+}
