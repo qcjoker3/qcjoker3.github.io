@@ -405,7 +405,7 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
     chartTrex = new Chart(ctx, { 
         type: 'bar', 
         data: { 
-            labels: ['Avec Frais', 'Sans Frais (Potentiel)'], 
+            labels: ['Avec Frais', 'Sans Frais'], 
             datasets: [{ 
                 label: 'Valeur finale', 
                 data: [capitalAvecFrais, capitalSansFrais], 
