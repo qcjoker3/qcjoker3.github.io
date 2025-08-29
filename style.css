@@ -347,3 +347,8 @@ footer, .site-footer {
     background-color: #4f46e5; /* Couleur principale pour le filtre actif */
     color: white;
 }
+
+.contenu-article p {
+    margin-bottom: 1.2em; /* Espace équivalent à 1.2x la taille de la police */
+    line-height: 1.6;     /* Augmente l'espace entre les lignes pour une meilleure lecture */
+}
