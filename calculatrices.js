@@ -367,25 +367,61 @@ if (formHypotheque) {
 }
 
     // --- Calculatrice de Frais de Gestion ---
-    document.getElementById('form-trex')?.addEventListener('submit', e => {
-        e.preventDefault();
-        const resultatTrex = document.getElementById('resultat-trex');
-        const montantInitial = getVal('trex-montant');
-        const cotisationAnnuelle = getVal('trex-cotisation-annuelle');
-        const duree = getVal('trex-duree');
-        const rendementBrut = getVal('trex-rendement-brut') / 100;
-        const fraisAnnuel = getVal('trex-taux') / 100;
-        
-        const rendementNet = rendementBrut - fraisAnnuel;
-        const fv = (P, r, n, C) => P * Math.pow(1 + r, n) + (C * ((Math.pow(1 + r, n) - 1) / r));
-        const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
-        const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
-        resultatTrex.textContent = `Impact des frais : ${fmtNombre(capitalSansFrais - capitalAvecFrais)} $. Valeur finale : ${fmtNombre(capitalAvecFrais)} $.`;
-        const ctx = document.getElementById('chart-trex')?.getContext('2d');
-        if (!ctx) return;
-        if (chartTrex) chartTrex.destroy();
-        chartTrex = new Chart(ctx, { type: 'bar', data: { labels: ['Avec Frais', 'Sans Frais (Potentiel)'], datasets: [{ label: 'Valeur finale', data: [capitalAvecFrais, capitalSansFrais], backgroundColor: ['#16a34a', '#86efac'] }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) + ' $' } } } } });
+document.getElementById('form-trex')?.addEventListener('submit', e => {
+    e.preventDefault();
+    const resultatTrex = document.getElementById('resultat-trex');
+    const montantInitial = getVal('trex-montant');
+    const cotisationAnnuelle = getVal('trex-cotisation-annuelle');
+    const duree = getVal('trex-duree');
+    const rendementBrut = getVal('trex-rendement-brut') / 100;
+    const fraisAnnuel = getVal('trex-taux') / 100;
+    
+    const rendementNet = rendementBrut - fraisAnnuel;
+    const fv = (P, r, n, C) => P * Math.pow(1 + r, n) + (C * ((Math.pow(1 + r, n) - 1) / r));
+    
+    const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
+    const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
+
+    // ▼▼▼ MODIFICATION DE L'AFFICHAGE DU RÉSULTAT ▼▼▼
+    resultatTrex.innerHTML = `
+        <div class="results-side-by-side">
+            <div>
+                <span>Valeur Potentielle (sans frais)</span>
+                <strong class="positive">${fmtNombre(capitalSansFrais)}</strong>
+            </div>
+            <div>
+                <span>Valeur Finale (avec frais)</span>
+                <strong>${fmtNombre(capitalAvecFrais)}</strong>
+            </div>
+        </div>
+        <p class="impact-frais">Impact total des frais : ${fmtNombre(capitalSansFrais - capitalAvecFrais)}</p>
+    `;
+    // ▲▲▲ FIN DE LA MODIFICATION ▲▲▲
+    
+    const ctx = document.getElementById('chart-trex')?.getContext('2d');
+    if (!ctx) return;
+    if (chartTrex) chartTrex.destroy();
+    
+    chartTrex = new Chart(ctx, { 
+        type: 'bar', 
+        data: { 
+            labels: ['Avec Frais', 'Sans Frais (Potentiel)'], 
+            datasets: [{ 
+                label: 'Valeur finale', 
+                data: [capitalAvecFrais, capitalSansFrais], 
+                backgroundColor: ['#ef4444', '#22c55e'] // Rouge pour "avec", Vert pour "sans"
+            }] 
+        }, 
+        options: { 
+            maintainAspectRatio: false, 
+            scales: { 
+                y: { 
+                    ticks: { callback: v => fmtNombre(v) } 
+                } 
+            } 
+        } 
     });
+});
     
     // --- Calculatrice Acheter ou Louer ---
     document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
