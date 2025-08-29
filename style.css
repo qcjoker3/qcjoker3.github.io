@@ -350,6 +350,8 @@ footer, .site-footer {
 
 .contenu-article p {
     margin-bottom: 2em; /* Espace équivalent à 1.2x la taille de la police */
-    line-height: 1.6;     /* Augmente l'espace entre les lignes pour une meilleure lecture */
-    margin-top: 3rem 
+    line-height: 2;     /* Augmente l'espace entre les lignes pour une meilleure lecture */
+}
+.contenu-article {
+    margin-top: 3rem; /* ou 48px, 2em, etc. */
 }
