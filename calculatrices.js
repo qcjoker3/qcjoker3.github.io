@@ -181,20 +181,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if(formRetraiteAvancee) {
 
         // Mise à jour visuelle des sliders
-
-        ['ret-rendement', 'ret-regle-retrait', 'ret-rendement-retraite'].forEach(id => {
-
-            const slider = document.getElementById(id);
-
-            const valeurDisplay = document.getElementById(`${id}-valeur`);
-
-            if(slider && valeurDisplay) {
-
-                slider.addEventListener('input', () => valeurDisplay.textContent = `${parseFloat(slider.value).toFixed(1)} %`);
-
-            }
-
-        });
+['ret-rendement', 'ret-regle-retrait', 'ret-rendement-retraite'].forEach(id => {
+    const slider = document.getElementById(id);
+    if (slider) {
+        // On trouve l'élément de type 'div' qui est juste après le slider.
+        const valeurDisplay = slider.nextElementSibling; 
+        if (valeurDisplay) {
+            // Mise à jour initiale de la valeur au chargement
+            valeurDisplay.textContent = `${parseFloat(slider.value).toFixed(1)} %`;
+            // Mise à jour lors du changement
+            slider.addEventListener('input', () => {
+                valeurDisplay.textContent = `${parseFloat(slider.value).toFixed(1)} %`;
+            });
+        }
+    }
+});
 
 
 
@@ -368,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             
 
-            const repartition = { epargne: retraitInitialBrut, rrq: rrqInitial, sv: svInitial };
+           const repartition = { epargne: retraitInitial, rrq: rrqInitial, sv: svInitial };
 
             
 
