@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'vf-montant-initial', 'vf-cotisation', 'hypo-montant', 'trex-montant', 
         'trex-cotisation-annuelle', 'al-prix-propriete', 'al-mise-de-fonds', 
         'al-taxes-annuelles', 'al-assurance-proprio', 'al-frais-condo', 
-        'al-loyer-mensuel', 'al-assurance-loc'
+        'al-loyer-mensuel', 'al-assurance-loc', 'hypo-prix-propriete', 'hypo-mise-de-fonds'
         // 'epargne-mensuelle' a été retiré car il n'existe plus
     ];
     const champsEntier = [
