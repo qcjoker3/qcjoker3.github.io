@@ -1,1 +1,56 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finoza - Articles</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
+<header class="container">
+    <h1>Finoza</h1>
+    <nav>
+        <a href="index.html">Accueil</a>
+        <a href="calculatrices.html">Calculatrices</a>
+        <a href="blog.html">Articles</a> </nav>
+</header>
+
+<main class="container">
+    <section id="blog-intro">
+        <h2>Nos Articles</h2>
+        <p>Explorez nos analyses et conseils sur la finance personnelle.</p>
+    </section>
+
+    <section id="filtres-categories">
+        <button class="filtre-btn active" data-categorie="tous">Tous</button>
+        <button class="filtre-btn" data-categorie="investissement">Investissement</button>
+        <button class="filtre-btn" data-categorie="budget">Budget</button>
+        <button class="filtre-btn" data-categorie="retraite">Retraite</button>
+    </section>
+
+    <section id="liste-articles" class="card-grid">
+        
+        <article class="carte-article" data-categorie="investissement">
+            <h3>Les 5 erreurs à éviter quand on investit</h3>
+            <div class="info-article">
+                <span class="categorie">Investissement</span>
+            </div>
+            <p>Découvrez les pièges courants qui peuvent nuire à vos rendements et comment les contourner...</p>
+            <a href="articles/article-1-investissement.html" class="btn-secondary">Lire la suite</a>
+        </article>
+        
+        <article class="carte-article" data-categorie="budget">
+            <h3>Comment créer un budget que vous respecterez</h3>
+             <div class="info-article">
+                <span class="categorie">Budget</span>
+            </div>
+            <p>Le secret d'un bon budget n'est pas la restriction, mais l'alignement avec vos objectifs de vie...</p>
+            <a href="articles/article-2-budget.html" class="btn-secondary">Lire la suite</a>
+        </article>
+        
+        </section>
+</main>
+
+<script src="js/blog.js"></script> </body>
+</html>
