@@ -345,7 +345,7 @@ if (formHypotheque) {
             return;
         }
         const mensualite = montantPret * rMensuel / (1 - Math.pow(1 + rMensuel, -n));
-        resultatHypo.textContent = `Mensualité estimée : ${fmtNombre(mensualite)} $`;
+        resultatHypo.textContent = `Mensualité estimée : ${fmtNombre(mensualite)}`;
         
         const ctx = document.getElementById('chart-hypotheque')?.getContext('2d');
         if (!ctx || !isFinite(mensualite)) return;
