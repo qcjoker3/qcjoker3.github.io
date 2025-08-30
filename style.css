@@ -267,8 +267,8 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 
 /* --- Pied de Page (Footer) --- */
 footer, .site-footer {
-    background-color: #000; color: var(--subtle-text-color);
-    text-align: center; padding: 3rem 0; margin-top: 5rem;
+    background-color: var(--card-bg-color); /* Utilise la couleur des cartes pour la cohérence */
+    color: var(--subtle-text-color);
     border-top: 1px solid var(--border-color);
 }
 
@@ -296,8 +296,8 @@ footer, .site-footer {
 
 /* Style pour les cartes d'articles */
 .carte-article {
-    background-color: #2d3748; /* Fond sombre */
-    border: 1px solid #4a5568;
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1.5rem;
     display: flex;
@@ -330,9 +330,9 @@ footer, .site-footer {
 }
 
 .filtre-btn {
-    background-color: #4a5568;
-    color: #e2e8f0;
-    border: none;
+    background-color: var(--card-bg-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
     padding: 0.5rem 1rem;
     border-radius: 20px;
     cursor: pointer;
@@ -344,8 +344,8 @@ footer, .site-footer {
 }
 
 .filtre-btn.active {
-    background-color: #4f46e5; /* Couleur principale pour le filtre actif */
-    color: white;
+    background-color: var(--primary-color);
+    color: var(--light-text-color);
 }
 
 .contenu-article p {
