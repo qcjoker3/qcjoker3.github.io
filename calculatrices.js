@@ -418,7 +418,7 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
                 y: { 
                     ticks: { callback: v => fmtNombre(v) } 
                 } 
-            } 
+            }, 
             plugins: {
             legend: {
                 display: false // <-- Ceci cache la légende
