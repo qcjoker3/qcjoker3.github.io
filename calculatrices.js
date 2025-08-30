@@ -516,14 +516,20 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
         chartAcheterLouer = new Chart(ctx, { type: 'line', data: { labels, datasets: [ { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true }, { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true } ] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: value => fmtNombre(value) } } } } });
     });
 
-// Logique d'affichage initial
-const derniereCalc = sessionStorage.getItem('derniereCalculatrice');
+// Logique d'affichage initial améliorée
+const ancreURL = window.location.hash.substring(1); // Récupère le mot après le # (ex: "hypotheque")
 
-if (derniereCalc) {
-    // Si une calculatrice a été sauvegardée, on l'affiche
-    showCalculator(derniereCalc);
+if (ancreURL) {
+    // Si une ancre est présente dans l'URL, on affiche la calculatrice correspondante
+    showCalculator(ancreURL);
+
 } else {
-    // Sinon (première visite), on affiche celle par défaut
-    showCalculator('retraite');
+    // Sinon, on applique l'ancienne logique avec la mémoire de session
+    const derniereCalc = sessionStorage.getItem('derniereCalculatrice');
+    if (derniereCalc) {
+        showCalculator(derniereCalc);
+    } else {
+        showCalculator('retraite'); // Calculatrice par défaut
+    }
 }
 });
