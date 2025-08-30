@@ -359,3 +359,20 @@ footer, .site-footer {
 .en-tete-article {
     margin-bottom: 2.5rem; /* ou 40px, la valeur que vous préférez */
 }
+
+/*
+ * Ajustement des marges pour les sections de la page de blog.
+*/
+
+#blog-intro {
+    margin-bottom: 1.5rem; /* Réduit l'espace SOUS l'intro */
+}
+
+#filtres-categories {
+    margin-top: 0;         /* Retire l'espace AU-DESSUS des filtres */
+    margin-bottom: 2rem;   /* Ajuste l'espace SOUS les filtres */
+}
+
+#liste-articles {
+    margin-top: 0;         /* Retire l'espace AU-DESSUS de la grille d'articles */
+}
