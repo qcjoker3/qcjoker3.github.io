@@ -407,7 +407,7 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
         data: { 
             labels: ['Avec Frais', 'Sans Frais'], 
             datasets: [{ 
-                label: 'Valeur finale', 
+                //label: 'Valeur finale', 
                 data: [capitalAvecFrais, capitalSansFrais], 
                 backgroundColor: ['#ef4444', '#22c55e'] // Rouge pour "avec", Vert pour "sans"
             }] 
@@ -419,6 +419,11 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
                     ticks: { callback: v => fmtNombre(v) } 
                 } 
             } 
+            plugins: {
+            legend: {
+                display: false // <-- Ceci cache la légende
+             }   
+            }
         } 
     });
 });
