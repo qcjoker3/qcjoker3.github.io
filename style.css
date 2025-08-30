@@ -257,6 +257,7 @@ footer, .site-footer {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap; /* Permet aux boutons de passer à la ligne sur mobile */
+    margin-bottom: 3rem; /* <-- AJOUT DE L'ESPACE ICI */
 }
 .filtre-btn {
     background-color: var(--card-bg-color);
