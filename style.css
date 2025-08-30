@@ -3,13 +3,13 @@
 
 /* --- Animations --- */
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 @keyframes aurora {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 /* =============================================================== */
@@ -17,58 +17,58 @@
 /* =============================================================== */
 
 :root {
-    /* --- THÈME LIGHT (par défaut) : Professionnel & Léché --- */
-    --primary-color: #0D9488;
-    --primary-hover: #0F766E;
-    --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7);
-    --accent-color: #0D9488;
-    --accent-hover: #A855F7;
+    /* --- THÈME LIGHT (par défaut) : Professionnel & Léché --- */
+    --primary-color: #0D9488;
+    --primary-hover: #0F766E;
+    --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7);
+    --accent-color: #0D9488;
+    --accent-hover: #A855F7;
 
-    --bg-color: #FFFFFF;
-    --section-bg-color: #F9FAFB;
-    --card-bg-color: #FFFFFF;
-    
-    --heading-color: #111827;
-    --text-color: #374151;
-    --subtle-text-color: #6B7280;
-    --light-text-color: #FFFFFF;
-    
-    --border-color: #E5E7EB;
+    --bg-color: #FFFFFF;
+    --section-bg-color: #F9FAFB;
+    --card-bg-color: #FFFFFF;
+    
+    --heading-color: #111827;
+    --text-color: #374151;
+    --subtle-text-color: #6B7280;
+    --light-text-color: #FFFFFF;
+    
+    --border-color: #E5E7EB;
 
-    --font-body: 'Inter', system-ui, sans-serif;
-    --font-heading: 'Lora', serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-heading: 'Lora', serif;
 
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-focus-ring: 0 0 0 3px rgba(13, 148, 136, 0.2);
-    --border-radius: 12px;
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-focus-ring: 0 0 0 3px rgba(13, 148, 136, 0.2);
+    --border-radius: 12px;
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
-        /* --- THÈME DARK : Dynamique & Coloré --- */
-        --primary-color: #4F46E5;
-        --primary-hover: #4338CA;
-        --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7);
-        --accent-color: #10B981;
-        --accent-hover: #A855F7;
+    :root {
+        /* --- THÈME DARK : Dynamique & Coloré --- */
+        --primary-color: #4F46E5;
+        --primary-hover: #4338CA;
+        --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7);
+        --accent-color: #10B981;
+        --accent-hover: #A855F7;
 
-        --bg-color: #111827;
-        --section-bg-color: #111827;
-        --card-bg-color: #1F2937;
+        --bg-color: #111827;
+        --section-bg-color: #111827;
+        --card-bg-color: #1F2937;
 
-        --heading-color: #F9FAFB;
-        --text-color: #9CA3AF;
-        --subtle-text-color: #6B7280;
-        
-        --border-color: #374151;
+        --heading-color: #F9FAFB;
+        --text-color: #9CA3AF;
+        --subtle-text-color: #6B7280;
+        
+        --border-color: #374151;
 
-        --font-heading: 'Poppins', sans-serif;
+        --font-heading: 'Poppins', sans-serif;
 
-        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
-        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
-        --shadow-focus-ring: 0 0 0 3px rgba(16, 185, 129, 0.3);
-    }
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+        --shadow-focus-ring: 0 0 0 3px rgba(16, 185, 129, 0.3);
+    }
 }
 
 /* =============================================================== */
@@ -76,123 +76,123 @@
 /* =============================================================== */
 
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
-    font-family: var(--font-body);
-    line-height: 1.6;
-    color: var(--text-color);
-    background-color: var(--bg-color);
-    -webkit-font-smoothing: antialiased;
-    transition: background-color 0.3s ease, color 0.3s ease;
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--bg-color);
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 0 20px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 20px;
 }
 
 h1, h2, h3 {
-    font-family: var(--font-heading);
-    color: var(--heading-color);
-    line-height: 1.3;
+    font-family: var(--font-heading);
+    color: var(--heading-color);
+    line-height: 1.3;
 }
 h2 {
-    font-size: 2.8rem;
-    text-align: center;
-    margin-top: 3.5rem;
+    font-size: 2.8rem;
+    text-align: center;
+    margin-top: 3.5rem;
 }
 p.subtitle {
-    text-align: center;
-    max-width: 800px;
-    margin: -2rem auto 3rem auto;
-    color: var(--text-color);
+    text-align: center;
+    max-width: 800px;
+    margin: -2rem auto 3rem auto;
+    color: var(--text-color);
 }
 
 a {
-    text-decoration: none;
-    color: var(--accent-color);
-    transition: color 0.2s ease;
+    text-decoration: none;
+    color: var(--accent-color);
+    transition: color 0.2s ease;
 }
 a:hover {
-    color: var(--accent-hover);
+    color: var(--accent-hover);
 }
 
 section {
-    padding: 5rem 0;
-    animation: fadeIn 0.8s ease-out forwards;
-    background-color: var(--section-bg-color);
-    transition: background-color 0.3s ease;
+    padding: 5rem 0;
+    animation: fadeIn 0.8s ease-out forwards;
+    background-color: var(--section-bg-color);
+    transition: background-color 0.3s ease;
 }
 
 /* --- En-tête & Navigation --- */
 .site-header, header.container {
-    background-color: var(--bg-color);
-    padding: 1.5rem 20px;
-    border-bottom: 1px solid var(--border-color);
-    position: sticky; top: 0; z-index: 100;
-    transition: background-color 0.3s ease, border-color 0.3s ease;
+    background-color: var(--bg-color);
+    padding: 1.5rem 20px;
+    border-bottom: 1px solid var(--border-color);
+    position: sticky; top: 0; z-index: 100;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 .site-header .container { /* Pour la page d'accueil */
-    display: flex; flex-direction: row; justify-content: space-between; align-items: center;
-    padding: 0; margin: 0 auto; width: 100%;
+    display: flex; flex-direction: row; justify-content: space-between; align-items: center;
+    padding: 0; margin: 0 auto; width: 100%;
 }
 header.container { /* Pour les autres pages */
-    display: flex; flex-direction: column; align-items: center; gap: 1rem;
+    display: flex; flex-direction: column; align-items: center; gap: 1rem;
 }
 .logo, header.container h1 {
-    font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700;
-    color: var(--heading-color); margin: 0;
+    font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700;
+    color: var(--heading-color); margin: 0;
 }
 .main-nav, header.container nav {
-    display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;
+    display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;
 }
 .main-nav a, header.container nav a {
-    color: var(--text-color); font-weight: 500;
-    transition: color 0.2s ease, transform 0.2s ease;
+    color: var(--text-color); font-weight: 500;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
 .main-nav a:hover, header.container nav a:hover {
-    color: var(--heading-color); transform: translateY(-2px);
+    color: var(--heading-color); transform: translateY(-2px);
 }
 
 
 /* --- Section d'Accueil (Hero) --- */
 .hero { padding: 7rem 0; text-align: center; position: relative; overflow: hidden; }
 .hero::before {
-    content: ''; position: absolute; top: 50%; left: 50%;
-    transform: translate(-50%, -50%); width: 150%; height: 150%;
-    background: radial-gradient(circle, var(--primary-color) 0%, transparent 60%);
-    opacity: 0.15; animation: aurora 20s infinite linear; z-index: 0;
+    content: ''; position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%); width: 150%; height: 150%;
+    background: radial-gradient(circle, var(--primary-color) 0%, transparent 60%);
+    opacity: 0.15; animation: aurora 20s infinite linear; z-index: 0;
 }
 .hero > .container { position: relative; z-index: 1; }
 .hero h1 {
-    font-size: 4rem; background: var(--primary-gradient);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    margin-bottom: 1.5rem;
+    font-size: 4rem; background: var(--primary-gradient);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
 }
 .hero .subtitle { font-size: 1.25rem; color: var(--text-color); max-width: 700px; margin: 0 auto 2.5rem auto; }
 
 /* --- Boutons --- */
 .btn-primary {
-    display: inline-block; background: var(--primary-gradient); color: var(--light-text-color);
-    border: none; padding: 1rem 2.5rem; border-radius: 50px; cursor: pointer;
-    font-weight: 700; font-family: var(--font-heading); font-size: 1.1rem;
-    margin-top: 10px; box-shadow: var(--shadow-md); transition: all 0.3s ease;
-    background-size: 200% auto;
+    display: inline-block; background: var(--primary-gradient); color: var(--light-text-color);
+    border: none; padding: 1rem 2.5rem; border-radius: 50px; cursor: pointer;
+    font-weight: 700; font-family: var(--font-heading); font-size: 1.1rem;
+    margin-top: 10px; box-shadow: var(--shadow-md); transition: all 0.3s ease;
+    background-size: 200% auto;
 }
 .btn-primary:hover { background-position: right center; transform: scale(1.05); box-shadow: var(--shadow-lg); }
 
 /* --- Cartes (Cards) --- */
 .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0rem 2rem}
 .card {
-    background-color: var(--card-bg-color); border: 1px solid var(--border-color);
-    border-radius: var(--border-radius); padding: 2.5rem; margin-top: 2rem;
-    transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
-    position: relative;
+    background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+    border-radius: var(--border-radius); padding: 2.5rem; margin-top: 2rem;
+    transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+    position: relative;
 }
 .card:hover { transform: translateY(-5px); border-color: var(--primary-color); }
 .card h3 { font-size: 1.5rem; }
@@ -202,13 +202,13 @@ header.container { /* Pour les autres pages */
 
 /* === STYLES POUR LES CALCULATRICES === */
 .calculator-card {
-    display: none; padding: 2.5rem; margin-top: 2rem;
-    border-radius: 16px; background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+    display: none; padding: 2.5rem; margin-top: 2rem;
+    border-radius: 16px; background-color: var(--card-bg-color); border: 1px solid var(--border-color);
 }
 .calculator-card.active { display: block; animation: fadeIn 0.5s ease-out; }
 .boite-explication {
-    display: none; background-color: var(--bg-color); border: 1px solid var(--border-color);
-    padding: 1.5rem; margin: 2rem 0; border-radius: 16px;
+    display: none; background-color: var(--bg-color); border: 1px solid var(--border-color);
+    padding: 1.5rem; margin: 2rem 0; border-radius: 16px;
 }
 .boite-explication.active { display: block; }
 .chart-container { width: 100%; height: 450px; margin-top: 2.5rem; }
@@ -216,48 +216,48 @@ header.container { /* Pour les autres pages */
 /* --- Formulaires --- */
 .form-group label { color: var(--heading-color); }
 .form-group input, .form-group select {
-    width: 100%; padding: 0.9rem 1rem; margin: 0.2rem; border: 1px solid var(--border-color);
-    border-radius: 8px; font-size: 1rem; font-family: var(--font-body);
-    background-color: var(--bg-color); color: var(--text-color);
-    transition: border-color 0.2s, box-shadow 0.2s;
+    width: 100%; padding: 0.9rem 1rem; margin: 0.2rem; border: 1px solid var(--border-color);
+    border-radius: 8px; font-size: 1rem; font-family: var(--font-body);
+    background-color: var(--bg-color); color: var(--text-color);
+    transition: border-color 0.2s, box-shadow 0.2s;
 }
-.form-group input:focus, 
+.form-group input:focus, 
 .form-group select:focus {
-    outline: none; border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring);
+    outline: none; border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring);
 }
 
 /* === STYLES SPÉCIFIQUES À LA NOUVELLE CALCULATRICE DE RETRAITE === */
 .form-section {
-    padding: 2rem; background-color: var(--card-bg-color);
-    border: 1px solid var(--border-color); border-radius: var(--border-radius);
-    margin-bottom: 2rem; transition: background-color 0.3s ease, border-color 0.3s ease;
+    padding: 2rem; background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color); border-radius: var(--border-radius);
+    margin-bottom: 2rem; transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 .advanced-options {
-    margin-top: 2rem; border-radius: var(--border-radius);
-    border: 1px solid var(--border-color); overflow: hidden;
+    margin-top: 2rem; border-radius: var(--border-radius);
+    border: 1px solid var(--border-color); overflow: hidden;
 }
 .advanced-options summary {
-    padding: 1rem 1.5rem; font-family: var(--font-heading); font-weight: 600;
-    color: var(--heading-color); background-color: var(--section-bg-color); cursor: pointer;
-    transition: background-color 0.3s ease;
+    padding: 1rem 1.5rem; font-family: var(--font-heading); font-weight: 600;
+    color: var(--heading-color); background-color: var(--section-bg-color); cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 .advanced-options[open] > summary { border-bottom: 1px solid var(--border-color); }
 .advanced-options .form-section { border: none; margin-bottom: 0; }
 .results-container {
-    margin-top: 3rem; padding: 2rem; background-color: var(--section-bg-color);
-    border: 1px solid var(--border-color); border-radius: var(--border-radius);
-    animation: fadeIn 0.5s ease-out;
+    margin-top: 3rem; padding: 2rem; background-color: var(--section-bg-color);
+    border: 1px solid var(--border-color); border-radius: var(--border-radius);
+    animation: fadeIn 0.5s ease-out;
 }
 .results-dashboard { display: grid; grid-template-columns: 1fr; gap: 1.5rem; text-align: center; margin-bottom: 3rem; }
 @media(min-width: 768px) { .results-dashboard { grid-template-columns: 1fr 1fr; } }
 .result-box {
-    padding: 1.5rem; background-color: var(--card-bg-color);
-    border-radius: var(--border-radius); box-shadow: var(--shadow-md);
+    padding: 1.5rem; background-color: var(--card-bg-color);
+    border-radius: var(--border-radius); box-shadow: var(--shadow-md);
 }
 .result-label { display: block; font-size: 1rem; color: var(--text-color); margin-bottom: 0.5rem; }
 .result-value {
-    display: block; font-size: 2.5rem; font-weight: 700;
-    color: var(--heading-color); font-family: var(--font-heading);
+    display: block; font-size: 2.5rem; font-weight: 700;
+    color: var(--heading-color); font-family: var(--font-heading);
 }
 .chart-container-small { max-width: 400px; height: 300px; margin: 1.5rem auto; }
 input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: var(--border-color); border-radius: 5px; outline: none; }
@@ -267,9 +267,9 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 
 /* --- Pied de Page (Footer) --- */
 footer, .site-footer {
-    background-color: var(--card-bg-color); /* Utilise la couleur des cartes pour la cohérence */
-    color: var(--subtle-text-color);
-    border-top: 1px solid var(--border-color);
+    background-color: #000; color: var(--subtle-text-color);
+    text-align: center; padding: 3rem 0; margin-top: 5rem;
+    border-top: 1px solid var(--border-color);
 }
 
 /* --- Ajustements d'espacement pour la page des calculatrices --- */
@@ -279,100 +279,100 @@ footer, .site-footer {
 
 /* --- Mise en page en colonnes (Calculatrice Acheter/Louer) --- */
 .form-columns {
-    display: grid; grid-template-columns: 1fr;
-    gap: 2.5rem; margin-top: 2rem;
+    display: grid; grid-template-columns: 1fr;
+    gap: 2.5rem; margin-top: 2rem;
 }
 @media (min-width: 768px) { .form-columns { grid-template-columns: 1fr 1fr; } }
 .form-column h3 {
-    font-size: 1.5rem; margin-bottom: 1.5rem;
-    font-family: var(--font-heading); color: var(--heading-color);
+    font-size: 1.5rem; margin-bottom: 1.5rem;
+    font-family: var(--font-heading); color: var(--heading-color);
 }
 
 /* --- Ajustements d'espacement pour la page de la planification financière (retraite) --- */
 .card {
-  padding: 16px;   /* 👈 ajoute du padding interne */
-  gap: 8px;
+  padding: 16px;   /* 👈 ajoute du padding interne */
+  gap: 8px;
 }
 
 /* Style pour les cartes d'articles */
 .carte-article {
-    background-color: var(--card-bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
+    background-color: #2d3748; /* Fond sombre */
+    border: 1px solid #4a5568;
+    border-radius: 8px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
 }
 
 .carte-article h3 {
-    margin-top: 0;
+    margin-top: 0;
 }
 
 .carte-article .categorie {
-    display: inline-block;
-    background-color: #4a5568;
-    color: #e2e8f0;
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8em;
-    margin-bottom: 1rem;
+    display: inline-block;
+    background-color: #4a5568;
+    color: #e2e8f0;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8em;
+    margin-bottom: 1rem;
 }
 
 .carte-article p {
-    flex-grow: 1; /* Pousse le bouton "Lire la suite" vers le bas */
+    flex-grow: 1; /* Pousse le bouton "Lire la suite" vers le bas */
 }
 
 /* Style pour les filtres */
 #filtres-categories {
-    margin-bottom: 2rem;
-    display: flex;
-    gap: 0.5rem;
+    margin-bottom: 2rem;
+    display: flex;
+    gap: 0.5rem;
 }
 
 .filtre-btn {
-    background-color: var(--card-bg-color);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    padding: 0.5rem 1rem;
-    border-radius: 20px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+    background-color: #4a5568;
+    color: #e2e8f0;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: background-color 0.2s;
 }
 
 .filtre-btn:hover {
-    background-color: #2d3748;
+    background-color: #2d3748;
 }
 
 .filtre-btn.active {
-    background-color: var(--primary-color);
-    color: var(--light-text-color);
+    background-color: #4f46e5; /* Couleur principale pour le filtre actif */
+    color: white;
 }
 
 .contenu-article p {
-    margin-bottom: 1.6em; /* Espace équivalent à 1.2x la taille de la police */
-    line-height: 1.6;     /* Augmente l'espace entre les lignes pour une meilleure lecture */
+    margin-bottom: 1.6em; /* Espace équivalent à 1.2x la taille de la police */
+    line-height: 1.6;     /* Augmente l'espace entre les lignes pour une meilleure lecture */
 }
 .contenu-article {
-    margin-top: 3rem; /* ou 48px, 2em, etc. */
+    margin-top: 3rem; /* ou 48px, 2em, etc. */
 }
 
 .en-tete-article {
-    margin-bottom: 2.5rem; /* ou 40px, la valeur que vous préférez */
+    margin-bottom: 2.5rem; /* ou 40px, la valeur que vous préférez */
 }
 
 /*
- * Ajustement des marges pour les sections de la page de blog.
+ * Ajustement des marges pour les sections de la page de blog.
 */
 
 #blog-intro {
-    margin-bottom: 1.5rem; /* Réduit l'espace SOUS l'intro */
+    margin-bottom: 1.5rem; /* Réduit l'espace SOUS l'intro */
 }
 
 #filtres-categories {
-    margin-top: 0;         /* Retire l'espace AU-DESSUS des filtres */
-    margin-bottom: 2rem;   /* Ajuste l'espace SOUS les filtres */
+    margin-top: 0;         /* Retire l'espace AU-DESSUS des filtres */
+    margin-bottom: 2rem;   /* Ajuste l'espace SOUS les filtres */
 }
 
 #liste-articles {
-    margin-top: 0;         /* Retire l'espace AU-DESSUS de la grille d'articles */
+    margin-top: 0;         /* Retire l'espace AU-DESSUS de la grille d'articles */
 }
