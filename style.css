@@ -282,19 +282,8 @@ footer, .site-footer {
 #blog-intro { margin-bottom: 1.5rem; text-align: center; }
 
 /* --- Page: Calculatrices --- */
-.calculator-card {
-    display: none; padding: 2.5rem; margin-top: 2rem;
-    border-radius: 16px; background-color: var(--card-bg-color); border: 1px solid var(--border-color);
-}
-.calculator-card.active { display: block; animation: fadeIn 0.5s ease-out; }
-.boite-explication {
-    display: none; background-color: var(--bg-color); border: 1px solid var(--border-color);
-    padding: 1.5rem; margin: 2rem 0; border-radius: 16px;
-}
-.boite-explication.active { display: block; }
-.chart-container { width: 100%; height: 450px; margin-top: 2.5rem; }
 
-/* [MODIFICATION] On ajuste le padding des sections pour un espacement contrôlé */
+/* 1. On ajuste le padding des sections conteneurs */
 #selection-calculatrices {
     padding-top: 3rem;
     padding-bottom: 1.5rem; /* Espace entre le choix et l'explication */
@@ -308,10 +297,24 @@ footer, .site-footer {
     padding-bottom: 3rem; /* Espace sous la calculatrice */
 }
 
+/* 2. On définit le style de la boîte d'explication */
+.boite-explication {
+    display: none; 
+    background-color: var(--bg-color); 
+    border: 1px solid var(--border-color);
+    padding: 1.5rem; 
+    margin: 0; /* On retire la marge verticale pour un contrôle total par le parent */
+    border-radius: 16px;
+}
+.boite-explication.active { 
+    display: block; 
+}
+
+/* 3. On définit le style de la carte de la calculatrice */
 .calculator-card {
     display: none; 
     padding: 2.5rem; 
-    margin-top: 0; /* [MODIFICATION] On retire la marge superflue */
+    margin-top: 0; /* On retire la marge verticale */
     border-radius: 16px; 
     background-color: var(--card-bg-color); 
     border: 1px solid var(--border-color);
@@ -321,29 +324,22 @@ footer, .site-footer {
     animation: fadeIn 0.5s ease-out; 
 }
 
-.boite-explication {
-    display: none; 
-    background-color: var(--bg-color); 
-    border: 1px solid var(--border-color);
-    padding: 1.5rem; 
-    margin: 0; /* [MODIFICATION] On retire la marge superflue */
-    border-radius: 16px;
-}
-.boite-explication.active { 
-    display: block; 
-}
-
+/* 4. On conserve les autres styles de la page */
 .chart-container { 
     width: 100%; 
     height: 450px; 
     margin-top: 2.5rem; 
 }
 .form-section {
-    padding: 2rem; background-color: var(--card-bg-color);
-    border: 1px solid var(--border-color); border-radius: var(--border-radius);
+    padding: 2rem; 
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color); 
+    border-radius: var(--border-radius);
     margin-bottom: 2rem;
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
+
+/* ... Le reste de vos styles pour .advanced-options, .results-container, etc., vient ici ... */
 .advanced-options { margin-top: 2rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow: hidden; }
 .advanced-options summary { padding: 1rem 1.5rem; font-family: var(--font-heading); font-weight: 600; color: var(--heading-color); background-color: var(--section-bg-color); cursor: pointer; transition: background-color 0.3s ease; }
 .advanced-options[open] > summary { border-bottom: 1px solid var(--border-color); }
