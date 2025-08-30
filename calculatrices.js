@@ -75,6 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetExplication = document.getElementById(`explication-${key}`);
         allExplications.forEach(box => box.classList.remove('active'));
         if (targetExplication) targetExplication.classList.add('active');
+        sessionStorage.setItem('derniereCalculatrice', key);
     };
     calcCards.forEach(card => card.addEventListener('click', () => showCalculator(card.dataset.calc)));
 
@@ -511,6 +512,14 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
         chartAcheterLouer = new Chart(ctx, { type: 'line', data: { labels, datasets: [ { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true }, { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true } ] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: value => fmtNombre(value) } } } } });
     });
 
-    // Affichage initial
-    //showCalculator('retraite');
+// Logique d'affichage initial
+const derniereCalc = sessionStorage.getItem('derniereCalculatrice');
+
+if (derniereCalc) {
+    // Si une calculatrice a été sauvegardée, on l'affiche
+    showCalculator(derniereCalc);
+} else {
+    // Sinon (première visite), on affiche celle par défaut
+    showCalculator('retraite');
+}
 });
