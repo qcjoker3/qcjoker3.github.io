@@ -244,8 +244,8 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
     const fvReelle = fvTotal / Math.pow(1 + tauxInflation, duree);
 
     // MODIFIÉ : Affichage des deux résultats
-    resultatVF.innerHTML = `Valeur future estimée : <strong>${fmtNombre(fvTotal)} $</strong><br>
-                           En dollars d'aujourd'hui (inflation 2%) : <strong>${fmtNombre(fvReelle)} $</strong>`;
+    resultatVF.innerHTML = `Valeur future estimée : <strong>${fmtNombre(fvTotal)} </strong><br>
+                           En dollars d'aujourd'hui (inflation 2%) : <strong>${fmtNombre(fvReelle)} </strong>`;
     
     const ctx = document.getElementById('chart-vf')?.getContext('2d');
     if (!ctx || !isFinite(fvTotal)) return;
@@ -298,7 +298,7 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
             maintainAspectRatio: false, 
             scales: { 
                 y: { 
-                    ticks: { callback: v => fmtNombre(v) + ' $' } 
+                    ticks: { callback: v => fmtNombre(v) } 
                 } 
             } 
         } 
@@ -503,12 +503,12 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
         const resultatFinalLocataire = dataLocataire[dataLocataire.length - 1];
         const difference = resultatFinalProprio - resultatFinalLocataire;
         
-        document.getElementById('resultat-acheter-louer').textContent = `Après ${horizon} ans, l'actif net du propriétaire est de ${fmtNombre(resultatFinalProprio)} $ et celui du locataire de ${fmtNombre(resultatFinalLocataire)} $. Différence : ${fmtNombre(Math.abs(difference))} $ en faveur du ${difference > 0 ? 'propriétaire' : 'locataire'}.`;
+        document.getElementById('resultat-acheter-louer').textContent = `Après ${horizon} ans, l'actif net du propriétaire est de ${fmtNombre(resultatFinalProprio)} et celui du locataire de {fmtNombre(resultatFinalLocataire)}. Différence : ${fmtNombre(Math.abs(difference))} en faveur du ${difference > 0 ? 'propriétaire' : 'locataire'}.`;
         
         const ctx = document.getElementById('chart-acheter-louer')?.getContext('2d');
         if (!ctx) return;
         if (chartAcheterLouer) chartAcheterLouer.destroy();
-        chartAcheterLouer = new Chart(ctx, { type: 'line', data: { labels, datasets: [ { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true }, { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true } ] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: value => fmtNombre(value) + ' $' } } } } });
+        chartAcheterLouer = new Chart(ctx, { type: 'line', data: { labels, datasets: [ { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true }, { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true } ] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: value => fmtNombre(value) } } } } });
     });
 
     // Affichage initial
