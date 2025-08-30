@@ -215,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('retraite-resultats').scrollIntoView({ behavior: 'smooth' });
         });
     }
+
 // --- Calculatrice de Valeur Future ---
 document.getElementById('form-vf')?.addEventListener('submit', e => {
     e.preventDefault();
@@ -225,34 +226,33 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
     const cotisation = getVal('vf-cotisation');
     const freq = document.getElementById('vf-frequence').value;
 
-    // AJOUT : Taux d'inflation annuel fixe
-    const tauxInflation = 0.02;
+    // [MODIFICATION] On lit la valeur depuis le nouvel input au lieu qu'elle soit fixe
+    const tauxInflation = getVal('vf-inflation') / 100;
     
+    // [MODIFICATION] On récupère la valeur en % pour l'afficher dans le texte du résultat
+    const inflationPourcent = getVal('vf-inflation');
+
     const m = freq === 'mensuelle' ? 12 : 1;
     const nP = duree * m;
-    // Pour éviter une division par zéro si le taux est de 0%
     const rP = taux > 0 ? Math.pow(1 + taux, 1 / m) - 1 : 0;
     
     let fvTotal;
     if (taux > 0) {
         fvTotal = (montantInitial * Math.pow(1 + rP, nP)) + (cotisation * ((Math.pow(1 + rP, nP) - 1) / rP));
     } else {
-        // Si le taux est 0, la valeur future est simplement le montant initial + les cotisations
         fvTotal = montantInitial + (cotisation * nP);
     }
 
-    // AJOUT : Calcul de la valeur future ajustée pour l'inflation (en dollars courants)
     const fvReelle = fvTotal / Math.pow(1 + tauxInflation, duree);
 
-    // MODIFIÉ : Affichage des deux résultats
-    resultatVF.innerHTML = `Valeur future estimée : <strong>${fmtNombre(fvTotal)} </strong><br>
-                           En dollars d'aujourd'hui (inflation 2%) : <strong>${fmtNombre(fvReelle)} </strong>`;
+    // [MODIFICATION] L'affichage du résultat est maintenant dynamique
+    resultatVF.innerHTML = `Valeur future estimée : <strong>${fmtNombre(fvTotal)}</strong><br>
+                            En dollars d'aujourd'hui (inflation ${inflationPourcent}%) : <strong>${fmtNombre(fvReelle)}</strong>`;
     
     const ctx = document.getElementById('chart-vf')?.getContext('2d');
     if (!ctx || !isFinite(fvTotal)) return;
     if (chartVF) chartVF.destroy();
     
-    // MODIFIÉ : Préparation des données pour les deux courbes du graphique
     const labels = [];
     const valeurNominaleData = [];
     const valeurReelleData = [];
@@ -269,11 +269,10 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
         }
         
         valeurNominaleData.push(valeurNominaleAnnee);
-        // AJOUT : Calcul de la valeur réelle pour chaque année du graphique
+        // Le calcul ici utilise déjà la variable `tauxInflation`, donc il se met à jour automatiquement
         valeurReelleData.push(valeurNominaleAnnee / Math.pow(1 + tauxInflation, i));
     }
     
-    // MODIFIÉ : Création du graphique avec deux lignes de données
     chartVF = new Chart(ctx, { 
         type: 'line', 
         data: { 
@@ -289,9 +288,9 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
                 {
                     label: "Valeur en dollars d'aujourd'hui",
                     data: valeurReelleData,
-                    borderColor: '#A855F7', // Une couleur distincte
-                    fill: false, // Ligne simple pour une meilleure lisibilité
-                    borderDash: [5, 5] // Ligne en pointillé
+                    borderColor: '#A855F7',
+                    fill: false,
+                    borderDash: [5, 5]
                 }
             ] 
         }, 
