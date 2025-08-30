@@ -1,1 +1,274 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lexique de la finance personnelle - Finoza</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Styles spécifiques pour la nouvelle page lexique */
+        html {
+            scroll-behavior: smooth;
+        }
+        .table-des-matieres {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-bottom: 3rem;
+            position: sticky;
+            top: 80px; /* Hauteur approx. de votre header */
+            background-color: var(--bg-color);
+            padding: 1rem;
+            z-index: 50;
+            border-bottom: 1px solid var(--border-color);
+            backdrop-filter: blur(8px);
+            background-color: rgba(255, 255, 255, 0.8);
+        }
+        @media (prefers-color-scheme: dark) {
+            .table-des-matieres {
+                background-color: rgba(17, 24, 39, 0.8);
+            }
+        }
+        .table-des-matieres a {
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 999px;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+        .table-des-matieres a:hover {
+            background-color: var(--section-bg-color);
+            border-color: var(--border-color);
+            color: var(--heading-color);
+        }
+        .section-lexique {
+            padding-top: 100px; /* Compense le header sticky */
+            margin-top: -80px;
+        }
+        .section-lexique h2 {
+            font-size: 2.2rem;
+            text-align: left;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .definition-bloc {
+            margin-bottom: 2.5rem;
+        }
+        .definition-bloc h3 {
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--heading-color);
+            margin-bottom: 0.5rem;
+        }
+        .definition-bloc p {
+            margin-left: 0;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+        strong.quebec-spec {
+            background-color: rgba(79, 70, 229, 0.1);
+            color: #4F46E5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+        @media (prefers-color-scheme: dark) {
+            strong.quebec-spec {
+                background-color: rgba(16, 185, 129, 0.1);
+                color: #10B981;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="container">
+    <h1>Finoza</h1>
+    <nav>
+        <a href="index.html">Accueil</a>
+        <a href="index.html#services">Services</a>
+        <a href="Prédictions.html">Prédictions</a>
+        <a href="calculatrices.html">Calculatrices</a>
+        <a href="gestionActive.html">Gestion active</a>
+        <a href="decaissementRetraite.html">Décaissement retraite</a>
+        <a href="blog.html">Articles</a>
+        <a href="lexique-finance.html">Lexique</a>
+        <a href="index.html#contact">Contact</a>
+    </nav>
+</header>
+
+<main class="container">
+    <section id="lexique-intro" style="text-align:center; padding-top: 3rem;">
+        <h2>Le Guide des termes financiers</h2>
+        <p class="subtitle">Le jargon de la finance, expliqué simplement pour prendre le contrôle de votre argent.</p>
+    </section>
+
+    <nav class="table-des-matieres">
+        <a href="#section-fondations">Les Fondations</a>
+        <a href="#section-comptes">Les Comptes</a>
+        <a href="#section-investissement">L'Investissement</a>
+        <a href="#section-mecanismes">Les Mécanismes Clés</a>
+        <a href="#section-dettes">Dettes & Crédit</a>
+        <a href="#section-rentes">Rentes Gouvernementales</a>
+    </nav>
+
+    <div class="contenu-article">
+
+        <!-- Section 1: Les Fondations -->
+        <section id="section-fondations" class="section-lexique">
+            <h2><span style="font-size: 2rem;">🏛️</span> Les Fondations</h2>
+            <div class="definition-bloc">
+                <h3>Actif</h3>
+                <p>Tout ce que vous possédez et qui a une valeur. Pensez à votre maison, votre voiture, l'argent dans votre compte en banque et vos placements. C'est le côté "positif" de votre bilan financier.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Passif</h3>
+                <p>Tout ce que vous devez. Pensez à votre prêt hypothécaire, votre prêt auto, le solde de votre carte de crédit. C'est le côté "négatif" de votre bilan financier.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Valeur nette</h3>
+                <p>Le vrai bulletin de votre santé financière. C'est la valeur de tout ce que vous possédez (vos <strong>actifs</strong>) moins la valeur de tout ce que vous devez (vos <strong>passifs</strong>). L'objectif est de faire augmenter ce chiffre tout au long de votre vie.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Budget</h3>
+                <p>Un plan simple qui dit où va votre argent chaque mois. C'est la différence entre ce que vous gagnez (vos revenus) et ce que vous dépensez (vos dépenses). C'est l'outil numéro un pour prendre le contrôle de vos finances.</p>
+            </div>
+        </section>
+
+        <!-- Section 2: L'Épargne et les Comptes -->
+        <section id="section-comptes" class="section-lexique">
+            <h2><span style="font-size: 2rem;">🏦</span> L'Épargne et les Comptes</h2>
+            <div class="definition-bloc">
+                <h3>Compte chèque</h3>
+                <p>Votre compte bancaire de tous les jours. C'est là que votre paie est déposée et d'où vous payez vos factures. Il est fait pour les transactions, pas pour épargner, car il ne rapporte pratiquement aucun intérêt.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Compte d'épargne</h3>
+                <p>Un compte où vous mettez de l'argent de côté pour des projets à court terme (ex: vacances, fonds d'urgence). Il rapporte un peu d'intérêt, mais souvent moins que l'inflation.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Compte d'épargne à intérêt élevé</h3>
+                <p>Une version améliorée du compte d'épargne, souvent offerte par les banques en ligne. Il offre un taux d'intérêt beaucoup plus intéressant, tout en gardant votre argent accessible. C'est le meilleur endroit pour votre fonds d'urgence.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>CÉLI (Compte d'Épargne Libre d'Impôt)</h3>
+                <p>Un type de compte de placement magique. L'argent que vous placez dedans grandit complètement **à l'abri de l'impôt**. Quand vous le retirez, vous ne payez aucun impôt sur les profits que vous avez faits. Idéal pour des projets à moyen ou long terme.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>REER (Régime Enregistré d'Épargne-Retraite)</h3>
+                <p>Un type de compte de placement pour la retraite. Son grand avantage : chaque dollar que vous y mettez réduit votre revenu imposable pour l'année. Vous obtenez donc un retour d'impôt. L'argent grandit à l'abri de l'impôt, mais vous serez imposé quand vous le retirerez à la retraite.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>CELIAPP (Compte d'Épargne Libre d'Impôt pour l'Achat d'une Première Propriété)</h3>
+                <p><strong class="quebec-spec">Spécifique au Canada</strong> Un nouveau compte qui combine le meilleur du REER et du CÉLI. Vos cotisations vous donnent une déduction d'impôt (comme un REER), et vos retraits pour acheter une première maison sont non imposables (comme un CÉLI).</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>CRI (Compte de Retraite Immobilisé)</h3>
+                <p>Un compte spécial où est transféré l'argent de votre fonds de pension si vous quittez un emploi. L'argent est "immobilisé", ce qui veut dire que vous ne pouvez pas le retirer avant la retraite, sauf exceptions.</p>
+            </div>
+        </section>
+
+        <!-- Section 3: Le Monde de l'Investissement -->
+        <section id="section-investissement" class="section-lexique">
+            <h2><span style="font-size: 2rem;">📈</span> Le Monde de l'Investissement</h2>
+            <div class="definition-bloc">
+                <h3>Action</h3>
+                <p>Un petit morceau d'une entreprise. Quand vous achetez une action de l'entreprise "Pommes Inc.", vous devenez propriétaire d'une minuscule partie de cette entreprise. Si l'entreprise fait des profits et grandit, la valeur de votre action peut augmenter. C'est un placement plus risqué, mais avec un potentiel de rendement plus élevé.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Obligation</h3>
+                <p>Un prêt que vous faites à un gouvernement ou à une grande entreprise. En échange, ils vous promettent de vous payer un intérêt fixe (comme un coupon) régulièrement, puis de vous rembourser votre montant initial à la fin de la période convenue. C'est généralement considéré comme plus sécuritaire que les actions, mais avec un potentiel de rendement plus faible.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Bourse</h3>
+                <p>Un grand marché public où les actions des entreprises sont achetées et vendues. Pensez-y comme à un grand centre commercial pour les placements. Les Bourses les plus connues sont celles de New York (NYSE) et de Toronto (TSX).</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Portefeuille</h3>
+                <p>L'ensemble de tous vos placements. Votre portefeuille peut inclure des actions, des FNB, des obligations, etc. C'est votre "équipe" de placements qui travaille pour vous.</p>
+            </div>
+             <div class="definition-bloc">
+                <h3>Diversification</h3>
+                <p>La règle d'or de l'investissement : "Ne pas mettre tous ses œufs dans le même panier". Au lieu de tout investir dans une seule action, on répartit l'argent dans plusieurs types de placements (actions, obligations) et dans plusieurs régions du monde pour réduire le risque.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>FNB (Fonds Négocié en Bourse)</h3>
+                <p>Similaire à un fonds commun, mais qui se contente de suivre un indice boursier (ex: les 500 plus grandes entreprises américaines). Comme il n'y a pas de gestionnaire qui essaie de "battre le marché", les frais sont beaucoup plus bas. C'est la solution privilégiée par Finoza.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Fonds Commun de Placement (Fonds Mutuel)</h3>
+                <p>Un gros panier de placements géré par un professionnel. Des milliers d'investisseurs mettent leur argent en commun, et un gestionnaire décide quelles actions ou obligations acheter. C'est simple, mais souvent très coûteux en frais.</p>
+            </div>
+        </section>
+
+        <!-- Section 4: Les Mécanismes Clés -->
+        <section id="section-mecanismes" class="section-lexique">
+            <h2><span style="font-size: 2rem;">⚙️</span> Les Mécanismes Clés</h2>
+            <div class="definition-bloc">
+                <h3>Effet composé</h3>
+                <p>La "magie" de l'investissement. C'est quand vos gains génèrent eux-mêmes des gains. Votre argent fait des bébés, et ces bébés font ensuite leurs propres bébés. C'est ce qui transforme de petites sommes en grandes fortunes sur le long terme.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Inflation</h3>
+                <p>La hausse générale des prix au fil du temps. C'est ce qui fait que le café qui coûtait 1$ il y a 20 ans en coûte 2,50$ aujourd'hui. L'inflation gruge la valeur de votre argent, c'est pourquoi il est crucial d'investir pour que votre argent grandisse plus vite qu'elle.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Frais de Gestion (RFG)</h3>
+                <p>Le pourcentage que vous payez chaque année à la compagnie qui gère votre fonds de placement. C'est le "tueur silencieux de richesse", car même un petit 2% peut manger près de la moitié de votre richesse sur 30 ans. À surveiller comme la peste !</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Dividende</h3>
+                <p>Une partie des profits qu'une entreprise verse à ses actionnaires, souvent chaque trimestre. C'est comme recevoir un petit loyer juste pour être propriétaire d'un morceau de l'entreprise.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Taux d'intérêt</h3>
+                <p>Le coût de l'emprunt d'argent (exprimé en pourcentage). C'est aussi ce que vous gagnez lorsque vous prêtez de l'argent (par exemple, en le plaçant dans un compte d'épargne).</p>
+            </div>
+        </section>
+
+        <!-- Section 5: Dettes & Crédit -->
+        <section id="section-dettes" class="section-lexique">
+            <h2><span style="font-size: 2rem;">💳</span> Dettes & Crédit</h2>
+            <div class="definition-bloc">
+                <h3>Hypothèque</h3>
+                <p>Le prêt que vous contractez auprès d'une banque pour acheter une propriété. Vous remboursez le prêt avec des intérêts sur une longue période (l'amortissement).</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Amortissement</h3>
+                <p>La période totale sur laquelle vous vous engagez à rembourser un prêt, le plus souvent une hypothèque. Un amortissement de 25 ans signifie que vos paiements sont calculés pour que le prêt soit entièrement remboursé en 25 ans.</p>
+            </div>
+             <div class="definition-bloc">
+                <h3>Dette (bonne vs. mauvaise)</h3>
+                <p><strong>Bonne dette :</strong> Un emprunt pour acheter quelque chose qui prendra de la valeur avec le temps (ex: une hypothèque pour une maison, un prêt étudiant pour une meilleure carrière).</p>
+                <p><strong>Mauvaise dette :</strong> Un emprunt pour acheter quelque chose qui perd de la valeur rapidement ou qui ne génère aucun revenu (ex: solde de carte de crédit pour des vacances, prêt auto à taux élevé).</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>Cote de crédit</h3>
+                <p>Un pointage (entre 300 et 900) qui dit aux banques si vous êtes un bon "emprunteur". Plus votre cote est haute, plus vous êtes considéré comme fiable, et plus il sera facile d'obtenir un prêt (hypothèque, prêt auto) à un bon taux.</p>
+            </div>
+        </section>
+
+        <!-- Section 6: Rentes Gouvernementales -->
+        <section id="section-rentes" class="section-lexique">
+            <h2><span style="font-size: 2rem;">🏛️</span> Rentes Gouvernementales</h2>
+            <div class="definition-bloc">
+                <h3>RRQ (Régime de rentes du Québec)</h3>
+                <p><strong class="quebec-spec">Spécifique au Québec</strong> Le régime de retraite public du gouvernement québécois. Vous et votre employeur y cotisez à chaque paie. À la retraite, vous recevrez une rente mensuelle à vie.</p>
+            </div>
+            <div class="definition-bloc">
+                <h3>SV (Sécurité de la Vieillesse)</h3>
+                <p><strong class="quebec-spec">Spécifique au Canada</strong> Une pension versée par le gouvernement fédéral à la plupart des Canadiens de 65 ans et plus. Le montant dépend du nombre d'années où vous avez vécu au Canada.</p>
+            </div>
+        </section>
+
+    </div>
+</main>
+
+</body>
+</html>
 
