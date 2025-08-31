@@ -531,19 +531,21 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
             const montantInitial = getVal('duree-montant-initial');
             const retraitAnnuel = getVal('duree-retrait-annuel');
             const rendement = getVal('duree-rendement') / 100;
-
+            const inflation = getVal('duree-inflation') / 100;
             const resultatDiv = document.getElementById('resultat-duree-capital');
             const chartContainer = resultatDiv.nextElementSibling;
 
             let capitalRestant = montantInitial;
+            let retraitIndexe = retraitAnnuelInitial;
             let annees = 0;
             const trajectoireCapital = [montantInitial];
             let messageFinal = '';
-
+            const rendementReel = (1 + rendement) / (1 + inflation) - 1;
             // Cas où le capital dure "éternellement"
-            if (rendement > 0 && retraitAnnuel <= montantInitial * rendement) {
+           if (rendementReel > 0 && retraitAnnuelInitial <= montantInitial * rendementReel) {
                 for (let i = 1; i <= 50; i++) {
-                    capitalRestant = (capitalRestant - retraitAnnuel) * (1 + rendement);
+                    capitalRestant = (capitalRestant * (1 + rendement)) - retraitIndexe;
+                    retraitIndexe *= (1 + inflation);
                     trajectoireCapital.push(capitalRestant);
                 }
                 messageFinal = `
@@ -560,76 +562,42 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
                     <p style="text-align:center; margin-top: 1rem;">Vos retraits annuels (${fmtNombre(retraitAnnuel)}) sont inférieurs ou égaux aux gains générés. Votre portefeuille ne s'épuisera jamais et continuera même de croître.</p>
                 `;
             } else {
-                // Boucle de calcul jusqu'à épuisement
-                while (capitalRestant > 0 && annees < 100) { // Limite de 100 ans pour éviter boucle infinie
-                    capitalRestant -= retraitAnnuel;
-                    if (capitalRestant <= 0) {
-                        // Le capital est épuisé pendant l'année
-                        trajectoireCapital.push(0);
-                        break;
-                    }
-                    capitalRestant *= (1 + rendement);
+                while (capitalRestant > retraitIndexe && annees < 100) {
+                    capitalRestant = (capitalRestant * (1 + rendement)) - retraitIndexe;
+                    retraitIndexe *= (1 + inflation);
                     annees++;
                     trajectoireCapital.push(capitalRestant);
                 }
-
-                if (annees >= 100) {
-                    annees = "plus de 100";
+                if (capitalRestant > 0 && annees < 100) {
+                    annees += capitalRestant / retraitIndexe;
+                    trajectoireCapital.push(0);
                 }
+                if (annees >= 100) {
+                     messageFinal = `<div class="result-box"><span class="result-label">Votre capital durera</span><span class="result-value">Plus de 100 ans</span></div>`;
+                } else {
 
                 messageFinal = `
-                    <div class="results-dashboard">
-                        <div class="result-box">
-                            <span class="result-label">Votre capital durera</span>
-                            <span class="result-value">${annees} ans</span>
+                        <div class="results-dashboard">
+                            <div class="result-box">
+                                <span class="result-label">Votre capital durera environ</span>
+                                <span class="result-value">${annees.toFixed(1)} ans</span>
+                            </div>
+                            <div class="result-box">
+                                <span class="result-label">Montant restant à la fin</span>
+                                <span class="result-value">${fmtNombre(0)}</span>
+                            </div>
                         </div>
-                        <div class="result-box">
-                            <span class="result-label">Montant restant à la fin</span>
-                            <span class="result-value">${fmtNombre(Math.max(0, capitalRestant))}</span>
-                        </div>
-                    </div>
-                `;
+                    `;
+                }
             }
 
-            resultatDiv.innerHTML = messageFinal;
+resultatDiv.innerHTML = messageFinal;
             resultatDiv.style.display = 'block';
             chartContainer.style.display = 'block';
-
-            // Mise à jour du graphique
             const ctx = document.getElementById('chart-duree-capital').getContext('2d');
-            if (chartDureeCapital) {
-                chartDureeCapital.destroy();
-            }
-
+            if (chartDureeCapital) chartDureeCapital.destroy();
             const labels = Array.from({ length: trajectoireCapital.length }, (_, i) => `Année ${i}`);
-            
-            chartDureeCapital = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Évolution du capital',
-                        data: trajectoireCapital,
-                        borderColor: '#4F46E5',
-                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
-                        fill: true,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    maintainAspectRatio: false,
-                    scales: {
-                        y: {
-                            ticks: { callback: v => fmtNombre(v) },
-                            beginAtZero: true
-                        }
-                    },
-                    plugins: {
-                        legend: { display: false }
-                    }
-                }
-            });
-            
+            chartDureeCapital = new Chart(ctx, { type: 'line', data: { labels: labels, datasets: [{ label: 'Évolution du capital', data: trajectoireCapital, borderColor: '#4F46E5', backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: true, tension: 0.1 }] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) }, beginAtZero: true } }, plugins: { legend: { display: false } } } });
             resultatDiv.scrollIntoView({ behavior: 'smooth' });
         });
     }
