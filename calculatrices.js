@@ -524,7 +524,7 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
     // === CALCULATRICE DE DURÉE DU CAPITAL (DÉCAISSEMENT) ===
     // =========================================================================   
     
-    let chartDureeCapital = null;
+    //let chartDureeCapital = null;
     const formDureeCapital = document.getElementById('form-duree-capital');
 
     if (formDureeCapital) {
