@@ -42,6 +42,43 @@
             border-bottom: 1px solid var(--border-color); /* Ligne de séparation subtile */
             padding-bottom: 0.5rem;
         }
+        /* Styles pour la section de partage */
+        .partage-social-container {
+            margin: 3rem 0 2rem 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-color);
+            text-align: center;
+        }
+        .partage-social-container h3 {
+            font-family: var(--font-heading);
+            color: var(--heading-color);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+        }
+        .boutons-partage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .partage-btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 999px;
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            background-color: var(--card-bg-color);
+        }
+        .partage-btn:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
     </style>
 </head>
 <body>
@@ -125,7 +162,56 @@
         <p id="note1"><sup>1</sup> La plupart des placements courants sont admissibles (actions, FNB, obligations, CPG), mais certains placements plus exotiques ou non conformes peuvent être interdits. Il est toujours bon de vérifier l'admissibilité d'un placement spécifique.</p>
     </div>
 </main>
+    
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const pageUrl = window.location.href;
+        const articleTitle = document.querySelector('h1').innerText;
 
+        const encodedUrl = encodeURIComponent(pageUrl);
+        const encodedTitle = encodeURIComponent(articleTitle);
+
+        document.querySelector('.partage-btn.facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+        document.querySelector('.partage-btn.twitter').href = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
+        document.querySelector('.partage-btn.linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`;
+        document.querySelector('.partage-btn.whatsapp').href = `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`;
+        document.querySelector('.partage-btn.email').href = `mailto:?subject=${encodedTitle}&body=Je pensais que cet article pourrait t'intéresser :%0A%0A${pageUrl}`;
+
+        const copyBtn = document.querySelector('.partage-btn.copy-link');
+        const copyConfirmation = document.getElementById('copy-confirmation');
+        
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+                try {
+                    navigator.clipboard.writeText(pageUrl).then(() => {
+                        copyConfirmation.style.display = 'inline';
+                        setTimeout(() => {
+                            copyConfirmation.style.display = 'none';
+                        }, 2000);
+                    });
+                } catch (err) {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = pageUrl;
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        copyConfirmation.style.display = 'inline';
+                        setTimeout(() => {
+                            copyConfirmation.style.display = 'none';
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Impossible de copier le lien', err);
+                    }
+                    document.body.removeChild(textArea);
+                }
+            });
+        }
+    });
+</script>
+
+    
 </body>
 </html>
 
