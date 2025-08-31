@@ -547,11 +547,17 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
                     trajectoireCapital.push(capitalRestant);
                 }
                 messageFinal = `
-                    <div class="result-box" style="background-color: var(--section-bg-color);">
-                        <span class="result-label">Durée de votre capital</span>
-                        <span class="result-value" style="color: var(--accent-color);">Pour toujours</span>
+                    <div class="results-dashboard">
+                        <div class="result-box">
+                            <span class="result-label">Durée de votre capital</span>
+                            <span class="result-value" style="color: var(--accent-color);">Pour toujours</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Montant projeté après 50 ans</span>
+                            <span class="result-value">${fmtNombre(capitalRestant)}</span>
+                        </div>
                     </div>
-                    <p style="text-align:center; margin-top: 1rem;">Vos retraits annuels (${fmtNombre(retraitAnnuel)}) sont inférieurs ou égaux aux gains générés par votre capital. Votre portefeuille ne s'épuisera jamais et continuera même de croître.</p>
+                    <p style="text-align:center; margin-top: 1rem;">Vos retraits annuels (${fmtNombre(retraitAnnuel)}) sont inférieurs ou égaux aux gains générés. Votre portefeuille ne s'épuisera jamais et continuera même de croître.</p>
                 `;
             } else {
                 // Boucle de calcul jusqu'à épuisement
