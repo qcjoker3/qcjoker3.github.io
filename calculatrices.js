@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
         'trex-cotisation-annuelle', 'al-prix-propriete', 'al-mise-de-fonds', 
         'al-taxes-annuelles', 'al-assurance-proprio', 'al-frais-condo', 
         'al-loyer-mensuel', 'al-assurance-loc', 'hypo-prix-propriete', 'hypo-mise-de-fonds'
+        'duree-montant-initial','duree-retrait-annuel'
         // 'epargne-mensuelle' a été retiré car il n'existe plus
     ];
     const champsEntier = [
@@ -516,6 +517,115 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
         if (chartAcheterLouer) chartAcheterLouer.destroy();
         chartAcheterLouer = new Chart(ctx, { type: 'line', data: { labels, datasets: [ { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true }, { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true } ] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: value => fmtNombre(value) } } } } });
     });
+    let chartDureeCapital = null;
+    const formDureeCapital = document.getElementById('form-duree-capital');
+
+    if (formDureeCapital) {
+        formDureeCapital.addEventListener('submit', e => {
+            e.preventDefault();
+
+            const montantInitial = getVal('duree-montant-initial');
+            const retraitAnnuel = getVal('duree-retrait-annuel');
+            const rendement = getVal('duree-rendement') / 100;
+
+            const resultatDiv = document.getElementById('resultat-duree-capital');
+            const chartContainer = resultatDiv.nextElementSibling;
+
+            let capitalRestant = montantInitial;
+            let annees = 0;
+            const trajectoireCapital = [montantInitial];
+            let messageFinal = '';
+
+            // Cas où le capital dure "éternellement"
+            if (rendement > 0 && retraitAnnuel <= montantInitial * rendement) {
+                annees = "infinie";
+                for (let i = 1; i <= 50; i++) { // On simule 50 ans pour le graphique
+                    capitalRestant -= retraitAnnuel;
+                    capitalRestant *= (1 + rendement);
+                    trajectoireCapital.push(capitalRestant);
+                }
+                messageFinal = `
+                    <div class="result-box" style="background-color: var(--section-bg-color);">
+                        <span class="result-label">Durée de votre capital</span>
+                        <span class="result-value" style="color: var(--accent-color);">Pour toujours</span>
+                    </div>
+                    <p style="text-align:center; margin-top: 1rem;">Vos retraits annuels (${fmtNombre(retraitAnnuel)}) sont inférieurs ou égaux aux gains générés par votre capital. Votre portefeuille ne s'épuisera jamais et continuera même de croître.</p>
+                `;
+            } else {
+                // Boucle de calcul jusqu'à épuisement
+                while (capitalRestant > 0 && annees < 100) { // Limite de 100 ans pour éviter boucle infinie
+                    capitalRestant -= retraitAnnuel;
+                    if (capitalRestant <= 0) {
+                        // Le capital est épuisé pendant l'année
+                        trajectoireCapital.push(0);
+                        break;
+                    }
+                    capitalRestant *= (1 + rendement);
+                    annees++;
+                    trajectoireCapital.push(capitalRestant);
+                }
+
+                if (annees >= 100) {
+                    annees = "plus de 100";
+                }
+
+                messageFinal = `
+                    <div class="results-dashboard">
+                        <div class="result-box">
+                            <span class="result-label">Votre capital durera</span>
+                            <span class="result-value">${annees} ans</span>
+                        </div>
+                        <div class="result-box">
+                            <span class="result-label">Montant restant à la fin</span>
+                            <span class="result-value">${fmtNombre(Math.max(0, capitalRestant))}</span>
+                        </div>
+                    </div>
+                `;
+            }
+
+            resultatDiv.innerHTML = messageFinal;
+            resultatDiv.style.display = 'block';
+            chartContainer.style.display = 'block';
+
+            // Mise à jour du graphique
+            const ctx = document.getElementById('chart-duree-capital').getContext('2d');
+            if (chartDureeCapital) {
+                chartDureeCapital.destroy();
+            }
+
+            const labels = Array.from({ length: trajectoireCapital.length }, (_, i) => `Année ${i}`);
+            
+            chartDureeCapital = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Évolution du capital',
+                        data: trajectoireCapital,
+                        borderColor: '#4F46E5',
+                        backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            ticks: { callback: v => fmtNombre(v) },
+                            beginAtZero: true
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+            
+            resultatDiv.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+    
 
 // Logique d'affichage initial améliorée
 const ancreURL = window.location.hash.substring(1); // Récupère le mot après le # (ex: "hypotheque")
