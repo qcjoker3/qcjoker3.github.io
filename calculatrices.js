@@ -485,11 +485,12 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
                 retourImpotPrecedent = 0;
             }
             portefeuilleLocataire += investissementAnnuel;
-            let gainPlacement = portefeuilleLocataire * rendementPlacement;
-            if (typeCompte === 'non-enregistre') {
-                gainPlacement *= (1 - (tauxMarginal * 0.5));
-            }
+        let gainPlacement = portefeuilleLocataire * rendementPlacement;
+        if (typeCompte === 'non-enregistre') {
+            gainPlacement *= (1 - (tauxMarginal * 0.5));
+        }
             portefeuilleLocataire += gainPlacement;
+            portefeuilleLocataire += investissementAnnuel;
             valeurPropriete *= (1 + croissanceImmo);
             
             labels.push(`Année ${an}`);
