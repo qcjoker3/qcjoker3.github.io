@@ -25,13 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- INITIALISATION D'AUTONUMERIC ---
     const anInputs = {};
     const champsArgent = [
-        'ret-epargne-actuelle', 'ret-cotisation-mensuelle', // Nouveaux champs Retraite
+        'ret-epargne-actuelle', 'ret-cotisation-mensuelle', 
         'vf-montant-initial', 'vf-cotisation', 'hypo-montant', 'trex-montant', 
         'trex-cotisation-annuelle', 'al-prix-propriete', 'al-mise-de-fonds', 
         'al-taxes-annuelles', 'al-assurance-proprio', 'al-frais-condo', 
         'al-loyer-mensuel', 'al-assurance-loc', 'hypo-prix-propriete', 'hypo-mise-de-fonds',
-        'duree-montant-initial','duree-retrait-annuel'
-        // 'epargne-mensuelle' a été retiré car il n'existe plus
+        'duree-montant-initial','duree-retrait-annuel','fire-epargne-actuelle','fire-epargne-annuelle','fire-depenses-annuelles',
+        'reer-celi-montant-annuel','cout-montant-depense','fnb-montant-initial','fnb-cotisation-mensuelle'
+        
     ];
     const champsEntier = [
         'ret-age-actuel', 'ret-age-retraite', // Nouveaux champs Retraite
@@ -60,7 +61,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Variables globales pour les graphiques
     let chartVF = null, chartHypo = null, chartTrex = null, chartAcheterLouer = null;
-    let chartRevenu = null, chartTrajectoire = null;
+    let chartRevenu = null, chartTrajectoire = null, chartDureeCapital = null;
+    let chartFire = null, chartReerCeli = null, chartCoutOpportunite = null, chartSimulateurFnb = null, chartFnbAllocation = null;
 
     // --- SYSTÈME DE NAVIGATION ENTRE CALCULATRICES ---
     const calcCards = document.querySelectorAll('.card-grid .card[data-calc]');
@@ -79,7 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.setItem('derniereCalculatrice', key);
     };
     calcCards.forEach(card => card.addEventListener('click', () => showCalculator(card.dataset.calc)));
-
+    
+    // --- LOGIQUE SPÉCIFIQUE (sliders, etc.) ---
     const typeCompteSelect = document.getElementById('al-type-compte');
     const reinvestOptionDiv = document.getElementById('reinvest-reer-option');
     function toggleReinvestOption() {
@@ -602,7 +605,292 @@ resultatDiv.innerHTML = messageFinal;
         });
     }
     
+// =========================================================================
+    // === CALCULATRICE D'INDÉPENDANCE FINANCIÈRE (FIRE) ===
+    // =========================================================================
+    const formFire = document.getElementById('form-fire');
+    if (formFire) {
+        formFire.addEventListener('submit', e => {
+            e.preventDefault();
+            const epargneActuelle = getVal('fire-epargne-actuelle');
+            const epargneAnnuelle = getVal('fire-epargne-annuelle');
+            const depensesAnnuelles = getVal('fire-depenses-annuelles');
+            const rendement = getVal('fire-rendement') / 100;
+            const tauxRetrait = 0.04;
+            const resultatDiv = document.getElementById('resultat-fire');
+            const chartContainer = resultatDiv.nextElementSibling;
 
+            if (depensesAnnuelles <= 0) return;
+
+            const numeroFire = depensesAnnuelles / tauxRetrait;
+            let patrimoine = epargneActuelle;
+            let annees = 0;
+            const trajectoirePatrimoine = [patrimoine];
+
+            if (epargneAnnuelle <= 0 && patrimoine < numeroFire) {
+                resultatDiv.innerHTML = `<div class="result-box"><span class="result-label">Objectif FIRE</span><strong>Non atteignable</strong><p class="mt-2 text-sm">Votre épargne annuelle est de 0 ou négative. L'objectif ne peut être atteint sans épargner.</p></div>`;
+                resultatDiv.style.display = 'block';
+                chartContainer.style.display = 'none';
+                return;
+            }
+
+            while (patrimoine < numeroFire && annees < 100) {
+                patrimoine = patrimoine * (1 + rendement) + epargneAnnuelle;
+                annees++;
+                trajectoirePatrimoine.push(patrimoine);
+            }
+
+            resultatDiv.innerHTML = `
+                <div class="results-dashboard">
+                    <div class="result-box">
+                        <span class="result-label">Vous atteindrez l'indépendance financière dans</span>
+                        <span class="result-value">${annees < 100 ? `${annees} ans` : "Plus de 100 ans"}</span>
+                    </div>
+                    <div class="result-box">
+                        <span class="result-label">Votre "Numéro FIRE" est de</span>
+                        <span class="result-value">${fmtNombre(numeroFire)}</span>
+                    </div>
+                </div>
+            `;
+            resultatDiv.style.display = 'block';
+            chartContainer.style.display = 'block';
+
+            const ctx = document.getElementById('chart-fire').getContext('2d');
+            if (chartFire) chartFire.destroy();
+            const labels = Array.from({ length: trajectoirePatrimoine.length }, (_, i) => `Année ${i}`);
+            chartFire = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Croissance du Patrimoine',
+                        data: trajectoirePatrimoine,
+                        borderColor: '#0D9488',
+                        backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                        fill: true,
+                    }, {
+                        label: 'Objectif FIRE',
+                        data: Array(labels.length).fill(numeroFire),
+                        borderColor: '#4F46E5',
+                        borderDash: [5, 5],
+                        fill: false,
+                    }]
+                },
+                options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) } } } }
+            });
+            resultatDiv.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+ // =========================================================================
+    // === SIMULATEUR D'OPTIMISATION FISCALE (REER vs CÉLI) ===
+    // =========================================================================
+    const formReerCeli = document.getElementById('form-reer-celi');
+    if (formReerCeli) {
+        ['reer-celi-taux-actuel', 'reer-celi-taux-retraite'].forEach(id => {
+            const slider = document.getElementById(id);
+            const display = document.getElementById(`${id}-valeur`);
+            if (slider && display) {
+                display.textContent = `${slider.value} %`;
+                slider.addEventListener('input', () => { display.textContent = `${slider.value} %`; });
+            }
+        });
+        
+        formReerCeli.addEventListener('submit', e => {
+            e.preventDefault();
+            const montantAnnuel = getVal('reer-celi-montant-annuel');
+            const duree = getVal('reer-celi-duree');
+            const rendement = getVal('reer-celi-rendement') / 100;
+            const tauxActuel = getVal('reer-celi-taux-actuel') / 100;
+            const tauxRetraite = getVal('reer-celi-taux-retraite') / 100;
+            const resultatDiv = document.getElementById('resultat-reer-celi');
+            const chartContainer = resultatDiv.nextElementSibling;
+            
+            let patrimoineCeli = 0;
+            const trajectoireCeli = [0];
+            for(let i=0; i < duree; i++) {
+                patrimoineCeli = (patrimoineCeli + montantAnnuel) * (1 + rendement);
+                trajectoireCeli.push(patrimoineCeli);
+            }
+
+            const retourImpot = montantAnnuel * tauxActuel;
+            const investissementAnnuelReer = montantAnnuel + retourImpot;
+            let patrimoineBrutReer = 0;
+            const trajectoireReer = [0];
+            for(let i=0; i < duree; i++) {
+                patrimoineBrutReer = (patrimoineBrutReer + investissementAnnuelReer) * (1 + rendement);
+                trajectoireReer.push(patrimoineBrutReer * (1 - tauxRetraite));
+            }
+            const patrimoineNetReer = patrimoineBrutReer * (1 - tauxRetraite);
+            
+            const gagnant = patrimoineNetReer > patrimoineCeli ? 'REER' : 'CÉLI';
+            const difference = Math.abs(patrimoineNetReer - patrimoineCeli);
+            
+            resultatDiv.innerHTML = `
+                 <div class="results-dashboard">
+                    <div class="result-box">
+                        <span class="result-label">Valeur Nette Finale (CÉLI)</span>
+                        <span class="result-value">${fmtNombre(patrimoineCeli)}</span>
+                    </div>
+                    <div class="result-box">
+                        <span class="result-label">Valeur Nette Finale (REER)</span>
+                        <span class="result-value">${fmtNombre(patrimoineNetReer)}</span>
+                    </div>
+                </div>
+                <p style="text-align:center; margin-top: 1rem; font-size: 1.1em;">Dans ce scénario, la stratégie <strong>${gagnant}</strong> est plus avantageuse de <strong>${fmtNombre(difference)}</strong>.</p>
+            `;
+            resultatDiv.style.display = 'block';
+            chartContainer.style.display = 'block';
+            
+            const ctx = document.getElementById('chart-reer-celi').getContext('2d');
+            if (chartReerCeli) chartReerCeli.destroy();
+            const labels = Array.from({ length: duree + 1 }, (_, i) => `Année ${i}`);
+            chartReerCeli = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels,
+                    datasets: [{
+                        label: 'Patrimoine Net CÉLI',
+                        data: trajectoireCeli,
+                        borderColor: '#0D9488',
+                    }, {
+                        label: 'Patrimoine Net REER',
+                        data: trajectoireReer,
+                        borderColor: '#4F46E5',
+                    }]
+                },
+                options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) } } } }
+            });
+            resultatDiv.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+    // =========================================================================
+    // === CALCULATRICE DE COÛT D'OPPORTUNITÉ ===
+    // =========================================================================
+    const formCoutOpportunite = document.getElementById('form-cout-opportunite');
+    if (formCoutOpportunite) {
+        formCoutOpportunite.addEventListener('submit', e => {
+            e.preventDefault();
+            const montantDepense = getVal('cout-montant-depense');
+            const frequence = document.getElementById('cout-frequence').value;
+            const duree = getVal('cout-duree');
+            const rendement = getVal('cout-rendement') / 100;
+            const resultatDiv = document.getElementById('resultat-cout-opportunite');
+            const chartContainer = resultatDiv.nextElementSibling;
+
+            let montantAnnuel;
+            if (frequence === 'quotidienne') montantAnnuel = montantDepense * 365;
+            else if (frequence === 'hebdomadaire') montantAnnuel = montantDepense * 52;
+            else montantAnnuel = montantDepense * 12;
+
+            let valeurPotentielle = 0;
+            for(let i=0; i < duree; i++) {
+                valeurPotentielle = (valeurPotentielle + montantAnnuel) * (1 + rendement);
+            }
+            const totalDepense = montantAnnuel * duree;
+
+            resultatDiv.innerHTML = `<div class="result-box"><span class="result-label">Cette dépense vous coûte réellement</span><span class="result-value">${fmtNombre(valeurPotentielle)}</span><p class="mt-2 text-sm">... sur ${duree} ans, au lieu de seulement ${fmtNombre(totalDepense)} dépensés.</p></div>`;
+            resultatDiv.style.display = 'block';
+            chartContainer.style.display = 'block';
+
+            const ctx = document.getElementById('chart-cout-opportunite').getContext('2d');
+            if (chartCoutOpportunite) chartCoutOpportunite.destroy();
+            chartCoutOpportunite = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Total Dépensé', 'Valeur Potentielle si Investi'],
+                    datasets: [{
+                        data: [totalDepense, valeurPotentielle],
+                        backgroundColor: ['#6B7280', '#0D9488']
+                    }]
+                },
+                options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) } } }, plugins: { legend: { display: false } } }
+            });
+            resultatDiv.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+// =========================================================================
+    // === SIMULATEUR DE PORTEFEUILLE FNB ===
+    // =========================================================================
+    const formSimulateurFnb = document.getElementById('form-simulateur-fnb');
+    if (formSimulateurFnb) {
+        const fnbData = {
+            VBAL: { nom: "Portefeuille Équilibré (VBAL)", frais: 0.24, rendement: 6.5, allocation: { Actions: 60, Obligations: 40 } },
+            VGRO: { nom: "Portefeuille de Croissance (VGRO)", frais: 0.24, rendement: 7.5, allocation: { Actions: 80, Obligations: 20 } },
+            VEQT: { nom: "Portefeuille 100% Actions (VEQT)", frais: 0.24, rendement: 8.5, allocation: { Actions: 100, Obligations: 0 } }
+        };
+
+        formSimulateurFnb.addEventListener('submit', e => {
+            e.preventDefault();
+            const profil = formSimulateurFnb.querySelector('input[name="fnb-profil"]:checked').value;
+            const fnb = fnbData[profil];
+            const montantInitial = getVal('fnb-montant-initial');
+            const cotisationMensuelle = getVal('fnb-cotisation-mensuelle');
+            const duree = getVal('fnb-duree');
+            const resultatDiv = document.getElementById('resultat-simulateur-fnb');
+            const chartContainer = resultatDiv.nextElementSibling;
+            
+            const rendementNet = (fnb.rendement - fnb.frais) / 100;
+            const n = duree * 12;
+            const r = Math.pow(1 + rendementNet, 1/12) - 1;
+            let valeurFinale = montantInitial * Math.pow(1 + r, n);
+            if(r > 0) {
+                valeurFinale += cotisationMensuelle * ( (Math.pow(1 + r, n) - 1) / r );
+            } else {
+                valeurFinale += cotisationMensuelle * n;
+            }
+
+            resultatDiv.innerHTML = `
+                <div class="results-dashboard">
+                     <div class="result-box">
+                        <span class="result-label">Valeur Finale Projetée</span>
+                        <span class="result-value">${fmtNombre(valeurFinale)}</span>
+                    </div>
+                    <div class="result-box" id="fnb-allocation-chart-container" style="height: 150px;">
+                        <canvas id="chart-fnb-allocation"></canvas>
+                    </div>
+                </div>
+                <p style="text-align:center; margin-top: 1rem;">Basé sur le FNB <strong>${fnb.nom}</strong> avec des frais annuels de <strong>${fnb.frais}%</strong>.</p>
+            `;
+            resultatDiv.style.display = 'block';
+            chartContainer.style.display = 'block';
+            
+            const ctxAlloc = document.getElementById('chart-fnb-allocation').getContext('2d');
+            if (chartFnbAllocation) chartFnbAllocation.destroy();
+            chartFnbAllocation = new Chart(ctxAlloc, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Actions', 'Obligations'],
+                    datasets: [{
+                        data: [fnb.allocation.Actions, fnb.allocation.Obligations],
+                        backgroundColor: ['#0D9488', '#4F46E5'],
+                        borderColor: 'var(--card-bg-color)'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right' } } }
+            });
+
+            const trajectoire = [montantInitial];
+            let patrimoine = montantInitial;
+            for(let i=0; i<duree * 12; i++) {
+                patrimoine = patrimoine * (1 + r) + cotisationMensuelle;
+                if((i + 1) % 12 === 0) trajectoire.push(patrimoine);
+            }
+            const ctxCroissance = document.getElementById('chart-simulateur-fnb').getContext('2d');
+            if (chartSimulateurFnb) chartSimulateurFnb.destroy();
+            const labels = Array.from({ length: duree + 1 }, (_, i) => `Année ${i}`);
+            chartSimulateurFnb = new Chart(ctxCroissance, {
+                type: 'line',
+                data: { labels, datasets: [{ label: 'Croissance du portefeuille', data: trajectoire, borderColor: '#0D9488', fill: true, backgroundColor: 'rgba(13, 148, 136, 0.1)' }] },
+                options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) } } } }
+            });
+            resultatDiv.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+    
+    
 // Logique d'affichage initial améliorée
 const ancreURL = window.location.hash.substring(1); // Récupère le mot après le # (ex: "hypotheque")
 
@@ -619,4 +907,31 @@ if (ancreURL) {
         showCalculator('retraite'); // Calculatrice par défaut
     }
 }
+    // =========================================================================
+    // === CARROUSEL DES CALCULATRICES ===
+    // =========================================================================
+    const gridContainer = document.getElementById('calculator-grid-container');
+    const scrollLeftBtn = document.getElementById('scroll-left-btn');
+    const scrollRightBtn = document.getElementById('scroll-right-btn');
+
+    if (gridContainer && scrollLeftBtn && scrollRightBtn) {
+        const checkScrollButtons = () => {
+            setTimeout(() => {
+                const maxScrollLeft = gridContainer.scrollWidth - gridContainer.clientWidth;
+                scrollLeftBtn.disabled = gridContainer.scrollLeft < 10;
+                scrollRightBtn.disabled = gridContainer.scrollLeft > maxScrollLeft - 10;
+            }, 100);
+        };
+
+        const scrollGrid = (direction) => {
+            const scrollAmount = gridContainer.clientWidth * 0.8;
+            gridContainer.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' });
+        };
+
+        scrollLeftBtn.addEventListener('click', () => scrollGrid(-1));
+        scrollRightBtn.addEventListener('click', () => scrollGrid(1));
+        gridContainer.addEventListener('scroll', checkScrollButtons);
+        window.addEventListener('resize', checkScrollButtons);
+        checkScrollButtons();
+    }
 });
