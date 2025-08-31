@@ -508,7 +508,7 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
         const resultatFinalLocataire = dataLocataire[dataLocataire.length - 1];
         const difference = resultatFinalProprio - resultatFinalLocataire;
         
-        document.getElementById('resultat-acheter-louer').textContent = `Après ${horizon} ans, l'actif net du propriétaire est de ${fmtNombre(resultatFinalProprio)} et celui du locataire de {fmtNombre(resultatFinalLocataire)}. Différence : ${fmtNombre(Math.abs(difference))} en faveur du ${difference > 0 ? 'propriétaire' : 'locataire'}.`;
+        document.getElementById('resultat-acheter-louer').textContent = `Après ${horizon} ans, l'actif net du propriétaire est de ${fmtNombre(resultatFinalProprio)} et celui du locataire de ${fmtNombre(resultatFinalLocataire)}. Différence : ${fmtNombre(Math.abs(difference))} en faveur du ${difference > 0 ? 'propriétaire' : 'locataire'}.`;
         
         const ctx = document.getElementById('chart-acheter-louer')?.getContext('2d');
         if (!ctx) return;
