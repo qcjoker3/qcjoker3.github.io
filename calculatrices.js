@@ -517,6 +517,10 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
         if (chartAcheterLouer) chartAcheterLouer.destroy();
         chartAcheterLouer = new Chart(ctx, { type: 'line', data: { labels, datasets: [ { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true }, { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true } ] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: value => fmtNombre(value) } } } } });
     });
+     // =========================================================================
+    // === CALCULATRICE DE DURÉE DU CAPITAL (DÉCAISSEMENT) ===
+    // =========================================================================   
+    
     let chartDureeCapital = null;
     const formDureeCapital = document.getElementById('form-duree-capital');
 
@@ -538,10 +542,8 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
 
             // Cas où le capital dure "éternellement"
             if (rendement > 0 && retraitAnnuel <= montantInitial * rendement) {
-                annees = "infinie";
-                for (let i = 1; i <= 50; i++) { // On simule 50 ans pour le graphique
-                    capitalRestant -= retraitAnnuel;
-                    capitalRestant *= (1 + rendement);
+                for (let i = 1; i <= 50; i++) {
+                    capitalRestant = (capitalRestant - retraitAnnuel) * (1 + rendement);
                     trajectoireCapital.push(capitalRestant);
                 }
                 messageFinal = `
