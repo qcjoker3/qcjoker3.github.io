@@ -24,36 +24,67 @@
 
 <main class="container">
     <section id="selection-calculatrices">
-        <h2>Choisissez une calculatrice</h2>
-        <div class="card-grid">
-            <div class="card card-link selected" data-calc="retraite">
-                <h3>Retraite 360°</h3>
-                <p>Estimez votre revenu mensuel net à la retraite.</p>
+<h2>Nos Outils Financiers</h2>
+        <!-- [MODIFICATION] Ajout du conteneur pour le carrousel et les flèches -->
+        <div class="relative max-w-6xl mx-auto">
+            <div id="calculator-grid-container" class="card-grid-scroller">
+                <div class="card-grid" id="calculator-grid">
+                    <!-- Carte Indépendance Financière -->
+                    <div class="card card-link" data-calc="fire">
+                        <h3>Indépendance Financière (FIRE)</h3>
+                        <p>Découvrez dans combien d'années vous pourriez atteindre la liberté financière.</p>
+                    </div>
+                    <!-- Carte Optimisation Fiscale -->
+                    <div class="card card-link" data-calc="reer-celi">
+                        <h3>Optimisation Fiscale (REER vs CÉLI)</h3>
+                        <p>Simulez quelle stratégie est la plus payante selon vos revenus.</p>
+                    </div>
+                    <!-- Carte Coût d'Opportunité -->
+                    <div class="card card-link" data-calc="cout-opportunite">
+                        <h3>Coût d'Opportunité</h3>
+                        <p>Calculez le véritable coût futur de vos dépenses récurrentes.</p>
+                    </div>
+                    <!-- Carte Simulateur FNB -->
+                    <div class="card card-link" data-calc="simulateur-fnb">
+                        <h3>Simulateur de Portefeuille FNB</h3>
+                        <p>Projetez la croissance d'un portefeuille passif et à faible coût.</p>
+                    </div>
+                     <!-- Carte Retraite 360 -->
+                    <div class="card card-link" data-calc="retraite">
+                        <h3>Retraite 360°</h3>
+                        <p>Estimez votre revenu mensuel net à la retraite.</p>
+                    </div>
+                    <!-- Carte Durée du Capital -->
+                    <div class="card card-link" data-calc="duree-capital">
+                        <h3>Durée du Capital</h3>
+                        <p>Calculez combien de temps durera votre capital en décaissement.</p>
+                    </div>
+                    <!-- Carte Valeur Future -->
+                    <div class="card card-link" data-calc="valeur-future">
+                        <h3>Valeur Future</h3>
+                        <p>Calculez la croissance de vos investissements.</p>
+                    </div>
+                    <!-- Carte Frais de Gestion -->
+                    <div class="card card-link" data-calc="trex">
+                        <h3>Frais de Gestion</h3>
+                        <p>Visualisez l'impact des frais sur le long terme.</p>
+                    </div>
+                </div>
             </div>
-            <div class="card card-link" data-calc="vf">
-                <h3>Valeur future</h3>
-                <p>Calculez la croissance de vos investissements.</p>
-            </div>
-            <div class="card card-link" data-calc="hypotheque">
-                <h3>Hypothèque</h3>
-                <p>Simulez vos paiements hypothécaires.</p>
-            </div>
-            <div class="card card-link" data-calc="trex">
-                <h3>Frais de gestion</h3>
-                <p>Visualisez l'impact des frais sur le long terme.</p>
-            </div>
-            <div class="card card-link" data-calc="acheter-louer">
-                <h3>Acheter ou Louer</h3>
-                <p>Comparez l'enrichissement entre les deux scénarios.</p>
-            </div>
-            <div class="card card-link" data-calc="duree-capital">
-                <h3>Durée du Capital</h3>
-                <p>Calculez combien de temps durera votre capital.</p>
-            </div>
+            <!-- Boutons de navigation -->
+            <button id="scroll-left-btn" class="carousel-arrow -left-5 disabled:opacity-0">&lt;</button>
+            <button id="scroll-right-btn" class="carousel-arrow -right-5">&gt;</button>
         </div>
     </section>
-
     <section id="explications-container">
+        <div id="explication-fire" class="boite-explication">
+            <p><strong>Calculateur d'Indépendance Financière (FIRE) :</strong> Basé sur vos revenus, dépenses et épargne, cet outil calcule votre "numéro FIRE" et estime dans combien d'années vous pourriez vivre de vos placements sans avoir à travailler.</p></div>
+        <div id="explication-reer-celi" class="boite-explication">
+            <p><strong>Simulateur d'Optimisation Fiscale :</strong> Cet outil compare les deux principaux régimes d'épargne (REER et CÉLI) pour déterminer lequel vous enrichira le plus en fonction de votre taux d'imposition actuel et futur.</p></div>
+        <div id="explication-cout-opportunite" class="boite-explication">
+            <p><strong>Calculateur de Coût d'Opportunité :</strong> Découvrez le coût réel de vos petites dépenses quotidiennes en visualisant ce que cet argent pourrait devenir s'il était investi sur le long terme.</p></div>
+        <div id="explication-simulateur-fnb" class="boite-explication">
+            <p><strong>Simulateur de Portefeuille FNB :</strong> Choisissez un profil de risque et voyez la composition, les frais et la croissance projetée d'un portefeuille "tout-en-un" basé sur des FNB.</p></div>
         <div id="explication-retraite" class="boite-explication">
             <p><strong>Calculatrice de Revenu de Retraite 360° :</strong> Estimez non seulement votre capital, mais surtout le <strong>revenu mensuel NET (après impôt)</strong> dont vous disposerez réellement à la retraite. Cet outil avancé simule l'impact des rentes gouvernementales (RRQ/SV), de la fiscalité et des règles de décaissement (FERR/FRV) pour vous donner le portrait le plus réaliste possible.</p>
         </div>
@@ -75,6 +106,94 @@
     </section>
     
     <section id="calculatrices-container">
+       <section id="calc-fire" class="calculator-card">
+            <h2>Calculateur d'Indépendance Financière (FIRE)</h2>
+            <form id="form-fire">
+                <div class="form-columns">
+                    <div class="form-column">
+                        <div class="form-group"><label for="fire-epargne-actuelle">Épargne & Placements Actuels</label><input type="text" id="fire-epargne-actuelle" value="50000"></div>
+                        <div class="form-group"><label for="fire-epargne-annuelle">Épargne Annuelle</label><input type="text" id="fire-epargne-annuelle" value="15000"></div>
+                    </div>
+                    <div class="form-column">
+                        <div class="form-group"><label for="fire-depenses-annuelles">Dépenses Annuelles Estimées</label><input type="text" id="fire-depenses-annuelles" value="40000"></div>
+                        <div class="form-group"><label for="fire-rendement">Rendement Annuel Net (%)</label><input type="number" id="fire-rendement" value="6" step="0.5"></div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Calculer ma date FIRE</button>
+            </form>
+            <div id="resultat-fire" class="results-container" style="display: none;"></div>
+            <div class="chart-container" style="display: none;"><canvas id="chart-fire"></canvas></div>
+        </section>
+        
+        <!-- NOUVELLE: CALCULATRICE REER vs CÉLI -->
+        <section id="calc-reer-celi" class="calculator-card">
+            <h2>Simulateur d'Optimisation Fiscale : REER vs CÉLI</h2>
+            <form id="form-reer-celi">
+                 <div class="form-group"><label for="reer-celi-montant-annuel">Montant à investir annuellement</label><input type="text" id="reer-celi-montant-annuel" value="6000"></div>
+                 <div class="form-group"><label for="reer-celi-duree">Durée de l'investissement (années)</label><input type="number" id="reer-celi-duree" value="30"></div>
+                 <div class="form-group"><label for="reer-celi-rendement">Rendement annuel (%)</label><input type="number" id="reer-celi-rendement" value="7" step="0.5"></div>
+                 <div class="form-group">
+                    <label for="reer-celi-taux-actuel">Taux d'imposition actuel (%) - <span id="reer-celi-taux-actuel-valeur"></span></label>
+                    <input type="range" id="reer-celi-taux-actuel" min="20" max="53" value="35" step="1" class="slider">
+                 </div>
+                 <div class="form-group">
+                    <label for="reer-celi-taux-retraite">Taux d'imposition estimé à la retraite (%) - <span id="reer-celi-taux-retraite-valeur"></span></label>
+                    <input type="range" id="reer-celi-taux-retraite" min="15" max="53" value="25" step="1" class="slider">
+                 </div>
+                <button type="submit" class="btn-primary">Comparer les stratégies</button>
+            </form>
+            <div id="resultat-reer-celi" class="results-container" style="display: none;"></div>
+            <div class="chart-container" style="display: none;"><canvas id="chart-reer-celi"></canvas></div>
+        </section>
+
+        <!-- NOUVELLE: CALCULATRICE COÛT D'OPPORTUNITÉ -->
+        <section id="calc-cout-opportunite" class="calculator-card">
+            <h2>Calculateur de Coût d'Opportunité</h2>
+            <form id="form-cout-opportunite">
+                <div class="form-group"><label for="cout-montant-depense">Montant de la dépense</label><input type="text" id="cout-montant-depense" value="150"></div>
+                <div class="form-group">
+                    <label for="cout-frequence">Fréquence</label>
+                    <select id="cout-frequence" class="form-input">
+                        <option value="mensuelle">Mensuelle</option>
+                        <option value="hebdomadaire">Hebdomadaire</option>
+                        <option value="quotidienne">Quotidienne</option>
+                    </select>
+                </div>
+                <div class="form-group"><label for="cout-duree">Sur une durée de (années)</label><input type="number" id="cout-duree" value="20"></div>
+                <div class="form-group"><label for="cout-rendement">Rendement annuel si investi (%)</label><input type="number" id="cout-rendement" value="7" step="0.5"></div>
+                <button type="submit" class="btn-primary">Calculer le coût réel</button>
+            </form>
+            <div id="resultat-cout-opportunite" class="results-container" style="display: none;"></div>
+            <div class="chart-container" style="display: none;"><canvas id="chart-cout-opportunite"></canvas></div>
+        </section>
+
+        <!-- NOUVELLE: SIMULATEUR FNB -->
+        <section id="calc-simulateur-fnb" class="calculator-card">
+            <h2>Simulateur de Portefeuille FNB "Tout-en-un"</h2>
+            <form id="form-simulateur-fnb">
+                <div class="form-group">
+                    <label>Choisissez votre profil de risque</label>
+                    <div class="flex space-x-4 mt-2">
+                        <label><input type="radio" name="fnb-profil" value="VBAL" checked> Équilibré (VBAL)</label>
+                        <label><input type="radio" name="fnb-profil" value="VGRO"> Croissance (VGRO)</label>
+                        <label><input type="radio" name="fnb-profil" value="VEQT"> Dynamique (VEQT)</label>
+                    </div>
+                </div>
+                <div class="form-columns">
+                    <div class="form-column">
+                        <div class="form-group"><label for="fnb-montant-initial">Montant initial</label><input type="text" id="fnb-montant-initial" value="25000"></div>
+                        <div class="form-group"><label for="fnb-cotisation-mensuelle">Cotisation mensuelle</label><input type="text" id="fnb-cotisation-mensuelle" value="500"></div>
+                    </div>
+                    <div class="form-column">
+                        <div class="form-group"><label for="fnb-duree">Durée de l'investissement (années)</label><input type="number" id="fnb-duree" value="25"></div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary">Simuler la croissance</button>
+            </form>
+            <div id="resultat-simulateur-fnb" class="results-container" style="display: none;"></div>
+            <div class="chart-container" style="display: none;"><canvas id="chart-simulateur-fnb"></canvas></div>
+        </section>
+        
         <section id="calc-retraite" class="calculator-card active">
             <h2>Calculatrice de Revenu de Retraite 360°</h2>
              <form id="form-retraite-avancee">
