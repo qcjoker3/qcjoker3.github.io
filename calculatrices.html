@@ -46,6 +46,10 @@
                 <h3>Acheter ou Louer</h3>
                 <p>Comparez l'enrichissement entre les deux scénarios.</p>
             </div>
+            <div class="card card-link" data-calc="duree-capital">
+                <h3>Durée du Capital</h3>
+                <p>Calculez combien de temps durera votre capital.</p>
+            </div>
         </div>
     </section>
 
@@ -64,6 +68,9 @@
         </div>
         <div id="explication-acheter-louer" class="boite-explication">
             <p><strong>Calculatrice Acheter ou Louer :</strong> Cette calculatrice est un outil de simulation financière conçu pour vous aider à prendre une des plus grandes décisions financières : <strong>acheter une propriété ou continuer à louer.</strong> Plutôt que de simplement comparer un paiement hypothécaire à un loyer, elle compare l'évolution de votre <strong>valeur nette</strong> totale dans les deux scénarios sur plusieurs années. Son hypothèse fondamentale est cruciale : elle suppose que <strong>le locataire investit de façon disciplinée</strong> toute somme d'argent économisée par rapport au propriétaire. Cela inclut la mise de fonds initiale et toute différence dans les frais mensuels (taxes, entretien, etc.). En tenant compte de variables comme l'appréciation immobilière, le rendement de vos placements et l'augmentation du loyer, l'outil projette lequel des deux chemins pourrait vous rendre le plus riche à long terme.</p>
+        </div>
+        <div id="explication-duree-capital" class="boite-explication">
+            <p><strong>Calculatrice de Durée du Capital :</strong> Déterminez pendant combien d'années vous pourrez retirer un montant spécifique de votre portefeuille avant qu'il ne soit épuisé, tout en tenant compte du fait que le capital restant continue de générer des rendements.</p>
         </div>
     </section>
     
@@ -299,6 +306,33 @@
                 <canvas id="chart-acheter-louer"></canvas>
             </div>
         </section>
+        <!-- CALCULATRICE DE DURÉE DU CAPITAL -->
+        <section id="calc-duree-capital" class="calculator-card">
+            <h2>Calculatrice de Durée du Capital (Décaissement)</h2>
+            <form id="form-duree-capital">
+                <div class="form-group">
+                    <label for="duree-montant-initial">Capital initial de votre portefeuille</label>
+                    <input type="text" id="duree-montant-initial" value="500000">
+                </div>
+                <div class="form-group">
+                    <label for="duree-retrait-annuel">Montant du retrait annuel</label>
+                    <input type="text" id="duree-retrait-annuel" value="30000">
+                </div>
+                <div class="form-group">
+                    <label for="duree-rendement">Rendement annuel espéré du capital restant (%)</label>
+                    <input type="number" id="duree-rendement" value="5" step="0.1" placeholder="ex: 5">
+                </div>
+                <button type="submit" class="btn-primary">Calculer la durée</button>
+            </form>
+            <div id="resultat-duree-capital" class="results-container" style="display: none;">
+                <!-- Les résultats seront injectés ici par le JS -->
+            </div>
+            <div class="chart-container" style="display: none;">
+                <canvas id="chart-duree-capital"></canvas>
+            </div>
+        </section>
+
+        
     </section>
 </main>
 
