@@ -16,6 +16,23 @@
             font-style: italic;
             color: var(--text-color);
         }
+            /* Style pour la section des notes de bas de page */
+        .notes-de-bas-de-page {
+            margin-top: 3rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-color);
+        }
+        .notes-de-bas-de-page p {
+            font-size: 0.9em;
+            color: var(--subtle-text-color);
+            line-height: 1.5;
+        }
+        /* Style pour les liens d'ancrage des notes */
+        sup a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 600;
+        }    
          /* Style pour réduire la taille des sous-titres dans l'article */
         .contenu-article h2 {
             font-size: 1.2rem;   /* Taille réduite pour les sous-titres */
@@ -53,7 +70,7 @@
 <main class="container article-seul contenu-article">
  
     <p>D'abord, qu'est-ce que le CELI? Le CELI est une coquille, un contenant enregistré auprès du gouvernement. Pensez-y comme à une serre personnelle. Tout ce qui pousse à l'intérieur de cette serre - les fruits, les légumes, les fleurs - vous appartient, et vous n'aurez jamais à payer de taxe sur votre récolte. À l'extérieur de la serre, chaque fruit que vous cueillez est imposé.</p>
-    <p>Dans cette serre, vous pouvez y faire pousser ce que vous voulez(1): des actions d'entreprises, des FNB (Fonds négociés en Bourse), des obligations, etc. Le compte lui-même n'est qu'une protection contre le fisc. Créé en 2009, ce régime permet à chaque Canadien de 18 ans et plus de cotiser un certain montant chaque année. Cette limite annuelle, qui était de 5 000 $ à ses débuts, augmente périodiquement avec l'inflation et est arrondi au premier 500$ près. En 2025, elle a atteint 7 000 $. Une personne qui avait 18 ans en 2009 et qui n'a jamais cotisé dispose aujourd'hui d'un droit de cotisation total de plus de 100 000 $. Ces droits sont cumulatifs et ne se perdent jamais.</p>
+    <p>Dans cette serre, vous pouvez y faire pousser ce que vous voulez<sup><a href="#note1">1</a></sup>: des actions d'entreprises, des FNB (Fonds négociés en Bourse), des obligations, etc. Le compte lui-même n'est qu'une protection contre le fisc. Créé en 2009, ce régime permet à chaque Canadien de 18 ans et plus de cotiser un certain montant chaque année. Cette limite annuelle, qui était de 5 000 $ à ses débuts, augmente périodiquement avec l'inflation et est arrondi au premier 500$ près. En 2025, elle a atteint 7 000 $. Une personne qui avait 18 ans en 2009 et qui n'a jamais cotisé dispose aujourd'hui d'un droit de cotisation total de plus de 100 000 $. Ces droits sont cumulatifs et ne se perdent jamais.</p>
     
     <p>Mais la véritable magie du CÉLI ne réside pas dans les cotisations, mais bien dans ce qui se passe après : la croissance, totalement et absolument libre d'impôt.</p>
     
@@ -104,6 +121,9 @@
     <p>En terminant, le CELI puissant outil pour une retraite dorée? Définitivement! Ainsi, la prochaine fois que vous entendrez que le CELI est un compte d'épargne pour la réalisation de projets de vie tel que la rénovation de la cuisine vous pourrez gentillement et poliment vous lever et sortir de son bureau.</p>
     
     <a href="../blog.html" class="lien-retour">← Retour à tous les articles</a>
+    <div class="notes-de-bas-de-page">
+        <p id="note1"><sup>1</sup> La plupart des placements courants sont admissibles (actions, FNB, obligations, CPG), mais certains placements plus exotiques ou non conformes peuvent être interdits. Il est toujours bon de vérifier l'admissibilité d'un placement spécifique.</p>
+    </div>
 </main>
 
 </body>
