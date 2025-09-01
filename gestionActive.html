@@ -25,20 +25,32 @@
   <main>
     <h1>Gestion active contre gestion passive</h1>
 
+    <!-- Sélecteur de catégories -->
     <section>
-      <label for="fondActifSelect">Choisir un fonds actif :</label>
-      <select id="fondActifSelect"></select>
+      <h2>Choisir une catégorie</h2>
+      <div id="categories" class="categories-container">
+        <!-- Les boutons de catégories seront ajoutés ici -->
+      </div>
     </section>
-
+  
+    <!-- Fonds sous forme de pastilles -->
     <section>
-      <h2>Rendements annuels</h2>
-      <canvas id="rendementAnnuelChart" width="860" height="400"></canvas>
+      <h2>Choisir un fonds</h2>
+      <div id="fondsContainer" class="fonds-container">
+        <!-- Les pastilles de fonds apparaîtront ici -->
+      </div>
     </section>
 
     <section>
       <h2>Croissance d’un investissement initial</h2>
       <canvas id="croissanceChart" width="860" height="400"></canvas>
     </section>
+
+    <section>
+      <h2>Rendements annuels</h2>
+      <canvas id="rendementAnnuelChart" width="860" height="400"></canvas>
+    </section>
+    
   </main>
 
   <script src="dataFonds.js"></script>
