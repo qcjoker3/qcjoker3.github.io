@@ -539,13 +539,13 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
             const chartContainer = resultatDiv.nextElementSibling;
 
             let capitalRestant = montantInitial;
-            let retraitIndexe = retraitAnnuelInitial;
+            let retraitIndexe = retraitAnnuel;
             let annees = 0;
             const trajectoireCapital = [montantInitial];
             let messageFinal = '';
             const rendementReel = (1 + rendement) / (1 + inflation) - 1;
             // Cas où le capital dure "éternellement"
-           if (rendementReel > 0 && retraitAnnuelInitial <= montantInitial * rendementReel) {
+           if (rendementReel > 0 && retraitAnnuel <= montantInitial * rendementReel) {
                 for (let i = 1; i <= 50; i++) {
                     capitalRestant = (capitalRestant * (1 + rendement)) - retraitIndexe;
                     retraitIndexe *= (1 + inflation);
