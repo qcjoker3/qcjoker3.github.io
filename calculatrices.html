@@ -246,30 +246,30 @@
         
 <section id="calc-retraite" class="calculator-card active">
         <h2>Calculatrice de Revenu de Retraite 360°</h2>
-       
+        <p class="subtitle">Un outil de planification avancé qui simule des milliers de scénarios pour vous aider à bâtir une stratégie de retraite robuste.</p>
+
         <form id="financial-plan-form">
-            <!-- Le conteneur .card est retiré car la section parente l'a déjà -->
             <!-- Step 1: Profil & Objectifs -->
             <div id="step1" class="wizard-step active">
                 <h3>Étape 1: Profil et Objectifs</h3>
                 <div class="form-group"><label style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="toggleConjoint" style="width:auto; height:20px;"> Planification pour un couple</label></div>
-                <div class="form-grid">
+                <div class="main-grid">
                     <div>
                         <h4>Personne 1</h4>
                         <div class="form-group"><label>Âge</label><input id="age1" type="number" value="35"></div>
                         <div class="form-group"><label>Revenu Annuel Brut</label><input id="revenu1" type="number" value="60000"></div>
-                         <div class="form-group"><label>Âge début de carrière<span class="tooltip">?<span class="tooltip-text">Âge auquel vous avez commencé à cotiser au RRQ (travail à temps plein).</span></span></label><input id="ageDebutTravail1" type="number" value="22"></div>
+                        <div class="form-group"><label>Âge début de carrière<span class="tooltip">?<span class="tooltip-text">Âge auquel vous avez commencé à cotiser au RRQ (travail à temps plein).</span></span></label><input id="ageDebutTravail1" type="number" value="22"></div>
                     </div>
                     <div id="conjoint-profil-group" class="hidden">
-                         <h4>Personne 2</h4>
-                         <div class="form-group"><label>Âge</label><input id="age2" type="number" value="35"></div>
-                         <div class="form-group"><label>Revenu Annuel Brut</label><input id="revenu2" type="number" value="60000"></div>
-                         <div class="form-group"><label>Âge début de carrière</label><input id="ageDebutTravail2" type="number" value="24"></div>
+                        <h4>Personne 2</h4>
+                        <div class="form-group"><label>Âge</label><input id="age2" type="number" value="35"></div>
+                        <div class="form-group"><label>Revenu Annuel Brut</label><input id="revenu2" type="number" value="60000"></div>
+                        <div class="form-group"><label>Âge début de carrière</label><input id="ageDebutTravail2" type="number" value="24"></div>
                     </div>
                 </div>
                 <hr style="margin: 2rem 0; border:0; border-top: 1px solid var(--border-color);">
-                 <h4>Objectifs Communs</h4>
-                 <div class="form-grid">
+                <h4>Objectifs Communs</h4>
+                <div class="form-grid">
                     <div class="form-group"><label>Âge de Retraite</label><input id="ageRetraite" type="number" value="65"></div>
                     <div class="form-group"><label>Espérance de Vie</label><input id="esperanceVie" type="number" value="95"></div>
                     <div class="form-group"><label>Dépense Annuelle Nette Voulue</label><input id="depenseVisee" type="number" value="36000"><p class="helper">En dollars d'aujourd'hui.</p></div>
@@ -288,18 +288,18 @@
                         <div class="form-group"><label>CELI</label><input id="celi1" type="number" value="15000"></div>
                     </div>
                     <div id="conjoint-bilan-group" class="hidden">
-                         <h4>Personne 2</h4>
-                         <div class="form-group"><label>REER</label><input id="reer2" type="number" value="0"></div>
-                         <div class="form-group"><label>CRI</label><input id="cri2" type="number" value="0"></div>
-                         <div class="form-group"><label>CELI</label><input id="celi2" type="number" value="0"></div>
+                        <h4>Personne 2</h4>
+                        <div class="form-group"><label>REER</label><input id="reer2" type="number" value="0"></div>
+                        <div class="form-group"><label>CRI</label><input id="cri2" type="number" value="0"></div>
+                        <div class="form-group"><label>CELI</label><input id="celi2" type="number" value="0"></div>
                     </div>
                 </div>
-                 <hr style="margin: 2rem 0; border:0; border-top: 1px solid var(--border-color);">
-                 <h4>Comptes Conjoints</h4>
-                 <div class="form-grid">
-                     <div class="form-group"><label>Non-Enregistré (Valeur Marchande)</label><input id="nonEnr" type="number" value="15000"></div>
-                     <div class="form-group"><label>Coût de Base (PBR)<span class="tooltip">?<span class="tooltip-text">Prix de Base Rajusté: Le total de vos contributions. Crucial pour calculer l'impôt sur les gains en capital.</span></span></label><input id="nonEnrCoutBase" type="number" value="12000"></div>
-                 </div>
+                <hr style="margin: 2rem 0; border:0; border-top: 1px solid var(--border-color);">
+                <h4>Comptes Conjoints</h4>
+                <div class="form-grid">
+                    <div class="form-group"><label>Non-Enregistré (Valeur Marchande)</label><input id="nonEnr" type="number" value="15000"></div>
+                    <div class="form-group"><label>Coût de Base (PBR)<span class="tooltip">?<span class="tooltip-text">Prix de Base Rajusté: Le total de vos contributions. Crucial pour calculer l'impôt sur les gains en capital.</span></span></label><input id="nonEnrCoutBase" type="number" value="12000"></div>
+                </div>
                 <div class="wizard-nav"><button type="button" class="btn" data-prev="1">Précédent</button> <button type="button" class="btn-primary" data-next="3">Suivant</button></div>
             </div>
             
