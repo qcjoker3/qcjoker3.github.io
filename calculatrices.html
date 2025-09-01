@@ -5,6 +5,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finoza - Calculatrices Financières</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/7.8.3/simple-statistics.min.js"></script>
+    <style>
+        /* Styles spécifiques et corrigés pour la calculatrice */
+        :root {
+            --primary-color: #0D9488; --primary-gradient: linear-gradient(90deg, #0D9488, #0F766E);
+            --bg-color: #F9FAFB; --card-bg-color: #FFFFFF; --border-color: #E5E7EB; --input-bg: #FFFFFF;
+            --heading-color: #111827; --text-color: #374151; --subtle-text-color: #6B7280;
+            --light-text-color: #FFFFFF; --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-focus-ring: 0 0 0 3px rgba(13, 148, 136, 0.2); --border-radius: 12px;
+            --font-body: 'Inter', sans-serif; --font-heading: 'Lora', serif;
+        }
+        @media (prefers-color-scheme: dark) {
+            :root {
+                 --bg-color: #111827; --card-bg-color: #1F2937; --border-color: #374151; --input-bg: #374151;
+                 --heading-color: #F9FAFB; --text-color: #9CA3AF; --subtle-text-color: #6B7280;
+            }
+        }
+        
+        #calc-retraite h4 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 1rem; color: var(--primary-color); }
+        #calc-retraite .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
+        #calc-retraite .form-group label { display: flex; align-items: center; gap: 8px; font-size: 0.9em; font-weight: 500; margin-bottom: 0.5rem; }
+        #calc-retraite .helper { font-size: 0.8em; color: var(--subtle-text-color); margin-top: 0.25rem;}
+        #calc-retraite .btn { padding: 0.75rem 1.5rem; border-radius: 50px; cursor: pointer; font-weight: 600; text-align:center; transition: all 0.2s ease; border: 1px solid var(--border-color); background-color: transparent; }
+        #calc-retraite .btn-primary { background: var(--primary-gradient); color: var(--light-text-color) !important; border: none; font-size: 1.1rem; padding: 0.8rem 2.5rem; }
+        #calc-retraite #spinner { display: none; margin: 2rem auto; width: 50px; height: 50px; border: 5px solid var(--border-color); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        /* CORRECTION: Augmentation de la spécificité pour éviter les conflits */
+        #financial-plan-form .wizard-step { display: none; animation: fadeIn 0.5s; }
+        #financial-plan-form .wizard-step.active { display: block; }
+        
+        #calc-retraite .wizard-nav { display: flex; justify-content: space-between; margin-top: 2rem; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        #calc-retraite .tooltip { cursor: help; background: var(--subtle-text-color); color: white; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; justify-content: center; align-items: center; font-size: 12px; position: relative; }
+        #calc-retraite .tooltip .tooltip-text { visibility: hidden; width: 220px; background-color: #333; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 10; bottom: 150%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; font-family: var(--font-body); font-weight: 400; }
+        #calc-retraite .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+        #calc-retraite .hidden { display: none !important; }
+
+        /* Styles pour les résultats, préfixés pour éviter conflits */
+        #calc-retraite .results-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        #calc-retraite .result-box { background: var(--bg-color); padding: 1.5rem; text-align: center; border-radius: var(--border-radius); border: 1px solid var(--border-color); }
+        #calc-retraite .result-label { font-size: 0.9rem; color: var(--subtle-text-color); margin-bottom: 0.5rem; }
+        #calc-retraite .result-value { font-size: 2rem; font-weight: 700; color: var(--heading-color); font-family: var(--font-heading); }
+        #calc-retraite .result-value.success { color: #10B981; } 
+        #calc-retraite .result-value.danger { color: #EF4444; } 
+        #calc-retraite .result-value.warning { color: #f59e0b; }
+        #calc-retraite .chart-container { height: 450px; }
+        #calc-retraite .recommendation-box { background-color: rgba(13, 148, 136, 0.05); border-left: 4px solid var(--primary-color); padding: 1.5rem; border-radius: 8px; margin-top: 2rem; }
+    </style>
 </head>
 <body>
 
