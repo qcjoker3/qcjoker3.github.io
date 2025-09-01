@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Finoza - Calculatrices Financières</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Calculatrice de Revenu de Retraite 360°</title>
+    <!-- Assurez-vous que votre feuille de style principale est liée ici, par exemple: -->
+    <!-- <link rel="stylesheet" href="style.css"> -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/simple-statistics/7.8.3/simple-statistics.min.js"></script>
     <style>
@@ -25,6 +26,7 @@
         }
         
         #calc-retraite h4 { font-size: 1.1rem; margin-top: 1.5rem; margin-bottom: 1rem; color: var(--primary-color); }
+        #calc-retraite .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
         #calc-retraite .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; }
         #calc-retraite .form-group label { display: flex; align-items: center; gap: 8px; font-size: 0.9em; font-weight: 500; margin-bottom: 0.5rem; }
         #calc-retraite .helper { font-size: 0.8em; color: var(--subtle-text-color); margin-top: 0.25rem;}
@@ -34,8 +36,8 @@
         @keyframes spin { to { transform: rotate(360deg); } }
         
         /* CORRECTION: Augmentation de la spécificité pour éviter les conflits */
-        #calc-retraite .wizard-step { display: none; animation: fadeIn 0.5s; }
-        #calc-retraite .wizard-step.active { display: block; }
+        #financial-plan-form .wizard-step { display: none; animation: fadeIn 0.5s; }
+        #financial-plan-form .wizard-step.active { display: block; }
         
         #calc-retraite .wizard-nav { display: flex; justify-content: space-between; margin-top: 2rem; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -54,6 +56,7 @@
         #calc-retraite .result-value.warning { color: #f59e0b; }
         #calc-retraite .chart-container { height: 450px; }
         #calc-retraite .recommendation-box { background-color: rgba(13, 148, 136, 0.05); border-left: 4px solid var(--primary-color); padding: 1.5rem; border-radius: 8px; margin-top: 2rem; }
+        @media (max-width: 1200px) { #calc-retraite .main-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
