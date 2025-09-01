@@ -3,192 +3,249 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calculatrice - Planification financière</title>
+  <title>Calculatrice - Planification financière avancée</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
+    /* --- Importation des polices de caractères pour les deux thèmes --- */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500&family=Lora:wght@600&display=swap');
+
+    /* --- Animations --- */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes aurora {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    /* =============================================================== */
+    /* === DÉFINITION DES THÈMES LIGHT & DARK === */
+    /* =============================================================== */
+
     :root {
-      --primary-color: #005A9E;
-      --secondary-color: #f0f6fc;
-      --text-color: #333;
-      --border-color: #e0e0e0;
-      --card-bg: #ffffff;
-      --shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+        /* --- THÈME LIGHT (par défaut) : Professionnel & Léché --- */
+        --primary-color: #0D9488;
+        --primary-hover: #0F766E;
+        --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7);
+        --accent-color: #0D9488;
+        --accent-hover: #A855F7;
+
+        --bg-color: #FFFFFF;
+        --section-bg-color: #F9FAFB;
+        --card-bg-color: #FFFFFF;
+        
+        --heading-color: #111827;
+        --text-color: #374151;
+        --subtle-text-color: #6B7280;
+        --light-text-color: #FFFFFF;
+        
+        --border-color: #E5E7EB;
+
+        --font-body: 'Inter', system-ui, sans-serif;
+        --font-heading: 'Lora', serif;
+
+        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        --shadow-focus-ring: 0 0 0 3px rgba(13, 148, 136, 0.2);
+        --border-radius: 12px;
     }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            /* --- THÈME DARK : Dynamique & Coloré --- */
+            --primary-color: #4F46E5;
+            --primary-hover: #4338CA;
+            --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7);
+            --accent-color: #10B981;
+            --accent-hover: #A855F7;
+
+            --bg-color: #111827;
+            --section-bg-color: #111827;
+            --card-bg-color: #1F2937;
+
+            --heading-color: #F9FAFB;
+            --text-color: #9CA3AF;
+            --subtle-text-color: #6B7280;
+            
+            --border-color: #374151;
+
+            --font-heading: 'Poppins', sans-serif;
+
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+            --shadow-focus-ring: 0 0 0 3px rgba(16, 185, 129, 0.3);
+        }
+    }
+
+    /* =============================================================== */
+    /* === STYLES GÉNÉRIQUES (s'adaptent aux variables) === */
+    /* =============================================================== */
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      background-color: #f8f9fa;
-      color: var(--text-color);
-      margin: 0;
-      padding: 0;
-      line-height: 1.6;
+        font-family: var(--font-body);
+        line-height: 1.6;
+        color: var(--text-color);
+        background-color: var(--bg-color);
+        -webkit-font-smoothing: antialiased;
+        transition: background-color 0.3s ease, color 0.3s ease;
     }
+
     .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px;
     }
-    header {
-      background-color: var(--card-bg);
-      border-bottom: 1px solid var(--border-color);
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
+
+    h1, h2, h3 {
+        font-family: var(--font-heading);
+        color: var(--heading-color);
+        line-height: 1.3;
     }
-    header h1 {
-      color: var(--primary-color);
-      margin: 0;
+   
+    /* =============================================================== */
+    /* === COMPOSANTS === */
+    /* =============================================================== */
+
+    /* --- En-tête & Navigation --- */
+    header.container {
+        background-color: var(--bg-color);
+        padding: 1.5rem 20px;
+        border-bottom: 1px solid var(--border-color);
+        transition: background-color 0.3s ease, border-color 0.3s ease;
+        display: flex; flex-direction: column; align-items: center; gap: 1rem;
+        margin-bottom: 2rem;
     }
-    header nav {
-      display: flex;
-      gap: 15px;
-      flex-wrap: wrap;
+    
+    header.container h1 {
+        font-family: var(--font-heading); font-size: 2.2rem; font-weight: 700;
+        color: var(--heading-color); margin: 0;
     }
-    header nav a {
-      text-decoration: none;
-      color: var(--primary-color);
-      font-weight: 500;
-      padding: 5px 10px;
-      border-radius: 6px;
-      transition: background-color 0.3s;
+    header.container nav {
+        display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;
     }
-    header nav a:hover {
-      background-color: var(--secondary-color);
+    header.container nav a {
+        color: var(--text-color); font-weight: 500;
+        transition: color 0.2s ease, transform 0.2s ease;
+        text-decoration: none;
     }
-    .card-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 20px;
+    header.container nav a:hover {
+        color: var(--heading-color); transform: translateY(-2px);
     }
+    
+    /* --- Boutons --- */
+    .btn-primary {
+        display: inline-block; background: var(--primary-gradient); color: var(--light-text-color) !important;
+        border: none; padding: 0.8rem 2rem; border-radius: 50px; cursor: pointer;
+        font-weight: 700; font-family: var(--font-heading); font-size: 1rem;
+        box-shadow: var(--shadow-md); transition: all 0.3s ease;
+        background-size: 200% auto;
+        text-decoration: none;
+    }
+    .btn-primary:hover { background-position: right center; transform: scale(1.05); box-shadow: var(--shadow-lg); }
+
+    /* --- Cartes (Cards) --- */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
     .card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 25px;
-      box-shadow: var(--shadow);
-      margin-bottom: 20px;
+        background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+        border-radius: var(--border-radius); padding: 2.5rem;
+        transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
+        position: relative;
+        margin-bottom: 1.5rem;
     }
-    .card h3 {
-      margin-top: 0;
-      color: var(--primary-color);
-      border-bottom: 2px solid var(--secondary-color);
-      padding-bottom: 10px;
-      margin-bottom: 20px;
+    .card h3 { 
+        font-size: 1.5rem; 
+        margin-top: 0;
+        margin-bottom: 1.5rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1rem;
     }
+    
+    /* --- Formulaires --- */
     .form-group {
-      margin-bottom: 15px;
-      display: flex;
-      flex-direction: column;
+        margin-bottom: 1rem;
     }
     .form-group label {
-      font-weight: 600;
-      margin-bottom: 5px;
-      font-size: 0.9em;
+        color: var(--heading-color);
+        font-weight: 500;
+        display: block;
+        margin-bottom: 0.5rem;
     }
-    .form-group input,
-    .form-group select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      box-sizing: border-box;
-      transition: border-color 0.3s, box-shadow 0.3s;
+    .form-group input, .form-group select {
+        width: 100%; padding: 0.9rem 1rem; border: 1px solid var(--border-color);
+        border-radius: 8px; font-size: 1rem; font-family: var(--font-body);
+        background-color: var(--bg-color); color: var(--text-color);
+        transition: border-color 0.2s, box-shadow 0.2s;
     }
-    .form-group input:focus,
+    .form-group input:focus, 
     .form-group select:focus {
-      outline: none;
-      border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(0, 90, 158, 0.1);
+        outline: none; border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring);
     }
-    .btn-primary {
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 1em;
-      font-weight: 600;
-      transition: background-color 0.3s, transform 0.2s;
+    
+    .helper {
+      font-size: 0.85em;
+      color: var(--subtle-text-color);
+      margin-top: 5px;
     }
-    .btn-primary:hover {
-      background-color: #004a80;
-      transform: translateY(-2px);
-    }
-    .results-dashboard {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-      text-align: center;
-    }
-    .result-box {
-      background-color: var(--secondary-color);
-      padding: 20px;
-      border-radius: 10px;
-    }
-    .result-label {
-      display: block;
-      font-size: 0.9em;
-      color: #555;
-      margin-bottom: 5px;
-    }
-    .result-value {
-      display: block;
-      font-size: 1.5em;
-      font-weight: 700;
-      color: var(--primary-color);
-    }
+
+    /* --- Composants de Résultats --- */
+    .results-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; text-align: center; }
+    .result-box { padding: 1.5rem; background-color: var(--section-bg-color); border-radius: var(--border-radius); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); }
+    .result-label { display: block; font-size: 1rem; color: var(--text-color); margin-bottom: 0.5rem; }
+    .result-value { display: block; font-size: 2rem; font-weight: 700; color: var(--heading-color); font-family: var(--font-heading); }
+    
     .chart-container {
         position: relative;
-        height: 400px;
+        height: 450px;
         width: 100%;
+        margin-top: 2rem;
     }
     canvas {
       width: 100% !important;
       height: 100% !important;
     }
+
     table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.9em;
+      margin-top: 1.5rem;
     }
     th, td {
-      padding: 10px;
+      padding: 12px 15px;
       text-align: right;
       border-bottom: 1px solid var(--border-color);
     }
     th {
-      background-color: var(--secondary-color);
+      background-color: var(--section-bg-color);
       font-weight: 600;
+      font-family: var(--font-heading);
+      color: var(--heading-color);
+    }
+    tbody tr:nth-of-type(even) {
+        background-color: var(--section-bg-color);
     }
     tbody tr:hover {
-      background-color: #f5f5f5;
-    }
-    .helper {
-      font-size: 0.85em;
-      color: #666;
-      margin-top: 5px;
-    }
-    details summary {
-      cursor: pointer;
-      font-weight: 600;
-      color: var(--primary-color);
+      background-color: rgba(13, 148, 136, 0.1);
     }
   </style>
 </head>
 <body>
-  <header>
+  <header class="container">
     <h1>Finoza</h1>
     <nav>
-        <a href="index.html">Accueil</a>
-        <a href="#services">Services</a>
-        <a href="Prédictions.html">Prédictions</a>
-        <a href="calculatrices.html">Calculatrices</a>
-        <a href="gestionActive.html">Gestion active</a>
-        <a href="decaissementRetraite.html">Décaissement retraite</a>
-        <a href="blog.html">Articles</a>
-        <a href="#contact">Contact</a>
+      <a href="#accueil">Accueil</a>
+      <a href="#services">Services</a>
+      <a href="#calculatrices">Calculatrices</a>
+      <a href="#blog">Articles</a>
+      <a href="#contact">Contact</a>
     </nav>
   </header>
 
@@ -297,21 +354,21 @@
     <div class="card">
       <h3>Lancer la Simulation</h3>
       <p>Choisissez une stratégie de décaissement pour optimiser votre retraite. Le calculateur testera 24 ordres de retraits différents pour trouver le meilleur résultat selon votre objectif.</p>
-      <div style="display:flex; gap:12px; flex-wrap:wrap;">
-        <button class="btn-primary scenario" data-s="duree">1. Maximiser la durée du capital</button>
-        <button class="btn-primary scenario" data-s="impot">2. Minimiser l’impôt total payé</button>
+      <div style="display:flex; gap:12px; flex-wrap:wrap; justify-content:center; padding-top:1rem;">
+        <button class="btn-primary scenario" data-s="duree">1. Maximiser la durée</button>
+        <button class="btn-primary scenario" data-s="impot">2. Minimiser l’impôt</button>
         <button class="btn-primary scenario" data-s="capitalFinal">3. Maximiser le capital final</button>
       </div>
     </div>
     
-    <div id="resultsArea" style="display:none;">
+    <div id="resultsArea" style="display:none; animation: fadeIn 0.8s ease-out forwards;">
         <div class="card">
           <h3>Indicateurs Clés du Scénario</h3>
           <div class="results-dashboard">
             <div class="result-box"><span class="result-label">Capital restant (fin)</span><span class="result-value" id="totalRestant">$0</span></div>
             <div class="result-box"><span class="result-label">Âge d'épuisement</span><span class="result-value" id="ageEpuisement">N/A</span></div>
             <div class="result-box"><span class="result-label">Impôt total payé</span><span class="result-value" id="totalImpot">$0</span></div>
-            <div class="result-box"><span class="result-label">Meilleur ordre de retrait</span><span class="result-value" id="meilleurOrdre"></span></div>
+            <div class="result-box"><span class="result-label">Meilleur ordre de retrait</span><span class="result-value" id="meilleurOrdre" style="font-size:1.4rem"></span></div>
           </div>
         </div>
         
@@ -371,11 +428,12 @@ document.addEventListener("DOMContentLoaded", () => {
         div.className = "form-group";
         div.style.display = 'flex';
         div.style.gap = '10px';
+        div.style.alignItems = 'center';
         div.innerHTML = `
             <input type="number" class="evenementAge" placeholder="Âge" style="width: 100px;">
             <input type="number" class="evenementMontant" placeholder="Montant (+/-)" style="flex-grow: 1;">
             <input type="text" class="evenementDesc" placeholder="Description (ex: Voyage)" style="flex-grow: 2;">
-            <button type="button" onclick="this.parentElement.remove()" style="padding: 5px 10px;">X</button>
+            <button type="button" onclick="this.parentElement.remove()" style="padding: 8px 12px; border-radius:8px; border:1px solid var(--border-color); background: var(--card-bg-color); color:var(--text-color); cursor:pointer;">X</button>
         `;
         evenementsContainer.appendChild(div);
     });
@@ -629,24 +687,39 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Graphique
         const ctx = document.getElementById("graphiqueSoldes").getContext("2d");
+        const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const textColor = isDarkMode ? '#F9FAFB' : '#374151';
+
         if(window.graphique) window.graphique.destroy();
         window.graphique = new Chart(ctx, {
             type: "line",
             data: {
                 labels: projection.map(l => l.age),
                 datasets:[
-                    { label: "CELI", data: projection.map(l => l.celi), borderColor: "#3498db", fill: false, tension: 0.1 },
-                    { label: "REER/FERR", data: projection.map(l => l.reer), borderColor: "#2ecc71", fill: false, tension: 0.1 },
-                    { label: "CRI/FRV", data: projection.map(l => l.cri), borderColor: "#e74c3c", fill: false, tension: 0.1 },
-                    { label: "Non-enregistré", data: projection.map(l => l.nonEnr), borderColor: "#f1c40f", fill: false, tension: 0.1 }
+                    { label: "CELI", data: projection.map(l => l.celi), borderColor: "#3498db", backgroundColor: "#3498db", fill: false, tension: 0.1 },
+                    { label: "REER/FERR", data: projection.map(l => l.reer), borderColor: "#2ecc71", backgroundColor: "#2ecc71", fill: false, tension: 0.1 },
+                    { label: "CRI/FRV", data: projection.map(l => l.cri), borderColor: "#e74c3c", backgroundColor: "#e74c3c", fill: false, tension: 0.1 },
+                    { label: "Non-enregistré", data: projection.map(l => l.nonEnr), borderColor: "#f1c40f", backgroundColor: "#f1c40f", fill: false, tension: 0.1 }
                 ]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                plugins: {
+                    legend: { labels: { color: textColor } }
+                },
                 scales: {
                     y: {
-                        ticks: { callback: value => value.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD' }) }
+                        ticks: { 
+                            callback: value => value.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }),
+                            color: textColor 
+                        },
+                        grid: { color: gridColor }
+                    },
+                    x: {
+                        ticks: { color: textColor },
+                        grid: { color: gridColor }
                     }
                 }
             }
@@ -655,10 +728,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.querySelectorAll(".scenario").forEach(btn => {
         btn.addEventListener("click", () => {
-            calculerScenario(btn.dataset.s);
+            const resultsArea = document.getElementById('resultsArea');
+            resultsArea.style.display = 'none'; // Hide for animation
+            setTimeout(() => {
+                calculerScenario(btn.dataset.s);
+                resultsArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         });
     });
 });
 </script>
 </body>
 </html>
+
