@@ -202,303 +202,243 @@
       </table>
     </div>
   </div>
-  <script>
-    // --- Constantes et utilitaires ---
-  const AGE_MAX = 100;
-  const INFLATION_DEFAULT = 0.02;
-  
-  // --- Gestion affichage revenu manuel ---
-  const revenuChoix = document.getElementById('revenuChoix');
-  const revenuManuelGroup = document.getElementById('revenuManuelGroup');
-  revenuChoix.addEventListener('change', e => {
-    revenuManuelGroup.style.display = e.target.value === 'manuel' ? 'block' : 'none';
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // --- Gestion champs dynamiques ---
+  const revenuChoix = document.getElementById("revenuChoix");
+  const revenuManuelGroup = document.getElementById("revenuManuelGroup");
+  revenuChoix.addEventListener("change", () => {
+    revenuManuelGroup.style.display = revenuChoix.value === "manuel" ? "block" : "none";
   });
-  
-  // --- Gestion affichage fonds de pension ---
-  const pensionChoix = document.getElementById('pensionChoix');
-  const fondPensionGroup = document.getElementById('fondPensionGroup');
-  pensionChoix.addEventListener('change', e => {
-    fondPensionGroup.style.display = e.target.value === 'oui' ? 'block' : 'none';
+
+  const pensionChoix = document.getElementById("pensionChoix");
+  const fondPensionGroup = document.getElementById("fondPensionGroup");
+  pensionChoix.addEventListener("change", () => {
+    fondPensionGroup.style.display = pensionChoix.value === "oui" ? "block" : "none";
   });
-  
-  // --- Gestion événements financiers ---
-  const evenementsContainer = document.getElementById('evenementsContainer');
-  const ajoutEvenementBtn = document.getElementById('ajoutEvenement');
-  ajoutEvenementBtn.addEventListener('click', () => {
+
+  const evenementsContainer = document.getElementById("evenementsContainer");
+  document.getElementById("ajoutEvenement").addEventListener("click", () => {
     if (evenementsContainer.children.length >= 4) return;
-    const div = document.createElement('div');
-    div.classList.add('evenement');
+    const div = document.createElement("div");
+    div.className = "form-group";
     div.innerHTML = `
-      <input type="number" class="anneeEvenement" placeholder="Âge"/>
-      <input type="number" class="montantEvenement" placeholder="Montant"/>
-      <button type="button" class="supprimer">X</button>
+      <input type="number" class="evenementAge" placeholder="Âge">
+      <input type="number" class="evenementMontant" placeholder="Montant +/-">
     `;
-    div.querySelector('.supprimer').addEventListener('click', ()=>div.remove());
     evenementsContainer.appendChild(div);
   });
-  
-  // --- Scénario sélection ---
-  let scenarioChoisi = 'durée';
-  document.querySelectorAll('.scenario').forEach(btn=>{
-    btn.addEventListener('click', e=>{
-      scenarioChoisi = e.currentTarget.dataset.s;
-      document.getElementById('bestOrders').innerText = `Scénario sélectionné : ${scenarioChoisi}`;
-      calculer();
-    });
-  });
-  
-  // --- Fonction utilitaire inflation ---
-  function appliquerInflation(montant, annees, inflation) {
-    return montant * Math.pow(1 + inflation, annees);
-  }
-  
-  // --- Fonction impôt simplifié ---
-  function calculerImpot(retraitREER,retraitNon,retraitCRI,fedBrackets,qcBrackets){
-    let revenuOrdinaire = retraitREER + retraitCRI;
-    let gainNon = retraitNon/2; // 50% inclus pour gain en capital
-    revenuOrdinaire += retraitNon - gainNon;
-    let impFed=0, impQc=0, restant=revenuOrdinaire, last=0;
-    fedBrackets.forEach(b=>{
-      const taxable=Math.min(restant,b[0]-last);
-      if(taxable>0) impFed+=taxable*b[1];
-      restant-=taxable; last=b[0];
-    });
-    restant=revenuOrdinaire; last=0;
-    qcBrackets.forEach(b=>{
-      const taxable=Math.min(restant,b[0]-last);
-      if(taxable>0) impQc+=taxable*b[1];
-      restant-=taxable; last=b[0];
-    });
-    return impFed+impQc;
-  }
-  
-  // --- Permutations ---
-  function getPermutations(array){
-    if(array.length===1) return [array];
-    const perms=[];
-    array.forEach((v,i)=>{
-      const rest=array.slice(0,i).concat(array.slice(i+1));
-      getPermutations(rest).forEach(p=>perms.push([v,...p]));
-    });
-    return perms;
-  }
-  
-  // --- Décaissement optimisé ---
-  function decaissementOptimise(revenu, soldeREER, soldeCELI, soldeNon, soldeCRI, scenario, fedBrackets, qcBrackets){
-    const comptes=['REER','CELI','Non','CRI'];
-    const permutations = getPermutations(comptes);
-    let meilleur=null;
-    permutations.forEach(ord=>{
-      let sREER=soldeREER,sCELI=soldeCELI,sNon=soldeNon,sCRI=soldeCRI;
-      let retrait={REER:0,CELI:0,Non:0,CRI:0};
-      let restant=revenu;
-      ord.forEach(c=>{
-        let r=0;
-        if(c==='REER') r=Math.min(sREER,restant);
-        if(c==='CELI') r=Math.min(sCELI,restant);
-        if(c==='Non') r=Math.min(sNon,restant);
-        if(c==='CRI') r=Math.min(sCRI,restant);
-        if(c==='REER') sREER-=r;
-        if(c==='CELI') sCELI-=r;
-        if(c==='Non') sNon-=r;
-        if(c==='CRI') sCRI-=r;
-        retrait[c]=r; restant-=r;
-      });
-      let score;
-      if(scenario==='durée') score=sREER+sCELI+sNon+sCRI;
-      else if(scenario==='impot') score=-calculerImpot(retrait.REER,retrait.Non,retrait.CRI,fedBrackets,qcBrackets);
-      else if(scenario==='espvie') score=-Math.abs(sREER+sCELI+sNon+sCRI);
-      if(!meilleur || score>meilleur.score){
-        meilleur={retrait, sREER, sCELI, sNon, sCRI, score};
-      }
-    });
-    return meilleur;
-  }
-  
-  // --- Calcul principal ---
-  function calculer(){
-    const ageActuel = parseInt(document.getElementById('ageActuel').value);
-    const ageRetraite = parseInt(document.getElementById('ageRetraite').value);
-    const inflation = parseFloat(document.getElementById('inflation').value)/100 || INFLATION_DEFAULT;
-    const salaireActuel = parseFloat(document.getElementById('salaireActuel').value);
-  
-    let revenuDesire = 0;
-    const choix = document.getElementById('revenuChoix').value;
-    if(choix==='manuel') revenuDesire=parseFloat(document.getElementById('revenuManuel').value)||0;
-    else revenuDesire=salaireActuel*(parseInt(choix)/100);
-  
-    const esperanceVie = parseInt(document.getElementById('esperanceVie').value);
-  
-    // Soldes initiaux
-    let balances={
-      REER: parseFloat(document.getElementById('reerActuel').value),
-      CELI: parseFloat(document.getElementById('celiActuel').value),
-      CRI: parseFloat(document.getElementById('criActuel').value),
-      Non: parseFloat(document.getElementById('nonActuel').value),
-      RRIF:0, FRV:0
-    };
-  
-    // Cotisations annuelles (sans inflation)
-    const cotations={
-      REER: parseFloat(document.getElementById('reerCot').value),
-      CELI: parseFloat(document.getElementById('celiCot').value),
-      CRI: parseFloat(document.getElementById('criCot').value),
-      Non: parseFloat(document.getElementById('nonCot').value)
-    };
-  
-    // Rendements
-    const rendements={
-      REER: parseFloat(document.getElementById('reerRend').value)/100,
-      CELI: parseFloat(document.getElementById('celiRend').value)/100,
-      CRI: parseFloat(document.getElementById('criRend').value)/100,
-      Non: parseFloat(document.getElementById('nonRend').value)/100
-    };
-  
-    // RRQ/PSV avancé
-    const rrq=parseFloat(document.getElementById('rrq65').value)*12;
-    const psv=parseFloat(document.getElementById('psv65').value)*12;
-    const rrqRedPct=parseFloat(document.getElementById('rrqRedPct').value)/100 || 0.006;
-    const rrqBonPct=parseFloat(document.getElementById('rrqBonPct').value)/100 || 0.007;
-    const oasThresholdBase=parseFloat(document.getElementById('oasThresholdBase').value)||0;
-    const oasClawRate=parseFloat(document.getElementById('oasClawRate').value)/100||0.15;
-    const applyRrifLif=document.getElementById('applyRrifLif').value==='1';
-    const lifRefRate=parseFloat(document.getElementById('lifRefRate').value)/100||0.06;
-  
-    // Fonds de pension
-    const pensionOui=pensionChoix.value==='oui';
-    let salairePension = pensionOui ? parseFloat(document.getElementById('salairePension').value)||0 : 0;
-    const indexPension = pensionOui ? parseFloat(document.getElementById('indexPension').value)/100||0.02 : 0;
-  
-    // Fiscalité
-    const fedBrackets = JSON.parse(document.getElementById('fedBrackets').value);
-    const qcBrackets = JSON.parse(document.getElementById('qcBrackets').value);
-  
-    // Événements financiers
-    const evenements=[];
-    document.querySelectorAll('.evenement').forEach(ev=>{
-      const an=parseInt(ev.querySelector('.anneeEvenement').value);
-      const mt=parseFloat(ev.querySelector('.montantEvenement').value);
-      if(!isNaN(an)&&!isNaN(mt)) evenements.push({annee:an,montant:mt});
-    });
-  
-    // Tableau résultats
-    const tableau=[];
-    let totalImpot=0, totalDepenses=0;
-    let ageFinCapital=ageRetraite;
-  
-    for(let age=ageRetraite; age<=AGE_MAX; age++){
-      const annee=age-ageRetraite;
-  
-      // --- Appliquer cotisations annuelles (sans inflation) ---
-      balances.REER += cotations.REER;
-      balances.CELI += cotations.CELI;
-      balances.CRI += cotations.CRI;
-      balances.Non += cotations.Non;
-  
-      // --- Appliquer rendement annuel ---
-      balances.REER *= (1+rendements.REER);
-      balances.CELI *= (1+rendements.CELI);
-      balances.CRI *= (1+rendements.CRI);
-      balances.Non *= (1+rendements.Non);
-  
-      // --- Revenu annuel ---
-      let revenuAnnee = appliquerInflation(revenuDesire, annee, inflation);
-  
-      // Ajouter RRQ/PSV ajusté
-      let rrqAn=rrq, psvAn=psv;
-      if(age<65) rrqAn *= 1 - (65-age)*rrqRedPct;
-      if(age>65) rrqAn *= 1 + (age-65)*rrqBonPct;
-      psvAn *= Math.pow(1+inflation,age-65);
-      if(psvAn>oasThresholdBase) psvAn -= (psvAn-oasThresholdBase)*oasClawRate;
-  
-      revenuAnnee += rrqAn + psvAn;
-  
-      // Ajouter fonds de pension indexé
-      if(pensionOui) revenuAnnee += salairePension*Math.pow(1+indexPension, annee);
-  
-      // Événements financiers
-      evenements.forEach(ev=>{if(ev.annee===age) revenuAnnee+=ev.montant;});
-  
-      // Conversion RRIF/FRV à 71 ans
-      if(age===71 && applyRrifLif){
-        balances.RRIF=balances.REER; balances.REER=0;
-        balances.FRV=balances.CRI; balances.CRI=0;
-      }
-  
-      // Décaissement optimisé
-      const decaissement=decaissementOptimise(revenuAnnee,balances.REER,balances.CELI,balances.Non,balances.CRI,scenarioChoisi,fedBrackets,qcBrackets);
-      balances.REER=decaissement.sREER;
-      balances.CELI=decaissement.sCELI;
-      balances.Non=decaissement.sNon;
-      balances.CRI=decaissement.sCRI;
-  
-      const impAnnee=calculerImpot(decaissement.retrait.REER,decaissement.retrait.Non,decaissement.retrait.CRI,fedBrackets,qcBrackets);
-      totalImpot+=impAnnee;
-      totalDepenses+=revenuAnnee;
-  
-      tableau.push({
-        age,
-        salaire:appliquerInflation(revenuDesire,annee,inflation),
-        revenus:revenuAnnee,
-        retraitsNet:decaissement.retrait.REER+decaissement.retrait.CELI+decaissement.retrait.Non+decaissement.retrait.CRI,
-        impot:impAnnee,
-        retraitsBrut:decaissement.retrait.REER+decaissement.retrait.Non+decaissement.retrait.CRI+decaissement.retrait.CELI,
-        CELI:balances.CELI,
-        REER:balances.REER,
-        CRI:balances.CRI,
-        Non:balances.Non
-      });
-  
-      if(balances.REER+balances.CELI+balances.Non+balances.CRI<=0){ageFinCapital=age; break;}
+
+  // --- Permutations 24 décaissements ---
+  function permute(array) {
+    if (array.length <= 1) return [array];
+    const result = [];
+    for (let i=0; i<array.length; i++) {
+      const rest = array.slice(0,i).concat(array.slice(i+1));
+      for (const p of permute(rest)) result.push([array[i], ...p]);
     }
-  
-    // --- Affichage résultats ---
-    document.getElementById('totalRestant').innerText='$'+(balances.REER+balances.CELI+balances.CRI+balances.Non).toFixed(0);
-    document.getElementById('ageFin').innerText=ageFinCapital;
-    document.getElementById('totalImpot').innerText='$'+totalImpot.toFixed(0);
-    document.getElementById('depensesCumulees').innerText='$'+totalDepenses.toFixed(0);
-  
-    // --- Graphique Chart.js ---
-    const ctx=document.getElementById('graphiqueSoldes').getContext('2d');
-    if(window.chartInstance) window.chartInstance.destroy();
-    window.chartInstance=new Chart(ctx,{
-      type:'line',
-      data:{
-        labels:tableau.map(r=>r.age),
-        datasets:[
-          {label:'CELI', data:tableau.map(r=>r.CELI), borderColor:'green', fill:false},
-          {label:'REER', data:tableau.map(r=>r.REER), borderColor:'blue', fill:false},
-          {label:'CRI', data:tableau.map(r=>r.CRI), borderColor:'purple', fill:false},
-          {label:'Non-enreg.', data:tableau.map(r=>r.Non), borderColor:'orange', fill:false},
-          {label:'Total', data:tableau.map(r=>r.CELI+r.REER+r.CRI+r.Non), borderColor:'black', fill:false, borderWidth:2}
-        ]
-      },
-      options:{responsive:true, plugins:{legend:{position:'top'}}}
+    return result;
+  }
+
+  // --- FERR/FRV minimal ---
+  function ferrMinimum(solde, age) {
+    if (age < 71) return 0;
+    return solde / (90 - age);
+  }
+
+  // --- Calcul impôt ---
+  function calcImpot(revenuAnnuel, brackets) {
+    let impot = 0;
+    let revenuRestant = revenuAnnuel;
+    for (let i=0; i < brackets.length; i++) {
+      const [plafond, taux] = brackets[i];
+      const prevPlafond = i === 0 ? 0 : brackets[i-1][0];
+      const taxable = Math.min(revenuRestant, plafond - prevPlafond);
+      if (taxable > 0) impot += taxable * taux;
+      revenuRestant -= taxable;
+      if (revenuRestant <= 0) break;
+    }
+    return impot;
+  }
+
+  // --- Calcul scénario ---
+  function calculerScenario(scenario) {
+    const ageActuel = parseInt(document.getElementById("ageActuel").value);
+    const ageRetraite = parseInt(document.getElementById("ageRetraite").value);
+    const ageMax = 100;
+    const inflation = parseFloat(document.getElementById("inflation").value)/100;
+
+    // Soldes initiaux
+    let celi = parseFloat(document.getElementById("celiActuel").value);
+    let reer = parseFloat(document.getElementById("reerActuel").value);
+    let cri = parseFloat(document.getElementById("criActuel").value);
+    let non = parseFloat(document.getElementById("nonActuel").value);
+
+    // Cotisations
+    const celiCot = parseFloat(document.getElementById("celiCot").value);
+    const reerCot = parseFloat(document.getElementById("reerCot").value);
+    const criCot = parseFloat(document.getElementById("criCot").value);
+    const nonCot = parseFloat(document.getElementById("nonCot").value);
+
+    // Rendements
+    const celiRend = parseFloat(document.getElementById("celiRend").value)/100;
+    const reerRend = parseFloat(document.getElementById("reerRend").value)/100;
+    const criRend = parseFloat(document.getElementById("criRend").value)/100;
+    const nonRend = parseFloat(document.getElementById("nonRend").value)/100;
+
+    // RRQ/PSV
+    const rrq65 = parseFloat(document.getElementById("rrq65").value);
+    const psv65 = parseFloat(document.getElementById("psv65").value);
+    const ageRRQ = parseInt(document.getElementById("ageRRQ").value);
+    const agePSV = parseInt(document.getElementById("agePSV").value);
+    const rrqRedPct = parseFloat(document.getElementById("rrqRedPct").value)/100;
+    const rrqBonPct = parseFloat(document.getElementById("rrqBonPct").value)/100;
+    const oasThresholdBase = parseFloat(document.getElementById("oasThresholdBase").value);
+    const oasClawRate = parseFloat(document.getElementById("oasClawRate").value)/100;
+    const applyRrifLif = document.getElementById("applyRrifLif").value==="1";
+
+    // Revenu désiré
+    let revenuDesire = revenuChoix.value==="manuel" ? parseFloat(document.getElementById("revenuManuel").value)
+      : (parseFloat(revenuChoix.value)/100)*parseFloat(document.getElementById("salaireActuel").value);
+
+    // Événements
+    const evenements = [];
+    document.querySelectorAll(".evenementAge").forEach((input,i) => {
+      const ageEvt = parseInt(input.value);
+      const montant = parseFloat(document.querySelectorAll(".evenementMontant")[i].value);
+      if(!isNaN(ageEvt) && !isNaN(montant)) evenements.push({age:ageEvt, montant});
     });
-  
-    // --- Tableau ---
-    const tbody=document.querySelector('#tableauAnnuel tbody');
-    tbody.innerHTML='';
-    tableau.forEach(r=>{
-      const tr=document.createElement('tr');
-      tr.innerHTML=`
-        <td>${r.age}</td>
-        <td>${r.salaire.toFixed(0)}</td>
-        <td>${r.revenus.toFixed(0)}</td>
-        <td>${r.retraitsNet.toFixed(0)}</td>
-        <td>${r.impot.toFixed(0)}</td>
-        <td>${r.retraitsBrut.toFixed(0)}</td>
-        <td>${r.CELI.toFixed(0)}</td>
-        <td>${r.REER.toFixed(0)}</td>
-        <td>${r.CRI.toFixed(0)}</td>
-        <td>${r.Non.toFixed(0)}</td>
+
+    // Impôts
+    const fedBrackets = JSON.parse(document.getElementById("fedBrackets").value);
+    const qcBrackets = JSON.parse(document.getElementById("qcBrackets").value);
+
+    // Permutations comptes
+    const comptes = ["celi","reer","cri","non"];
+    const permutations = permute(comptes);
+
+    let meilleurTableau, critereMax;
+
+    permutations.forEach(ordre => {
+      // Copier soldes
+      let celiTmp = celi, reerTmp = reer, criTmp = cri, nonTmp = non;
+      const tableauTmp = [];
+      let totalImpot = 0, ageFin = ageMax;
+
+      for (let age=ageActuel; age<=ageMax; age++) {
+        // Cotisations avant retraite
+        if(age<ageRetraite){celiTmp+=celiCot;reerTmp+=reerCot;criTmp+=criCot;nonTmp+=nonCot;}
+        // Rendements
+        celiTmp*=1+celiRend; reerTmp*=1+reerRend; criTmp*=1+criRend; nonTmp*=1+nonRend;
+
+        // RRQ/PSV
+        let rrq=0, psv=0;
+        if(age>=ageRRQ){ rrq = rrq65*12*(ageRRQ<65?1-rrqRedPct*(65-ageRRQ):1+rrqBonPct*(ageRRQ-65)); }
+        if(age>=agePSV){ psv = psv65*12; if(psv>oasThresholdBase) psv-=(psv-oasThresholdBase)*oasClawRate; }
+
+        // Revenu désiré indexé
+        let revenuIndexe = revenuDesire*(1+inflation)**(age-ageRetraite);
+
+        // Événements
+        let evtMontant = evenements.filter(e=>e.age===age).reduce((a,b)=>a+b.montant,0);
+
+        // Retraits FERR/FRV
+        let retraitCRIFERR = applyRrifLif ? ferrMinimum(criTmp, age) : 0;
+        let retraitREERFERR = applyRrifLif ? ferrMinimum(reerTmp, age) : 0;
+
+        let totalRetrait = revenuIndexe + evtMontant + retraitCRIFERR + retraitREERFERR;
+
+        // Décaissement selon permutation
+        let tmpRetrait = totalRetrait;
+        const soldeParCompte = {celi: celiTmp, reer: reerTmp, cri: criTmp, non: nonTmp};
+        ordre.forEach(comp => {
+          const retrait = Math.min(tmpRetrait, soldeParCompte[comp]);
+          soldeParCompte[comp]-=retrait;
+          tmpRetrait-=retrait;
+        });
+
+        // Impôts
+        let impFédéral = calcImpot(totalRetrait, fedBrackets);
+        let impQC = calcImpot(totalRetrait, qcBrackets);
+        totalImpot += impFédéral + impQC;
+
+        tableauTmp.push({
+          age,
+          celi: soldeParCompte.celi,
+          reer: soldeParCompte.reer,
+          cri: soldeParCompte.cri,
+          non: soldeParCompte.non,
+          retraitNet: totalRetrait-(impFédéral+impQC),
+          impôtTotal: (impFédéral+impQC),
+          revenus: rrq+psv+evtMontant,
+          retraitBrut: totalRetrait
+        });
+
+        if(soldeParCompte.celi+soldeParCompte.reer+soldeParCompte.cri+soldeParCompte.non<=0 && ageFin===ageMax){
+          ageFin = age;
+        }
+      }
+
+      // Choix meilleur permutation
+      if(scenario==="durée"){ if(!critereMax || ageFin>critereMax){ critereMax=ageFin; meilleurTableau=tableauTmp; } }
+      else if(scenario==="impot"){ if(!critereMax || totalImpot<critereMax){ critereMax=totalImpot; meilleurTableau=tableauTmp; } }
+      else if(scenario==="espvie"){ const dernierSolde = tableauTmp[tableauTmp.length-1].celi+tableauTmp[tableauTmp.length-1].reer+tableauTmp[tableauTmp.length-1].cri+tableauTmp[tableauTmp.length-1].non; if(!critereMax || dernierSolde<critereMax){ critereMax=dernierSolde; meilleurTableau=tableauTmp; } }
+    });
+
+    // --- Affichage tableau HTML ---
+    const tbody = document.querySelector("#tableauAnnuel tbody");
+    tbody.innerHTML = "";
+    meilleurTableau.forEach(l => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${l.age}</td>
+        <td>${(l.retraitBrut-l.revenus).toFixed(2)}</td>
+        <td>${l.revenus.toFixed(2)}</td>
+        <td>${l.retraitNet.toFixed(2)}</td>
+        <td>${l.impôtTotal.toFixed(2)}</td>
+        <td>${l.retraitBrut.toFixed(2)}</td>
+        <td>${l.celi.toFixed(2)}</td>
+        <td>${l.reer.toFixed(2)}</td>
+        <td>${l.cri.toFixed(2)}</td>
+        <td>${l.non.toFixed(2)}</td>
       `;
       tbody.appendChild(tr);
     });
+
+    // --- Graphique ---
+    const ctx = document.getElementById("graphiqueSoldes").getContext("2d");
+    if(window.graphique) window.graphique.destroy();
+    window.graphique = new Chart(ctx, {
+      type:"line",
+      data:{
+        labels: meilleurTableau.map(l=>l.age),
+        datasets:[
+          {label:"CELI", data: meilleurTableau.map(l=>l.celi), borderColor:"blue", fill:false},
+          {label:"REER", data: meilleurTableau.map(l=>l.reer), borderColor:"green", fill:false},
+          {label:"CRI/FERR", data: meilleurTableau.map(l=>l.cri), borderColor:"red", fill:false},
+          {label:"Non-enregistré", data: meilleurTableau.map(l=>l.non), borderColor:"orange", fill:false}
+        ]
+      }
+    });
+
+    // --- Indicateurs ---
+    const dernier = meilleurTableau[meilleurTableau.length-1];
+    document.getElementById("totalRestant").textContent = `$${(dernier.celi+dernier.reer+dernier.cri+dernier.non).toFixed(2)}`;
+    document.getElementById("ageFin").textContent = dernier.age;
+    document.getElementById("totalImpot").textContent = `$${meilleurTableau.reduce((a,b)=>a+parseFloat(b.impôtTotal),0).toFixed(2)}`;
+    document.getElementById("depensesCumulees").textContent = `$${meilleurTableau.reduce((a,b)=>a+parseFloat(b.retraitNet),0).toFixed(2)}`;
   }
-  
-  // --- Calcul initial ---
-  calculer();
-  </script>
+
+  // --- Déclencheur boutons scénarios ---
+  document.querySelectorAll(".scenario").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const scenario = btn.dataset.s;
+      calculerScenario(scenario);
+    });
+  });
+
+});
+</script>
 </body>
 </html>
