@@ -109,7 +109,7 @@
         color: var(--heading-color);
         line-height: 1.3;
     }
-   
+    
     /* =============================================================== */
     /* === COMPOSANTS === */
     /* =============================================================== */
@@ -251,7 +251,6 @@
 
   <div class="container">
     <div class="card-grid">
-      <!-- Bloc 1: Infos personne -->
       <div class="card">
         <h3>Profil & Inflation</h3>
         <div class="form-group"><label>Âge actuel</label><input type="number" id="ageActuel" value="40" /></div>
@@ -281,7 +280,6 @@
         </div>
       </div>
 
-      <!-- Bloc 2: Soldes actuels -->
       <div class="card">
         <h3>Soldes Actuels</h3>
         <div class="form-group"><label>CELI actuel</label><input type="number" id="celiActuel" value="50000" /></div>
@@ -290,7 +288,6 @@
         <div class="form-group"><label>Non-enregistré actuel</label><input type="number" id="nonActuel" value="40000" /></div>
       </div>
 
-      <!-- Bloc 3: Cotisations -->
       <div class="card">
         <h3>Cotisations Annuelles</h3>
         <div class="form-group"><label>CELI</label><input type="number" id="celiCot" value="7000" /></div>
@@ -299,7 +296,6 @@
         <div class="form-group"><label>Non-enreg.</label><input type="number" id="nonCot" value="5000" /></div>
       </div>
       
-      <!-- Bloc 4: Rendements -->
       <div class="card">
         <h3>Rendements Annuels (%)</h3>
         <div class="form-group"><label>CELI</label><input type="number" id="celiRend" value="5" step="0.1" /></div>
@@ -308,7 +304,6 @@
         <div class="form-group"><label>Non-enreg.</label><input type="number" id="nonRend" value="4" step="0.1" /></div>
       </div>
 
-      <!-- Bloc 5: RRQ & PSV -->
       <div class="card">
         <h3>RRQ & PSV</h3>
         <div class="form-group"><label>RRQ à 65 ans (mensuel)</label><input type="number" id="rrq65" value="1300" /></div>
@@ -317,7 +312,6 @@
         <div class="form-group"><label>Âge de début PSV</label><input type="number" id="agePSV" value="65" /></div>
       </div>
 
-       <!-- Bloc 6: Fonds de pension -->
       <div class="card">
         <h3>Fonds de Pension</h3>
         <div class="form-group">
@@ -559,7 +553,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     annee.psv = inputs.psv.ageDebut <= age ? (inputs.psv.montant65 * 12 * ((1 + inputs.inflation) ** (age - Math.max(inputs.ageActuel, inputs.ageRetraite)))) : 0;
                     
-                    annee.pension = (inputs.pension.active && age >= inputs.pension.ageDebut) ? inputs.pension.rente * ((1 + inputs.pension.index) ** (age - inputs.pension.ageDebut)) : 0;
+                    // ▼▼▼ MODIFICATION INTÉGRÉE ICI ▼▼▼
+                    if (inputs.pension.active && age >= inputs.pension.ageDebut) {
+                        // 1. Ajuster la rente de base à l'inflation jusqu'au début de la pension
+                        const renteDeBaseFuture = inputs.pension.rente * ((1 + inputs.inflation) ** (inputs.pension.ageDebut - inputs.ageActuel));
+                        // 2. Appliquer l'indexation propre à la pension pour les années suivantes
+                        annee.pension = renteDeBaseFuture * ((1 + inputs.pension.index) ** (age - inputs.pension.ageDebut));
+                    } else {
+                        annee.pension = 0;
+                    }
+                    // ▲▲▲ FIN DE LA MODIFICATION ▲▲▲
 
                     revenuFixe = annee.rrq + annee.psv + annee.pension;
                     revenuImposable += annee.rrq + annee.pension; // PSV est ajouté plus tard pour la récupération
@@ -740,4 +743,3 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 </body>
 </html>
-
