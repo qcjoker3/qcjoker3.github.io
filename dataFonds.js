@@ -1,203 +1,161 @@
-// --- Fonctions utilitaires ---
+// ===============================================================
+// === FONCTIONS UTILES ===
+// ===============================================================
 async function loadData() {
-    return dataFonds;
+  const resp = await fetch('fonds.json');
+  if (!resp.ok) throw new Error("Erreur chargement fonds.json");
+  return await resp.json();
 }
 
 function sortedMonths(rendements) {
-    return Object.keys(rendements).sort();
+  return Object.keys(rendements).sort();
 }
 
 function calcRendementPassif(fondsPassifs, composition, mois) {
-    const result = {};
-    mois.forEach(m => {
-        let valeur = 0;
-        for (const key in composition) {
-            valeur += (fondsPassifs[key].rendements_mensuels[m] || 0) * composition[key];
-        }
-        result[m] = valeur;
-    });
-    return result;
+  let rendements = {};
+  mois.forEach(m => {
+    let total = 0;
+    for (let key in composition) {
+      const r = fondsPassifs[key].rendements_mensuels[m] || 0;
+      total += r * composition[key];
+    }
+    rendements[m] = total;
+  });
+  return rendements;
 }
 
-function calcRendementAnnuel(rendements) {
-    const annuels = {};
-    for (const mois in rendements) {
-        const an = mois.split('-')[0];
-        if (!annuels[an]) annuels[an] = 1;
-        annuels[an] *= (1 + rendements[mois]);
-    }
-    for (const an in annuels) {
-        annuels[an] -= 1;
-    }
-    return annuels;
+function calcRendementAnnuel(rendementsMensuels) {
+  let annuels = {};
+  for (let m in rendementsMensuels) {
+    let year = m.split('-')[0];
+    annuels[year] = (annuels[year] || 0) + rendementsMensuels[m];
+  }
+  return annuels;
 }
 
 function calcCroissanceMensuelle(rendements, capitalInitial = 10000) {
-    const croiss = {};
-    let capital = capitalInitial;
-    const moisTries = sortedMonths(rendements);
-    moisTries.forEach(m => {
-        capital *= (1 + (rendements[m] || 0));
-        croiss[m] = capital;
-    });
-    return croiss;
+  let croissance = {};
+  let capital = capitalInitial;
+  const mois = Object.keys(rendements).sort();
+  mois.forEach(m => {
+    capital = capital * (1 + (rendements[m] || 0));
+    croissance[m] = capital;
+  });
+  return croissance;
 }
 
-// --- Fonction principale ---
-async function main() {
-    const data = await loadData();
-    const categoriesContainer = document.getElementById('categories');
-    const fondsContainer = document.getElementById('fondsContainer');
-    let chartRendAnnuel, chartCroiss;
-    let selectedFondKey = null;
-
-    const categories = Object.keys(data.categories);
-    categories.forEach(cat => {
-        const btn = document.createElement('button');
-        btn.textContent = cat;
-        btn.className = 'pastille categorie';
-        btn.addEventListener('click', () => {
-            updateFonds(cat);
-            document.querySelectorAll('.categorie').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-        });
-        categoriesContainer.appendChild(btn);
-    });
-
-    function updateFonds(categorie) {
-        fondsContainer.innerHTML = '';
-        const fondsKeys = data.categories[categorie];
-        fondsKeys.forEach(key => {
-            const btn = document.createElement('button');
-            btn.textContent = data.fonds_actifs[key].nom;
-            btn.className = 'pastille fond';
-            btn.addEventListener('click', () => {
-                selectedFondKey = key;
-                document.querySelectorAll('.fond').forEach(b => b.classList.remove('selected'));
-                btn.classList.add('selected');
-                updateGraphs();
-            });
-            fondsContainer.appendChild(btn);
-        });
-        if (fondsKeys.length > 0) {
-            fondsContainer.querySelector('button').click();
-        }
-    }
-
-    function updateGraphs() {
-        if (!selectedFondKey) return;
-        const fondActif = data.fonds_actifs[selectedFondKey];
-        const compositionPassif = fondActif.composition_passif;
-        const fondsPassifs = data.fonds_passifs;
-
-        const rendementsActif = fondActif.rendements_mensuels;
-        const moisCommuns = sortedMonths(rendementsActif);
-        const rendementsPassif = calcRendementPassif(fondsPassifs, compositionPassif, moisCommuns);
-
-        const rendActifAnnuel = calcRendementAnnuel(rendementsActif);
-        const rendPassifAnnuel = calcRendementAnnuel(rendementsPassif);
-
-        const annees = Object.keys(rendActifAnnuel).sort();
-        const dataActifAnnuel = annees.map(a => rendActifAnnuel[a]);
-        const dataPassifAnnuel = annees.map(a => rendPassifAnnuel[a]);
-
-        const croissanceActif = calcCroissanceMensuelle(rendementsActif);
-        const croissancePassif = calcCroissanceMensuelle(rendementsPassif);
-
-        const moisCroissance = Object.keys(croissanceActif).sort();
-        const dataCroissActif = moisCroissance.map(m => croissanceActif[m]);
-        const dataCroissPassif = moisCroissance.map(m => croissancePassif[m]);
-
-        // Légendes personnalisées
-        const labelFond = fondActif.nom;
-        const labelPassif = Object.entries(compositionPassif)
-                            .map(([k,v]) => `${Math.round(v*100)}% ${k}`)
-                            .join(' + ');
-
-        // Destruction des anciens graphiques
-        if (chartRendAnnuel) chartRendAnnuel.destroy();
-        if (chartCroiss) chartCroiss.destroy();
-
-        // Graphiques
-        chartRendAnnuel = new Chart(document.getElementById('rendementAnnuelChart').getContext('2d'), {
-            type: 'bar',
-            data: {
-                labels: annees,
-                datasets: [
-                    { label: labelFond, data: dataActifAnnuel, backgroundColor: 'rgba(54, 162, 235, 0.7)' },
-                    { label: labelPassif, data: dataPassifAnnuel, backgroundColor: 'rgba(255, 99, 132, 0.7)' }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { position: 'top' } },
-                scales: { y: { beginAtZero: true, ticks: { callback: v => (v*100).toFixed(1) + '%' } } }
-            }
-        });
-
-        chartCroiss = new Chart(document.getElementById('croissanceChart').getContext('2d'), {
-            type: 'line',
-            data: {
-                labels: moisCroissance,
-                datasets: [
-                    { label: labelFond, data: dataCroissActif, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
-                    { label: labelPassif, data: dataCroissPassif, borderColor: 'rgba(255, 99, 132, 1)', fill: false }
-                ]
-            },
-            options: {
-                responsive: true,
-                plugins: { legend: { position: 'top' } },
-                scales: { y: { beginAtZero: false } }
-            }
-        });
-    }
-
-    if (categories.length > 0) {
-        categoriesContainer.querySelector('button').click();
-    }
-}
-
-// --- JSON complet avec rendements simulés ---
-const dataFonds = {
-    "categories": {
-        "Canadian Equity Balanced": ["FONDS_CAN_EQ_BAL1.A","FONDS_CAN_EQ_BAL2.A","FONDS_CAN_EQ_BAL3.A","FONDS_CAN_EQ_BAL4.A","FONDS_CAN_EQ_BAL5.A"],
-        "Canadian Neutral Balanced": ["FONDS_CAN_NEUTRAL_BAL1.A","FONDS_CAN_NEUTRAL_BAL2.A","FONDS_CAN_NEUTRAL_BAL3.A","FONDS_CAN_NEUTRAL_BAL4.A","FONDS_CAN_NEUTRAL_BAL5.A"],
-        "Canadian Fixed Income Balanced": ["FONDS_CAN_FIX_INC_BAL1.A","FONDS_CAN_FIX_INC_BAL2.A","FONDS_CAN_FIX_INC_BAL3.A","FONDS_CAN_FIX_INC_BAL4.A","FONDS_CAN_FIX_INC_BAL5.A"],
-        "Global Equity Balanced": ["FONDS_GLOBAL_EQ_BAL1.A","FONDS_GLOBAL_EQ_BAL2.A","FONDS_GLOBAL_EQ_BAL3.A","FONDS_GLOBAL_EQ_BAL4.A","FONDS_GLOBAL_EQ_BAL5.A"],
-        "Global Neutral Balanced": ["FONDS_GLOBAL_NEUTRAL_BAL1.A","FONDS_GLOBAL_NEUTRAL_BAL2.A","FONDS_GLOBAL_NEUTRAL_BAL3.A","FONDS_GLOBAL_NEUTRAL_BAL4.A","FONDS_GLOBAL_NEUTRAL_BAL5.A"],
-        "Global Fixed Income Balanced": ["FONDS_GLOBAL_FIX_INC_BAL1.A","FONDS_GLOBAL_FIX_INC_BAL2.A","FONDS_GLOBAL_FIX_INC_BAL3.A","FONDS_GLOBAL_FIX_INC_BAL4.A","FONDS_GLOBAL_FIX_INC_BAL5.A"]
+// ===============================================================
+// === FONCTIONS DE CRÉATION DES GRAPHIQUES ===
+// ===============================================================
+function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, mixPassif) {
+  return new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: nomFond, data: dataFond, backgroundColor: '#0D9488' },
+        { label: `Mix Passif (${mixPassif})`, data: dataPassif, backgroundColor: '#A855F7' }
+      ]
     },
-    "fonds_actifs": {},
-    "fonds_passifs": {
-        "XWD.TO": { "nom": "iShares MSCI World ETF", "rendements_mensuels": {} },
-        "XBB.TO": { "nom": "iShares Canadian Bond Index ETF", "rendements_mensuels": {} }
-    }
-};
-
-// --- Génération aléatoire de rendements ---
-function randomRendements(startYear=2025, months=12) {
-    const rend = {};
-    for(let y=startYear; y<startYear+2; y++) {
-        for(let m=1; m<=months; m++) {
-            const month = m<10 ? '0'+m : m;
-            rend[`${y}-${month}`] = (Math.random()*0.04-0.02);
-        }
-    }
-    return rend;
+    options: { responsive: true, plugins: { legend: { position: 'top' } } }
+  });
 }
 
-// --- Création des fonds actifs ---
-Object.values(dataFonds.categories).flat().forEach((key,i) => {
-    const compositionXWD = 0.5 + (i%5)*0.05;
-    const compositionXBB = 1 - compositionXWD;
-    dataFonds.fonds_actifs[key] = {
-        nom: key.replace(/\./,''),
-        composition_passif: { "XWD.TO": compositionXWD, "XBB.TO": compositionXBB },
-        rendements_mensuels: randomRendements()
-    };
-});
+function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, mixPassif) {
+  return new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: nomFond, data: dataFond, borderColor: '#0D9488', fill: false, tension: 0.3 },
+        { label: `Mix Passif (${mixPassif})`, data: dataPassif, borderColor: '#A855F7', fill: false, tension: 0.3 }
+      ]
+    },
+    options: { responsive: true, plugins: { legend: { position: 'top' } } }
+  });
+}
 
-dataFonds.fonds_passifs["XWD.TO"].rendements_mensuels = randomRendements();
-dataFonds.fonds_passifs["XBB.TO"].rendements_mensuels = randomRendements();
+// ===============================================================
+// === GESTION ACTIVE ===
+// ===============================================================
+async function main() {
+  const data = await loadData();
+  const categoriesContainer = document.getElementById('categories');
+  const fondsContainer = document.getElementById('fondsContainer');
+  let chartRendAnnuel, chartCroiss;
+  let selectedFondKey = null;
+
+  const categories = Object.keys(data.categories);
+  categories.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.textContent = cat;
+    btn.className = 'pastille categorie';
+    btn.addEventListener('click', () => {
+      updateFonds(cat);
+      document.querySelectorAll('.categorie').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+    categoriesContainer.appendChild(btn);
+  });
+
+  function updateFonds(categorie) {
+    fondsContainer.innerHTML = '';
+    const fondsKeys = data.categories[categorie];
+    fondsKeys.forEach(key => {
+      const btn = document.createElement('button');
+      btn.textContent = data.fonds_actifs[key].nom;
+      btn.className = 'pastille fond';
+      btn.addEventListener('click', () => {
+        selectedFondKey = key;
+        document.querySelectorAll('.fond').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        updateGraphs();
+      });
+      fondsContainer.appendChild(btn);
+    });
+    if (fondsKeys.length > 0) fondsContainer.querySelector('button').click();
+  }
+
+  function updateGraphs() {
+    if (!selectedFondKey) return;
+    const fondActif = data.fonds_actifs[selectedFondKey];
+    const compositionPassif = fondActif.composition_passif;
+    const fondsPassifs = data.fonds_passifs;
+    const rendementsActif = fondActif.rendements_mensuels;
+    const moisCommuns = sortedMonths(rendementsActif);
+    const rendementsPassif = calcRendementPassif(fondsPassifs, compositionPassif, moisCommuns);
+
+    const rendActifAnnuel = calcRendementAnnuel(rendementsActif);
+    const rendPassifAnnuel = calcRendementAnnuel(rendementsPassif);
+    const annees = Object.keys(rendActifAnnuel).sort();
+
+    const croissanceActif = calcCroissanceMensuelle(rendementsActif);
+    const croissancePassif = calcCroissanceMensuelle(rendementsPassif);
+    const moisCroissance = Object.keys(croissanceActif).sort();
+
+    if (chartRendAnnuel) chartRendAnnuel.destroy();
+    if (chartCroiss) chartCroiss.destroy();
+
+    chartRendAnnuel = creerGraphRendementAnnuel(
+      document.getElementById('rendementAnnuelChart').getContext('2d'),
+      annees,
+      annees.map(y => rendActifAnnuel[y]),
+      annees.map(y => rendPassifAnnuel[y]),
+      fondActif.nom,
+      Object.keys(compositionPassif).join(" / ")
+    );
+
+    chartCroiss = creerGraphCroissance(
+      document.getElementById('croissanceChart').getContext('2d'),
+      moisCroissance,
+      moisCroissance.map(m => croissanceActif[m]),
+      moisCroissance.map(m => croissancePassif[m]),
+      fondActif.nom,
+      Object.keys(compositionPassif).join(" / ")
+    );
+  }
+
+  if (categories.length > 0) categoriesContainer.querySelector('button').click();
+}
 
 main();
