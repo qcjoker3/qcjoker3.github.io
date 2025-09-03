@@ -51,7 +51,10 @@ function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, m
         { label: `Mix Passif (${mixLabel})`, data: dataPassif, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color') }
       ]
     },
-    options: { responsive: true, plugins: { legend: { position: 'top', labels: { boxWidth: 20 } } } }
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 20 } } }
+    }
   });
 }
 
@@ -65,7 +68,10 @@ function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, mixLab
         { label: `Mix Passif (${mixLabel})`, data: dataPassif, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color'), fill: false, tension: 0.3 }
       ]
     },
-    options: { responsive: true, plugins: { legend: { position: 'top', labels: { boxWidth: 20 } } } }
+    options: {
+      responsive: true,
+      plugins: { legend: { position: 'top', labels: { boxWidth: 20 } } }
+    }
   });
 }
 
@@ -132,7 +138,7 @@ async function main() {
     if (chartCroiss) chartCroiss.destroy();
 
     const mixLabel = Object.entries(compositionPassif)
-      .map(([k,v]) => `${k}:${Math.round(v*100)}%`)
+      .map(([k,v]) => `${fondsPassifs[k]?.nom || k}:${Math.round(v*100)}%`)
       .join(" / ") || "—";
 
     chartRendAnnuel = creerGraphRendementAnnuel(
@@ -154,6 +160,7 @@ async function main() {
     );
   }
 
+  // Sélection automatique de la première catégorie
   if (categories.length > 0) categoriesContainer.querySelector('button').click();
 }
 
