@@ -1,15 +1,12 @@
-// --- Simule le chargement des données depuis dataFonds.js ---
+// --- Fonctions utilitaires ---
 async function loadData() {
-    // Ici tu peux remplacer par fetch('dataFonds.json') si tu as un vrai fichier JSON
-    return dataFonds; // dataFonds est ton JSON défini dans dataFonds.js
+    return dataFonds; // JSON complet ci-dessous
 }
 
-// --- Trie les mois pour s'assurer de l'ordre chronologique ---
 function sortedMonths(rendements) {
     return Object.keys(rendements).sort();
 }
 
-// --- Rendements passifs selon la composition du fond actif ---
 function calcRendementPassif(fondsPassifs, composition, mois) {
     const result = {};
     mois.forEach(m => {
@@ -22,7 +19,6 @@ function calcRendementPassif(fondsPassifs, composition, mois) {
     return result;
 }
 
-// --- Rendement annuel à partir des rendements mensuels ---
 function calcRendementAnnuel(rendements) {
     const annuels = {};
     for (const mois in rendements) {
@@ -31,12 +27,11 @@ function calcRendementAnnuel(rendements) {
         annuels[an] *= (1 + rendements[mois]);
     }
     for (const an in annuels) {
-        annuels[an] = annuels[an] - 1;
+        annuels[an] -= 1;
     }
     return annuels;
 }
 
-// --- Croissance du capital à partir des rendements mensuels ---
 function calcCroissanceMensuelle(rendements, capitalInitial = 10000) {
     const croiss = {};
     let capital = capitalInitial;
@@ -48,7 +43,6 @@ function calcCroissanceMensuelle(rendements, capitalInitial = 10000) {
     return croiss;
 }
 
-// --- Création d'un graphique de rendements annuels ---
 function creerGraphRendementAnnuel(ctx, labels, dataActif, dataPassif) {
     return new Chart(ctx, {
         type: 'bar',
@@ -67,7 +61,6 @@ function creerGraphRendementAnnuel(ctx, labels, dataActif, dataPassif) {
     });
 }
 
-// --- Création d'un graphique de croissance du capital ---
 function creerGraphCroissance(ctx, labels, dataActif, dataPassif) {
     return new Chart(ctx, {
         type: 'line',
@@ -89,14 +82,11 @@ function creerGraphCroissance(ctx, labels, dataActif, dataPassif) {
 // --- Fonction principale ---
 async function main() {
     const data = await loadData();
-
     const categoriesContainer = document.getElementById('categories');
     const fondsContainer = document.getElementById('fondsContainer');
-
     let chartRendAnnuel, chartCroiss;
     let selectedFondKey = null;
 
-    // --- Création des pastilles de catégories ---
     const categories = Object.keys(data.categories);
     categories.forEach(cat => {
         const btn = document.createElement('button');
@@ -110,11 +100,9 @@ async function main() {
         categoriesContainer.appendChild(btn);
     });
 
-    // --- Affichage des fonds pour une catégorie ---
     function updateFonds(categorie) {
         fondsContainer.innerHTML = '';
         const fondsKeys = data.categories[categorie];
-
         fondsKeys.forEach(key => {
             const btn = document.createElement('button');
             btn.textContent = data.fonds_actifs[key].nom;
@@ -127,49 +115,37 @@ async function main() {
             });
             fondsContainer.appendChild(btn);
         });
-
-        // Sélection automatique du premier fond
         if (fondsKeys.length > 0) {
             fondsContainer.querySelector('button').click();
         }
     }
 
-    // --- Mise à jour des graphiques ---
     function updateGraphs() {
         if (!selectedFondKey) return;
-
         const fondActif = data.fonds_actifs[selectedFondKey];
         const compositionPassif = fondActif.composition_passif;
         const fondsPassifs = data.fonds_passifs;
-
         const rendementsActif = fondActif.rendements_mensuels;
         const moisCommuns = sortedMonths(rendementsActif);
         const rendementsPassif = calcRendementPassif(fondsPassifs, compositionPassif, moisCommuns);
-
         const rendActifAnnuel = calcRendementAnnuel(rendementsActif);
         const rendPassifAnnuel = calcRendementAnnuel(rendementsPassif);
-
         const annees = Object.keys(rendActifAnnuel).sort();
         const dataActifAnnuel = annees.map(a => rendActifAnnuel[a]);
         const dataPassifAnnuel = annees.map(a => rendPassifAnnuel[a]);
-
         const croissanceActif = calcCroissanceMensuelle(rendementsActif);
         const croissancePassif = calcCroissanceMensuelle(rendementsPassif);
-
         const moisCroissance = Object.keys(croissanceActif).sort();
         const dataCroissActif = moisCroissance.map(m => croissanceActif[m]);
         const dataCroissPassif = moisCroissance.map(m => croissancePassif[m]);
-
         if (chartRendAnnuel) chartRendAnnuel.destroy();
         if (chartCroiss) chartCroiss.destroy();
-
         chartRendAnnuel = creerGraphRendementAnnuel(
             document.getElementById('rendementAnnuelChart').getContext('2d'),
             annees,
             dataActifAnnuel,
             dataPassifAnnuel
         );
-
         chartCroiss = creerGraphCroissance(
             document.getElementById('croissanceChart').getContext('2d'),
             moisCroissance,
@@ -178,37 +154,53 @@ async function main() {
         );
     }
 
-    // --- Sélection initiale ---
     if (categories.length > 0) {
         categoriesContainer.querySelector('button').click();
     }
 }
 
-// --- Exemple de rendements mensuels pour tester ---
+// --- JSON complet avec rendements simulés ---
 const dataFonds = {
     "categories": {
-        "Canadian Equity Balanced": ["FONDS_CAN_EQ_BAL1.A", "FONDS_CAN_EQ_BAL2.A"]
+        "Canadian Equity Balanced": ["FONDS_CAN_EQ_BAL1.A","FONDS_CAN_EQ_BAL2.A","FONDS_CAN_EQ_BAL3.A","FONDS_CAN_EQ_BAL4.A","FONDS_CAN_EQ_BAL5.A"],
+        "Canadian Neutral Balanced": ["FONDS_CAN_NEUTRAL_BAL1.A","FONDS_CAN_NEUTRAL_BAL2.A","FONDS_CAN_NEUTRAL_BAL3.A","FONDS_CAN_NEUTRAL_BAL4.A","FONDS_CAN_NEUTRAL_BAL5.A"],
+        "Canadian Fixed Income Balanced": ["FONDS_CAN_FIX_INC_BAL1.A","FONDS_CAN_FIX_INC_BAL2.A","FONDS_CAN_FIX_INC_BAL3.A","FONDS_CAN_FIX_INC_BAL4.A","FONDS_CAN_FIX_INC_BAL5.A"],
+        "Global Equity Balanced": ["FONDS_GLOBAL_EQ_BAL1.A","FONDS_GLOBAL_EQ_BAL2.A","FONDS_GLOBAL_EQ_BAL3.A","FONDS_GLOBAL_EQ_BAL4.A","FONDS_GLOBAL_EQ_BAL5.A"],
+        "Global Neutral Balanced": ["FONDS_GLOBAL_NEUTRAL_BAL1.A","FONDS_GLOBAL_NEUTRAL_BAL2.A","FONDS_GLOBAL_NEUTRAL_BAL3.A","FONDS_GLOBAL_NEUTRAL_BAL4.A","FONDS_GLOBAL_NEUTRAL_BAL5.A"],
+        "Global Fixed Income Balanced": ["FONDS_GLOBAL_FIX_INC_BAL1.A","FONDS_GLOBAL_FIX_INC_BAL2.A","FONDS_GLOBAL_FIX_INC_BAL3.A","FONDS_GLOBAL_FIX_INC_BAL4.A","FONDS_GLOBAL_FIX_INC_BAL5.A"]
     },
-    "fonds_actifs": {
-        "FONDS_CAN_EQ_BAL1.A": {
-            "nom": "Fonds Canadian Equity Balanced 1",
-            "composition_passif": {"XWD.TO":0.7,"XBB.TO":0.3},
-            "rendements_mensuels": {
-                "2025-01":0.01, "2025-02":0.015, "2025-03":0.02, "2025-04":-0.005, "2025-05":0.01
-            }
-        },
-        "FONDS_CAN_EQ_BAL2.A": {
-            "nom": "Fonds Canadian Equity Balanced 2",
-            "composition_passif": {"XWD.TO":0.65,"XBB.TO":0.35},
-            "rendements_mensuels": {
-                "2025-01":0.012, "2025-02":0.01, "2025-03":0.018, "2025-04":0, "2025-05":0.008
-            }
-        }
-    },
+    "fonds_actifs": {},
     "fonds_passifs": {
-        "XWD.TO": { "nom": "iShares MSCI World ETF", "rendements_mensuels": {"2025-01":0.01,"2025-02":0.015,"2025-03":0.018,"2025-04":-0.002,"2025-05":0.01} },
-        "XBB.TO": { "nom": "iShares Canadian Bond Index ETF", "rendements_mensuels": {"2025-01":0.005,"2025-02":0.004,"2025-03":0.003,"2025-04":0.002,"2025-05":0.004} }
+        "XWD.TO": { "nom": "iShares MSCI World ETF", "rendements_mensuels": {} },
+        "XBB.TO": { "nom": "iShares Canadian Bond Index ETF", "rendements_mensuels": {} }
     }
 };
 
+// --- Remplissage automatique de rendements simulés ---
+function randomRendements(startYear=2025, months=12) {
+    const rend = {};
+    for(let y=startYear; y<startYear+2; y++) {
+        for(let m=1; m<=months; m++) {
+            const month = m<10 ? '0'+m : m;
+            rend[`${y}-${month}`] = (Math.random()*0.04-0.02); // -2% à +2%
+        }
+    }
+    return rend;
+}
+
+// --- Création des fonds actifs avec rendements aléatoires ---
+const fondsActifsKeys = Object.values(dataFonds.categories).flat();
+fondsActifsKeys.forEach((key,i) => {
+    const compositionXWD = 0.5 + (i%5)*0.05;
+    const compositionXBB = 1 - compositionXWD;
+    dataFonds.fonds_actifs[key] = {
+        nom: key.replace(/\./,''),
+        composition_passif: { "XWD.TO": compositionXWD, "XBB.TO": compositionXBB },
+        rendements_mensuels: randomRendements()
+    };
+});
+dataFonds.fonds_passifs["XWD.TO"].rendements_mensuels = randomRendements();
+dataFonds.fonds_passifs["XBB.TO"].rendements_mensuels = randomRendements();
+
+// --- Lancement ---
 main();
