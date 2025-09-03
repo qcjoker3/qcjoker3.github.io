@@ -1,6 +1,6 @@
 // --- Fonctions utilitaires ---
 async function loadData() {
-    return dataFonds; // JSON complet ci-dessous
+    return dataFonds;
 }
 
 function sortedMonths(rendements) {
@@ -41,42 +41,6 @@ function calcCroissanceMensuelle(rendements, capitalInitial = 10000) {
         croiss[m] = capital;
     });
     return croiss;
-}
-
-function creerGraphRendementAnnuel(ctx, labels, dataActif, dataPassif) {
-    return new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels,
-            datasets: [
-                { label: 'Actif', data: dataActif, backgroundColor: 'rgba(54, 162, 235, 0.7)' },
-                { label: 'Passif', data: dataPassif, backgroundColor: 'rgba(255, 99, 132, 0.7)' }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { position: 'top' } },
-            scales: { y: { beginAtZero: true, ticks: { callback: v => (v*100).toFixed(1) + '%' } } }
-        }
-    });
-}
-
-function creerGraphCroissance(ctx, labels, dataActif, dataPassif) {
-    return new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels,
-            datasets: [
-                { label: 'Actif', data: dataActif, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
-                { label: 'Passif', data: dataPassif, borderColor: 'rgba(255, 99, 132, 1)', fill: false }
-            ]
-        },
-        options: {
-            responsive: true,
-            plugins: { legend: { position: 'top' } },
-            scales: { y: { beginAtZero: false } }
-        }
-    });
 }
 
 // --- Fonction principale ---
@@ -125,33 +89,67 @@ async function main() {
         const fondActif = data.fonds_actifs[selectedFondKey];
         const compositionPassif = fondActif.composition_passif;
         const fondsPassifs = data.fonds_passifs;
+
         const rendementsActif = fondActif.rendements_mensuels;
         const moisCommuns = sortedMonths(rendementsActif);
         const rendementsPassif = calcRendementPassif(fondsPassifs, compositionPassif, moisCommuns);
+
         const rendActifAnnuel = calcRendementAnnuel(rendementsActif);
         const rendPassifAnnuel = calcRendementAnnuel(rendementsPassif);
+
         const annees = Object.keys(rendActifAnnuel).sort();
         const dataActifAnnuel = annees.map(a => rendActifAnnuel[a]);
         const dataPassifAnnuel = annees.map(a => rendPassifAnnuel[a]);
+
         const croissanceActif = calcCroissanceMensuelle(rendementsActif);
         const croissancePassif = calcCroissanceMensuelle(rendementsPassif);
+
         const moisCroissance = Object.keys(croissanceActif).sort();
         const dataCroissActif = moisCroissance.map(m => croissanceActif[m]);
         const dataCroissPassif = moisCroissance.map(m => croissancePassif[m]);
+
+        // Légendes personnalisées
+        const labelFond = fondActif.nom;
+        const labelPassif = Object.entries(compositionPassif)
+                            .map(([k,v]) => `${Math.round(v*100)}% ${k}`)
+                            .join(' + ');
+
+        // Destruction des anciens graphiques
         if (chartRendAnnuel) chartRendAnnuel.destroy();
         if (chartCroiss) chartCroiss.destroy();
-        chartRendAnnuel = creerGraphRendementAnnuel(
-            document.getElementById('rendementAnnuelChart').getContext('2d'),
-            annees,
-            dataActifAnnuel,
-            dataPassifAnnuel
-        );
-        chartCroiss = creerGraphCroissance(
-            document.getElementById('croissanceChart').getContext('2d'),
-            moisCroissance,
-            dataCroissActif,
-            dataCroissPassif
-        );
+
+        // Graphiques
+        chartRendAnnuel = new Chart(document.getElementById('rendementAnnuelChart').getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: annees,
+                datasets: [
+                    { label: labelFond, data: dataActifAnnuel, backgroundColor: 'rgba(54, 162, 235, 0.7)' },
+                    { label: labelPassif, data: dataPassifAnnuel, backgroundColor: 'rgba(255, 99, 132, 0.7)' }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'top' } },
+                scales: { y: { beginAtZero: true, ticks: { callback: v => (v*100).toFixed(1) + '%' } } }
+            }
+        });
+
+        chartCroiss = new Chart(document.getElementById('croissanceChart').getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: moisCroissance,
+                datasets: [
+                    { label: labelFond, data: dataCroissActif, borderColor: 'rgba(54, 162, 235, 1)', fill: false },
+                    { label: labelPassif, data: dataCroissPassif, borderColor: 'rgba(255, 99, 132, 1)', fill: false }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'top' } },
+                scales: { y: { beginAtZero: false } }
+            }
+        });
     }
 
     if (categories.length > 0) {
@@ -176,21 +174,20 @@ const dataFonds = {
     }
 };
 
-// --- Remplissage automatique de rendements simulés ---
+// --- Génération aléatoire de rendements ---
 function randomRendements(startYear=2025, months=12) {
     const rend = {};
     for(let y=startYear; y<startYear+2; y++) {
         for(let m=1; m<=months; m++) {
             const month = m<10 ? '0'+m : m;
-            rend[`${y}-${month}`] = (Math.random()*0.04-0.02); // -2% à +2%
+            rend[`${y}-${month}`] = (Math.random()*0.04-0.02);
         }
     }
     return rend;
 }
 
-// --- Création des fonds actifs avec rendements aléatoires ---
-const fondsActifsKeys = Object.values(dataFonds.categories).flat();
-fondsActifsKeys.forEach((key,i) => {
+// --- Création des fonds actifs ---
+Object.values(dataFonds.categories).flat().forEach((key,i) => {
     const compositionXWD = 0.5 + (i%5)*0.05;
     const compositionXBB = 1 - compositionXWD;
     dataFonds.fonds_actifs[key] = {
@@ -199,8 +196,8 @@ fondsActifsKeys.forEach((key,i) => {
         rendements_mensuels: randomRendements()
     };
 });
+
 dataFonds.fonds_passifs["XWD.TO"].rendements_mensuels = randomRendements();
 dataFonds.fonds_passifs["XBB.TO"].rendements_mensuels = randomRendements();
 
-// --- Lancement ---
 main();
