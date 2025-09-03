@@ -48,7 +48,7 @@ function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, m
       labels: labels,
       datasets: [
         { label: nomFond, data: dataFond, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color') },
-        { label: `Mix Passif (${mixLabel})`, data: dataPassif, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color') }
+        { label: `${mixLabel}`, data: dataPassif, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color') }
       ]
     },
     options: {
