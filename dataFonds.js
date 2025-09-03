@@ -53,8 +53,8 @@ function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, m
     data: {
       labels: labels,
       datasets: [
-        { label: nomFond, data: dataFond, backgroundColor: '#0D9488' },
-        { label: `Mix Passif (${mixPassif})`, data: dataPassif, backgroundColor: '#A855F7' }
+        { label: nomFond, data: dataFond, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color') },
+        { label: `Mix Passif (${mixPassif})`, data: dataPassif, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color') }
       ]
     },
     options: { responsive: true, plugins: { legend: { position: 'top' } } }
@@ -67,8 +67,8 @@ function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, mixPas
     data: {
       labels: labels,
       datasets: [
-        { label: nomFond, data: dataFond, borderColor: '#0D9488', fill: false, tension: 0.3 },
-        { label: `Mix Passif (${mixPassif})`, data: dataPassif, borderColor: '#A855F7', fill: false, tension: 0.3 }
+        { label: nomFond, data: dataFond, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'), fill: false, tension: 0.3 },
+        { label: `Mix Passif (${mixPassif})`, data: dataPassif, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color'), fill: false, tension: 0.3 }
       ]
     },
     options: { responsive: true, plugins: { legend: { position: 'top' } } }
@@ -136,13 +136,15 @@ async function main() {
     if (chartRendAnnuel) chartRendAnnuel.destroy();
     if (chartCroiss) chartCroiss.destroy();
 
+    const mixLabel = Object.keys(compositionPassif).map(k => `${k}:${compositionPassif[k]*100}%`).join(" / ");
+
     chartRendAnnuel = creerGraphRendementAnnuel(
       document.getElementById('rendementAnnuelChart').getContext('2d'),
       annees,
       annees.map(y => rendActifAnnuel[y]),
       annees.map(y => rendPassifAnnuel[y]),
       fondActif.nom,
-      Object.keys(compositionPassif).join(" / ")
+      mixLabel
     );
 
     chartCroiss = creerGraphCroissance(
@@ -151,7 +153,7 @@ async function main() {
       moisCroissance.map(m => croissanceActif[m]),
       moisCroissance.map(m => croissancePassif[m]),
       fondActif.nom,
-      Object.keys(compositionPassif).join(" / ")
+      mixLabel
     );
   }
 
