@@ -65,7 +65,7 @@ function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, mixLab
       labels: labels,
       datasets: [
         { label: nomFond, data: dataFond, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'), fill: false, tension: 0.3 },
-        { label: `Mix Passif (${mixLabel})`, data: dataPassif, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color'), fill: false, tension: 0.3 }
+        { label: `${mixLabel}`, data: dataPassif, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color'), fill: false, tension: 0.3 }
       ]
     },
     options: {
@@ -138,7 +138,7 @@ async function main() {
     if (chartCroiss) chartCroiss.destroy();
 
     const mixLabel = Object.entries(compositionPassif)
-      .map(([k,v]) => `${fondsPassifs[k]?.nom || k}:${Math.round(v*100)}%`)
+      .map(([k,v]) => `${fondsPassifs[k]?.nom || k} : ${Math.round(v*100)}%`)
       .join(" / ") || "—";
 
     chartRendAnnuel = creerGraphRendementAnnuel(
