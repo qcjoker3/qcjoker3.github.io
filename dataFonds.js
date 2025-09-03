@@ -1,6 +1,3 @@
-// ===============================================================
-// === FONCTIONS UTILES ===
-// ===============================================================
 async function loadData() {
   const resp = await fetch('fonds.json');
   if (!resp.ok) throw new Error("Erreur chargement fonds.json");
@@ -16,7 +13,7 @@ function calcRendementPassif(fondsPassifs, composition, mois) {
   mois.forEach(m => {
     let total = 0;
     for (let key in composition) {
-      const r = fondsPassifs[key].rendements_mensuels[m] || 0;
+      const r = fondsPassifs[key]?.rendements_mensuels[m] || 0;
       total += r * composition[key];
     }
     rendements[m] = total;
@@ -44,40 +41,34 @@ function calcCroissanceMensuelle(rendements, capitalInitial = 10000) {
   return croissance;
 }
 
-// ===============================================================
-// === FONCTIONS DE CRÉATION DES GRAPHIQUES ===
-// ===============================================================
-function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, mixPassif) {
+function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, mixLabel) {
   return new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
       datasets: [
         { label: nomFond, data: dataFond, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color') },
-        { label: `Mix Passif (${mixPassif})`, data: dataPassif, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color') }
+        { label: `Mix Passif (${mixLabel})`, data: dataPassif, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color') }
       ]
     },
-    options: { responsive: true, plugins: { legend: { position: 'top' } } }
+    options: { responsive: true, plugins: { legend: { position: 'top', labels: { boxWidth: 20 } } } }
   });
 }
 
-function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, mixPassif) {
+function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, mixLabel) {
   return new Chart(ctx, {
     type: 'line',
     data: {
       labels: labels,
       datasets: [
         { label: nomFond, data: dataFond, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'), fill: false, tension: 0.3 },
-        { label: `Mix Passif (${mixPassif})`, data: dataPassif, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color'), fill: false, tension: 0.3 }
+        { label: `Mix Passif (${mixLabel})`, data: dataPassif, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color'), fill: false, tension: 0.3 }
       ]
     },
-    options: { responsive: true, plugins: { legend: { position: 'top' } } }
+    options: { responsive: true, plugins: { legend: { position: 'top', labels: { boxWidth: 20 } } } }
   });
 }
 
-// ===============================================================
-// === GESTION ACTIVE ===
-// ===============================================================
 async function main() {
   const data = await loadData();
   const categoriesContainer = document.getElementById('categories');
@@ -86,6 +77,8 @@ async function main() {
   let selectedFondKey = null;
 
   const categories = Object.keys(data.categories);
+
+  // Crée les boutons de catégories
   categories.forEach(cat => {
     const btn = document.createElement('button');
     btn.textContent = cat;
@@ -98,12 +91,13 @@ async function main() {
     categoriesContainer.appendChild(btn);
   });
 
+  // Met à jour les pastilles de fonds selon la catégorie
   function updateFonds(categorie) {
     fondsContainer.innerHTML = '';
     const fondsKeys = data.categories[categorie];
     fondsKeys.forEach(key => {
       const btn = document.createElement('button');
-      btn.textContent = data.fonds_actifs[key].nom;
+      btn.textContent = data.fonds_actifs[key]?.nom || key;
       btn.className = 'pastille fond';
       btn.addEventListener('click', () => {
         selectedFondKey = key;
@@ -113,15 +107,16 @@ async function main() {
       });
       fondsContainer.appendChild(btn);
     });
+    // Sélection automatique du premier fonds
     if (fondsKeys.length > 0) fondsContainer.querySelector('button').click();
   }
 
   function updateGraphs() {
     if (!selectedFondKey) return;
     const fondActif = data.fonds_actifs[selectedFondKey];
-    const compositionPassif = fondActif.composition_passif;
-    const fondsPassifs = data.fonds_passifs;
-    const rendementsActif = fondActif.rendements_mensuels;
+    const compositionPassif = fondActif.composition_passif || {};
+    const fondsPassifs = data.fonds_passifs || {};
+    const rendementsActif = fondActif.rendements_mensuels || {};
     const moisCommuns = sortedMonths(rendementsActif);
     const rendementsPassif = calcRendementPassif(fondsPassifs, compositionPassif, moisCommuns);
 
@@ -136,7 +131,9 @@ async function main() {
     if (chartRendAnnuel) chartRendAnnuel.destroy();
     if (chartCroiss) chartCroiss.destroy();
 
-    const mixLabel = Object.keys(compositionPassif).map(k => `${k}:${compositionPassif[k]*100}%`).join(" / ");
+    const mixLabel = Object.entries(compositionPassif)
+      .map(([k,v]) => `${k}:${Math.round(v*100)}%`)
+      .join(" / ") || "—";
 
     chartRendAnnuel = creerGraphRendementAnnuel(
       document.getElementById('rendementAnnuelChart').getContext('2d'),
