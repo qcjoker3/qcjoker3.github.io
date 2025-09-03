@@ -146,7 +146,7 @@ async function main() {
       annees,
       annees.map(y => rendActifAnnuel[y]),
       annees.map(y => rendPassifAnnuel[y]),
-      fondActif.nom,
+      selectedFondKey,
       mixLabel
     );
 
@@ -155,7 +155,7 @@ async function main() {
       moisCroissance,
       moisCroissance.map(m => croissanceActif[m]),
       moisCroissance.map(m => croissancePassif[m]),
-      fondActif.nom,
+      selectedFondKey,
       mixLabel
     );
   }
