@@ -1,24 +1,138 @@
+/* =============================================================== */
+/* === STYLES SPÉCIFIQUES À LA PAGE DE PRÉDICTIONS === */
+/* =============================================================== */
 
-       /* body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #fdfdff; }*/
-        /*.container { max-width: 1100px; margin: 0 auto; padding: 20px; } */
-       /* .encadre-texte { font-size: 1.1em; max-width: 1200px; margin: 20px auto; padding: 20px; text-align: center; background-color: #f7f9fa; border-radius: 8px; }*/
-        .year-selector { text-align: center; margin: 30px 0; }
-        #chartContainer { max-width: 100%; margin: auto; height: 600px; position: relative; }
-       /* footer { text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid #e5e7eb; }*/
-       /* .analysis { max-width: 1050px; margin: 28px auto 60px; padding-top: 8px; border-top: 1px solid #e5e7eb; }*/
-        .analysis h3 { margin: 14px 0; }
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 28px; }
-        /*.horizon-tabs { display: flex; gap: 8px; margin: 6px 0 12px; }*/
-        .horizon-tabs button { padding: 8px 12px; border-radius: 8px; border: 1px solid #e5e7eb; background: #fff; cursor: pointer; }
-        .horizon-tabs button.active { background: #111827; color: #fff; border-color: #111827; }
-        .hint { color: #6b7280; font-size: 0.9em; margin: 6px 0 12px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 9px 10px; border-bottom: 1px solid #eceff3; text-align: left; }
-        th { background: #f7f9fa; }
-        .table-wrap { max-height: 340px; overflow: auto; border: 1px solid #eceff3; border-radius: 8px; }
-        .rank-badge { display: inline-block; min-width: 26px; text-align: center; padding: 2px 6px; border-radius: 999px; background: #eef2ff; color: #3730a3; font-weight: 600; font-size: 12px; }
-        tr.focused { background: #fff7ed !important; }
-        tr:hover { background: #f9fafb; cursor: pointer; }
-        #predRealContainer { position: relative; height: 400px; }
+/* --- Conteneurs principaux --- */
+.year-selector {
+    text-align: center;
+    margin: 2rem 0;
+}
 
+#chartContainer {
+    max-width: 100%;
+    margin: auto;
+    height: 600px;
+    position: relative;
+}
 
+#predRealContainer {
+    position: relative;
+    height: 400px;
+}
+
+.analysis {
+    max-width: 1100px; /* Aligné avec la largeur .container */
+    margin: 3rem auto;
+    padding-top: 3rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.analysis h3 {
+    margin: 1rem 0 1.5rem 0;
+    font-size: 1.5rem; /* Taille de titre cohérente */
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 2rem;
+}
+
+@media (max-width: 768px) {
+    .grid-2 {
+        grid-template-columns: 1fr; /* Une seule colonne sur mobile */
+    }
+}
+
+/* --- Boutons "pastilles" pour les horizons de temps --- */
+.horizon-tabs {
+    display: flex;
+    flex-wrap: wrap; /* Permet le retour à la ligne sur mobile */
+    gap: 0.75rem;
+    margin: 0 0 1rem 0;
+}
+
+.horizon-tabs button {
+    padding: 0.5rem 1rem;
+    border-radius: 50px; /* Style "pilule" cohérent */
+    border: 1px solid var(--border-color);
+    background-color: var(--card-bg-color);
+    color: var(--text-color);
+    font-family: var(--font-body);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.horizon-tabs button:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.horizon-tabs button.active {
+    background: var(--primary-gradient);
+    color: var(--light-text-color);
+    border-color: transparent;
+    transform: translateY(-2px);
+}
+
+/* --- Tableaux de données --- */
+.table-wrap {
+    max-height: 380px;
+    overflow-y: auto;
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    background-color: var(--card-bg-color);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    white-space: nowrap; /* Empêche le texte de revenir à la ligne */
+}
+
+th {
+    background-color: var(--section-bg-color);
+    font-family: var(--font-heading);
+    color: var(--heading-color);
+    font-size: 0.9rem;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+tr:hover {
+    background-color: var(--section-bg-color);
+    cursor: pointer;
+}
+
+tr.focused {
+    background-color: rgba(13, 148, 136, 0.1) !important; /* Vert léger, avec !important pour surpasser le :hover */
+}
+
+/* Badge pour le classement */
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: var(--section-bg-color);
+    color: var(--text-color);
+    font-weight: 600;
+    font-size: 0.8rem;
+}
+
+/* --- Texte d'aide --- */
+.hint {
+    color: var(--subtle-text-color);
+    font-size: 0.9em;
+    margin: 0.5rem 0 1rem 0;
+}
