@@ -40,7 +40,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // 'age-actuel' et 'age-retraite' ont été retirés
     ];
     
-    const optionsArgent = AutoNumeric.getPredefinedOptions().dollar;
+    //const optionsArgent = AutoNumeric.getPredefinedOptions().dollar;
+    const optionsArgent = {
+    currencySymbol: '$',
+    currencySymbolPlacement: 's', // 's' pour suffixe (après le nombre)
+    decimalCharacter: ',',
+    digitGroupSeparator: ' ',     // Espace comme séparateur de milliers
+    decimalPlaces: 2
+};
     const optionsEntier = { decimalPlaces: 0, digitGroupSeparator: '' };
 
     champsArgent.forEach(id => {
