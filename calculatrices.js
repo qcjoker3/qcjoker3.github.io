@@ -441,6 +441,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }});
         }
+    }
 
 // --- Calculatrice de Valeur Future ---
 document.getElementById('form-vf')?.addEventListener('submit', e => {
@@ -652,7 +653,7 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
             }
         } 
     });
-    
+});
     // --- Calculatrice Acheter ou Louer ---
     document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
         e.preventDefault();
