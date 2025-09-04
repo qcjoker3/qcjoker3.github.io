@@ -653,7 +653,6 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
             }
         } 
     });
-});
     
     // --- Calculatrice Acheter ou Louer ---
     document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
