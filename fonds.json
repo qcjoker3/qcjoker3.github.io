@@ -120,7 +120,6 @@
         "2025-06":0.0245,"2025-07":0.0190,"2025-08":0.0136
       }
     },
-        },
     "CIBC Smart Balanced Solution": {
       "composition_passif": {"XWD.TO":0.60,"XBB.TO":0.40},
       "rendements_mensuels": {
