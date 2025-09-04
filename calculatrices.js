@@ -441,7 +441,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }});
         }
-    });
 
 // --- Calculatrice de Valeur Future ---
 document.getElementById('form-vf')?.addEventListener('submit', e => {
