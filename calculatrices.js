@@ -1156,4 +1156,3 @@ if (ancreURL) {
         checkScrollButtons();
     }
 });
-});
