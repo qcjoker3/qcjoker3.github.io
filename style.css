@@ -372,14 +372,32 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 }
 .card-grid-scroller::-webkit-scrollbar { display: none; }
 #selection-calculatrices .card-grid {
-    display: flex;
-    flex-direction: column
-    flex-wrap: wrap
-    gap: 1.5rem
-    height: 420px
+     /* CORRECTION CLÉ : Force la grille à s'adapter à la largeur de son contenu,
+       ce qui est parfait pour un conteneur qui défile horizontalement. */
+    display: inline-grid;
+
+    /* On remplit les colonnes de haut en bas, puis on passe à la colonne suivante */
+    grid-auto-flow: column;
+
+    /* On définit explicitement 2 RANGÉES dont la hauteur s'adapte au contenu */
+    grid-template-rows: repeat(2, auto);
+
+    gap: 1.5rem;
 }
 #selection-calculatrices .card {
-    width: 280px; /* Ajustez cette largeur pour voir plus ou moins de cartes */
+    width: 260px; /* Ajustez cette largeur pour voir plus ou moins de cartes */
+    padding: 1.5rem;
+    text-align: center;
+    display: flex; /* Permet de mieux centrer le contenu verticalement */
+    flex-direction: column;
+    justify-content: center;
+}
+#selection-calculatrices .card h3 {
+    font-size: 1.1rem;
+}
+#selection-calculatrices .card p {
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
 }
 
 .carousel-arrow {
