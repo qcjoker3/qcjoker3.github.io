@@ -25,10 +25,10 @@
     <section id="prediction-hero">
          <h2 style="text-align:center;">Prédictions du S&P 500</h2>
         <div class="encadre-texte">
-            À chaque début d'année les stratégistes des grandes banques et fonds d'investissement dévoilent leurs prédictions sur le S&P 500 pour l'année à venir. Ils sont payés des millions par année et possèdent des modèles économétriques très avancés. Ils devraient être bons, n'est-ce pas ? Pourtant année après année ils sont toujours à l'emploi de leur firme à attendre leur chèque aux 2 semaines. Charlatants ou experts? Voyez par vous-mêmes !
+            À chaque début d'année les stratégistes des grandes banques et fonds d'investissement dévoilent leurs prédictions sur le S&P 500 pour l'année à venir. Ils sont payés des millions par année et possèdent des modèles économétriques très avancés. Ils devraient être bons, n'est-ce pas ? Pourtant année après année ils sont toujours à l'emploi de leur firme à attendre leur chèque aux 2 semaines. Charlatans ou experts? Voyez par vous-mêmes !
         </div>
 
-       
+        
 
         <section class="analysis">
             <h3>Analyse détaillée</h3>
@@ -109,17 +109,78 @@
     // ==========================================================
     // FONCTIONS DE MISE À JOUR DE L'INTERFACE
     // ==========================================================
+
+    // <-- DÉBUT DU BLOC CORRIGÉ
     function updateMainChart(year) {
         const data = chartDataByYear[year];
         const canvas = document.getElementById('chartCanvas');
         if (!canvas || !data) return;
         if (chartInstance) chartInstance.destroy();
+        
         const { institutions, previsions, real } = data;
-        const base = previsions.map(p => Math.min(p, real));
-        const ecarts = previsions.map(p => Math.abs(real - p));
+
+        const base = previsions.map(p => Math.min(p, real)); 
+        const ecarts = previsions.map(p => Math.abs(real - p)); 
         const signes = previsions.map(p => p >= real);
-        chartInstance = new Chart(canvas.getContext('2d'), { type: 'bar', data: { labels: institutions, datasets: [{ label: 'Prévision', data: base, backgroundColor: 'rgba(54, 162, 235, 0.85)', stack: 'group' }, { label: 'Écart vs Réalité', data: ecarts, backgroundColor: 'rgba(255, 99, 132, 0.65)', stack: 'group' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { title: { display: true, text: `S&P 500 – ${year} : Prévisions vs Réalité (${real} pts)`, font: { size: 18 } }, legend: { position: 'bottom' }, realityLine: { y: real }, datalabels: { display: (c) => c.datasetIndex === 1, anchor: 'center', align: 'center', color: 'white', font: { weight: 'bold' }, formatter: (v, c) => (signes[c.dataIndex] ? '🔺' : '🔻') + ` ${(v / real * 100).toFixed(1)}%` } } , scales: { x: { stacked: true }, y: { stacked: true, title: { display: true, text: 'Points S&P 500' } } } } });
+
+        chartInstance = new Chart(canvas.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: institutions,
+                datasets: [{
+                    label: 'Base (Prévision ou Réalité)',
+                    data: base,
+                    backgroundColor: 'rgba(54, 162, 235, 0.85)',
+                    stack: 'group'
+                }, {
+                    label: 'Écart vs Réalité',
+                    data: ecarts,
+                    backgroundColor: (c) => signes[c.dataIndex] ? 'rgba(255, 99, 132, 0.65)' : 'rgba(75, 192, 192, 0.65)',
+                    stack: 'group'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: `S&P 500 – ${year} : Prévisions vs Réalité (${real} pts)`,
+                        font: { size: 18 }
+                    },
+                    legend: {
+                        position: 'bottom'
+                    },
+                    realityLine: {
+                        y: real
+                    },
+                    datalabels: {
+                        display: (c) => c.datasetIndex === 1,
+                        anchor: 'center',
+                        align: 'center',
+                        color: 'white',
+                        font: {
+                            weight: 'bold'
+                        },
+                        formatter: (v, c) => (signes[c.dataIndex] ? '🔺' : '🔻') + ` ${(v / real * 100).toFixed(1)}%`
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true
+                    },
+                    y: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Points S&P 500'
+                        }
+                    }
+                }
+            }
+        });
     }
+    // <-- FIN DU BLOC CORRIGÉ
 
     function updateRankingAndDetail(endYear, horizon) {
         const years = Object.keys(chartDataByYear).sort();
