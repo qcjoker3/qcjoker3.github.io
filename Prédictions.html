@@ -29,8 +29,6 @@
             À chaque début d'année les stratégistes des grandes banques et fonds d'investissement dévoilent leurs prédictions sur le S&P 500 pour l'année à venir. Ils sont payés des millions par année et possèdent des modèles économétriques très avancés. Ils devraient être bons, n'est-ce pas ? Pourtant année après année ils sont toujours à l'emploi de leur firme à attendre leur chèque aux 2 semaines. Charlatans ou experts? Voyez par vous-mêmes !
         </div>
 
-        
-
         <section class="analysis">
             <h3>Analyse détaillée</h3>
             <div class="grid-2">
@@ -110,8 +108,6 @@
     // ==========================================================
     // FONCTIONS DE MISE À JOUR DE L'INTERFACE
     // ==========================================================
-
-    // <-- DÉBUT DU BLOC CORRIGÉ
     function updateMainChart(year) {
         const data = chartDataByYear[year];
         const canvas = document.getElementById('chartCanvas');
@@ -164,32 +160,28 @@
                             weight: 'bold'
                         },
                         formatter: (v, c) => (signes[c.dataIndex] ? '🔺' : '🔻') + ` ${(v / real * 100).toFixed(1)}%`
-                    }
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            let label = context.dataset.label || '';
+                    }, // <-- CORRECTION : Il manquait une virgule ici
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
 
-                            if (label) {
-                                label += ': ';
-                            }
-                            // Si c'est le dataset "Prévision", on utilise la valeur originale de la prévision
-                            if (context.datasetIndex === 0) { 
-                                return label + previsions[context.dataIndex] + ' pts';
-                            } 
-                            // Sinon, on affiche l'écart tel quel
-                            else {
-                                const ecartAbsolu = Math.abs(real - previsions[context.dataIndex]);
-                                const signe = previsions[context.dataIndex] >= real ? 'au-dessus' : 'en-dessous';
-                                return `Écart: ${ecartAbsolu} pts (${signe})`;
+                                if (label) {
+                                    label += ': ';
+                                }
+                                
+                                if (context.datasetIndex === 0) { 
+                                    return label + previsions[context.dataIndex] + ' pts';
+                                } 
+                                else {
+                                    const ecartAbsolu = Math.abs(real - previsions[context.dataIndex]);
+                                    const signe = previsions[context.dataIndex] >= real ? 'au-dessus' : 'en-dessous';
+                                    return `Écart: ${ecartAbsolu} pts (${signe})`;
+                                }
                             }
                         }
                     }
-                }
-                // <-- FIN DE LA CORRECTION POUR LES TOOLTIPS
-            },
-                
+                },
                 scales: {
                     x: {
                         stacked: true
@@ -205,7 +197,6 @@
             }
         });
     }
-    // <-- FIN DU BLOC CORRIGÉ
 
     function updateRankingAndDetail(endYear, horizon) {
         const years = Object.keys(chartDataByYear).sort();
