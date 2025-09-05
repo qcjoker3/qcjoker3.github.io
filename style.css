@@ -203,6 +203,9 @@ header.container {
 .card-link { display: block; color: inherit; text-decoration: none; }
 .card.selected { border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring); }
 
+.relative {
+    position: relative;
+}
 /* --- Formulaires --- */
 .form-group label { color: var(--heading-color); }
 .form-group input, .form-group select {
@@ -392,10 +395,10 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 }
 /* [MODIFICATION] Règles spécifiques pour chaque flèche */
 #scroll-left-btn {
-    left: -1; /* Positionne la flèche à gauche, à l'extérieur du conteneur */
+    left: -22; /* Positionne la flèche à gauche, à l'extérieur du conteneur */
 }
 #scroll-right-btn {
-    right: -1; /* Positionne la flèche à droite, à l'extérieur */
+    right: -22; /* Positionne la flèche à droite, à l'extérieur */
 }
 .carousel-arrow:hover {
     background-color: var(--primary-color);
