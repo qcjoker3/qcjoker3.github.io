@@ -146,3 +146,9 @@ tr.focused {
         grid-template-columns: 1fr;
     }
 }
+
+#prediction-hero {
+  /* La valeur par défaut pour toutes les sections est 5rem. */
+  /* Ajustez cette valeur comme vous le souhaitez. */
+  padding-top: 2rem; 
+}
