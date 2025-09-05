@@ -2,12 +2,34 @@
 /* === STYLES SPÉCIFIQUES À LA PAGE DE PRÉDICTIONS === */
 /* =============================================================== */
 
-/* --- Conteneurs principaux --- */
+/* --- Conteneurs et mise en page --- */
 .year-selector {
     text-align: center;
-    margin: 2rem 0;
+    margin-bottom: 3rem;
+    padding-top: 1rem;
 }
 
+.analysis {
+    max-width: 1100px; /* Aligné avec la largeur .container */
+    margin: 3rem auto;
+    padding-top: 3rem;
+    border-top: 1px solid var(--border-color);
+}
+
+.analysis h3 {
+    font-family: var(--font-heading);
+    color: var(--heading-color);
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 2rem;
+}
+
+/* --- Graphiques --- */
 #chartContainer {
     max-width: 100%;
     margin: auto;
@@ -20,40 +42,16 @@
     height: 400px;
 }
 
-.analysis {
-    max-width: 1100px; /* Aligné avec la largeur .container */
-    margin: 3rem auto;
-    padding-top: 3rem;
-    border-top: 1px solid var(--border-color);
-}
-
-.analysis h3 {
-    margin: 1rem 0 1.5rem 0;
-    font-size: 1.5rem; /* Taille de titre cohérente */
-}
-
-.grid-2 {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
-    gap: 2rem;
-}
-
-@media (max-width: 768px) {
-    .grid-2 {
-        grid-template-columns: 1fr; /* Une seule colonne sur mobile */
-    }
-}
-
 /* --- Boutons "pastilles" pour les horizons de temps --- */
 .horizon-tabs {
     display: flex;
-    flex-wrap: wrap; /* Permet le retour à la ligne sur mobile */
+    flex-wrap: wrap;
     gap: 0.75rem;
-    margin: 0 0 1rem 0;
+    margin-bottom: 1rem;
 }
 
 .horizon-tabs button {
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 1.25rem;
     border-radius: 50px; /* Style "pilule" cohérent */
     border: 1px solid var(--border-color);
     background-color: var(--card-bg-color);
@@ -67,6 +65,7 @@
 .horizon-tabs button:hover {
     border-color: var(--primary-color);
     transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .horizon-tabs button.active {
@@ -74,6 +73,7 @@
     color: var(--light-text-color);
     border-color: transparent;
     transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 /* --- Tableaux de données --- */
@@ -83,6 +83,7 @@
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     background-color: var(--card-bg-color);
+    box-shadow: var(--shadow-md);
 }
 
 table {
@@ -94,7 +95,7 @@ th, td {
     padding: 0.75rem 1rem;
     border-bottom: 1px solid var(--border-color);
     text-align: left;
-    white-space: nowrap; /* Empêche le texte de revenir à la ligne */
+    white-space: nowrap; 
 }
 
 th {
@@ -102,7 +103,7 @@ th {
     font-family: var(--font-heading);
     color: var(--heading-color);
     font-size: 0.9rem;
-    position: sticky;
+    position: sticky; /* En-tête fixe lors du défilement */
     top: 0;
     z-index: 1;
 }
@@ -113,7 +114,8 @@ tr:hover {
 }
 
 tr.focused {
-    background-color: rgba(13, 148, 136, 0.1) !important; /* Vert léger, avec !important pour surpasser le :hover */
+    /* Couleur de surbrillance qui fonctionne en thèmes clair et sombre */
+    background-color: rgba(13, 148, 136, 0.1) !important;
 }
 
 /* Badge pour le classement */
@@ -134,5 +136,13 @@ tr.focused {
 .hint {
     color: var(--subtle-text-color);
     font-size: 0.9em;
-    margin: 0.5rem 0 1rem 0;
+    margin-bottom: 1rem;
+}
+
+
+/* --- Responsive pour les grilles --- */
+@media (max-width: 768px) {
+    .grid-2 {
+        grid-template-columns: 1fr;
+    }
 }
