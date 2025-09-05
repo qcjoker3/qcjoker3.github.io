@@ -166,6 +166,30 @@
                         formatter: (v, c) => (signes[c.dataIndex] ? '🔺' : '🔻') + ` ${(v / real * 100).toFixed(1)}%`
                     }
                 },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.dataset.label || '';
+
+                            if (label) {
+                                label += ': ';
+                            }
+                            // Si c'est le dataset "Prévision", on utilise la valeur originale de la prévision
+                            if (context.datasetIndex === 0) { 
+                                return label + previsions[context.dataIndex] + ' pts';
+                            } 
+                            // Sinon, on affiche l'écart tel quel
+                            else {
+                                const ecartAbsolu = Math.abs(real - previsions[context.dataIndex]);
+                                const signe = previsions[context.dataIndex] >= real ? 'au-dessus' : 'en-dessous';
+                                return `Écart: ${ecartAbsolu} pts (${signe})`;
+                            }
+                        }
+                    }
+                }
+                // <-- FIN DE LA CORRECTION POUR LES TOOLTIPS
+            },
+                
                 scales: {
                     x: {
                         stacked: true
