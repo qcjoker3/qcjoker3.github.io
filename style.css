@@ -373,10 +373,14 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 .card-grid-scroller::-webkit-scrollbar { display: none; }
 #selection-calculatrices .card-grid {
     display: grid;
+    gap: 1.5rem
     grid-auto-flow: column;
-    grid-auto-columns: calc((100% / 3) - 1.34rem);
-    gap: 2rem;
+    grid-template-rows: repeat(2, 1fr);
 }
+#selection-calculatrices .card {
+    width: 280px; /* Ajustez cette largeur pour voir plus ou moins de cartes */
+}
+
 .carousel-arrow {
     position: absolute;
     top: 50%;
