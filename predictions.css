@@ -150,5 +150,5 @@ tr.focused {
 #prediction-hero {
   /* La valeur par défaut pour toutes les sections est 5rem. */
   /* Ajustez cette valeur comme vous le souhaitez. */
-  padding-top: 1rem; 
+  padding-top: 0.5rem; 
 }
