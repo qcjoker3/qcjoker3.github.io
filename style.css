@@ -391,10 +391,10 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 }
 /* [MODIFICATION] Règles spécifiques pour chaque flèche */
 #scroll-left-btn {
-    left: -22px; /* Positionne la flèche à gauche, à l'extérieur du conteneur */
+    left: 0; /* Positionne la flèche à gauche, à l'extérieur du conteneur */
 }
 #scroll-right-btn {
-    right: -22px; /* Positionne la flèche à droite, à l'extérieur */
+    right: 0; /* Positionne la flèche à droite, à l'extérieur */
 }
 .carousel-arrow:hover {
     background-color: var(--primary-color);
