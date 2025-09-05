@@ -372,10 +372,11 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 }
 .card-grid-scroller::-webkit-scrollbar { display: none; }
 #selection-calculatrices .card-grid {
-    display: grid;
+    display: flex;
+    flex-direction: column
+    flex-wrap: wrap
     gap: 1.5rem
-    grid-auto-flow: column;
-    grid-template-rows: repeat(2, 1fr);
+    height: 420px
 }
 #selection-calculatrices .card {
     width: 280px; /* Ajustez cette largeur pour voir plus ou moins de cartes */
