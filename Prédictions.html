@@ -102,7 +102,7 @@
     let focusedInstitution = null;
     let currentHorizon = 1;
 
-    const realityLinePlugin = { id: 'realityLine', afterDatasetsDraw(chart) { const { ctx, chartArea, scales } = chart; const yValue = chart.options.plugins?.realityLine?.y; if (typeof yValue !== 'number') return; const yPixel = scales.y.getPixelForValue(yValue); ctx.save(); ctx.strokeStyle = '#28a745'; ctx.lineWidth = 3; ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.moveTo(chartArea.left, yPixel); ctx.lineTo(chartArea.right, yPixel); ctx.stroke(); ctx.restore(); ctx.font = 'bold 13px "Segoe UI"'; ctx.fillStyle = '#28a745'; ctx.textAlign = 'right'; ctx.fillText(`Réalité: ${yValue}`, chartArea.right - 5, yPixel - 8); } };
+    const realityLinePlugin = { id: 'realityLine', afterDatasetsDraw(chart) { const { ctx, chartArea, scales } = chart; const yValue = chart.options.plugins?.realityLine?.y; if (typeof yValue !== 'number') return; const yPixel = scales.y.getPixelForValue(yValue); ctx.save(); ctx.strokeStyle = '#4b5563'; ctx.lineWidth = 3; ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.moveTo(chartArea.left, yPixel); ctx.lineTo(chartArea.right, yPixel); ctx.stroke(); ctx.restore(); ctx.font = 'bold 15px "Segoe UI"'; ctx.fillStyle = '#4b5563'; ctx.textAlign = 'right'; ctx.fillText(`Réalité: ${yValue}`, chartArea.right - 5, yPixel - 8); } };
     Chart.register(realityLinePlugin, ChartDataLabels);
 
     // ==========================================================
