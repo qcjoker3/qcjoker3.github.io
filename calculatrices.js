@@ -96,8 +96,10 @@ document.addEventListener('DOMContentLoaded', () => {
 // =========================================================================
 // === NOUVELLE CALCULATRICE DE RETRAITE 360° ===
 // =========================================================================
+
 const formRetraite = document.getElementById('financial-plan-form');
 if (formRetraite) {
+    // ... (Le reste des déclarations initiales reste inchangé)
     const spinner = document.getElementById('spinner');
     const resultsArea = document.getElementById('results-area');
     const wizardSteps = formRetraite.querySelectorAll('.wizard-step');
@@ -112,6 +114,7 @@ if (formRetraite) {
         else if (e.target.matches('[data-prev]')) { goToStep(parseInt(e.target.dataset.prev)); }
     });
     
+    // ... (Les fonctions goToStep, handleConjointView, validateAllocation restent inchangées)
     function goToStep(step) {
         if (step > 0 && step <= wizardSteps.length) {
             wizardSteps[currentStep - 1].classList.remove('active');
@@ -141,7 +144,7 @@ if (formRetraite) {
         const totalEpargne = getVal('epargneAnnuelle');
         let totalAllocated = 0;
         allocationInputs.forEach(input => { if (!input.disabled) { totalAllocated += getVal(input.id); } });
-        const isValid = Math.abs(totalAllocated - totalEpargne) < 0.01; // Use tolerance for floating point
+        const isValid = Math.abs(totalAllocated - totalEpargne) < 0.01;
         allocationError.textContent = isValid ? '' : `Répartition (${totalAllocated.toLocaleString('fr-CA')} $) ≠ Total (${totalEpargne.toLocaleString('fr-CA')} $).`;
         submitButton.disabled = !isValid;
     }
@@ -151,6 +154,7 @@ if (formRetraite) {
     allocationInputs.forEach(input => input.addEventListener('input', validateAllocation));
     handleConjointView();
     
+    // === MODIFIÉ: Logique de soumission pour gérer les objectifs ===
     formRetraite.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (submitButton.disabled) return;
@@ -160,17 +164,39 @@ if (formRetraite) {
 
         try {
             const plan = getPlanInputs();
+            const objectif = document.getElementById('objectif').value;
+
+            // === MODIFIÉ: Ajout de plus de stratégies à comparer ===
             const strategies = [
-                { name: "REER/CRI d'abord", order: ['reer','cri', 'nonEnr', 'celi'] },
-                { name: "Non-Enr. d'abord", order: ['nonEnr', 'reer', 'cri', 'celi'] }
+                { name: "REER/CRI d'abord", order: ['reer', 'cri', 'nonEnr', 'celi'] },
+                { name: "Non-Enregistré d'abord", order: ['nonEnr', 'reer', 'cri', 'celi'] },
+                { name: "CELI d'abord (rarement optimal)", order: ['celi', 'nonEnr', 'reer', 'cri'] }
             ];
-            let bestResult = null;
-            for(const strategy of strategies) {
+
+            // 1. Exécuter toutes les simulations
+            const allResults = strategies.map(strategy => {
                 const result = runMonteCarlo(plan, strategy.order);
                 result.strategyName = strategy.name;
-                if (!bestResult || result.medianCapital > bestResult.medianCapital) { bestResult = result; }
+                return result;
+            });
+
+            // 2. Sélectionner la meilleure stratégie selon l'objectif
+            let bestResult;
+            switch (objectif) {
+                case 'duree': // Maximiser la durée (Taux de succès)
+                    bestResult = allResults.sort((a, b) => b.successRate - a.successRate)[0];
+                    break;
+                case 'impot': // Minimiser l'impôt
+                    bestResult = allResults.sort((a, b) => a.medianTax - b.medianTax)[0];
+                    break;
+                case 'capital': // Maximiser le capital final (par défaut)
+                default:
+                    bestResult = allResults.sort((a, b) => b.medianCapital - a.medianCapital)[0];
+                    break;
             }
+            
             displayResults(bestResult, plan);
+
         } catch (error) {
             console.error("Simulation Error:", error);
             alert("Une erreur est survenue.");
@@ -181,6 +207,8 @@ if (formRetraite) {
         }
     });
 
+    // ... (Aucun changement dans les fonctions getPlanInputs, K, estimateQPP, runMonteCarlo, runSingleProjection, et les fonctions de calcul d'impôt)
+    // ... (Collez ici toutes les autres fonctions qui n'ont pas été modifiées)
     function getPlanInputs() {
         const isCouple = getVal('toggleConjoint');
         return {
@@ -234,7 +262,7 @@ if (formRetraite) {
         const numYears = commun.esperanceVie - p1.age + 1;
         const returnSequence = Array.from({length: numYears}, () => ss.probit(Math.random()) * commun.volatilite + commun.rendementMoyen);
         let comptes = { p1: { ...p1 }, p2: isCouple ? { ...p2 } : null, commun: { ...commun } };
-        let capitalTrajectory = [], incomeTrajectory = [], decaissementTrajectory = [], totalTax = 0; // Ajout de decaissementTrajectory
+        let capitalTrajectory = [], incomeTrajectory = [], decaissementTrajectory = [], totalTax = 0;
 
         for (let i = 0; i < numYears; i++) {
             const age1 = p1.age + i;
@@ -267,7 +295,6 @@ if (formRetraite) {
             let totalCapital = comptes.p1.reer + comptes.p1.cri + comptes.p1.celi + (isCouple ? comptes.p2.reer + comptes.p2.cri + comptes.p2.celi : 0) + comptes.commun.nonEnr;
             capitalTrajectory.push({ age: age1, capital: totalCapital });
             
-            // === NOUVEAU: Capture des soldes de comptes pour le graphique de décaissement ===
             decaissementTrajectory.push({
                 age: age1,
                 reer: comptes.p1.reer + (isCouple ? comptes.p2.reer : 0),
@@ -276,7 +303,7 @@ if (formRetraite) {
                 nonEnr: comptes.commun.nonEnr
             });
         }
-        return { finalCapital: capitalTrajectory.slice(-1)[0].capital, totalTax, capitalTrajectory, incomeTrajectory, decaissementTrajectory }; // Retourner les nouvelles données
+        return { finalCapital: capitalTrajectory.slice(-1)[0].capital, totalTax, capitalTrajectory, incomeTrajectory, decaissementTrajectory };
     }
 
     function calculateYearlyFinances(soldes, depenseVisee, plan, ages, inflation, strategy) {
@@ -423,10 +450,9 @@ if (formRetraite) {
             options: { scales: { x: { stacked: true }, y: { stacked: true } } }
         });
 
-        // === NOUVEAU: Graphique de décaissement des actifs ===
         const decaissementData = medianProjection.decaissementTrajectory;
         renderChart('chartDecaissement', {
-            type: 'line', // Un graphique en aires est un 'line' avec 'fill: true'
+            type: 'line',
             data: {
                 labels: decaissementData.map(d => d.age),
                 datasets: [
@@ -438,7 +464,7 @@ if (formRetraite) {
             },
             options: {
                 scales: { 
-                    y: { stacked: true } // Empiler les données sur l'axe Y
+                    y: { stacked: true }
                 }
             }
         });
@@ -460,7 +486,6 @@ if (formRetraite) {
         }
     }
 
-    // === MODIFIÉ: Fonction renderChart plus flexible ===
     function renderChart(canvasId, config) {
         const ctx = document.getElementById(canvasId).getContext('2d');
         if (charts[canvasId]) charts[canvasId].destroy();
@@ -480,7 +505,6 @@ if (formRetraite) {
             }
         };
 
-        // Fusionne les options par défaut avec les options spécifiques au graphique
         const options = { ...defaultOptions, ...config.options };
         if (config.options && config.options.scales) {
             options.scales = {
