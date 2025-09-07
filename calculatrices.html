@@ -374,6 +374,17 @@
                     <div class="form-group"><label>Volatilité (Écart-Type) <span class="tooltip">?<span class="tooltip-text">Mesure du risque. Un portefeuille 60/40 a typiquement 10-12% de volatilité. Plus le chiffre est élevé, plus les rendements varient.</span></span></label><input id="volatilite" type="number" value="10.0" step="0.1"></div>
                     <div class="form-group"><label>Taux d'Inflation Moyen</label><input id="inflation" type="number" value="2.5" step="0.1"></div>
                 </div>
+                <div class="form-group">
+                <label for="objectif">
+                🎯 Quel est votre objectif principal?
+                <span class="tooltip-trigger" data-tooltip="Choisissez l'objectif qui guidera la sélection de la meilleure stratégie de décaissement pour vous.">?</span>
+                </label>
+                <select id="objectif" name="objectif" class="form-control">
+                <option value="capital" selected>Maximiser le capital final (Héritage)</option>
+                <option value="duree">Maximiser la durée du patrimoine (Sécurité)</option>
+                <option value="impot">Minimiser l'impôt total payé</option>
+                </select>
+                </div>
                 <div style="text-align: center; padding-top: 2rem;"><button type="submit" id="submit-button" class="btn-primary">Lancer l'Analyse Stratégique</button></div>
                 <div class="wizard-nav"><button type="button" class="btn" data-prev="4">Précédent</button></div>
             </div>
