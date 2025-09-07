@@ -474,8 +474,7 @@ function generateRecommendations({successRate}, plan) {
     const recList = document.getElementById('recommendationsList');
     recList.innerHTML = '';
     const addRec = (text) => recList.insertAdjacentHTML('beforeend', `<li>${text}</li>`);
-    const totalEpargne = Object.values(plan.commun.epargne).reduce((a, b) => a + b, 0);
-
+    
     // Étape 1: Donner un diagnostic sur l'état du plan
     if (successRate >= 85) {
         addRec(`Félicitations! Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est très robuste.`);
@@ -487,20 +486,27 @@ function generateRecommendations({successRate}, plan) {
 
     // Étape 2: Fournir une recommandation concrète si le plan n'est pas optimal
     if (successRate < 85) {
+        
+        // === CORRECTION AJOUTÉE ICI ===
+        // On intercepte le cas où le taux de succès est de 0 pour éviter le calcul NaN.
+        if (successRate === 0) {
+            addRec("Le taux de succès est de 0%. Il est primordial de revoir le plan en profondeur (établir un plan d'épargne, réduire les dépenses visées ou retarder la retraite).");
+            return; // On arrête ici pour ne pas faire le calcul qui suit.
+        }
+
+        const totalEpargne = Object.values(plan.commun.epargne).reduce((a, b) => a + b, 0);
+
         if (totalEpargne > 0) {
-            // CAS 1: L'utilisateur épargne déjà -> On suggère une augmentation
             const extraSavings = totalEpargne * (85 / successRate - 1);
-            if (extraSavings > 1) { // On met une petite marge pour ne pas afficher 0$
+            if (extraSavings > 1) {
                 addRec(`Pour viser 85% de succès, vous pourriez augmenter votre épargne annuelle d'environ <strong>${extraSavings.toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits:0})}</strong> ou retarder la retraite.`);
             }
         } else {
-            // CAS 2: L'utilisateur n'épargne pas encore -> On estime l'épargne nécessaire
-            // Heuristique basée sur la dépense visée et le déficit du plan
             const estimatedSavings = plan.commun.depenseVisee * (85 / successRate - 1);
              if (estimatedSavings > 1) {
                 addRec(`Comme vous n'épargnez pas actuellement, il est crucial de commencer. Pour viser 85% de succès, vous pourriez établir un objectif d'épargne annuelle d'environ <strong>${estimatedSavings.toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits:0})}</strong>.`);
+            }
         }
-    }
 
     function renderChart(canvasId, config) {
         const ctx = document.getElementById(canvasId).getContext('2d');
