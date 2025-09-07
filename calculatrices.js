@@ -143,9 +143,10 @@ if (formRetraite) {
     }
 
     function validateAllocation() {
-        const totalEpargne = getVal('epargneAnnuelle') || 0;
+        const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
+        const totalEpargne = getVal('epargneAnnuelle');
         let totalAllocated = 0;
-        allocationInputs.forEach(input => { if (!input.disabled) { totalAllocated += getVal(input.id) || 0; } });
+        allocationInputs.forEach(input => { if (!input.disabled) { totalAllocated += getVal(input.id); } });
         const isValid = Math.abs(totalAllocated - totalEpargne) < 0.01;
         allocationError.textContent = isValid ? '' : `Répartition (${totalAllocated.toLocaleString('fr-CA')} $) ≠ Total (${totalEpargne.toLocaleString('fr-CA')} $).`;
         submitButton.disabled = !isValid;
@@ -171,7 +172,8 @@ if (formRetraite) {
             const strategies = [
                 { name: "REER/CRI d'abord (fiscalité élevée)", order: ['reer', 'cri', 'nonEnr', 'celi'] },
                 { name: "Non-Enregistré d'abord", order: ['nonEnr', 'reer', 'cri', 'celi'] },
-                { name: "Optimale 'Laferrière' (anti-récupération)", order: ['celi', 'nonEnr', 'reer', 'cri'] }
+                { name: "Optimale 'Laferrière' (anti-récupération)", order: ['celi', 'nonEnr', 'reer', 'cri'] },
+                { name: "Revenu Lissé (Décaissement Mixte)", order: { reer: 0.6, cri: 0, nonEnr: 0.2, celi: 0.2 } }
             ];
 
             const allResults = strategies.map(strategy => {
@@ -209,7 +211,6 @@ if (formRetraite) {
     // --- EXTRACTION ET PRÉPARATION DES DONNÉES ---
     function getPlanInputs() {
         const isCouple = document.getElementById('toggleConjoint').checked;
-        // Helper pour lire les valeurs numériques des champs
         const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
     
         return {
@@ -288,7 +289,7 @@ if (formRetraite) {
                 });
                 comptes.commun.nonEnr -= fiscalYear.retraits.nonEnr;
                 comptes.commun.nonEnrCoutBase -= fiscalYear.coutBaseConsomme;
-                incomeTrajectory.push({ age: age1, ...fiscalYear.revenus, ...fiscalYear.retraits, ...fiscalYear.credits });
+                incomeTrajectory.push({ age: age1, ...fiscalYear });
             }
             Object.keys(comptes.p1).filter(k => ['reer', 'cri', 'celi'].includes(k)).forEach(type => comptes.p1[type] *= (1 + currentReturn));
             if (isCouple) Object.keys(comptes.p2).filter(k => ['reer', 'cri', 'celi'].includes(k)).forEach(type => comptes.p2[type] *= (1 + currentReturn));
@@ -301,127 +302,168 @@ if (formRetraite) {
     }
     
     // --- MOTEUR FISCAL ET FINANCIER ---
-function calculateYearlyFinances(soldes, depenseVisee, plan, ages, inflation, strategy) {
-    const { p1, p2, isCouple } = plan;
-    const revenus = {
-        rrq1: calculatePension(p1.rrqEst, 65, p1.ageDebutRrq, ages.age1, inflation, true),
-        psv1: calculatePension(K.oas.maxAmount, 65, p1.ageDebutPsv, ages.age1, inflation, false),
-        pension1: calculatePension(p1.pension.amount, plan.commun.ageRetraite, plan.commun.ageRetraite, ages.age1, inflation, false, p1.pension.isIndexed),
-        travail1: (ages.age1 < p1.travail.ageFin) ? p1.travail.amount * inflation : 0,
-        // ... (logique similaire pour p2 si isCouple)
-    };
-
-    let besoinRetraitBrut = Math.max(0, depenseVisee - Object.values(revenus).reduce((a,b)=>a+b,0)) / 0.75; // Estimation simple
+    function calculateYearlyFinances(soldes, depenseVisee, plan, ages, inflation, strategy) {
+        const { p1, p2, isCouple } = plan;
+        // La logique est simplifiée pour une personne seule pour la clarté. L'extension pour un couple suivrait la même structure.
+        const revenus = {
+            rrq1: calculatePension(p1.rrqEst, 65, p1.ageDebutRrq, ages.age1, inflation, true),
+            psv1: calculatePension(K.oas.maxAmount, 65, p1.ageDebutPsv, ages.age1, inflation, false),
+            pension1: calculatePension(p1.pension.amount, plan.commun.ageRetraite, plan.commun.ageRetraite, ages.age1, inflation, false, p1.pension.isIndexed),
+            travail1: (ages.age1 < p1.travail.ageFin) ? p1.travail.amount * inflation : 0,
+        };
     
-    const retraits = { reer1: 0, cri1: 0, celi1: 0, nonEnr: 0 };
-    // ... votre logique de retrait ...
-    for (const type of strategy) {
-        if (besoinRetraitBrut <= 0) break;
-        const compte = type === 'nonEnr' ? 'nonEnr' : type + '1';
-        const solde = (type === 'nonEnr') ? soldes.commun.nonEnr : soldes.p1[type];
-        const retrait = Math.min(besoinRetraitBrut, solde - (retraits[compte] || 0));
-        retraits[compte] += retrait;
-        besoinRetraitBrut -= retrait;
-    }
-
-    const gainCapitalRealise = (retraits.nonEnr / soldes.commun.nonEnr) * (soldes.commun.nonEnr - soldes.commun.nonEnrCoutBase) || 0;
-    const coutBaseConsomme = retraits.nonEnr - gainCapitalRealise;
-
-    const incomeP1 = { 
-        ordinaire: revenus.rrq1 + revenus.pension1 + revenus.travail1 + retraits.reer1 + retraits.cri1, 
-        gainCapital: gainCapitalRealise, 
-        pension: revenus.pension1 + retraits.reer1 + retraits.cri1,
-        travail: revenus.travail1
-    };
+        const retraits = { reer1: 0, cri1: 0, celi1: 0, nonEnr: 0, reer2: 0, cri2: 0, celi2: 0 };
+        let besoinRetraitNet = Math.max(0, depenseVisee - (revenus.rrq1 + revenus.pension1 + revenus.travail1));
     
-    const fiscalP1 = calculateTaxesAndBenefits(incomeP1, revenus.psv1, ages.age1, inflation, isCouple);
-
-    return { 
-        totalTax: fiscalP1.totalTax, 
-        retraits, 
-        revenus, 
-        coutBaseConsomme,
-        credits: { gis: fiscalP1.gis, solidarity: fiscalP1.solidarity },
-        netIncome: fiscalP1.netIncome // On s'assure de retourner le revenu net ici aussi
-    };
-}
-
-function calculateTaxesAndBenefits(income, psv, age, inflationMultiplier, isCouple) {
-    const i = (val) => val * inflationMultiplier;
-    let netIncomeForBenefits = income.ordinaire + income.gainCapital;
+        // Retraits FERR/FRV minimums (bruts, donc ils réduisent le besoin de retrait net)
+        ['p1', 'p2'].forEach(p_key => {
+            if (!plan[p_key]) return;
+            ['reer', 'cri'].forEach(type => {
+                const age = ages[p_key.replace('p', 'age')];
+                if (age >= 71) {
+                    const factor = K.rrifFactors[Math.min(age, 95)] || 0.2;
+                    const retraitMin = soldes[p_key][type] * factor;
+                    retraits[type + p_key.slice(-1)] = retraitMin;
+                }
+            });
+        });
+        const retraitsMinimauxImposables = retraits.reer1 + retraits.cri1 + retraits.reer2 + retraits.cri2;
     
-    const gisIncome = Math.max(0, netIncomeForBenefits - (income.travail > 0 ? i(K.gis.exemption) : 0));
-    const gisClawback = gisIncome * K.gis.clawbackRate;
-    const gisAmount = Math.max(0, i(K.gis.maxAmountSingle) - gisClawback);
+        // Le besoin de retrait brut est estimé. Une version avancée serait itérative.
+        let besoinRetraitBrut = Math.max(0, besoinRetraitNet / 0.75 - retraitsMinimauxImposables);
 
-    const solidarityClawback = Math.max(0, (netIncomeForBenefits - i(K.solidarity.threshold)) * K.solidarity.clawbackRate);
-    const solidarityAmount = Math.max(0, i(K.solidarity.maxAmountSingle) - solidarityClawback);
-
-    const oasClawback = Math.max(0, (netIncomeForBenefits - i(K.oas.clawbackThreshold)) * 0.15);
-    const psvNet = Math.max(0, psv - oasClawback);
-    
-    let taxableIncome = income.ordinaire + (income.gainCapital * 0.5) + psvNet;
-
-    const calcBracketTax = (brackets) => {
-        let tax = 0; let lastLimit = 0;
-        for (const [limit, rate] of brackets) {
-            if (taxableIncome > lastLimit) tax += (Math.min(taxableIncome, i(limit)) - lastLimit) * rate;
-            lastLimit = i(limit);
+        if (Array.isArray(strategy)) { // Mode séquentiel
+            for (const type of strategy) {
+                if (besoinRetraitBrut <= 0) break;
+                const compte = type === 'nonEnr' ? 'nonEnr' : type + '1';
+                const solde = (type === 'nonEnr') ? soldes.commun.nonEnr : soldes.p1[type];
+                const retrait = Math.min(besoinRetraitBrut, solde - (retraits[compte] || 0));
+                retraits[compte] += retrait;
+                besoinRetraitBrut -= retrait;
+            }
+        } else { // Mode mixte (pro-rata)
+            const totalProportions = Object.values(strategy).reduce((a, b) => a + b, 0);
+            if (totalProportions > 0) {
+                for (const type in strategy) {
+                    const proportion = strategy[type];
+                    const montantRetrait = besoinRetraitBrut * proportion;
+                    const compte = type === 'nonEnr' ? 'nonEnr' : type + '1';
+                    const solde = (type === 'nonEnr') ? soldes.commun.nonEnr : soldes.p1[type];
+                    const retrait = Math.min(montantRetrait, solde - (retraits[compte] || 0));
+                    retraits[compte] += retrait;
+                }
+            }
         }
-        return tax;
-    };
-    let fedTax = calcBracketTax(K.fed.brackets);
-    let qcTax = calcBracketTax(K.qc.brackets);
-
-    let fedCredits = i(K.fed.bpa);
-    let qcCredits = i(K.qc.bpa);
-
-    if (age >= 65) {
-        const fedAgeAmountReduction = Math.max(0, (netIncomeForBenefits - i(K.fed.ageAmountThreshold)) * 0.15);
-        fedCredits += Math.max(0, i(K.fed.ageAmount) - fedAgeAmountReduction);
-        qcCredits += i(K.qc.ageAmount);
-    }
-    if (income.pension > 0) {
-        fedCredits += Math.min(i(K.fed.pensionAmount), income.pension);
-        qcCredits += Math.min(i(K.qc.pensionAmount), income.pension);
-    }
-
-    fedTax = Math.max(0, fedTax - (fedCredits * 0.15));
-    qcTax = Math.max(0, qcTax - (qcCredits * 0.14));
-    const totalTax = fedTax + qcTax;
     
-    // NOUVEAU: On calcule le revenu net disponible
-    const netIncome = netIncomeForBenefits + psvNet + gisAmount + solidarityAmount - totalTax;
-
-    return { 
-        totalTax: totalTax, 
-        gis: gisAmount, 
-        solidarity: solidarityAmount,
-        netIncome: netIncome // On retourne le revenu net
-    };
-}
-
+        const gainCapitalRealise = (retraits.nonEnr / soldes.commun.nonEnr) * (soldes.commun.nonEnr - soldes.commun.nonEnrCoutBase) || 0;
+        const coutBaseConsomme = retraits.nonEnr - gainCapitalRealise;
+    
+        const incomeP1 = { 
+            ordinaire: revenus.rrq1 + revenus.pension1 + revenus.travail1 + retraits.reer1 + retraits.cri1, 
+            gainCapital: gainCapitalRealise, 
+            pension: revenus.pension1 + retraits.reer1 + retraits.cri1,
+            travail: revenus.travail1
+        };
+        
+        const fiscalP1 = calculateTaxesAndBenefits(incomeP1, revenus.psv1, ages.age1, inflation, isCouple);
+    
+        return { 
+            totalTax: fiscalP1.totalTax, 
+            retraits, 
+            revenus, 
+            coutBaseConsomme,
+            credits: { gis: fiscalP1.gis, solidarity: fiscalP1.solidarity },
+            netIncome: fiscalP1.netIncome
+        };
+    }
+    
+    function calculateTaxesAndBenefits(income, psv, age, inflationMultiplier, isCouple) {
+        const i = (val) => val * inflationMultiplier;
+        let netIncomeForBenefits = income.ordinaire + income.gainCapital;
+        
+        const gisIncome = Math.max(0, netIncomeForBenefits - (income.travail > 0 ? i(K.gis.exemption) : 0));
+        const gisClawback = gisIncome * K.gis.clawbackRate;
+        const gisAmount = Math.max(0, i(K.gis.maxAmountSingle) - gisClawback);
+    
+        const solidarityClawback = Math.max(0, (netIncomeForBenefits - i(K.solidarity.threshold)) * K.solidarity.clawbackRate);
+        const solidarityAmount = Math.max(0, i(K.solidarity.maxAmountSingle) - solidarityClawback);
+    
+        const oasClawback = Math.max(0, (netIncomeForBenefits - i(K.oas.clawbackThreshold)) * 0.15);
+        const psvNet = Math.max(0, psv - oasClawback);
+        
+        let taxableIncome = income.ordinaire + (income.gainCapital * 0.5) + psvNet;
+    
+        const calcBracketTax = (brackets) => {
+            let tax = 0; let lastLimit = 0;
+            for (const [limit, rate] of brackets) {
+                if (taxableIncome > lastLimit) tax += (Math.min(taxableIncome, i(limit)) - lastLimit) * rate;
+                lastLimit = i(limit);
+            }
+            return tax;
+        };
+        let fedTax = calcBracketTax(K.fed.brackets);
+        let qcTax = calcBracketTax(K.qc.brackets);
+    
+        let fedCredits = i(K.fed.bpa);
+        let qcCredits = i(K.qc.bpa);
+    
+        if (age >= 65) {
+            const fedAgeAmountReduction = Math.max(0, (netIncomeForBenefits - i(K.fed.ageAmountThreshold)) * 0.15);
+            fedCredits += Math.max(0, i(K.fed.ageAmount) - fedAgeAmountReduction);
+            qcCredits += i(K.qc.ageAmount);
+        }
+        if (income.pension > 0) {
+            fedCredits += Math.min(i(K.fed.pensionAmount), income.pension);
+            qcCredits += Math.min(i(K.qc.pensionAmount), income.pension);
+        }
+    
+        fedTax = Math.max(0, fedTax - (fedCredits * 0.15));
+        qcTax = Math.max(0, qcTax - (qcCredits * 0.14));
+        const totalTax = fedTax + qcTax;
+        
+        const netIncome = netIncomeForBenefits + psvNet + gisAmount + solidarityAmount - totalTax;
+    
+        return { 
+            totalTax: totalTax, 
+            gis: gisAmount, 
+            solidarity: solidarityAmount,
+            netIncome: netIncome
+        };
+    }
+    
     function calculatePension(base, baseAge, startAge, currentAge, inflationMultiplier, isRrq, isIndexed) {
         if (currentAge < startAge || !base) return 0;
-        if (isRrq || isIndexed === undefined) {
-            const factor = isRrq ? (startAge > baseAge ? 0.007 : -0.006) : (startAge > baseAge ? 0.006 : 0);
-            const adjustment = (startAge - baseAge) * 12 * factor;
-            return base * (1 + adjustment) * inflationMultiplier;
-        } else {
-             return isIndexed ? base * inflationMultiplier : base * Math.pow(1+plan.commun.inflation, plan.commun.ageRetraite - plan.p1.age);
+        const factor = isRrq ? (startAge > baseAge ? 0.007 : -0.006) : (startAge > baseAge ? 0.006 : -0.006);
+        const adjustment = (startAge - baseAge) * 12 * factor;
+        let adjustedBase = base * (1 + adjustment);
+        
+        if(isIndexed === false){ // Unindexed private pension
+            // Value is fixed at retirement date in future dollars, then stays constant
+            const yearsToRetirement = plan.commun.ageRetraite - plan.p1.age;
+            return base * Math.pow(1 + plan.commun.inflation, yearsToRetirement);
         }
+        
+        // Government pensions and indexed private pensions are inflated every year
+        return adjustedBase * inflationMultiplier;
     }
     
     // --- AFFICHAGE DES RÉSULTATS ---
     function displayResults(result, plan) {
         const { successRate, medianCapital, medianTax, projections, medianProjection, strategyName } = result;
         const fmt = (val) => (val || 0).toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
+        
         document.getElementById('tauxSucces').textContent = `${successRate.toFixed(1)}%`;
         document.getElementById('capitalMedian').textContent = fmt(medianCapital);
-        document.getElementById('impotMedian').textContent = fmt(medianTax);
         document.getElementById('strategieOptimale').textContent = strategyName;
         document.getElementById('tauxSucces').className = `result-value ${successRate >= 85 ? 'success' : successRate >= 60 ? 'warning' : 'danger'}`;
         
+        const firstYearRetirementIncome = result.medianProjection.incomeTrajectory[0];
+        if (firstYearRetirementIncome && firstYearRetirementIncome.netIncome) {
+            document.getElementById('revenuNetAnnuel').textContent = fmt(firstYearRetirementIncome.netIncome);
+        } else {
+            document.getElementById('revenuNetAnnuel').textContent = "N/A";
+        }
+
         generateRecommendations(result, plan);
         
         const labels = projections[0].map(p => p.age);
@@ -432,17 +474,16 @@ function calculateTaxesAndBenefits(income, psv, age, inflationMultiplier, isCoup
         renderChart('chartMonteCarlo', { type: 'line', data: { labels, datasets: [ { label: 'Pire 10% (P10)', data: p10, borderColor: 'rgba(239, 68, 68, 0.5)', fill: '+1', backgroundColor: 'rgba(239, 68, 68, 0.1)'}, { label: 'Médian (P50)', data: p50, borderColor: '#0D9488', borderWidth: 2.5 }, { label: 'Meilleur 10% (P90)', data: p90, borderColor: 'rgba(16, 185, 129, 0.5)', fill: false }]}});
         
         const incomeData = medianProjection.incomeTrajectory;
-        renderChart('chartSourcesFonds', { type: 'bar', data: { labels: incomeData.map(d => d.age), datasets: [ { label: 'Retrait REER/CRI', data: incomeData.map(d => (d.reer1 || 0) + (d.reer2 || 0) + (d.cri1 || 0) + (d.cri2 || 0)), backgroundColor: '#4338CA' }, { label: 'Retrait Non-Enr.', data: incomeData.map(d => d.nonEnr || 0), backgroundColor: '#A855F7' }, { label: 'Pension Employeur', data: incomeData.map(d => (d.pension1 || 0) + (d.pension2 || 0)), backgroundColor: '#6D28D9'}, { label: 'Revenu de Travail', data: incomeData.map(d => (d.travail1 || 0) + (d.travail2 || 0)), backgroundColor: '#be185d'}, { label: 'RRQ/PSV & Prestations', data: incomeData.map(d => (d.rrq1 || 0) + (d.rrq2 || 0) + (d.psv1 || 0) + (d.psv2 || 0) + (d.gis || 0) + (d.solidarity || 0)), backgroundColor: '#10B981' }, ] }, options: { scales: { x: { stacked: true }, y: { stacked: true } } }});
+        renderChart('chartSourcesFonds', { type: 'bar', data: { labels: incomeData.map(d => d.age), datasets: [ { label: 'Retrait REER/CRI', data: incomeData.map(d => (d.retraits.reer1 || 0) + (d.retraits.reer2 || 0) + (d.retraits.cri1 || 0) + (d.retraits.cri2 || 0)), backgroundColor: '#4338CA' }, { label: 'Retrait Non-Enr.', data: incomeData.map(d => d.retraits.nonEnr || 0), backgroundColor: '#A855F7' }, { label: 'Pension Employeur', data: incomeData.map(d => (d.revenus.pension1 || 0) + (d.revenus.pension2 || 0)), backgroundColor: '#6D28D9'}, { label: 'Revenu de Travail', data: incomeData.map(d => (d.revenus.travail1 || 0) + (d.revenus.travail2 || 0)), backgroundColor: '#be185d'}, { label: 'RRQ/PSV & Prestations', data: incomeData.map(d => (d.revenus.rrq1 || 0) + (d.revenus.rrq2 || 0) + (d.revenus.psv1 || 0) + (d.revenus.psv2 || 0) + (d.credits.gis || 0) + (d.credits.solidarity || 0)), backgroundColor: '#10B981' }, ] }, options: { scales: { x: { stacked: true }, y: { stacked: true } } }});
 
         const decaissementData = medianProjection.decaissementTrajectory;
         renderChart('chartDecaissement', { type: 'line', data: { labels: decaissementData.map(d => d.age), datasets: [ { label: 'Non-Enregistré', data: decaissementData.map(d => d.nonEnr), backgroundColor: 'rgba(168, 85, 247, 0.7)', borderColor: 'rgba(168, 85, 247, 1)', fill: true, tension: 0.3 }, { label: 'CELI', data: decaissementData.map(d => d.celi), backgroundColor: 'rgba(16, 185, 129, 0.7)', borderColor: 'rgba(16, 185, 129, 1)', fill: true, tension: 0.3 }, { label: 'CRI', data: decaissementData.map(d => d.cri), backgroundColor: 'rgba(239, 68, 68, 0.7)', borderColor: 'rgba(239, 68, 68, 1)', fill: true, tension: 0.3 }, { label: 'REER', data: decaissementData.map(d => d.reer), backgroundColor: 'rgba(67, 56, 202, 0.7)', borderColor: 'rgba(67, 56, 202, 1)', fill: true, tension: 0.3 }, ] }, options: { scales: { y: { stacked: true }}}});
 
         const creditsList = document.getElementById('creditsList');
         creditsList.innerHTML = '';
-        const firstYearRetirementIncome = result.medianProjection.incomeTrajectory[0];
         if (firstYearRetirementIncome) {
-            creditsList.insertAdjacentHTML('beforeend', `<li>Supplément de Revenu Garanti (SRG): <strong>${fmt(firstYearRetirementIncome.gis)}</strong></li>`);
-            creditsList.insertAdjacentHTML('beforeend', `<li>Crédit d'impôt pour solidarité: <strong>${fmt(firstYearRetirementIncome.solidarity)}</strong></li>`);
+            creditsList.insertAdjacentHTML('beforeend', `<li>Supplément de Revenu Garanti (SRG): <strong>${fmt(firstYearRetirementIncome.credits.gis)}</strong></li>`);
+            creditsList.insertAdjacentHTML('beforeend', `<li>Crédit d'impôt pour solidarité: <strong>${fmt(firstYearRetirementIncome.credits.solidarity)}</strong></li>`);
         }
     }
     
@@ -465,8 +506,10 @@ function calculateTaxesAndBenefits(income, psv, age, inflationMultiplier, isCoup
                 const extraSavings = totalEpargne * (85 / successRate - 1);
                 if (extraSavings > 1) { addRec(`Pour viser 85% de succès, vous pourriez augmenter votre épargne annuelle d'environ <strong>${extraSavings.toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits:0})}</strong> ou retarder la retraite.`); }
             } else {
-                const estimatedSavings = plan.commun.depenseVisee * (85 / successRate - 1);
-                 if (estimatedSavings > 1) { addRec(`Comme vous n'épargnez pas actuellement, il est crucial de commencer. Pour viser 85% de succès, vous pourriez établir un objectif d'épargne annuelle d'environ <strong>${estimatedSavings.toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits:0})}</strong>.`); }
+                if(plan.commun.depenseVisee > 0){
+                    const estimatedSavings = plan.commun.depenseVisee * (85 / successRate - 1);
+                    if (estimatedSavings > 1) { addRec(`Comme vous n'épargnez pas actuellement, il est crucial de commencer. Pour viser 85% de succès, vous pourriez établir un objectif d'épargne annuelle d'environ <strong>${estimatedSavings.toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits:0})}</strong>.`); }
+                }
             }
         }
     }
