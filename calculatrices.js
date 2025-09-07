@@ -99,7 +99,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const formRetraite = document.getElementById('financial-plan-form');
 if (formRetraite) {
-    // ... (Le reste des déclarations initiales reste inchangé)
     const spinner = document.getElementById('spinner');
     const resultsArea = document.getElementById('results-area');
     const wizardSteps = formRetraite.querySelectorAll('.wizard-step');
@@ -114,7 +113,6 @@ if (formRetraite) {
         else if (e.target.matches('[data-prev]')) { goToStep(parseInt(e.target.dataset.prev)); }
     });
     
-    // ... (Les fonctions goToStep, handleConjointView, validateAllocation restent inchangées)
     function goToStep(step) {
         if (step > 0 && step <= wizardSteps.length) {
             wizardSteps[currentStep - 1].classList.remove('active');
@@ -154,7 +152,6 @@ if (formRetraite) {
     allocationInputs.forEach(input => input.addEventListener('input', validateAllocation));
     handleConjointView();
     
-    // === MODIFIÉ: Logique de soumission pour gérer les objectifs ===
     formRetraite.addEventListener('submit', async (e) => {
         e.preventDefault();
         if (submitButton.disabled) return;
@@ -166,30 +163,27 @@ if (formRetraite) {
             const plan = getPlanInputs();
             const objectif = document.getElementById('objectif').value;
 
-            // === MODIFIÉ: Ajout de plus de stratégies à comparer ===
             const strategies = [
                 { name: "REER/CRI d'abord", order: ['reer', 'cri', 'nonEnr', 'celi'] },
                 { name: "Non-Enregistré d'abord", order: ['nonEnr', 'reer', 'cri', 'celi'] },
                 { name: "CELI d'abord (rarement optimal)", order: ['celi', 'nonEnr', 'reer', 'cri'] }
             ];
 
-            // 1. Exécuter toutes les simulations
             const allResults = strategies.map(strategy => {
                 const result = runMonteCarlo(plan, strategy.order);
                 result.strategyName = strategy.name;
                 return result;
             });
 
-            // 2. Sélectionner la meilleure stratégie selon l'objectif
             let bestResult;
             switch (objectif) {
-                case 'duree': // Maximiser la durée (Taux de succès)
+                case 'duree':
                     bestResult = allResults.sort((a, b) => b.successRate - a.successRate)[0];
                     break;
-                case 'impot': // Minimiser l'impôt
+                case 'impot':
                     bestResult = allResults.sort((a, b) => a.medianTax - b.medianTax)[0];
                     break;
-                case 'capital': // Maximiser le capital final (par défaut)
+                case 'capital':
                 default:
                     bestResult = allResults.sort((a, b) => b.medianCapital - a.medianCapital)[0];
                     break;
@@ -207,8 +201,6 @@ if (formRetraite) {
         }
     });
 
-    // ... (Aucun changement dans les fonctions getPlanInputs, K, estimateQPP, runMonteCarlo, runSingleProjection, et les fonctions de calcul d'impôt)
-    // ... (Collez ici toutes les autres fonctions qui n'ont pas été modifiées)
     function getPlanInputs() {
         const isCouple = getVal('toggleConjoint');
         return {
@@ -470,43 +462,40 @@ if (formRetraite) {
         });
     }
     
-function generateRecommendations({successRate}, plan) {
-    const recList = document.getElementById('recommendationsList');
-    recList.innerHTML = '';
-    const addRec = (text) => recList.insertAdjacentHTML('beforeend', `<li>${text}</li>`);
-    
-    // Étape 1: Donner un diagnostic sur l'état du plan
-    if (successRate >= 85) {
-        addRec(`Félicitations! Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est très robuste.`);
-    } else if (successRate < 60) {
-        addRec(`Attention: avec <strong>${successRate.toFixed(1)}%</strong> de succès, des ajustements significatifs sont recommandés.`);
-    } else {
-        addRec(`Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est viable mais pourrait être renforcé.`);
-    }
-
-    // Étape 2: Fournir une recommandation concrète si le plan n'est pas optimal
-    if (successRate < 85) {
+    function generateRecommendations({successRate}, plan) {
+        const recList = document.getElementById('recommendationsList');
+        recList.innerHTML = '';
+        const addRec = (text) => recList.insertAdjacentHTML('beforeend', `<li>${text}</li>`);
         
-        // === CORRECTION AJOUTÉE ICI ===
-        // On intercepte le cas où le taux de succès est de 0 pour éviter le calcul NaN.
-        if (successRate === 0) {
-            addRec("Le taux de succès est de 0%. Il est primordial de revoir le plan en profondeur (établir un plan d'épargne, réduire les dépenses visées ou retarder la retraite).");
-            return; // On arrête ici pour ne pas faire le calcul qui suit.
-        }
-
-        const totalEpargne = Object.values(plan.commun.epargne).reduce((a, b) => a + b, 0);
-
-        if (totalEpargne > 0) {
-            const extraSavings = totalEpargne * (85 / successRate - 1);
-            if (extraSavings > 1) {
-                addRec(`Pour viser 85% de succès, vous pourriez augmenter votre épargne annuelle d'environ <strong>${extraSavings.toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits:0})}</strong> ou retarder la retraite.`);
-            }
+        if (successRate >= 85) {
+            addRec(`Félicitations! Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est très robuste.`);
+        } else if (successRate < 60) {
+            addRec(`Attention: avec <strong>${successRate.toFixed(1)}%</strong> de succès, des ajustements significatifs sont recommandés.`);
         } else {
-            const estimatedSavings = plan.commun.depenseVisee * (85 / successRate - 1);
-             if (estimatedSavings > 1) {
-                addRec(`Comme vous n'épargnez pas actuellement, il est crucial de commencer. Pour viser 85% de succès, vous pourriez établir un objectif d'épargne annuelle d'environ <strong>${estimatedSavings.toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits:0})}</strong>.`);
+            addRec(`Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est viable mais pourrait être renforcé.`);
+        }
+
+        if (successRate < 85) {
+            if (successRate === 0) {
+                addRec("Le taux de succès est de 0%. Il est primordial de revoir le plan en profondeur (établir un plan d'épargne, réduire les dépenses visées ou retarder la retraite).");
+                return;
+            }
+
+            const totalEpargne = Object.values(plan.commun.epargne).reduce((a, b) => a + b, 0);
+
+            if (totalEpargne > 0) {
+                const extraSavings = totalEpargne * (85 / successRate - 1);
+                if (extraSavings > 1) {
+                    addRec(`Pour viser 85% de succès, vous pourriez augmenter votre épargne annuelle d'environ <strong>${extraSavings.toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits:0})}</strong> ou retarder la retraite.`);
+                }
+            } else {
+                const estimatedSavings = plan.commun.depenseVisee * (85 / successRate - 1);
+                 if (estimatedSavings > 1) {
+                    addRec(`Comme vous n'épargnez pas actuellement, il est crucial de commencer. Pour viser 85% de succès, vous pourriez établir un objectif d'épargne annuelle d'environ <strong>${estimatedSavings.toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits:0})}</strong>.`);
+                }
             }
         }
+    }
 
     function renderChart(canvasId, config) {
         const ctx = document.getElementById(canvasId).getContext('2d');
