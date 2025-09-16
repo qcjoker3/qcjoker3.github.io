@@ -1,41 +1,62 @@
 {
   "categories": {
-    "Canadian Equity Balanced": [
+    "Banque Nationale": [
+      "Portefeuille Prudent BNI",
+      "Portefeuille Conservateur BNI",
+      "Portefeuille Pondéré BNI",
+      "Portefeuille Équilibré BNI",
+      "Portefeuille Croissance BNI",
+      "Portefeuille Actions BNI",
+      "Portefeuille durable prudent BNI",
+      "Portefeuille durable conservateur BNI",
+      "Portefeuille durable pondéré BNI",
+      "Portefeuille durable équilibré BNI",
+      "Portefeuille durable croissance BNI",
+      "Portefeuille durable actions BNI"
+    ],
+    "BMO": [
       "RBC Select C",
       "TD Canadian Equity Balanced Fund",
       "BMO Canadian Equity Balanced Fund",
       "CIBC Canadian Equity Balanced Fund",
       "Scotia Canadian Equity Balanced Fund"
     ],
-    "Canadian Neutral Balanced": [
+    "CIBC": [
       "RBC Canadian Neutral Balanced Fund",
       "TD Canadian Neutral Balanced Fund",
       "BMO Canadian Neutral Balanced Fund",
       "CIBC Canadian Neutral Balanced Fund",
       "Scotia Canadian Neutral Balanced Fund"
     ],
-    "Canadian Fixed Income Balanced": [
+    "Desjardins": [
       "RBC Canadian Fixed Income Balanced Fund",
       "TD Canadian Fixed Income Balanced Fund",
       "BMO Canadian Fixed Income Balanced Fund",
       "CIBC Canadian Fixed Income Balanced Fund",
       "Scotia Canadian Fixed Income Balanced Fund"
     ],
-    "Global Equity Balanced": [
+    "Fidelity": [
       "RBC Global Equity Balanced Fund",
       "TD Global Equity Balanced Fund",
       "BMO Global Equity Balanced Fund",
       "CIBC Global Equity Balanced Fund",
       "Scotia Global Equity Balanced Fund"
     ],
-    "Global Neutral Balanced": [
+    "RBC": [
       "RBC Select Balanced",
       "Fidelity Global Balanced",
       "BMO SelectTrust Balanced",
       "TD Managed Balanced Growth",
       "CIBC Smart Balanced Solution"
     ],
-    "Global Fixed Income Balanced": [
+    "Scotia": [
+      "RBC Global Fixed Income Balanced Fund",
+      "TD Global Fixed Income Balanced Fund",
+      "BMO Global Fixed Income Balanced Fund",
+      "CIBC Global Fixed Income Balanced Fund",
+      "Scotia Global Fixed Income Balanced Fund"
+    ],
+    "TD": [
       "RBC Global Fixed Income Balanced Fund",
       "TD Global Fixed Income Balanced Fund",
       "BMO Global Fixed Income Balanced Fund",
