@@ -8,16 +8,15 @@ function sortedMonths(rendements) {
   return Object.keys(rendements).sort();
 }
 
-function calcRendementPassif(fondsPassifs, composition, mois) {
+function calcRendementPassif(fondsPassifs, keyFond, mois) {
   let rendements = {};
+  const fonds = fondsPassifs[keyFond]; // récupère le fonds correspondant
+  if (!fonds) return rendements;
+
   mois.forEach(m => {
-    let total = 0;
-    {
-    const r = fondsPassifs?.rendements_mensuels[m] || 0;
-    total += r * 1;
-    }
-    rendements[m] = total;
+    rendements[m] = fonds.rendements_mensuels[m] || 0;
   });
+
   return rendements;
 }
 
@@ -124,7 +123,7 @@ async function main() {
     const fondsPassifs = data.fonds_passifs || {};
     const rendementsActif = fondActif.rendements_mensuels || {};
     const moisCommuns = sortedMonths(rendementsActif);
-    const rendementsPassif = calcRendementPassif(fondsPassifs, compositionPassif, moisCommuns);
+    const rendementsPassif = calcRendementPassif(fondsPassifs, selectedFondKey, moisCommuns);
 
     const rendActifAnnuel = calcRendementAnnuel(rendementsActif);
     const rendPassifAnnuel = calcRendementAnnuel(rendementsPassif);
