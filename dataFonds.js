@@ -8,10 +8,9 @@ function sortedMonths(rendements) {
   return Object.keys(rendements).sort();
 }
 
-function calcRendementPassif(fondsPassifs, keyFond, mois) {
+function calcRendementPassif(fondsPassifs, mois) {
   let rendements = {};
-  const fonds = fondsPassifs[keyFond]; // récupère le fonds correspondant
-  if (!fonds) return rendements;
+  if (!fondsPassifs) return rendements;
 
   mois.forEach(m => {
     rendements[m] = fonds.rendements_mensuels[m] || 0;
