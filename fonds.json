@@ -15,18 +15,23 @@
       "Portefeuille durable actions BNI"
     ],
     "BMO": [
-      "RBC Select C",
-      "TD Canadian Equity Balanced Fund",
-      "BMO Canadian Equity Balanced Fund",
-      "CIBC Canadian Equity Balanced Fund",
-      "Scotia Canadian Equity Balanced Fund"
+      "BMO Portefeuille de revenu géré",
+      "BMO Portefeuille conservateur géré",
+      "BMO Portefeuille équilibré géré",
+      "BMO Portefeuille croissance géré",
+      "BMO Portefeuille actions de croissance géré",
+      "BMO Portefeuille de revenu durable",
+      "BMO Portefeuille conservateur durable",
+      "BMO Portefeuille équilibré durable",
+      "BMO Portefeuille croissance durable",
+      "BMO Portefeuille actions de croissance durable"
     ],
     "CIBC": [
-      "RBC Canadian Neutral Balanced Fund",
-      "TD Canadian Neutral Balanced Fund",
-      "BMO Canadian Neutral Balanced Fund",
-      "CIBC Canadian Neutral Balanced Fund",
-      "Scotia Canadian Neutral Balanced Fund"
+      "Portefeuille revenu sous gestion CIBC",
+      "Portefeuille équilibré sous gestion CIBC",
+      "Portefeuille croissance équilibré sous gestion CIBC",
+      "Portefeuille croissance sous gestion CIBC",
+      "Portefeuille croissance plus sous gestion CIBC"
     ],
     "Desjardins": [
       "RBC Canadian Fixed Income Balanced Fund",
