@@ -13,7 +13,7 @@ function calcRendementPassif(fondsPassifs, mois) {
   if (!fondsPassifs) return rendements;
 
   mois.forEach(m => {
-    rendements[m] = fonds.rendements_mensuels[m]/ 100 || 0;
+    rendements[m] = (fonds.rendements_mensuels[m] ?? 0) / 100;
   });
 
   return rendements;
@@ -23,7 +23,7 @@ function calcRendementAnnuel(rendementsMensuels) {
   let annuels = {};
   for (let m in rendementsMensuels) {
     let year = m.split('-')[0];
-    annuels[year] = (annuels[year] || 0) + rendementsMensuels[m]/ 100;
+    annuels[year] = (annuels[year] ?? 0) + rendementsMensuels[m]/ 100;
   }
   return annuels;
 }
@@ -33,7 +33,7 @@ function calcCroissanceMensuelle(rendements, capitalInitial = 10000) {
   let capital = capitalInitial;
   const mois = Object.keys(rendements).sort();
   mois.forEach(m => {
-    capital = capital * (1 + (rendements[m] || 0)/ 100);
+    capital = capital * (1 + (rendements[m] ?? 0)/ 100);
     croissance[m] = capital;
   });
   return croissance;
