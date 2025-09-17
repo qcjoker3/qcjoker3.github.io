@@ -77,30 +77,30 @@ function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, mixLab
 
 async function main() {
   const data = await loadData();
-  const categoriesContainer = document.getElementById('categories');
+  const institutionsContainer = document.getElementById('institutions');
   const fondsContainer = document.getElementById('fondsContainer');
   let chartRendAnnuel, chartCroiss;
   let selectedFondKey = null;
 
-  const categories = Object.keys(data.categories);
+  const institutions = Object.keys(data.institutions);
 
-  // Crée les boutons de catégories
-  categories.forEach(cat => {
+  // Crée les boutons de institutions
+  institutions.forEach(inst => {
     const btn = document.createElement('button');
-    btn.textContent = cat;
-    btn.className = 'pastille categorie';
+    btn.textContent = inst;
+    btn.className = 'pastille institution';
     btn.addEventListener('click', () => {
-      updateFonds(cat);
-      document.querySelectorAll('.categorie').forEach(b => b.classList.remove('selected'));
+      updateFonds(inst);
+      document.querySelectorAll('.institution').forEach(b => b.classList.remove('selected'));
       btn.classList.add('selected');
     });
-    categoriesContainer.appendChild(btn);
+    institutionsContainer.appendChild(btn);
   });
 
-  // Met à jour les pastilles de fonds selon la catégorie
-  function updateFonds(categorie) {
+  // Met à jour les pastilles de fonds selon l'institution
+  function updateFonds(institution) {
     fondsContainer.innerHTML = '';
-    const fondsKeys = data.categories[categorie];
+    const fondsKeys = data.institutions[institution];
     fondsKeys.forEach(key => {
       const btn = document.createElement('button');
       btn.textContent = data.fonds_actifs[key]?.nom || key;
@@ -160,8 +160,8 @@ async function main() {
     );
   }
 
-  // Sélection automatique de la première catégorie
-  if (categories.length > 0) categoriesContainer.querySelector('button').click();
+  // Sélection automatique de la première instégorie
+  if (institutions.length > 0) institutionsContainer.querySelector('button').click();
 }
 
 main();
