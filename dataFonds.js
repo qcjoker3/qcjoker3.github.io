@@ -8,37 +8,42 @@ function sortedMonths(rendements) {
   return Object.keys(rendements).sort();
 }
 
-function calcRendementPassif(fondsPassifs, mois) {
+// Rendements du fonds passif sélectionné
+function calcRendementPassif(fondsPassifs, keyFond, mois) {
   let rendements = {};
-  if (!fondsPassifs) return rendements;
+  const fonds = fondsPassifs[keyFond];
+  if (!fonds) return rendements;
 
   mois.forEach(m => {
-    rendements[m] = (fonds.rendements_mensuels[m] ?? 0) / 100;
+    rendements[m] = fonds.rendements_mensuels[m] ?? 0;
   });
 
   return rendements;
 }
 
+// Rendements annuels à partir des mensuels
 function calcRendementAnnuel(rendementsMensuels) {
   let annuels = {};
   for (let m in rendementsMensuels) {
     let year = m.split('-')[0];
-    annuels[year] = (annuels[year] ?? 0) + rendementsMensuels[m]/ 100;
+    annuels[year] = (annuels[year] ?? 0) + rendementsMensuels[m];
   }
   return annuels;
 }
 
+// Croissance du capital
 function calcCroissanceMensuelle(rendements, capitalInitial = 10000) {
   let croissance = {};
   let capital = capitalInitial;
   const mois = Object.keys(rendements).sort();
   mois.forEach(m => {
-    capital = capital * (1 + (rendements[m] ?? 0)/ 100);
+    capital = capital * (1 + (rendements[m] ?? 0) / 100);
     croissance[m] = capital;
   });
   return croissance;
 }
 
+// Création graphique bar (rendement annuel)
 function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, fondsPassif) {
   return new Chart(ctx, {
     type: 'bar',
@@ -56,6 +61,7 @@ function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, f
   });
 }
 
+// Création graphique ligne (croissance)
 function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, fondsPassif) {
   return new Chart(ctx, {
     type: 'line',
@@ -73,6 +79,7 @@ function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, fondsP
   });
 }
 
+// MAIN
 async function main() {
   const data = await loadData();
   const institutionsContainer = document.getElementById('institutions');
@@ -118,11 +125,13 @@ async function main() {
   function updateGraphs() {
     if (!selectedFondKey) return;
     const fondActif = data.fonds_actifs[selectedFondKey];
-    const compositionPassif = fondActif.composition_passif || {};
     const fondsPassifs = data.fonds_passifs || {};
     const rendementsActif = fondActif.rendements_mensuels || {};
     const moisCommuns = sortedMonths(rendementsActif);
-    const rendementsPassif = calcRendementPassif(fondsPassifs, selectedFondKey, moisCommuns);
+
+    // prend le premier fonds passif
+    const keyFondPassif = fondActif.composition_passif?.[0];
+    const rendementsPassif = calcRendementPassif(fondsPassifs, keyFondPassif, moisCommuns);
 
     const rendActifAnnuel = calcRendementAnnuel(rendementsActif);
     const rendPassifAnnuel = calcRendementAnnuel(rendementsPassif);
@@ -135,14 +144,14 @@ async function main() {
     if (chartRendAnnuel) chartRendAnnuel.destroy();
     if (chartCroiss) chartCroiss.destroy();
 
-    const fondsPassif = fondsPassifs
+    const mixLabel = keyFondPassif || "Passif";
 
     chartRendAnnuel = creerGraphRendementAnnuel(
       document.getElementById('rendementAnnuelChart').getContext('2d'),
       annees,
       annees.map(y => rendActifAnnuel[y]),
       annees.map(y => rendPassifAnnuel[y]),
-      selectedFondKey,
+      fondActif.nom,
       mixLabel
     );
 
@@ -151,7 +160,7 @@ async function main() {
       moisCroissance,
       moisCroissance.map(m => croissanceActif[m]),
       moisCroissance.map(m => croissancePassif[m]),
-      selectedFondKey,
+      fondActif.nom,
       mixLabel
     );
   }
