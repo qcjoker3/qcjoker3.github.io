@@ -24,7 +24,7 @@ function calcRendementAnnuel(rendementsMensuels) {
   let annuels = {};
   for (let m in rendementsMensuels) {
     let year = m.split('-')[0];
-    annuels[year] = (annuels[year] || 0) + rendementsMensuels[m];
+    annuels[year] = (annuels[year] || 0) + rendementsMensuels[m]/ 100;
   }
   return annuels;
 }
@@ -34,7 +34,7 @@ function calcCroissanceMensuelle(rendements, capitalInitial = 10000) {
   let capital = capitalInitial;
   const mois = Object.keys(rendements).sort();
   mois.forEach(m => {
-    capital = capital * (1 + (rendements[m] || 0));
+    capital = capital * (1 + (rendements[m] || 0)/ 100);
     croissance[m] = capital;
   });
   return croissance;
