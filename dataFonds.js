@@ -12,9 +12,9 @@ function calcRendementPassif(fondsPassifs, composition, mois) {
   let rendements = {};
   mois.forEach(m => {
     let total = 0;
-    for (let key in composition) {
-      const r = fondsPassifs[key]?.rendements_mensuels[m] || 0;
-      total += r * composition[key];
+    {
+    const r = fondsPassifs?.rendements_mensuels[m] || 0;
+    total += r * 1;
     }
     rendements[m] = total;
   });
