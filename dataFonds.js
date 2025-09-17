@@ -84,7 +84,7 @@ async function main() {
 
   const institutions = Object.keys(data.institutions);
 
-  // Crée les boutons de institutions
+  // Crée les boutons des institutions
   institutions.forEach(inst => {
     const btn = document.createElement('button');
     btn.textContent = inst;
@@ -160,7 +160,7 @@ async function main() {
     );
   }
 
-  // Sélection automatique de la première instégorie
+  // Sélection automatique de la première institution
   if (institutions.length > 0) institutionsContainer.querySelector('button').click();
 }
 
