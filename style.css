@@ -278,6 +278,11 @@ footer, .site-footer {
     border-color: transparent;
     transform: translateY(-2px);
 }
+#liste-articles {
+    margin-top: 3rem; /* Vous pouvez ajuster cette valeur (ex: 4rem, 60px) */
+}
+
+.contenu-article { margin-top: 3rem; }
 .contenu-article { margin-top: 3rem; }
 .contenu-article p { margin-bottom: 1.6em; line-height: 1.7; }
 .en-tete-article { margin-bottom: 2.5rem; }
