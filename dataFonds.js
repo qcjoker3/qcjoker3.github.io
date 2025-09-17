@@ -13,7 +13,7 @@ function calcRendementPassif(fondsPassifs, mois) {
   if (!fondsPassifs) return rendements;
 
   mois.forEach(m => {
-    rendements[m] = fonds.rendements_mensuels[m] || 0;
+    rendements[m] = fonds.rendements_mensuels[m]/ 100 || 0;
   });
 
   return rendements;
