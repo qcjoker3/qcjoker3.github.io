@@ -39,14 +39,14 @@ function calcCroissanceMensuelle(rendements, capitalInitial = 10000) {
   return croissance;
 }
 
-function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, mixLabel) {
+function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, fondsPassif) {
   return new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
       datasets: [
         { label: nomFond, data: dataFond, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color') },
-        { label: `${mixLabel}`, data: dataPassif, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color') }
+        { label: fondsPassif, data: dataPassif, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color') }
       ]
     },
     options: {
@@ -56,14 +56,14 @@ function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, m
   });
 }
 
-function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, mixLabel) {
+function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, fondsPassif) {
   return new Chart(ctx, {
     type: 'line',
     data: {
       labels: labels,
       datasets: [
         { label: nomFond, data: dataFond, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'), fill: false, tension: 0.3 },
-        { label: `${mixLabel}`, data: dataPassif, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color'), fill: false, tension: 0.3 }
+        { label: fondsPassif, data: dataPassif, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color'), fill: false, tension: 0.3 }
       ]
     },
     options: {
@@ -135,9 +135,7 @@ async function main() {
     if (chartRendAnnuel) chartRendAnnuel.destroy();
     if (chartCroiss) chartCroiss.destroy();
 
-    const mixLabel = Object.entries(compositionPassif)
-      .map(([k,v]) => `${fondsPassifs[k]?.nom || k} : ${Math.round(v*100)}%`)
-      .join(" / ") || "—";
+    const fondsPassif = fondsPassifs
 
     chartRendAnnuel = creerGraphRendementAnnuel(
       document.getElementById('rendementAnnuelChart').getContext('2d'),
