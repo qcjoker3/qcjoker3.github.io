@@ -231,8 +231,7 @@ commun: {
     nonEnrCoutBase: getVal('nonEnrCoutBase'), 
     epargne: { reer1: getVal('alloc-reer1'), celi1: getVal('alloc-celi1'), reer2: isCouple ? getVal('alloc-reer2') : 0, celi2: isCouple ? getVal('alloc-celi2') : 0, nonEnr: getVal('alloc-nonEnr') } 
         }
-    };
-}        
+};       
     const K = {
         fed: { bpa: 15705, ageAmount: 8790, ageAmountThreshold: 42335, pensionAmount: 2000, brackets: [[55867, 0.15], [111733, 0.205], [173205, 0.26], [246752, 0.29], [Infinity, 0.33]] },
         qc: { bpa: 18056, ageAmount: 3464, pensionAmount: 3464, brackets: [[51780, 0.14], [103545, 0.19], [126000, 0.24], [Infinity, 0.2575]] },
@@ -475,6 +474,7 @@ commun: {
         document.getElementById('tauxSucces').textContent = `${successRate.toFixed(1)}%`;
         document.getElementById('capitalMedian').textContent = fmt(medianCapital);
         document.getElementById('strategieOptimale').textContent = strategyName;
+        document.getElementById('impotMedian').textContent = fmt(medianTax); 
         document.getElementById('tauxSucces').className = `result-value ${successRate >= 85 ? 'success' : successRate >= 60 ? 'warning' : 'danger'}`;
         
         const firstYearRetirementIncome = result.medianProjection.incomeTrajectory[0];
