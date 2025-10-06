@@ -192,6 +192,14 @@
             <form id="financial-plan-form">
                 <div id="step1" class="wizard-step active">
                     <h3>Étape 1: Profil et Objectifs</h3>
+                     <h4>Objectifs Communs</h4>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Âge de Retraite</label><input id="ageRetraite" type="number" value="65"></div>
+                        <div class="form-group"><label>Espérance de Vie</label><input id="esperanceVie" type="number" value="95"></div>
+                        <div class="form-group"><label>Dépense Annuelle Nette Voulue</label><input id="depenseVisee" type="number" value="36000"><p class="helper">En dollars d'aujourd'hui.</p></div>
+                    
+                    <div class="wizard-nav"><span></span><button type="button" class="btn-primary" data-next="2">Suivant</button></div>
+                </div>
                     <div class="form-group"><label style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="toggleConjoint" style="width:auto; height:20px;"> Planification pour un couple</label></div>
                     <div class="main-grid">
                         <div>
@@ -210,14 +218,7 @@
                         </div>
                     </div>
                     <hr style="margin: 2rem 0; border:0; border-top: 1px solid var(--border-color);">
-                    <h4>Objectifs Communs</h4>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Âge de Retraite</label><input id="ageRetraite" type="number" value="65"></div>
-                        <div class="form-group"><label>Espérance de Vie</label><input id="esperanceVie" type="number" value="95"></div>
-                        <div class="form-group"><label>Dépense Annuelle Nette Voulue</label><input id="depenseVisee" type="number" value="36000"><p class="helper">En dollars d'aujourd'hui.</p></div>
-                    
-                    <div class="wizard-nav"><span></span><button type="button" class="btn-primary" data-next="2">Suivant</button></div>
-                </div>
+
                 <div id="step2" class="wizard-step">
                     <h3>Étape 2: Bilan Financier Actuel</h3>
                     <div class="main-grid">
