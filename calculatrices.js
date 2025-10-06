@@ -256,8 +256,14 @@ if (formRetraite) {
         const successCount = finalCapitals.filter(c => c > 0).length;
         const medianCapital = ss.median(finalCapitals);
         const medianSimIndex = results.findIndex(r => r.finalCapital >= medianCapital);
-        return { successRate: (successCount / 1000) * 100, medianCapital, medianTax: ss.median(totalTaxes), projections: results.map(r => r.capitalTrajectory), medianProjection: results[medianSimIndex] };
-    }
+        return { 
+        successRate: (successCount / 1000) * 100, 
+        medianCapital, 
+        medianTax: ss.median(totalTaxes), // <--- MODIFICATION ICI
+        projections: results.map(r => r.capitalTrajectory), 
+        medianProjection: results[medianSimIndex] 
+    };
+}
 
     function runSingleProjection(plan, strategy) {
         const { p1, p2, commun, isCouple } = plan;
