@@ -188,170 +188,195 @@
         </section>
         
         <section id="calc-retraite" class="calculator-card active">
-            <h2>Calculatrice de Revenu de Retraite 360°</h2>
-            <form id="financial-plan-form">
-                <div id="step1" class="wizard-step active">
-                    <h3>Étape 1: Profil et Objectifs</h3>
-                     <h4>Objectifs Communs</h4>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Âge de Retraite</label><input id="ageRetraite" type="number" value="65"></div>
-                        <div class="form-group"><label>Espérance de Vie</label><input id="esperanceVie" type="number" value="95"></div>
-                        <div class="form-group"><label>Dépense Annuelle Nette Voulue</label><input id="depenseVisee" type="number" value="36000"><p class="helper">En dollars d'aujourd'hui.</p></div>
-                    
-                    <div class="wizard-nav"><span></span><button type="button" class="btn-primary" data-next="2">Suivant</button></div>
-                </div>
-                    <div class="form-group"><label style="display:flex; align-items:center; gap:10px;"><input type="checkbox" id="toggleConjoint" style="width:auto; height:20px;"> Planification pour un couple</label></div>
-                    <div class="main-grid">
-                        <div>
-                            <h4>Personne 1</h4>
-                            <div class="form-group"><label>Âge</label><input id="age1" type="number" value="35"></div>
-                            <div class="form-group"><label>Revenu Annuel Brut</label><input id="revenu1" type="number" value="60000"></div>
-                            <div class="form-group"><label>Croissance Annuelle du Revenu (%)<span class="tooltip">?<span class="tooltip-text">Taux annuel moyen auquel vous prévoyez que vos salaires augmenteront jusqu'à la retraite (inflation + augmentation de carrière).</span></span></label><input id="croissanceRevenu1" type="number" value="3.0" step="0.1"></div>
-                            <div class="form-group"><label>Âge début de carrière<span class="tooltip">?<span class="tooltip-text">Âge auquel vous avez commencé à cotiser au RRQ (travail à temps plein).</span></span></label><input id="ageDebutTravail1" type="number" value="22"></div>
-                        </div>
-                        <div id="conjoint-profil-group" class="hidden">
-                            <h4>Personne 2</h4>
-                            <div class="form-group"><label>Âge</label><input id="age2" type="number" value="35"></div>
-                            <div class="form-group"><label>Revenu Annuel Brut</label><input id="revenu2" type="number" value="60000"></div>
-                            <div class="form-group"><label>Croissance Annuelle du Revenu (%)<span class="tooltip">?<span class="tooltip-text">Taux annuel moyen auquel vous prévoyez que vos salaires augmenteront jusqu'à la retraite (inflation + augmentation de carrière).</span></span></label><input id="croissanceRevenu2" type="number" value="3.0" step="0.1"></div>
-                            <div class="form-group"><label>Âge début de carrière</label><input id="ageDebutTravail2" type="number" value="24"></div>
-                        </div>
-                    </div>
-                    <hr style="margin: 2rem 0; border:0; border-top: 1px solid var(--border-color);">
+    <h2>Calculatrice de Revenu de Retraite 360°</h2>
+    <form id="financial-plan-form">
 
-                <div id="step2" class="wizard-step">
-                    <h3>Étape 2: Bilan Financier Actuel</h3>
-                    <div class="main-grid">
-                        <div>
-                            <h4>Personne 1</h4>
-                            <div class="form-group"><label>REER</label><input id="reer1" type="number" value="45000"></div>
-                            <div class="form-group"><label>CRI</label><input id="cri1" type="number" value="0"></div>
-                            <div class="form-group"><label>CELI</label><input id="celi1" type="number" value="15000"></div>
-                        </div>
-                        <div id="conjoint-bilan-group" class="hidden">
-                            <h4>Personne 2</h4>
-                            <div class="form-group"><label>REER</label><input id="reer2" type="number" value="0"></div>
-                            <div class="form-group"><label>CRI</label><input id="cri2" type="number" value="0"></div>
-                            <div class="form-group"><label>CELI</label><input id="celi2" type="number" value="0"></div>
-                        </div>
-                    </div>
-                    <hr style="margin: 2rem 0; border:0; border-top: 1px solid var(--border-color);">
-                    <h4>Comptes Conjoints</h4>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Non-Enregistré (Valeur Marchande)</label><input id="nonEnr" type="number" value="15000"></div>
-                        <div class="form-group"><label>Coût de Base (PBR)<span class="tooltip">?<span class="tooltip-text">Prix de Base Rajusté: Le total de vos contributions. Crucial pour calculer l'impôt sur les gains en capital.</span></span></label><input id="nonEnrCoutBase" type="number" value="12000"></div>
-                    </div>
-                    <div class="wizard-nav"><button type="button" class="btn" data-prev="1">Précédent</button> <button type="button" class="btn-primary" data-next="3">Suivant</button></div>
-                </div>
-                <div id="step3" class="wizard-step">
-                    <h3>Étape 3: Revenus de Retraite</h3>
-                    <div class="main-grid">
-                        <div>
-                            <h4>Personne 1</h4>
-                            <div class="form-group"><label>Âge début RRQ</label><input id="ageDebutRrq1" type="number" value="65"></div>
-                            <div class="form-group"><label>Âge début PSV</label><input id="ageDebutPsv1" type="number" value="65"></div>
-                            <h5>Régime de retraite d'employeur</h5>
-                            <div class="form-grid">
-                                <div class="form-group"><label>Rente Annuelle<p class="helper">(en dollars d'aujourd'hui)</p></label><input id="pension1" type="number" value="0"></div>
-                                <div class="form-group"><label>100% Indexée?</label><input type="checkbox" id="pensionIndexee1" style="width: auto; height: 20px;"></div>
-                            </div>
-                            <h5>Revenu de travail à la retraite</h5>
-                            <div class="form-grid">
-                                <div class="form-group"><label>Montant Annuel Brut</label><input id="travail1" type="number" value="0"></div>
-                                <div class="form-group"><label>Fin à quel âge</label><input id="ageFinTravail1" type="number" value="65"></div>
-                            </div>
-                        </div>
-                        <div id="conjoint-revenus-group" class="hidden">
-                            <h4>Personne 2</h4>
-                            <div class="form-group"><label>Âge début RRQ</label><input id="ageDebutRrq2" type="number" value="65"></div>
-                            <div class="form-group"><label>Âge début PSV</label><input id="ageDebutPsv2" type="number" value="65"></div>
-                            <h5>Régime de retraite d'employeur</h5>
-                            <div class="form-grid">
-                                <div class="form-group"><label>Rente Annuelle<p class="helper">(en dollars d'aujourd'hui)</p></label><input id="pension2" type="number" value="0"></div>
-                                <div class="form-group"><label>100% Indexée?</label><input type="checkbox" id="pensionIndexee2" style="width: auto; height: 20px;"></div>
-                            </div>
-                            <h5>Revenu de travail à la retraite</h5>
-                            <div class="form-grid">
-                                <div class="form-group"><label>Montant Annuel Brut</label><input id="travail2" type="number" value="0"></div>
-                                <div class="form-group"><label>Fin à quel âge</label><input id="ageFinTravail2" type="number" value="65"></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="wizard-nav"><button type="button" class="btn" data-prev="2">Précédent</button> <button type="button" class="btn-primary" data-next="4">Suivant</button></div>
-                </div>
-                <div id="step4" class="wizard-step">
-                    <h3>Étape 4: Stratégie d'Épargne Annuelle</h3>
-                    <div class="form-group"><label>Montant Total Épargné par An</label><input id="epargneAnnuelle" type="number" value="6000"></div>
-                    <div id="allocation-section">
-                        <label>Répartition de l'épargne</label>
-                        <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
-                            <div class="form-group"><label>REER P1</label><input class="allocation" id="alloc-reer1" type="number" value="6000"></div>
-                            <div class="form-group"><label>CELI P1</label><input class="allocation" id="alloc-celi1" type="number" value="0"></div>
-                            <div class="form-group"><label>REER P2</label><input class="allocation" id="alloc-reer2" type="number" value="0"></div>
-                            <div class="form-group"><label>CELI P2</label><input class="allocation" id="alloc-celi2" type="number" value="0"></div>
-                            <div class="form-group"><label>Non-Enregistré</label><input class="allocation" id="alloc-nonEnr" type="number" value="0"></div>
-                        </div>
-                        <div id="allocation-error" class="helper" style="color:red; font-weight:bold;"></div>
-                    </div>
-                    <div class="wizard-nav"><button type="button" class="btn" data-prev="3">Précédent</button> <button type="button" class="btn-primary" data-next="5">Suivant</button></div>
-                </div>
-                <div id="step5" class="wizard-step">
-                    <h3>Étape 5: Hypothèses & Objectif</h3>
-                    <div class="form-grid">
-                        <div class="form-group"><label>Rendement Annuel Moyen <span class="tooltip">?<span class="tooltip-text">Rendement espéré avant inflation. Ex: 6.5% pour un portefeuille équilibré 60/40.</span></span></label><input id="rendementMoyen" type="number" value="6" step="0.1"></div>
-                        <div class="form-group"><label>Volatilité (Écart-Type) <span class="tooltip">?<span class="tooltip-text">Mesure du risque. Un portefeuille 60/40 a typiquement 10-12% de volatilité. Plus le chiffre est élevé, plus les rendements varient.</span></span></label><input id="volatilite" type="number" value="10.0" step="0.1"></div>
-                        <div class="form-group"><label>Taux d'Inflation Moyen</label><input id="inflation" type="number" value="2.5" step="0.1"></div>
+        <div id="step1" class="wizard-step active">
+            <h3>Étape 1: Profil et Objectifs</h3>
+            
+            <div class="form-group">
+                <label style="display:flex; align-items:center; gap:10px;">
+                    <input type="checkbox" id="toggleConjoint" style="width:auto; height:20px;"> Planification pour un couple
+                </label>
+            </div>
+            
+            <div class="main-grid">
+                <div>
+                    <h4>Personne 1</h4>
+                    <div class="form-group"><label>Âge</label><input id="age1" type="number" value="35"></div>
+                    <div class="form-group"><label>Revenu Annuel Brut</label><input id="revenu1" type="number" value="60000"></div>
+                    <div class="form-group">
+                        <label>Croissance Annuelle du Revenu (%)<span class="tooltip">?<span class="tooltip-text">Taux annuel moyen auquel vous prévoyez que vos salaires augmenteront jusqu'à la retraite (inflation + augmentation de carrière).</span></span></label>
+                        <input id="croissanceRevenu1" type="number" value="3.0" step="0.1">
                     </div>
                     <div class="form-group">
-                        <label for="objectif">
-                            🎯 Quel est votre objectif principal?
-                            <span class="tooltip">?<span class="tooltip-text">Choisissez l'objectif qui guidera la sélection de la meilleure stratégie de décaissement pour vous.</span></span>
-                        </label>
-                        <select id="objectif" name="objectif" class="form-control">
-                            <option value="capital" selected>Maximiser le capital final (Héritage)</option>
-                            <option value="duree">Maximiser la durée du patrimoine (Sécurité)</option>
-                            <option value="impot">Minimiser l'impôt total payé</option>
-                        </select>
-                    </div>
-                    <div style="text-align: center; padding-top: 2rem;"><button type="submit" id="submit-button" class="btn-primary">Lancer l'Analyse Stratégique</button></div>
-                    <div class="wizard-nav"><button type="button" class="btn" data-prev="4">Précédent</button></div>
-                </div>
-            </form>
-            <div id="spinner"></div>
-            <div id="results-area" class="results-container" style="display:none;">
-                <div class="results-dashboard">
-                    <div class="result-box"><div class="result-label">Taux de Succès</div><div class="result-value" id="tauxSucces">0%</div></div>
-                    <div class="result-box"><div class="result-label">Patrimoine Net Final Médian</div><div class="result-value" id="capitalMedian">$0</div></div>
-                    <div class="result-box"><div class="result-label">Revenu Net Annuel (1ère année)</div><div class="result-value" id="revenuNetAnnuel">$0</div></div>
-                    <div class="result-box"><div class="result-label">Stratégie Optimale</div><div class="result-value" id="strategieOptimale" style="font-size:1.1rem;font-family:var(--font-body);"></div></div>
-                    <div class="result-box"><div class="result-label">Impôt Total Médian Payé</div><div class="result-value" id="impotMedian">$0</div></div>
-                </div>
-                <div class="main-grid" style="margin-top: 2rem; align-items: start;">
-                    <div class="recommendation-box">
-                        <h3>Recommandations Stratégiques</h3>
-                        <ul id="recommendationsList" style="padding-left: 20px;"></ul>
-                    </div>
-                    <div class="result-card">
-                        <h3>Crédits & Prestations (Année 1 de retraite)</h3>
-                        <ul id="creditsList" style="padding-left: 20px; text-align: left; list-style-type: none;"></ul>
+                        <label>Âge début de carrière<span class="tooltip">?<span class="tooltip-text">Âge auquel vous avez commencé à cotiser au RRQ (travail à temps plein).</span></span></label>
+                        <input id="ageDebutTravail1" type="number" value="22">
                     </div>
                 </div>
-                <div class="main-grid" style="margin-top:2rem;">
-                    <div>
-                        <h3>Sources de Revenus (Scénario Médian)</h3>
-                        <div class="chart-container"><canvas id="chartSourcesFonds"></canvas></div>
+                <div id="conjoint-profil-group" class="hidden">
+                    <h4>Personne 2</h4>
+                    <div class="form-group"><label>Âge</label><input id="age2" type="number" value="35"></div>
+                    <div class="form-group"><label>Revenu Annuel Brut</label><input id="revenu2" type="number" value="60000"></div>
+                    <div class="form-group">
+                        <label>Croissance Annuelle du Revenu (%)<span class="tooltip">?<span class="tooltip-text">Taux annuel moyen auquel vous prévoyez que vos salaires augmenteront jusqu'à la retraite (inflation + augmentation de carrière).</span></span></label>
+                        <input id="croissanceRevenu2" type="number" value="3.0" step="0.1">
                     </div>
-                    <div>
-                        <h3>Projection du Patrimoine Net (Monte-Carlo)</h3>
-                        <div class="chart-container"><canvas id="chartMonteCarlo"></canvas></div>
-                    </div>
-                </div>
-                <div class="result-card" style="margin-top: 2rem;">
-                    <h3>📉 Évolution du Patrimoine par Type de Compte (Simulation Médiane)</h3> 
-                    <div class="chart-container"><canvas id="chartDecaissement"></canvas></div>
+                    <div class="form-group"><label>Âge début de carrière</label><input id="ageDebutTravail2" type="number" value="24"></div>
                 </div>
             </div>
-        </section>
+
+            <hr style="margin: 2rem 0; border:0; border-top: 1px solid var(--border-color);">
+
+            <h4>Objectifs Communs</h4>
+            <div class="form-grid">
+                <div class="form-group"><label>Âge de Retraite</label><input id="ageRetraite" type="number" value="65"></div>
+                <div class="form-group"><label>Espérance de Vie</label><input id="esperanceVie" type="number" value="95"></div>
+                <div class="form-group"><label>Dépense Annuelle Nette Voulue</label><input id="depenseVisee" type="number" value="36000"><p class="helper">En dollars d'aujourd'hui.</p></div>
+            </div>
+
+            <div class="wizard-nav">
+                <span></span>
+                <button type="button" class="btn-primary" data-next="2">Suivant</button>
+            </div>
+        </div>
+        <div id="step2" class="wizard-step">
+            <h3>Étape 2: Bilan Financier Actuel</h3>
+            <div class="main-grid">
+                <div>
+                    <h4>Personne 1</h4>
+                    <div class="form-group"><label>REER</label><input id="reer1" type="number" value="45000"></div>
+                    <div class="form-group"><label>CRI</label><input id="cri1" type="number" value="0"></div>
+                    <div class="form-group"><label>CELI</label><input id="celi1" type="number" value="15000"></div>
+                </div>
+                <div id="conjoint-bilan-group" class="hidden">
+                    <h4>Personne 2</h4>
+                    <div class="form-group"><label>REER</label><input id="reer2" type="number" value="0"></div>
+                    <div class="form-group"><label>CRI</label><input id="cri2" type="number" value="0"></div>
+                    <div class="form-group"><label>CELI</label><input id="celi2" type="number" value="0"></div>
+                </div>
+            </div>
+            <hr style="margin: 2rem 0; border:0; border-top: 1px solid var(--border-color);">
+            <h4>Comptes Conjoints</h4>
+            <div class="form-grid">
+                <div class="form-group"><label>Non-Enregistré (Valeur Marchande)</label><input id="nonEnr" type="number" value="15000"></div>
+                <div class="form-group"><label>Coût de Base (PBR)<span class="tooltip">?<span class="tooltip-text">Prix de Base Rajusté: Le total de vos contributions. Crucial pour calculer l'impôt sur les gains en capital.</span></span></label><input id="nonEnrCoutBase" type="number" value="12000"></div>
+            </div>
+            <div class="wizard-nav"><button type="button" class="btn" data-prev="1">Précédent</button> <button type="button" class="btn-primary" data-next="3">Suivant</button></div>
+        </div>
+
+        <div id="step3" class="wizard-step">
+            <h3>Étape 3: Revenus de Retraite</h3>
+            <div class="main-grid">
+                <div>
+                    <h4>Personne 1</h4>
+                    <div class="form-group"><label>Âge début RRQ</label><input id="ageDebutRrq1" type="number" value="65"></div>
+                    <div class="form-group"><label>Âge début PSV</label><input id="ageDebutPsv1" type="number" value="65"></div>
+                    <h5>Régime de retraite d'employeur</h5>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Rente Annuelle<p class="helper">(en dollars d'aujourd'hui)</p></label><input id="pension1" type="number" value="0"></div>
+                        <div class="form-group"><label>100% Indexée?</label><input type="checkbox" id="pensionIndexee1" style="width: auto; height: 20px;"></div>
+                    </div>
+                    <h5>Revenu de travail à la retraite</h5>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Montant Annuel Brut</label><input id="travail1" type="number" value="0"></div>
+                        <div class="form-group"><label>Fin à quel âge</label><input id="ageFinTravail1" type="number" value="65"></div>
+                    </div>
+                </div>
+                <div id="conjoint-revenus-group" class="hidden">
+                    <h4>Personne 2</h4>
+                    <div class="form-group"><label>Âge début RRQ</label><input id="ageDebutRrq2" type="number" value="65"></div>
+                    <div class="form-group"><label>Âge début PSV</label><input id="ageDebutPsv2" type="number" value="65"></div>
+                    <h5>Régime de retraite d'employeur</h5>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Rente Annuelle<p class="helper">(en dollars d'aujourd'hui)</p></label><input id="pension2" type="number" value="0"></div>
+                        <div class="form-group"><label>100% Indexée?</label><input type="checkbox" id="pensionIndexee2" style="width: auto; height: 20px;"></div>
+                    </div>
+                    <h5>Revenu de travail à la retraite</h5>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Montant Annuel Brut</label><input id="travail2" type="number" value="0"></div>
+                        <div class="form-group"><label>Fin à quel âge</label><input id="ageFinTravail2" type="number" value="65"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="wizard-nav"><button type="button" class="btn" data-prev="2">Précédent</button> <button type="button" class="btn-primary" data-next="4">Suivant</button></div>
+        </div>
+
+        <div id="step4" class="wizard-step">
+            <h3>Étape 4: Stratégie d'Épargne Annuelle</h3>
+            <div class="form-group"><label>Montant Total Épargné par An</label><input id="epargneAnnuelle" type="number" value="6000"></div>
+            <div id="allocation-section">
+                <label>Répartition de l'épargne</label>
+                <div class="form-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));">
+                    <div class="form-group"><label>REER P1</label><input class="allocation" id="alloc-reer1" type="number" value="6000"></div>
+                    <div class="form-group"><label>CELI P1</label><input class="allocation" id="alloc-celi1" type="number" value="0"></div>
+                    <div class="form-group"><label>REER P2</label><input class="allocation" id="alloc-reer2" type="number" value="0"></div>
+                    <div class="form-group"><label>CELI P2</label><input class="allocation" id="alloc-celi2" type="number" value="0"></div>
+                    <div class="form-group"><label>Non-Enregistré</label><input class="allocation" id="alloc-nonEnr" type="number" value="0"></div>
+                </div>
+                <div id="allocation-error" class="helper" style="color:red; font-weight:bold;"></div>
+            </div>
+            <div class="wizard-nav"><button type="button" class="btn" data-prev="3">Précédent</button> <button type="button" class="btn-primary" data-next="5">Suivant</button></div>
+        </div>
+
+        <div id="step5" class="wizard-step">
+            <h3>Étape 5: Hypothèses & Objectif</h3>
+            <div class="form-grid">
+                <div class="form-group"><label>Rendement Annuel Moyen <span class="tooltip">?<span class="tooltip-text">Rendement espéré avant inflation. Ex: 6.5% pour un portefeuille équilibré 60/40.</span></span></label><input id="rendementMoyen" type="number" value="6" step="0.1"></div>
+                <div class="form-group"><label>Volatilité (Écart-Type) <span class="tooltip">?<span class="tooltip-text">Mesure du risque. Un portefeuille 60/40 a typiquement 10-12% de volatilité. Plus le chiffre est élevé, plus les rendements varient.</span></span></label><input id="volatilite" type="number" value="10.0" step="0.1"></div>
+                <div class="form-group"><label>Taux d'Inflation Moyen</label><input id="inflation" type="number" value="2.5" step="0.1"></div>
+            </div>
+            <div class="form-group">
+                <label for="objectif">
+                    🎯 Quel est votre objectif principal?
+                    <span class="tooltip">?<span class="tooltip-text">Choisissez l'objectif qui guidera la sélection de la meilleure stratégie de décaissement pour vous.</span></span>
+                </label>
+                <select id="objectif" name="objectif" class="form-control">
+                    <option value="capital" selected>Maximiser le capital final (Héritage)</option>
+                    <option value="duree">Maximiser la durée du patrimoine (Sécurité)</option>
+                    <option value="impot">Minimiser l'impôt total payé</option>
+                </select>
+            </div>
+            <div style="text-align: center; padding-top: 2rem;"><button type="submit" id="submit-button" class="btn-primary">Lancer l'Analyse Stratégique</button></div>
+            <div class="wizard-nav"><button type="button" class="btn" data-prev="4">Précédent</button></div>
+        </div>
+    </form>
+    
+    <div id="spinner"></div>
+    <div id="results-area" class="results-container" style="display:none;">
+        <div class="results-dashboard">
+            <div class="result-box"><div class="result-label">Taux de Succès</div><div class="result-value" id="tauxSucces">0%</div></div>
+            <div class="result-box"><div class="result-label">Patrimoine Net Final Médian</div><div class="result-value" id="capitalMedian">$0</div></div>
+            <div class="result-box"><div class="result-label">Revenu Net Annuel (1ère année)</div><div class="result-value" id="revenuNetAnnuel">$0</div></div>
+            <div class="result-box"><div class="result-label">Stratégie Optimale</div><div class="result-value" id="strategieOptimale" style="font-size:1.1rem;font-family:var(--font-body);"></div></div>
+            <div class="result-box"><div class="result-label">Impôt Total Médian Payé</div><div class="result-value" id="impotMedian">$0</div></div>
+        </div>
+        <div class="main-grid" style="margin-top: 2rem; align-items: start;">
+            <div class="recommendation-box">
+                <h3>Recommandations Stratégiques</h3>
+                <ul id="recommendationsList" style="padding-left: 20px;"></ul>
+            </div>
+            <div class="result-card">
+                <h3>Crédits & Prestations (Année 1 de retraite)</h3>
+                <ul id="creditsList" style="padding-left: 20px; text-align: left; list-style-type: none;"></ul>
+            </div>
+        </div>
+        <div class="main-grid" style="margin-top:2rem;">
+            <div>
+                <h3>Sources de Revenus (Scénario Médian)</h3>
+                <div class="chart-container"><canvas id="chartSourcesFonds"></canvas></div>
+            </div>
+            <div>
+                <h3>Projection du Patrimoine Net (Monte-Carlo)</h3>
+                <div class="chart-container"><canvas id="chartMonteCarlo"></canvas></div>
+            </div>
+        </div>
+        <div class="result-card" style="margin-top: 2rem;">
+            <h3>📉 Évolution du Patrimoine par Type de Compte (Simulation Médiane)</h3> 
+            <div class="chart-container"><canvas id="chartDecaissement"></canvas></div>
+        </div>
+    </div>
+</section>
         
         <section id="calc-vf" class="calculator-card">
             <h2>Calculatrice de valeur future</h2>
