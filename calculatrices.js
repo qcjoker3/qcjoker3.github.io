@@ -160,6 +160,7 @@ if (formRetraite) {
     // --- SOUMISSION ET ORCHESTRATION DE LA SIMULATION ---
     formRetraite.addEventListener('submit', async (e) => {
         e.preventDefault();
+        console.log("ÉTAPE 1 : Clic sur le bouton 'Lancer l'Analyse' détecté."); // <-- AJOUTEZ CECI
         if (submitButton.disabled) return;
         spinner.style.display = 'block';
         resultsArea.style.display = 'none';
@@ -167,6 +168,7 @@ if (formRetraite) {
 
         try {
             const plan = getPlanInputs();
+            console.log("ÉTAPE 2 : Données du formulaire lues :", plan); // <-- AJOUTEZ CECI
             const objectif = document.getElementById('objectif').value;
 
             const strategies = [
@@ -466,6 +468,7 @@ commun: {
     
     // --- AFFICHAGE DES RÉSULTATS ---
     function displayResults(result, plan) {
+        console.log("ÉTAPE 3 : Affichage des résultats demandé.", result); // <-- AJOUTEZ CECI
         const { successRate, medianCapital, medianTax, projections, medianProjection, strategyName } = result;
         const fmt = (val) => (val || 0).toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
         
