@@ -217,7 +217,7 @@ if (formRetraite) {
             isCouple,
             p1: { id: 'p1', age: getVal('age1'), revenu: getVal('revenu1'), ageDebutTravail: getVal('ageDebutTravail1'), reer: getVal('reer1'), cri: getVal('cri1'), celi: getVal('celi1'), ageDebutRrq: getVal('ageDebutRrq1'), ageDebutPsv: getVal('ageDebutPsv1'), pension: { amount: getVal('pension1'), isIndexed: document.getElementById('pensionIndexee1').checked }, travail: { amount: getVal('travail1'), ageFin: getVal('ageFinTravail1') } },
             p2: isCouple ? { id: 'p2', age: getVal('age2'), revenu: getVal('revenu2'), ageDebutTravail: getVal('ageDebutTravail2'), reer: getVal('reer2'), cri: getVal('cri2'), celi: getVal('celi2'), ageDebutRrq: getVal('ageDebutRrq2'), ageDebutPsv: getVal('ageDebutPsv2'), pension: { amount: getVal('pension2'), isIndexed: document.getElementById('pensionIndexee2').checked }, travail: { amount: getVal('travail2'), ageFin: getVal('ageFinTravail2') } } : null,
-            commun: { ageRetraite: getVal('ageRetraite'), esperanceVie: getVal('esperanceVie'), depenseVisee: getVal('depenseVisee'), inflation: getVal('inflation') / 100, rendementMoyen: getVal('rendementMoyen') / 100, volatilite: getVal('volatilite') / 100, nonEnr: getVal('nonEnr'), nonEnrCoutBase: getVal('nonEnrCoutBase'), epargne: { reer1: getVal('alloc-reer1'), celi1: getVal('alloc-celi1'), reer2: isCouple ? getVal('alloc-reer2') : 0, celi2: isCouple ? getVal('alloc-celi2') : 0, nonEnr: getVal('alloc-nonEnr') } },
+            commun: { ageRetraite: getVal('ageRetraite'), esperanceVie: getVal('esperanceVie'), depenseVisee: getVal('depenseVisee'), inflation: getVal('inflation') / 100, croissanceRevenu: getVal('croissanceRevenu') / 100, rendementMoyen: getVal('rendementMoyen') / 100, volatilite: getVal('volatilite') / 100, nonEnr: getVal('nonEnr'), nonEnrCoutBase: getVal('nonEnrCoutBase'), epargne: { reer1: getVal('alloc-reer1'), celi1: getVal('alloc-celi1'), reer2: isCouple ? getVal('alloc-reer2') : 0, celi2: isCouple ? getVal('alloc-celi2') : 0, nonEnr: getVal('alloc-nonEnr') } },
         };
     }
 
@@ -232,7 +232,7 @@ if (formRetraite) {
     };
 
     // --- MOTEUR DE SIMULATION ---
-    function estimateQPP(person, inflation) {
+    function estimateQPP(person, croissanceRevenu) {
         const contributingYears = 65 - person.ageDebutTravail;
         if (contributingYears <= 0) return 0;
         let totalNormalizedEarnings = 0;
@@ -240,7 +240,8 @@ if (formRetraite) {
         for (let i = 0; i < contributingYears; i++) {
             const year = currentYear - (person.age - person.ageDebutTravail) + i;
             const ympeYear = Object.keys(K.ympe).reduce((prev, curr) => Math.abs(curr - year) < Math.abs(prev - year) ? curr : prev);
-            const salary = person.revenu * Math.pow(1 + inflation, i - (person.age - person.ageDebutTravail));
+            
+            const salary = person.revenu * Math.pow(1 + croissanceRevenu, i);
             totalNormalizedEarnings += Math.min(salary, K.ympe[ympeYear]) / K.ympe[ympeYear];
         }
         const avgNormalizedEarnings = totalNormalizedEarnings / contributingYears;
@@ -248,8 +249,8 @@ if (formRetraite) {
     }
 
     function runMonteCarlo(plan, strategy) {
-        plan.p1.rrqEst = estimateQPP(plan.p1, plan.commun.inflation);
-        if (plan.isCouple) { plan.p2.rrqEst = estimateQPP(plan.p2, plan.commun.inflation); }
+        plan.p1.rrqEst = estimateQPP(plan.p1, plan.commun.croissanceRevenu);
+        if (plan.isCouple) { plan.p2.rrqEst = estimateQPP(plan.p2, plan.commun.croissanceRevenu); }
         const results = Array.from({ length: 1000 }, () => runSingleProjection(plan, strategy));
         const finalCapitals = results.map(r => r.finalCapital).sort((a, b) => a - b);
         const totalTaxes = results.map(r => r.totalTax).sort((a, b) => a - b);
