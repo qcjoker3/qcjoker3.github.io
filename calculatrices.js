@@ -215,10 +215,20 @@ if (formRetraite) {
     
         return {
             isCouple,
-            p1: { id: 'p1', age: getVal('age1'), revenu: getVal('revenu1'), ageDebutTravail: getVal('ageDebutTravail1'), reer: getVal('reer1'), cri: getVal('cri1'), celi: getVal('celi1'), ageDebutRrq: getVal('ageDebutRrq1'), ageDebutPsv: getVal('ageDebutPsv1'), pension: { amount: getVal('pension1'), isIndexed: document.getElementById('pensionIndexee1').checked }, travail: { amount: getVal('travail1'), ageFin: getVal('ageFinTravail1') } },
-            p2: isCouple ? { id: 'p2', age: getVal('age2'), revenu: getVal('revenu2'), ageDebutTravail: getVal('ageDebutTravail2'), reer: getVal('reer2'), cri: getVal('cri2'), celi: getVal('celi2'), ageDebutRrq: getVal('ageDebutRrq2'), ageDebutPsv: getVal('ageDebutPsv2'), pension: { amount: getVal('pension2'), isIndexed: document.getElementById('pensionIndexee2').checked }, travail: { amount: getVal('travail2'), ageFin: getVal('ageFinTravail2') } } : null,
-            commun: { ageRetraite: getVal('ageRetraite'), esperanceVie: getVal('esperanceVie'), depenseVisee: getVal('depenseVisee'), inflation: getVal('inflation') / 100, croissanceRevenu: getVal('croissanceRevenu') / 100, rendementMoyen: getVal('rendementMoyen') / 100, volatilite: getVal('volatilite') / 100, nonEnr: getVal('nonEnr'), nonEnrCoutBase: getVal('nonEnrCoutBase'), epargne: { reer1: getVal('alloc-reer1'), celi1: getVal('alloc-celi1'), reer2: isCouple ? getVal('alloc-reer2') : 0, celi2: isCouple ? getVal('alloc-celi2') : 0, nonEnr: getVal('alloc-nonEnr') } },
-        };
+            p1: { id: 'p1', age: getVal('age1'), revenu: getVal('revenu1'), croissanceRevenu: getVal('croissanceRevenu1') / 100, ageDebutTravail: getVal('ageDebutTravail1'), reer: getVal('reer1'), cri: getVal('cri1'), celi: getVal('celi1'), ageDebutRrq: getVal('ageDebutRrq1'), ageDebutPsv: getVal('ageDebutPsv1'), pension: { amount: getVal('pension1'), isIndexed: document.getElementById('pensionIndexee1').checked }, travail: { amount: getVal('travail1'), ageFin: getVal('ageFinTravail1') } },
+            p2: isCouple ? { id: 'p2', age: getVal('age2'), revenu: getVal('revenu2'), croissanceRevenu: getVal('croissanceRevenu2') / 100, ageDebutTravail: getVal('ageDebutTravail2'), reer: getVal('reer2'), cri: getVal('cri2'), celi: getVal('celi2'), ageDebutRrq: getVal('ageDebutRrq2'), ageDebutPsv: getVal('ageDebutPsv2'), pension: { amount: getVal('pension2'), isIndexed: document.getElementById('pensionIndexee2').checked }, travail: { amount: getVal('travail2'), ageFin: getVal('ageFinTravail2') } } : null,
+commun: { 
+    ageRetraite: getVal('ageRetraite'), 
+    esperanceVie: getVal('esperanceVie'), 
+    depenseVisee: getVal('depenseVisee'), 
+    inflation: getVal('inflation') / 100, 
+    // La ligne 'croissanceRevenu' a été enlevée d'ici
+    rendementMoyen: getVal('rendementMoyen') / 100, 
+    volatilite: getVal('volatilite') / 100, 
+    nonEnr: getVal('nonEnr'), 
+    nonEnrCoutBase: getVal('nonEnrCoutBase'), 
+    epargne: { reer1: getVal('alloc-reer1'), celi1: getVal('alloc-celi1'), reer2: isCouple ? getVal('alloc-reer2') : 0, celi2: isCouple ? getVal('alloc-celi2') : 0, nonEnr: getVal('alloc-nonEnr') } 
+},
     }
 
     const K = {
