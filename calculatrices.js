@@ -259,8 +259,8 @@ commun: {
     }
 
     function runMonteCarlo(plan, strategy) {
-        plan.p1.rrqEst = estimateQPP(plan.p1, plan.commun.croissanceRevenu);
-        if (plan.isCouple) { plan.p2.rrqEst = estimateQPP(plan.p2, plan.commun.croissanceRevenu); }
+        plan.p1.rrqEst = estimateQPP(plan.p1, plan.p1.croissanceRevenu);
+        if (plan.isCouple) { plan.p2.rrqEst = estimateQPP(plan.p2, plan.p2.croissanceRevenu); }
         const results = Array.from({ length: 1000 }, () => runSingleProjection(plan, strategy));
         const finalCapitals = results.map(r => r.finalCapital).sort((a, b) => a - b);
         const totalTaxes = results.map(r => r.totalTax).sort((a, b) => a - b);
