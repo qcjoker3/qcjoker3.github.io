@@ -495,3 +495,21 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
         height: 500px;
     }
 }
+
+.encadre-explicatif {
+    background-color: #f7f9fa; /* Couleur de fond légèrement grise */
+    border-left: 4px solid #0D9488; /* Bordure de couleur d'accentuation */
+    padding: 20px;
+    margin: 30px 0; /* Marge en haut et en bas pour l'espacement */
+    border-radius: 8px;
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+/* Pour le mode sombre (si vous en avez un) */
+@media (prefers-color-scheme: dark) {
+    .encadre-explicatif {
+        background-color: #1F2937;
+        border-left-color: #0D9488;
+    }
+}
