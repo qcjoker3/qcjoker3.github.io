@@ -213,21 +213,21 @@
     }
 
     table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.9em;
-      margin-top: 1.5rem;
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.9em;
+        margin-top: 1.5rem;
     }
     th, td {
-      padding: 12px 15px;
-      text-align: right;
-      border-bottom: 1px solid var(--border-color);
+        padding: 12px 15px;
+        text-align: right;
+        border-bottom: 1px solid var(--border-color);
     }
     th {
-      background-color: var(--section-bg-color);
-      font-weight: 600;
-      font-family: var(--font-heading);
-      color: var(--heading-color);
+        background-color: var(--section-bg-color);
+        font-weight: 600;
+        font-family: var(--font-heading);
+        color: var(--heading-color);
     }
     tbody tr:nth-of-type(even) {
         background-color: var(--section-bg-color);
@@ -556,27 +556,46 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     annee.psv = inputs.psv.ageDebut <= age ? (inputs.psv.montant65 * 12 * ((1 + inputs.inflation) ** (age - Math.max(inputs.ageActuel, inputs.ageRetraite)))) : 0;
                     
-                    // ▼▼▼ MODIFICATION INTÉGRÉE ICI ▼▼▼
                     if (inputs.pension.active && age >= inputs.pension.ageDebut) {
-                        // 1. Ajuster la rente de base à l'inflation jusqu'au début de la pension
                         const renteDeBaseFuture = inputs.pension.rente * ((1 + inputs.inflation) ** (inputs.pension.ageDebut - inputs.ageActuel));
-                        // 2. Appliquer l'indexation propre à la pension pour les années suivantes
                         annee.pension = renteDeBaseFuture * ((1 + inputs.pension.index) ** (age - inputs.pension.ageDebut));
                     } else {
                         annee.pension = 0;
                     }
-                    // ▲▲▲ FIN DE LA MODIFICATION ▲▲▲
 
                     revenuFixe = annee.rrq + annee.psv + annee.pension;
                     revenuImposable += annee.rrq + annee.pension; // PSV est ajouté plus tard pour la récupération
 
                     // C2. Calcul du besoin de retrait du portefeuille
+                    // ▼▼▼ DÉBUT DE LA CORRECTION POUR LES ÉVÉNEMENTS FINANCIERS ▼▼▼
                     const depenseDesiree = inputs.revenuDesire * multiplicateurInflation;
-                    annee.depenseNette = depenseDesiree;
                     const evenementAnnee = evenements.find(e => e.age === age)?.montant || 0;
 
-                    let besoinRetrait = Math.max(0, depenseDesiree - revenuFixe) - evenementAnnee;
+                    // On commence avec le besoin de base pour les dépenses courantes
+                    let besoinRetrait = Math.max(0, depenseDesiree - revenuFixe);
                     
+                    // On ajuste la dépense totale de l'année pour l'affichage dans le tableau
+                    annee.depenseNette = depenseDesiree;
+                    if (evenementAnnee < 0) {
+                        annee.depenseNette -= evenementAnnee; // On ajoute la dépense ponctuelle
+                    }
+
+                    // On calcule le flux net vers/depuis le portefeuille
+                    if (evenementAnnee > 0) { // C'est un revenu (ex: héritage)
+                        if (evenementAnnee >= besoinRetrait) {
+                            // Le revenu couvre tous les besoins, il y a un surplus
+                            const surplus = evenementAnnee - besoinRetrait;
+                            comptes.nonEnr += surplus; // On ajoute le surplus au compte non-enregistré
+                            besoinRetrait = 0; // Aucun retrait nécessaire
+                        } else {
+                            // Le revenu couvre une partie des besoins
+                            besoinRetrait -= evenementAnnee;
+                        }
+                    } else { // C'est une dépense (ou zéro)
+                        besoinRetrait -= evenementAnnee; // Soustraire un négatif = augmenter le besoin de retrait
+                    }
+                    // ▲▲▲ FIN DE LA CORRECTION ▲▲▲
+
                     // C3. Retraits minimums FERR/FRV
                     let retraitMinReer = age >= 71 ? soldesDebutAnnee.reer * (facteursFERR[Math.min(age, 95)] || 0.20) : 0;
                     let retraitMinCri = age >= 71 ? soldesDebutAnnee.cri * (facteursFERR[Math.min(age, 95)] || 0.20) : 0;
@@ -593,8 +612,8 @@ document.addEventListener("DOMContentLoaded", () => {
                              retraitEffectif = Math.min(soldesDebutAnnee.reer - retraitReer, besoinNonComble);
                              retraitReer += retraitEffectif;
                         } else if (typeCompte === 'cri') {
-                            retraitEffectif = Math.min(soldesDebutAnnee.cri - retraitCri, besoinNonComble);
-                            retraitCri += retraitEffectif;
+                           retraitEffectif = Math.min(soldesDebutAnnee.cri - retraitCri, besoinNonComble);
+                           retraitCri += retraitEffectif;
                         } else {
                             retraitEffectif = Math.min(soldesDebutAnnee[typeCompte], besoinNonComble);
                             comptes[typeCompte] -= retraitEffectif;
