@@ -6,6 +6,14 @@
   <title>Gestion Active vs. Passive - Finoza</title>
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* Style additionnel pour contraindre la hauteur des graphiques */
+    .chart-container {
+      position: relative;
+      height: 450px;
+      width: 100%;
+    }
+  </style>
 </head>
 <body>
 <header class="container">
@@ -51,7 +59,7 @@
     <section class="card" style="text-align: center;">
       <h3>Le Vrai Coût des Frais de Gestion</h3>
       <p style="margin-bottom: 1.5rem;">Sur le long terme, une différence de 2% en frais peut réduire votre capital final de près de 50%. Visualisez l'impact concret sur votre propre portefeuille avec notre outil.</p>
-      <a href="https://www.finoza.ca/calculatrices.html" class="btn-primary" target="_blank">Calculer l'Impact des Frais</a>
+      <a href="URL_VERS_VOTRE_CALCULATRICE" class="btn-primary" target="_blank">Calculer l'Impact des Frais</a>
     </section>
     
     <section class="card">
@@ -99,11 +107,15 @@
     <div id="charts-container" style="display: none;">
       <section class="card">
         <h3 id="croissanceChartTitle">Croissance de 10 000 $</h3>
-        <canvas id="croissanceChart"></canvas>
+        <div class="chart-container">
+            <canvas id="croissanceChart"></canvas>
+        </div>
       </section>
       <section class="card">
         <h3>Rendements annuels comparés</h3>
-        <canvas id="rendementAnnuelChart"></canvas>
+        <div class="chart-container">
+            <canvas id="rendementAnnuelChart"></canvas>
+        </div>
       </section>
     </div>
 
