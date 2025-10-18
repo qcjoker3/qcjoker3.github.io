@@ -93,6 +93,39 @@ document.addEventListener('DOMContentLoaded', () => {
     if (typeCompteSelect) typeCompteSelect.addEventListener('change', toggleReinvestOption);
     toggleReinvestOption();
 
+// ---- DÉBUT DE L'AJOUT ----
+    // Fonction pour lire l'URL au chargement et afficher la bonne calculatrice
+    function showCalculatorFromURL() {
+        // 1. Récupère la partie de l'URL après le # (ex: #fire)
+        const hash = window.location.hash; 
+
+        if (hash) {
+            // 2. Enlève le '#' pour obtenir l'identifiant propre (ex: 'fire')
+            const calculatorId = hash.substring(1); 
+            
+            // 3. Trouve la carte de sélection qui a le bon data-calc
+            const cardToSelect = document.querySelector(`.card[data-calc='${calculatorId}']`);
+
+            if (cardToSelect) {
+                // 4. Simule un clic sur cette carte pour déclencher votre logique existante
+                cardToSelect.click(); 
+                
+                // 5. (Optionnel) Fait défiler la page jusqu'à la calculatrice pour une meilleure expérience
+                const calculatorElement = document.getElementById(`calc-${calculatorId}`);
+                if (calculatorElement) {
+                    setTimeout(() => { // Un petit délai pour s'assurer que l'élément est visible
+                        calculatorElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+        }
+    }
+
+    // Exécute la fonction une fois que la page est chargée
+    showCalculatorFromURL();
+    // ---- FIN DE L'AJOUT ----
+
+    
 // =========================================================================
 // === NOUVELLE CALCULATRICE DE RETRAITE 360° ===
 // =========================================================================
