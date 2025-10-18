@@ -204,8 +204,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // --- DOM & CHARTING ---
-    let croissanceChartInstance, rendementAnnuelChartInstance;
-
     function displayComparison(data, fondKey) {
         const fondActif = data.fonds_actifs[fondKey];
         if (!fondActif) { console.error(`Fonds actif non trouvé: ${fondKey}`); return; }
@@ -255,14 +253,21 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function updateCroissanceChart(activeData, passiveData, activeName, passiveName) {
-        const ctx = document.getElementById('croissanceChart').getContext('2d');
-        if (croissanceChartInstance) croissanceChartInstance.destroy();
-        croissanceChartInstance = new Chart(ctx, {
+        const canvas = document.getElementById('croissanceChart');
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+        const passiveColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+        
+        new Chart(canvas, {
             type: 'line',
             data: {
                 datasets: [
-                    { label: activeName, data: activeData, borderColor: 'rgba(79, 70, 229, 1)', backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: 'origin', tension: 0.2, pointRadius: 0 },
-                    { label: passiveName, data: passiveData, borderColor: 'rgba(13, 148, 136, 1)', backgroundColor: 'rgba(13, 148, 136, 0.1)', fill: 'origin', tension: 0.2, pointRadius: 0 }
+                    { label: activeName, data: activeData, borderColor: activeColor, backgroundColor: activeColor + '33', fill: 'origin', tension: 0.2, pointRadius: 0 },
+                    { label: passiveName, data: passiveData, borderColor: passiveColor, backgroundColor: passiveColor + '33', fill: 'origin', tension: 0.2, pointRadius: 0 }
                 ]
             },
             options: chartOptions('Valeur du portefeuille')
@@ -270,15 +275,22 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function updateRendementAnnuelChart(activeReturns, passiveReturns, labels, activeName, passiveName) {
-        const ctx = document.getElementById('rendementAnnuelChart').getContext('2d');
-        if (rendementAnnuelChartInstance) rendementAnnuelChartInstance.destroy();
-        rendementAnnuelChartInstance = new Chart(ctx, {
+        const canvas = document.getElementById('rendementAnnuelChart');
+        const existingChart = Chart.getChart(canvas);
+        if (existingChart) {
+            existingChart.destroy();
+        }
+
+        const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
+        const passiveColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+
+        new Chart(canvas, {
             type: 'bar',
             data: {
                 labels,
                 datasets: [
-                    { label: activeName, data: activeReturns, backgroundColor: 'rgba(79, 70, 229, 0.8)' },
-                    { label: passiveName, data: passiveReturns, backgroundColor: 'rgba(13, 148, 136, 0.8)' }
+                    { label: activeName, data: activeReturns, backgroundColor: activeColor },
+                    { label: passiveName, data: passiveReturns, backgroundColor: passiveColor }
                 ]
             },
             options: chartOptions('Rendement (%)')
