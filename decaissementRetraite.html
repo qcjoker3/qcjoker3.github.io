@@ -199,7 +199,12 @@
     .results-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; text-align: center; }
     .result-box { padding: 1.5rem; background-color: var(--section-bg-color); border-radius: var(--border-radius); box-shadow: var(--shadow-md); border: 1px solid var(--border-color); }
     .result-label { display: block; font-size: 1rem; color: var(--text-color); margin-bottom: 0.5rem; }
-    .result-value { display: block; font-size: clamp(1.3rem, 4vw, 2rem); font-weight: 700; color: var(--heading-color); font-family: var(--font-heading);
+    .result-value { display: block; font-size: clamp(0.9rem, 4vw, 2rem); font-weight: 700; color: var(--heading-color); font-family: var(--font-heading); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    #meilleurOrdre {
+        /* Police encore plus petite pour le texte de l'ordre de retrait */
+        font-size: clamp(0.8rem, 2.5vw, 1.4rem);
+    }
       /* Permet au texte de couper pour éviter de déborder de la boîte */
       overflow-wrap: break-word;
       hyphens: auto;
