@@ -201,19 +201,12 @@
     .result-label { display: block; font-size: 1rem; color: var(--text-color); margin-bottom: 0.5rem; }
     .result-value { 
       display: block;
-      /* La taille de police est maintenant liée à la largeur de la boîte (5vw) */
-      /* `clamp` assure qu'elle ne sera ni trop grande, ni trop petite. */
-      font-size: clamp(0.7rem, 5vw, 2rem);
+      font-size: 2rem; /* Taille de départ maximale */
       font-weight: 700;
       color: var(--heading-color);
       font-family: var(--font-heading);
-      /* Force le texte à rester sur une seule ligne */
-      white-space: nowrap;
-      /* On retire les propriétés qui causaient les "..." */
-    }
-    #meilleurOrdre {
-        /* On utilise une unité de mesure plus petite pour le texte de l'ordre, car il est plus long */
-        font-size: clamp(0.7rem, 3vw, 1.4rem);
+      white-space: nowrap; /* On garde le texte sur une seule ligne */
+      line-height: 1.1; /* Améliore l'alignement vertical */
     }
     
     .chart-container {
