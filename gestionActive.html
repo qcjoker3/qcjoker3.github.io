@@ -45,6 +45,44 @@
             grid-template-columns: 1fr 1fr; /* Deux colonnes sur écrans plus larges */
         }
     }
+    /* --- Nouveaux styles pour les sous-encadrés de statistiques --- */
+    .metric-box {
+        display: flex;
+        flex-direction: column;
+        background-color: var(--section-bg-color); /* Fond de la boîte principale */
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+    }
+    .metric-box .label {
+        margin-bottom: auto; /* Pousse le label en haut */
+        font-weight: 500;
+        color: var(--heading-color);
+    }
+    .value-container {
+        display: flex;
+        gap: 0.75rem;
+        margin-top: 1rem;
+    }
+    .value-pair {
+        flex: 1;
+        background: var(--card-bg-color);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 0.75rem;
+        text-align: center;
+    }
+    .value-pair .value-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        color: var(--subtle-text-color);
+        text-transform: uppercase;
+    }
+    .metric-box .value {
+        font-size: 1.5rem; /* Réduit pour mieux s'adapter */
+        line-height: 1.2;
+        margin-top: 0.25rem;
+        font-weight: 700;
+    }
   </style>
 </head>
 <body>
@@ -106,23 +144,55 @@
         <div class="dashboard-grid">
           <div class="metric-box">
             <div class="label">Frais de Gestion (RFG)</div>
-            <div class="value active" id="active-fees">--</div>
-            <div class="value passive" id="passive-fees">--</div>
+            <div class="value-container">
+              <div class="value-pair">
+                <span class="value-label">Actif</span>
+                <div class="value active" id="active-fees">--</div>
+              </div>
+              <div class="value-pair">
+                <span class="value-label">Passif</span>
+                <div class="value passive" id="passive-fees">--</div>
+              </div>
+            </div>
           </div>
           <div class="metric-box">
             <div class="label">Rendt. Annuel</div>
-            <div class="value active" id="active-return">--</div>
-            <div class="value passive" id="passive-return">--</div>
+             <div class="value-container">
+              <div class="value-pair">
+                <span class="value-label">Actif</span>
+                <div class="value active" id="active-return">--</div>
+              </div>
+              <div class="value-pair">
+                <span class="value-label">Passif</span>
+                <div class="value passive" id="passive-return">--</div>
+              </div>
+            </div>
           </div>
           <div class="metric-box">
             <div class="label">Capital Final (10k$)</div>
-            <div class="value active" id="active-capital">--</div>
-            <div class="value passive" id="passive-capital">--</div>
+             <div class="value-container">
+              <div class="value-pair">
+                <span class="value-label">Actif</span>
+                <div class="value active" id="active-capital">--</div>
+              </div>
+              <div class="value-pair">
+                <span class="value-label">Passif</span>
+                <div class="value passive" id="passive-capital">--</div>
+              </div>
+            </div>
           </div>
           <div class="metric-box">
             <div class="label">Total Frais Payés (10k$)</div>
-            <div class="value active" id="active-fees-paid">--</div>
-            <div class="value passive" id="passive-fees-paid">--</div>
+             <div class="value-container">
+              <div class="value-pair">
+                <span class="value-label">Actif</span>
+                <div class="value active" id="active-fees-paid">--</div>
+              </div>
+              <div class="value-pair">
+                <span class="value-label">Passif</span>
+                <div class="value passive" id="passive-fees-paid">--</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -286,8 +356,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             existingChart.destroy();
         }
 
-        const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
-        const passiveColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+        const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+        const passiveColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
         
         new Chart(canvas, {
             type: 'line',
@@ -308,8 +378,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             existingChart.destroy();
         }
 
-        const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
-        const passiveColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+        const activeColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color').trim();
+        const passiveColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-color').trim();
 
         new Chart(canvas, {
             type: 'bar',
