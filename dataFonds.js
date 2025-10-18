@@ -1,172 +1,207 @@
-async function loadData() {
-  const resp = await fetch('fonds.json');
-  if (!resp.ok) throw new Error("Erreur chargement fonds.json");
-  return await resp.json();
-}
+document.addEventListener("DOMContentLoaded", async () => {
 
-function sortedMonths(rendements) {
-  return Object.keys(rendements).sort();
-}
-
-// Rendements du fonds passif sélectionné
-function calcRendementPassif(fondsPassifs, keyFond, mois) {
-  let rendements = {};
-  const fonds = fondsPassifs[keyFond];
-  if (!fonds) return rendements;
-
-  mois.forEach(m => {
-    rendements[m] = fonds.rendements_mensuels[m] ?? 0;
-  });
-
-  return rendements;
-}
-
-// Rendements annuels à partir des mensuels
-function calcRendementAnnuel(rendementsMensuels) {
-  let annuels = {};
-  for (let m in rendementsMensuels) {
-    let year = m.split('-')[0];
-    annuels[year] = (annuels[year] ?? 0) + rendementsMensuels[m];
-  }
-  return annuels;
-}
-
-// Croissance du capital
-function calcCroissanceMensuelle(rendements, capitalInitial = 10000) {
-  let croissance = {};
-  let capital = capitalInitial;
-  const mois = Object.keys(rendements).sort();
-  mois.forEach(m => {
-    capital = capital * (1 + (rendements[m] ?? 0) / 100);
-    croissance[m] = capital;
-  });
-  return croissance;
-}
-
-// Création graphique bar (rendement annuel)
-function creerGraphRendementAnnuel(ctx, labels, dataFond, dataPassif, nomFond, fondsPassif) {
-  return new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [
-        { label: nomFond, data: dataFond, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color') },
-        { label: fondsPassif, data: dataPassif, backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color') }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { position: 'top', labels: { boxWidth: 20 } } }
-    }
-  });
-}
-
-// Création graphique ligne (croissance)
-function creerGraphCroissance(ctx, labels, dataFond, dataPassif, nomFond, fondsPassif) {
-  return new Chart(ctx, {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [
-        { label: nomFond, data: dataFond, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--primary-color'), fill: false, tension: 0.3 },
-        { label: fondsPassif, data: dataPassif, borderColor: getComputedStyle(document.documentElement).getPropertyValue('--accent-color'), fill: false, tension: 0.3 }
-      ]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { position: 'top', labels: { boxWidth: 20 } } }
-    }
-  });
-}
-
-// MAIN
-async function main() {
-  const data = await loadData();
-  const institutionsContainer = document.getElementById('institutions');
-  const fondsContainer = document.getElementById('fondsContainer');
-  let chartRendAnnuel, chartCroiss;
-  let selectedFondKey = null;
-
-  const institutions = Object.keys(data.institutions);
-
-  // Crée les boutons des institutions
-  institutions.forEach(inst => {
-    const btn = document.createElement('button');
-    btn.textContent = inst;
-    btn.className = 'pastille institution';
-    btn.addEventListener('click', () => {
-      updateFonds(inst);
-      document.querySelectorAll('.institution').forEach(b => b.classList.remove('selected'));
-      btn.classList.add('selected');
+    // --- UTILITIES ---
+    const formatCurrency = (value) => value.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
+    const chartOptions = (yAxisTitle) => ({
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+            y: { ticks: { callback: value => `${value.toFixed(0)}${yAxisTitle.includes('%') ? '%' : '$'}` }, title: { display: true, text: yAxisTitle } },
+            x: { grid: { display: false } }
+        }
     });
-    institutionsContainer.appendChild(btn);
-  });
 
-  // Met à jour les pastilles de fonds selon l'institution
-  function updateFonds(institution) {
-    fondsContainer.innerHTML = '';
-    const fondsKeys = data.institutions[institution];
-    fondsKeys.forEach(key => {
-      const btn = document.createElement('button');
-      btn.textContent = data.fonds_actifs[key]?.nom || key;
-      btn.className = 'pastille fond';
-      btn.addEventListener('click', () => {
-        selectedFondKey = key;
-        document.querySelectorAll('.fond').forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        updateGraphs();
-      });
-      fondsContainer.appendChild(btn);
+    // --- DATA LOADING ---
+    async function loadData() {
+        try {
+            const resp = await fetch('fonds.json');
+            if (!resp.ok) throw new Error(`Erreur de chargement: ${resp.statusText}`);
+            return await resp.json();
+        } catch (error) {
+            console.error("Impossible de charger les données des fonds:", error);
+            return null;
+        }
+    }
+
+    // --- CALCULATIONS ---
+    function calculateGrowthAndFees(initial, monthlyReturns, annualFee) {
+        let value = initial;
+        let totalFeesPaid = 0;
+        const growth = [{ x: 'Départ', y: initial }];
+        const monthlyFeeRate = (annualFee ?? 0) / 100 / 12;
+
+        const sortedMonths = Object.keys(monthlyReturns).sort();
+        
+        for (const month of sortedMonths) {
+            if (monthlyReturns[month] === null) continue;
+            
+            const feeAmount = value * monthlyFeeRate;
+            totalFeesPaid += feeAmount;
+            value -= feeAmount;
+            value *= (1 + monthlyReturns[month] / 100);
+            growth.push({ x: month, y: value });
+        }
+        return { endValue: value, growth, totalFeesPaid };
+    }
+
+    function calculateAnnualizedReturn(growthData) {
+        if (growthData.length <= 1) return 0;
+        const endValue = growthData[growthData.length - 1].y;
+        const startValue = growthData[0].y;
+        const totalMonths = growthData.length - 1;
+        if (startValue === 0 || totalMonths === 0) return 0;
+        const totalYears = totalMonths / 12;
+        return (Math.pow(endValue / startValue, 1 / totalYears) - 1) * 100;
+    }
+
+    function calculateAnnualReturns(monthlyReturns) {
+        const annuals = {};
+        for (const month in monthlyReturns) {
+            if (monthlyReturns[month] === null) continue;
+            const year = month.split('-')[0];
+            if (!annuals[year]) annuals[year] = 1;
+            annuals[year] *= (1 + monthlyReturns[month] / 100);
+        }
+        for (const year in annuals) {
+            annuals[year] = (annuals[year] - 1) * 100;
+        }
+        return annuals;
+    }
+
+    // --- DOM & CHARTING ---
+    let croissanceChartInstance, rendementAnnuelChartInstance;
+
+    function displayComparison(data, fondKey) {
+        const fondActif = data.fonds_actifs[fondKey];
+        if (!fondActif) { console.error(`Fonds actif non trouvé: ${fondKey}`); return; }
+        
+        const keyFondPassif = fondActif.composition_passif?.[0];
+        const fondPassif = data.fonds_passifs[keyFondPassif];
+        if (!fondPassif) { console.error(`Fonds passif non trouvé: ${keyFondPassif}`); return; }
+
+        const activeMonths = Object.keys(fondActif.rendements_mensuels);
+        const passiveMonths = Object.keys(fondPassif.rendements_mensuels);
+        const commonMonths = activeMonths.filter(month => passiveMonths.includes(month));
+        
+        const rendementsActif = {};
+        const rendementsPassif = {};
+        commonMonths.forEach(month => {
+            rendementsActif[month] = fondActif.rendements_mensuels[month];
+            rendementsPassif[month] = fondPassif.rendements_mensuels[month];
+        });
+
+        const initialInvestment = 10000;
+        const activeFee = fondActif.frais ?? 2.1; 
+        const passiveFee = fondPassif.frais ?? 0.2;
+
+        const activeData = calculateGrowthAndFees(initialInvestment, rendementsActif, activeFee);
+        const passiveData = calculateGrowthAndFees(initialInvestment, rendementsPassif, passiveFee);
+
+        document.getElementById('active-fees').textContent = `${activeFee.toFixed(2)}%`;
+        document.getElementById('passive-fees').textContent = `${passiveFee.toFixed(2)}%`;
+        document.getElementById('active-return').textContent = `${calculateAnnualizedReturn(activeData.growth).toFixed(2)}%`;
+        document.getElementById('passive-return').textContent = `${calculateAnnualizedReturn(passiveData.growth).toFixed(2)}%`;
+        document.getElementById('active-capital').textContent = formatCurrency(activeData.endValue);
+        document.getElementById('passive-capital').textContent = formatCurrency(passiveData.endValue);
+        document.getElementById('active-fees-paid').textContent = formatCurrency(activeData.totalFeesPaid);
+        document.getElementById('passive-fees-paid').textContent = formatCurrency(passiveData.totalFeesPaid);
+
+        const years = (commonMonths.length) / 12;
+        document.getElementById('croissanceChartTitle').textContent = `Croissance de 10 000 $ sur ${years.toFixed(1)} ans`;
+        updateCroissanceChart(activeData.growth, passiveData.growth, fondActif.nom, keyFondPassif);
+        
+        const rendActifAnnuel = calculateAnnualReturns(rendementsActif);
+        const rendPassifAnnuel = calculateAnnualReturns(rendementsPassif);
+        const annees = Object.keys(rendActifAnnuel).sort();
+        updateRendementAnnuelChart(annees.map(y => rendActifAnnuel[y]), annees.map(y => rendPassifAnnuel[y]), annees, fondActif.nom, keyFondPassif);
+
+        document.getElementById('results-dashboard').style.display = 'block';
+        document.getElementById('charts-container').style.display = 'block';
+    }
+
+    function updateCroissanceChart(activeData, passiveData, activeName, passiveName) {
+        const ctx = document.getElementById('croissanceChart').getContext('2d');
+        if (croissanceChartInstance) croissanceChartInstance.destroy();
+        croissanceChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [
+                    { label: activeName, data: activeData, borderColor: 'rgba(79, 70, 229, 1)', backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: 'origin', tension: 0.2, pointRadius: 0 },
+                    { label: passiveName, data: passiveData, borderColor: 'rgba(13, 148, 136, 1)', backgroundColor: 'rgba(13, 148, 136, 0.1)', fill: 'origin', tension: 0.2, pointRadius: 0 }
+                ]
+            },
+            options: chartOptions('Valeur du portefeuille')
+        });
+    }
+
+    function updateRendementAnnuelChart(activeReturns, passiveReturns, labels, activeName, passiveName) {
+        const ctx = document.getElementById('rendementAnnuelChart').getContext('2d');
+        if (rendementAnnuelChartInstance) rendementAnnuelChartInstance.destroy();
+        rendementAnnuelChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    { label: activeName, data: activeReturns, backgroundColor: 'rgba(79, 70, 229, 0.8)' },
+                    { label: passiveName, data: passiveReturns, backgroundColor: 'rgba(13, 148, 136, 0.8)' }
+                ]
+            },
+            options: chartOptions('Rendement (%)')
+        });
+    }
+
+    // --- INITIALIZATION ---
+    const data = await loadData();
+    if (!data) {
+        console.error("Les données des fonds n'ont pas pu être initialisées.");
+        return;
+    }
+
+    const institutionsContainer = document.getElementById('institutions');
+    const fondsContainer = document.getElementById('fondsContainer');
+
+    Object.keys(data.institutions).forEach(inst => {
+        const btn = document.createElement('button');
+        btn.className = 'category-btn';
+        btn.textContent = inst;
+        btn.dataset.institution = inst;
+        institutionsContainer.appendChild(btn);
     });
-    // Sélection automatique du premier fonds
-    if (fondsKeys.length > 0) fondsContainer.querySelector('button').click();
-  }
 
-  function updateGraphs() {
-    if (!selectedFondKey) return;
-    const fondActif = data.fonds_actifs[selectedFondKey];
-    const fondsPassifs = data.fonds_passifs || {};
-    const rendementsActif = fondActif.rendements_mensuels || {};
-    const moisCommuns = sortedMonths(rendementsActif);
+    institutionsContainer.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('category-btn')) return;
+        const selectedInst = e.target.dataset.institution;
+        
+        document.querySelectorAll('.category-btn').forEach(btn => btn.classList.remove('active'));
+        e.target.classList.add('active');
 
-    // prend le premier fonds passif
-    const keyFondPassif = fondActif.composition_passif?.[0];
-    const rendementsPassif = calcRendementPassif(fondsPassifs, keyFondPassif, moisCommuns);
+        fondsContainer.innerHTML = '';
+        data.institutions[selectedInst].forEach(fondKey => {
+            const pill = document.createElement('button');
+            pill.className = 'fond-pill';
+            pill.textContent = data.fonds_actifs[fondKey]?.nom || fondKey;
+            pill.dataset.fondKey = fondKey;
+            fondsContainer.appendChild(pill);
+        });
+        
+        document.getElementById('results-dashboard').style.display = 'none';
+        document.getElementById('charts-container').style.display = 'none';
 
-    const rendActifAnnuel = calcRendementAnnuel(rendementsActif);
-    const rendPassifAnnuel = calcRendementAnnuel(rendementsPassif);
-    const annees = Object.keys(rendActifAnnuel).sort();
+        if (fondsContainer.firstChild) {
+            fondsContainer.firstChild.click();
+        }
+    });
 
-    const croissanceActif = calcCroissanceMensuelle(rendementsActif);
-    const croissancePassif = calcCroissanceMensuelle(rendementsPassif);
-    const moisCroissance = Object.keys(croissanceActif).sort();
-
-    if (chartRendAnnuel) chartRendAnnuel.destroy();
-    if (chartCroiss) chartCroiss.destroy();
-
-    const mixLabel = keyFondPassif || "Passif";
-
-    chartRendAnnuel = creerGraphRendementAnnuel(
-      document.getElementById('rendementAnnuelChart').getContext('2d'),
-      annees,
-      annees.map(y => rendActifAnnuel[y]),
-      annees.map(y => rendPassifAnnuel[y]),
-      fondActif.nom,
-      mixLabel
-    );
-
-    chartCroiss = creerGraphCroissance(
-      document.getElementById('croissanceChart').getContext('2d'),
-      moisCroissance,
-      moisCroissance.map(m => croissanceActif[m]),
-      moisCroissance.map(m => croissancePassif[m]),
-      fondActif.nom,
-      mixLabel
-    );
-  }
-
-  // Sélection automatique de la première institution
-  if (institutions.length > 0) institutionsContainer.querySelector('button').click();
-}
-
-main();
+    fondsContainer.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('fond-pill')) return;
+        const selectedFondKey = e.target.dataset.fondKey;
+        document.querySelectorAll('.fond-pill').forEach(pill => pill.classList.remove('active'));
+        e.target.classList.add('active');
+        displayComparison(data, selectedFondKey);
+    });
+    
+    if (institutionsContainer.firstChild) {
+        institutionsContainer.firstChild.click();
+    }
+});
