@@ -13,6 +13,20 @@
       height: 450px;
       width: 100%;
     }
+    /* Styles pour les nouvelles cartes de définition */
+    .icon {
+        font-size: 1.5rem;
+        margin-right: 0.75rem;
+        vertical-align: middle;
+    }
+    .card h3 {
+        display: flex;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+    .card p {
+        margin-bottom: 1rem;
+    }
   </style>
 </head>
 <body>
@@ -33,28 +47,18 @@
 <div class="container">
     <h2>Gestion active contre gestion passive</h2>
     
-    <section class="card">
-      <h3>Le Duel des Philosophies</h3>
-      <p>Laquelle de ces deux grandes approches d'investissement est la plus performante? Cette page compare des fonds communs de placement (gestion active) aux fonds négociés en bourse (gestion passive) pour vous aider à y voir plus clair.</p>
-      <table class="comparison-table">
-        <thead>
-          <tr>
-            <th><span class="icon">🧠</span>Gestion Active</th>
-            <th><span class="icon">📊</span>Gestion Passive</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Objectif :</strong> Tenter de battre le marché en sélectionnant les "meilleurs" titres.</td>
-            <td><strong>Objectif :</strong> Répliquer la performance d'un indice de marché (ex: S&P/TSX).</td>
-          </tr>
-          <tr>
-            <td><strong>Frais :</strong> Élevés (souvent 1.5% - 2.5%) pour payer l'équipe de gestion.</td>
-            <td><strong>Frais :</strong> Très faibles (souvent 0.05% - 0.25%) car la gestion est automatisée.</td>
-          </tr>
-        </tbody>
-      </table>
-    </section>
+    <div class="card-grid">
+        <div class="card">
+            <h3><span class="icon">🧠</span>Gestion Active</h3>
+            <p><strong>Objectif :</strong> Tenter de battre le marché en sélectionnant les "meilleurs" titres.</p>
+            <p><strong>Frais :</strong> Élevés (souvent 1.5% - 2.5%) pour payer l'équipe de gestion.</p>
+        </div>
+        <div class="card">
+            <h3><span class="icon">📊</span>Gestion Passive</h3>
+            <p><strong>Objectif :</strong> Répliquer la performance d'un indice de marché (ex: S&P/TSX).</p>
+            <p><strong>Frais :</strong> Très faibles (souvent 0.05% - 0.25%) car la gestion est automatisée.</p>
+        </div>
+    </div>
 
     <section class="card" style="text-align: center;">
       <h3>Le Vrai Coût des Frais de Gestion</h3>
@@ -204,6 +208,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // --- DOM & CHARTING ---
+    let croissanceChartInstance, rendementAnnuelChartInstance;
+
     function displayComparison(data, fondKey) {
         const fondActif = data.fonds_actifs[fondKey];
         if (!fondActif) { console.error(`Fonds actif non trouvé: ${fondKey}`); return; }
@@ -354,4 +360,3 @@ document.addEventListener("DOMContentLoaded", async () => {
 </script>
 </body>
 </html>
-
