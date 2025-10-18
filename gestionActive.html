@@ -2,10 +2,112 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Finoza</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestion Active vs. Passive - Finoza</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    /* --- Styles Généraux --- */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@600&display=swap');
+
+    :root {
+      --primary-color: #0D9488;
+      --primary-hover: #0F766E;
+      --accent-color: #4F46E5;
+      --bg-color: #F9FAFB;
+      --card-bg-color: #FFFFFF;
+      --heading-color: #111827;
+      --text-color: #374151;
+      --subtle-text-color: #6B7280;
+      --border-color: #E5E7EB;
+      --font-body: 'Inter', system-ui, sans-serif;
+      --font-heading: 'Lora', serif;
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --border-radius: 12px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); color: var(--text-color); background-color: var(--bg-color); }
+    .container { max-width: 900px; margin: 0 auto; padding: 1rem 20px 3rem; }
+    h1, h2, h3 { font-family: var(--font-heading); color: var(--heading-color); line-height: 1.3; margin-bottom: 1rem; }
+
+    /* --- Composants --- */
+    .card {
+      background-color: var(--card-bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      padding: 2.5rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-md);
+    }
+    .btn {
+      display: inline-block;
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: 500;
+      text-decoration: none;
+      transition: background-color 0.2s ease;
+    }
+    .btn:hover { background-color: var(--primary-hover); }
+    .btn-accent { background-color: var(--accent-color); }
+    .btn-accent:hover { background-color: #4338CA; }
+
+    /* --- En-tête --- */
+    header.container {
+        background-color: var(--card-bg-color);
+        padding: 1.5rem 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex; flex-direction: column; align-items: center; gap: 1rem;
+        margin-bottom: 2rem;
+        max-width: 100%;
+    }
+    header.container h1 {
+        font-size: 2.5rem; margin: 0;
+    }
+    header.container nav {
+        display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;
+    }
+    header.container nav a {
+        color: var(--text-color); text-decoration: none; font-weight: 500;
+        transition: color 0.2s ease;
+    }
+    header.container nav a:hover {
+        color: var(--primary-color);
+    }
+
+    /* --- Section de Définition --- */
+    .comparison-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
+    .comparison-table th, .comparison-table td { padding: 1rem; border: 1px solid var(--border-color); text-align: left; vertical-align: top; }
+    .comparison-table th { background-color: #F9FAFB; font-size: 1.1rem; }
+    .comparison-table td strong { color: var(--heading-color); }
+    .comparison-table .icon { font-size: 1.5rem; margin-right: 0.5rem; }
+
+    /* --- Section Comparateur --- */
+    .categories-container, .fonds-container { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem; }
+    .category-btn, .fond-pill {
+      background-color: #fff; border: 1px solid var(--border-color); padding: 0.6rem 1.2rem;
+      border-radius: 50px; cursor: pointer; transition: all 0.2s ease;
+    }
+    .category-btn:hover, .fond-pill:hover { background-color: #F3F4F6; border-color: var(--primary-color); }
+    .category-btn.active, .fond-pill.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
+    
+    /* --- Tableau de bord des résultats --- */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1.5rem;
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .metric-box { padding: 1.5rem; background-color: #F9FAFB; border-radius: var(--border-radius); }
+    .metric-box .label { font-size: 0.9rem; color: var(--subtle-text-color); margin-bottom: 0.5rem; }
+    .metric-box .value { font-size: 1.75rem; font-weight: 700; color: var(--heading-color); line-height: 1.2; }
+    .metric-box .passive { color: var(--primary-color); }
+    .metric-box .active { color: var(--accent-color); }
+  </style>
 </head>
 <body>
 <header class="container">
@@ -22,43 +124,110 @@
     </nav>
 </header>
 
-  <div class="container">
+<div class="container">
     <h2>Gestion active contre gestion passive</h2>
     
-    <div class="encadre-explicatif">
-        <p>
-            Cette page compare la performance des fonds de placement activement gérés par les grandes institutions financières canadiennes à celle d'un portefeuille passif équivalent, composé de FNB (fonds négociés en bourse) à faibles frais. L'objectif est de visualiser si la gestion active justifie ses frais plus élevés.
-        </p>
-    </div>
-    <!-- Sélecteur de catégories -->
-    <section>
-      <h3>Votre institution financière</h3>
-      <div id="institutions" class="categories-container">
-        <!-- Les boutons de catégories seront ajoutés ici -->
-      </div>
-    </section>
-  
-    <!-- Fonds sous forme de pastilles -->
-    <section>
-      <h3>Votre fonds</h3>
-      <div id="fondsContainer" class="fonds-container">
-        <!-- Les pastilles de fonds apparaîtront ici -->
-      </div>
-    </section>
-
-    <section>
-      <h3>Croissance d’un investissement initial</h3>
-      <canvas id="croissanceChart"></canvas>
+    <!-- 1. LE CONCEPT -->
+    <section class="card">
+      <h3>Le Duel des Philosophies</h3>
+      <p>Laquelle de ces deux grandes approches d'investissement est la plus performante? Cette page compare des fonds communs de placement (gestion active) aux fonds négociés en bourse (gestion passive) pour vous aider à y voir plus clair.</p>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th><span class="icon">🧠</span>Gestion Active</th>
+            <th><span class="icon">📊</span>Gestion Passive</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Objectif :</strong> Tenter de battre le marché en sélectionnant les "meilleurs" titres.</td>
+            <td><strong>Objectif :</strong> Répliquer la performance d'un indice de marché (ex: S&P/TSX).</td>
+          </tr>
+          <tr>
+            <td><strong>Frais :</strong> Élevés (souvent 1.5% - 2.5%) pour payer l'équipe de gestion.</td>
+            <td><strong>Frais :</strong> Très faibles (souvent 0.05% - 0.25%) car la gestion est automatisée.</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
 
-    <section>
-      <h3>Rendements annuels</h3>
-      <canvas id="rendementAnnuelChart"></canvas>
+    <!-- 2. L'IMPACT FINANCIER -->
+    <section class="card" style="text-align: center;">
+      <h3>Le Vrai Coût des Frais de Gestion</h3>
+      <p style="margin-bottom: 1.5rem;">Sur le long terme, une différence de 2% en frais peut réduire votre capital final de près de 50%. Visualisez l'impact concret sur votre propre portefeuille avec notre outil.</p>
+      <a href="URL_VERS_VOTRE_CALCULATRICE" class="btn btn-accent" target="_blank">Calculer l'Impact des Frais</a>
     </section>
     
+    <!-- 3. LA PREUVE PAR LES DONNÉES -->
+    <section class="card">
+      <h2>Comparateur de Performance</h2>
+      <p>Sélectionnez une institution financière, puis l'un de ses fonds pour le comparer à un portefeuille de FNB passif équivalent.</p>
+      
+      <h3 style="margin-top: 2rem;">1. Choisissez une institution</h3>
+      <div id="institutions" class="categories-container">
+          <!-- Les boutons d'institutions seront injectés ici par le JS -->
+      </div>
+      
+      <h3 style="margin-top: 1rem;">2. Choisissez un fonds</h3>
+      <div id="fondsContainer" class="fonds-container">
+          <!-- Les pastilles de fonds apparaîtront ici -->
+      </div>
+
+      <!-- TABLEAU DE BORD DES RÉSULTATS -->
+      <div id="results-dashboard" style="display: none;">
+        <div class="dashboard-grid">
+          <div class="metric-box">
+            <div class="label">Frais de Gestion (RFG)</div>
+            <div class="value active" id="active-fees">--</div>
+            <div class="value passive" id="passive-fees">--</div>
+          </div>
+          <div class="metric-box">
+            <div class="label">Rendt. Annuel</div>
+            <div class="value active" id="active-return">--</div>
+            <div class="value passive" id="passive-return">--</div>
+          </div>
+          <div class="metric-box">
+            <div class="label">Capital Final (10k$)</div>
+            <div class="value active" id="active-capital">--</div>
+            <div class="value passive" id="passive-capital">--</div>
+          </div>
+          <div class="metric-box">
+            <div class="label">Total Frais Payés (10k$)</div>
+            <div class="value active" id="active-fees-paid">--</div>
+            <div class="value passive" id="passive-fees-paid">--</div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- GRAPHIQUES -->
+    <div id="charts-container" style="display: none;">
+      <section class="card">
+        <h3 id="croissanceChartTitle">Croissance de 10 000 $</h3>
+        <canvas id="croissanceChart"></canvas>
+      </section>
+      <section class="card">
+        <h3>Rendements annuels comparés</h3>
+        <canvas id="rendementAnnuelChart"></canvas>
+      </section>
+    </div>
+
+    <!-- 4. L'ACTION -->
+    <section class="card">
+      <h2>Conclusion : Que Faire?</h2>
+      <p>Les données historiques démontrent souvent que les frais élevés des fonds actifs nuisent à leur performance à long terme. Pour la plupart des investisseurs, une approche passive avec des FNB à faibles coûts est une stratégie simple et très efficace.</p>
+      <h3 style="margin-top: 1.5rem;">Prochaines étapes :</h3>
+      <ul style="margin-left: 20px; line-height: 1.8;">
+        <li>Ouvrir un compte de courtage en ligne (ex: Disnat, Questrade, Wealthsimple Trade).</li>
+        <li>Explorer des FNB de répartition d'actifs comme XGRO, VGRO (80% actions) ou XBAL, VBAL (60% actions).</li>
+        <li>Utiliser notre <a href="decaissementRetraite.html">calculateur de décaissement</a> pour planifier votre retraite avec des hypothèses de rendements réalistes.</li>
+      </ul>
+    </section>
   </div>
 
-  <script src="dataFonds.js"></script>
+<script src="dataFonds.js"></script>
+<!-- Le code JS pour faire fonctionner cette page sera ajouté dans dataFonds.js -->
 
 </body>
 </html>
+
