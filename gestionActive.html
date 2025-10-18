@@ -13,7 +13,7 @@
       height: 450px;
       width: 100%;
     }
-    /* Styles pour les nouvelles cartes de définition */
+    /* Styles pour les cartes de définition */
     .icon {
         font-size: 1.5rem;
         margin-right: 0.75rem;
@@ -26,6 +26,24 @@
     }
     .card p {
         margin-bottom: 1rem;
+    }
+    /* Nouveaux styles pour les sous-encadrés */
+    .definition-grid {
+        display: grid;
+        grid-template-columns: 1fr; /* Colonne unique par défaut pour mobile */
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+    .definition-box {
+        background-color: var(--section-bg-color);
+        padding: 1.5rem;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-color);
+    }
+    @media (min-width: 768px) {
+        .definition-grid {
+            grid-template-columns: 1fr 1fr; /* Deux colonnes sur écrans plus larges */
+        }
     }
   </style>
 </head>
@@ -45,20 +63,23 @@
 </header>
 
 <div class="container">
-    <h2>Gestion active contre gestion passive</h2>
     
-    <div class="card-grid">
-        <div class="card">
-            <h3><span class="icon">🧠</span>Gestion Active</h3>
-            <p><strong>Objectif :</strong> Tenter de battre le marché en sélectionnant les "meilleurs" titres.</p>
-            <p><strong>Frais :</strong> Élevés (souvent 1.5% - 2.5%) pour payer l'équipe de gestion.</p>
+    <section class="card">
+        <h2>Le Duel des Philosophies</h2>
+        <p>Laquelle de ces deux grandes approches d'investissement est la plus performante? Cette page compare des fonds communs de placement (gestion active) aux fonds négociés en bourse (gestion passive) pour vous aider à y voir plus clair.</p>
+        <div class="definition-grid">
+            <div class="definition-box">
+                <h3><span class="icon">🧠</span>Gestion Active</h3>
+                <p><strong>Objectif :</strong> Tenter de battre le marché en sélectionnant les "meilleurs" titres.</p>
+                <p><strong>Frais :</strong> Élevés (souvent 1.5% - 2.5%) pour payer l'équipe de gestion.</p>
+            </div>
+            <div class="definition-box">
+                <h3><span class="icon">📊</span>Gestion Passive</h3>
+                <p><strong>Objectif :</strong> Répliquer la performance d'un indice de marché (ex: S&P/TSX).</p>
+                <p><strong>Frais :</strong> Très faibles (souvent 0.05% - 0.25%) car la gestion est automatisée.</p>
+            </div>
         </div>
-        <div class="card">
-            <h3><span class="icon">📊</span>Gestion Passive</h3>
-            <p><strong>Objectif :</strong> Répliquer la performance d'un indice de marché (ex: S&P/TSX).</p>
-            <p><strong>Frais :</strong> Très faibles (souvent 0.05% - 0.25%) car la gestion est automatisée.</p>
-        </div>
-    </div>
+    </section>
 
     <section class="card" style="text-align: center;">
       <h3>Le Vrai Coût des Frais de Gestion</h3>
