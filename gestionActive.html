@@ -340,8 +340,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById('results-dashboard').style.display = 'none';
         document.getElementById('charts-container').style.display = 'none';
 
-        if (fondsContainer.firstChild) {
-            fondsContainer.firstChild.click();
+        if (fondsContainer.querySelector('.fond')) {
+            fondsContainer.querySelector('.fond').click();
         }
     });
 
@@ -353,10 +353,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         displayComparison(data, selectedFondKey);
     });
     
-    if (institutionsContainer.firstChild) {
-        institutionsContainer.firstChild.click();
+    if (institutionsContainer.querySelector('.institution')) {
+        institutionsContainer.querySelector('.institution').click();
     }
 });
 </script>
 </body>
 </html>
+
