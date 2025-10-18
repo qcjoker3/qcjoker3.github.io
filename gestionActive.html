@@ -4,110 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestion Active vs. Passive - Finoza</title>
+  <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <style>
-    /* --- Styles Généraux --- */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lora:wght@600&display=swap');
-
-    :root {
-      --primary-color: #0D9488;
-      --primary-hover: #0F766E;
-      --accent-color: #4F46E5;
-      --bg-color: #F9FAFB;
-      --card-bg-color: #FFFFFF;
-      --heading-color: #111827;
-      --text-color: #374151;
-      --subtle-text-color: #6B7280;
-      --border-color: #E5E7EB;
-      --font-body: 'Inter', system-ui, sans-serif;
-      --font-heading: 'Lora', serif;
-      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-      --border-radius: 12px;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: var(--font-body); color: var(--text-color); background-color: var(--bg-color); }
-    .container { max-width: 900px; margin: 0 auto; padding: 1rem 20px 3rem; }
-    h1, h2, h3 { font-family: var(--font-heading); color: var(--heading-color); line-height: 1.3; margin-bottom: 1rem; }
-
-    /* --- Composants --- */
-    .card {
-      background-color: var(--card-bg-color);
-      border: 1px solid var(--border-color);
-      border-radius: var(--border-radius);
-      padding: 2.5rem;
-      margin-bottom: 2rem;
-      box-shadow: var(--shadow-md);
-    }
-    .btn {
-      display: inline-block;
-      background-color: var(--primary-color);
-      color: white;
-      border: none;
-      padding: 0.8rem 1.5rem;
-      border-radius: 50px;
-      cursor: pointer;
-      font-weight: 500;
-      text-decoration: none;
-      transition: background-color 0.2s ease;
-    }
-    .btn:hover { background-color: var(--primary-hover); }
-    .btn-accent { background-color: var(--accent-color); }
-    .btn-accent:hover { background-color: #4338CA; }
-
-    /* --- En-tête --- */
-    header.container {
-        background-color: var(--card-bg-color);
-        padding: 1.5rem 20px;
-        border-bottom: 1px solid var(--border-color);
-        display: flex; flex-direction: column; align-items: center; gap: 1rem;
-        margin-bottom: 2rem;
-        max-width: 100%;
-    }
-    header.container h1 {
-        font-size: 2.5rem; margin: 0;
-    }
-    header.container nav {
-        display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center;
-    }
-    header.container nav a {
-        color: var(--text-color); text-decoration: none; font-weight: 500;
-        transition: color 0.2s ease;
-    }
-    header.container nav a:hover {
-        color: var(--primary-color);
-    }
-
-    /* --- Section de Définition --- */
-    .comparison-table { width: 100%; border-collapse: collapse; margin-top: 1.5rem; }
-    .comparison-table th, .comparison-table td { padding: 1rem; border: 1px solid var(--border-color); text-align: left; vertical-align: top; }
-    .comparison-table th { background-color: #F9FAFB; font-size: 1.1rem; }
-    .comparison-table td strong { color: var(--heading-color); }
-    .comparison-table .icon { font-size: 1.5rem; margin-right: 0.5rem; }
-
-    /* --- Section Comparateur --- */
-    .categories-container, .fonds-container { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.5rem; }
-    .category-btn, .fond-pill {
-      background-color: #fff; border: 1px solid var(--border-color); padding: 0.6rem 1.2rem;
-      border-radius: 50px; cursor: pointer; transition: all 0.2s ease;
-    }
-    .category-btn:hover, .fond-pill:hover { background-color: #F3F4F6; border-color: var(--primary-color); }
-    .category-btn.active, .fond-pill.active { background-color: var(--primary-color); color: white; border-color: var(--primary-color); }
-    
-    /* --- Tableau de bord des résultats --- */
-    .dashboard-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 1.5rem;
-      text-align: center;
-      margin-top: 2rem;
-    }
-    .metric-box { padding: 1.5rem; background-color: #F9FAFB; border-radius: var(--border-radius); }
-    .metric-box .label { font-size: 0.9rem; color: var(--subtle-text-color); margin-bottom: 0.5rem; }
-    .metric-box .value { font-size: 1.75rem; font-weight: 700; color: var(--heading-color); line-height: 1.2; }
-    .metric-box .passive { color: var(--primary-color); }
-    .metric-box .active { color: var(--accent-color); }
-  </style>
 </head>
 <body>
 <header class="container">
@@ -127,7 +25,6 @@
 <div class="container">
     <h2>Gestion active contre gestion passive</h2>
     
-    <!-- 1. LE CONCEPT -->
     <section class="card">
       <h3>Le Duel des Philosophies</h3>
       <p>Laquelle de ces deux grandes approches d'investissement est la plus performante? Cette page compare des fonds communs de placement (gestion active) aux fonds négociés en bourse (gestion passive) pour vous aider à y voir plus clair.</p>
@@ -151,14 +48,12 @@
       </table>
     </section>
 
-    <!-- 2. L'IMPACT FINANCIER -->
     <section class="card" style="text-align: center;">
       <h3>Le Vrai Coût des Frais de Gestion</h3>
       <p style="margin-bottom: 1.5rem;">Sur le long terme, une différence de 2% en frais peut réduire votre capital final de près de 50%. Visualisez l'impact concret sur votre propre portefeuille avec notre outil.</p>
-      <a href="URL_VERS_VOTRE_CALCULATRICE" class="btn btn-accent" target="_blank">Calculer l'Impact des Frais</a>
+      <a href="URL_VERS_VOTRE_CALCULATRICE" class="btn-primary" target="_blank">Calculer l'Impact des Frais</a>
     </section>
     
-    <!-- 3. LA PREUVE PAR LES DONNÉES -->
     <section class="card">
       <h2>Comparateur de Performance</h2>
       <p>Sélectionnez une institution financière, puis l'un de ses fonds pour le comparer à un portefeuille de FNB passif équivalent.</p>
@@ -212,7 +107,6 @@
       </section>
     </div>
 
-    <!-- 4. L'ACTION -->
     <section class="card">
       <h2>Conclusion : Que Faire?</h2>
       <p>Les données historiques démontrent souvent que les frais élevés des fonds actifs nuisent à leur performance à long terme. Pour la plupart des investisseurs, une approche passive avec des FNB à faibles coûts est une stratégie simple et très efficace.</p>
@@ -225,9 +119,215 @@
     </section>
   </div>
 
-<script src="dataFonds.js"></script>
-<!-- Le code JS pour faire fonctionner cette page sera ajouté dans dataFonds.js -->
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
 
+    // --- UTILITIES ---
+    const formatCurrency = (value) => value.toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
+    const chartOptions = (yAxisTitle) => ({
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'top' } },
+        scales: {
+            y: { ticks: { callback: value => `${value.toFixed(0)}${yAxisTitle.includes('%') ? '%' : '$'}` }, title: { display: true, text: yAxisTitle } },
+            x: { grid: { display: false } }
+        }
+    });
+
+    // --- DATA LOADING ---
+    async function loadData() {
+        try {
+            const resp = await fetch('fonds.json');
+            if (!resp.ok) throw new Error(`Erreur de chargement: ${resp.statusText}`);
+            return await resp.json();
+        } catch (error) {
+            console.error("Impossible de charger les données des fonds:", error);
+            return null;
+        }
+    }
+
+    // --- CALCULATIONS ---
+    function calculateGrowthAndFees(initial, monthlyReturns, annualFee) {
+        let value = initial;
+        let totalFeesPaid = 0;
+        const growth = [{ x: 'Départ', y: initial }];
+        const monthlyFeeRate = (annualFee ?? 0) / 100 / 12;
+
+        const sortedMonths = Object.keys(monthlyReturns).sort();
+        
+        for (const month of sortedMonths) {
+            if (monthlyReturns[month] === null) continue;
+            
+            const feeAmount = value * monthlyFeeRate;
+            totalFeesPaid += feeAmount;
+            value -= feeAmount;
+            value *= (1 + monthlyReturns[month] / 100);
+            growth.push({ x: month, y: value });
+        }
+        return { endValue: value, growth, totalFeesPaid };
+    }
+
+    function calculateAnnualizedReturn(growthData) {
+        if (growthData.length <= 1) return 0;
+        const endValue = growthData[growthData.length - 1].y;
+        const startValue = growthData[0].y;
+        const totalMonths = growthData.length - 1;
+        if (startValue === 0 || totalMonths === 0) return 0;
+        const totalYears = totalMonths / 12;
+        return (Math.pow(endValue / startValue, 1 / totalYears) - 1) * 100;
+    }
+
+    function calculateAnnualReturns(monthlyReturns) {
+        const annuals = {};
+        for (const month in monthlyReturns) {
+            if (monthlyReturns[month] === null) continue;
+            const year = month.split('-')[0];
+            if (!annuals[year]) annuals[year] = 1;
+            annuals[year] *= (1 + monthlyReturns[month] / 100);
+        }
+        for (const year in annuals) {
+            annuals[year] = (annuals[year] - 1) * 100;
+        }
+        return annuals;
+    }
+
+    // --- DOM & CHARTING ---
+    let croissanceChartInstance, rendementAnnuelChartInstance;
+
+    function displayComparison(data, fondKey) {
+        const fondActif = data.fonds_actifs[fondKey];
+        if (!fondActif) { console.error(`Fonds actif non trouvé: ${fondKey}`); return; }
+        
+        const keyFondPassif = fondActif.composition_passif?.[0];
+        const fondPassif = data.fonds_passifs[keyFondPassif];
+        if (!fondPassif) { console.error(`Fonds passif non trouvé: ${keyFondPassif}`); return; }
+
+        const activeMonths = Object.keys(fondActif.rendements_mensuels);
+        const passiveMonths = Object.keys(fondPassif.rendements_mensuels);
+        const commonMonths = activeMonths.filter(month => passiveMonths.includes(month));
+        
+        const rendementsActif = {};
+        const rendementsPassif = {};
+        commonMonths.forEach(month => {
+            rendementsActif[month] = fondActif.rendements_mensuels[month];
+            rendementsPassif[month] = fondPassif.rendements_mensuels[month];
+        });
+
+        const initialInvestment = 10000;
+        const activeFee = fondActif.frais ?? 2.1; 
+        const passiveFee = fondPassif.frais ?? 0.2;
+
+        const activeData = calculateGrowthAndFees(initialInvestment, rendementsActif, activeFee);
+        const passiveData = calculateGrowthAndFees(initialInvestment, rendementsPassif, passiveFee);
+
+        document.getElementById('active-fees').textContent = `${activeFee.toFixed(2)}%`;
+        document.getElementById('passive-fees').textContent = `${passiveFee.toFixed(2)}%`;
+        document.getElementById('active-return').textContent = `${calculateAnnualizedReturn(activeData.growth).toFixed(2)}%`;
+        document.getElementById('passive-return').textContent = `${calculateAnnualizedReturn(passiveData.growth).toFixed(2)}%`;
+        document.getElementById('active-capital').textContent = formatCurrency(activeData.endValue);
+        document.getElementById('passive-capital').textContent = formatCurrency(passiveData.endValue);
+        document.getElementById('active-fees-paid').textContent = formatCurrency(activeData.totalFeesPaid);
+        document.getElementById('passive-fees-paid').textContent = formatCurrency(passiveData.totalFeesPaid);
+
+        const years = (commonMonths.length) / 12;
+        document.getElementById('croissanceChartTitle').textContent = `Croissance de 10 000 $ sur ${years.toFixed(1)} ans`;
+        updateCroissanceChart(activeData.growth, passiveData.growth, fondActif.nom, keyFondPassif);
+        
+        const rendActifAnnuel = calculateAnnualReturns(rendementsActif);
+        const rendPassifAnnuel = calculateAnnualReturns(rendementsPassif);
+        const annees = Object.keys(rendActifAnnuel).sort();
+        updateRendementAnnuelChart(annees.map(y => rendActifAnnuel[y]), annees.map(y => rendPassifAnnuel[y]), annees, fondActif.nom, keyFondPassif);
+
+        document.getElementById('results-dashboard').style.display = 'block';
+        document.getElementById('charts-container').style.display = 'block';
+    }
+
+    function updateCroissanceChart(activeData, passiveData, activeName, passiveName) {
+        const ctx = document.getElementById('croissanceChart').getContext('2d');
+        if (croissanceChartInstance) croissanceChartInstance.destroy();
+        croissanceChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [
+                    { label: activeName, data: activeData, borderColor: 'rgba(79, 70, 229, 1)', backgroundColor: 'rgba(79, 70, 229, 0.1)', fill: 'origin', tension: 0.2, pointRadius: 0 },
+                    { label: passiveName, data: passiveData, borderColor: 'rgba(13, 148, 136, 1)', backgroundColor: 'rgba(13, 148, 136, 0.1)', fill: 'origin', tension: 0.2, pointRadius: 0 }
+                ]
+            },
+            options: chartOptions('Valeur du portefeuille')
+        });
+    }
+
+    function updateRendementAnnuelChart(activeReturns, passiveReturns, labels, activeName, passiveName) {
+        const ctx = document.getElementById('rendementAnnuelChart').getContext('2d');
+        if (rendementAnnuelChartInstance) rendementAnnuelChartInstance.destroy();
+        rendementAnnuelChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels,
+                datasets: [
+                    { label: activeName, data: activeReturns, backgroundColor: 'rgba(79, 70, 229, 0.8)' },
+                    { label: passiveName, data: passiveReturns, backgroundColor: 'rgba(13, 148, 136, 0.8)' }
+                ]
+            },
+            options: chartOptions('Rendement (%)')
+        });
+    }
+
+    // --- INITIALIZATION ---
+    const data = await loadData();
+    if (!data) {
+        console.error("Les données des fonds n'ont pas pu être initialisées.");
+        return;
+    }
+
+    const institutionsContainer = document.getElementById('institutions');
+    const fondsContainer = document.getElementById('fondsContainer');
+
+    Object.keys(data.institutions).forEach(inst => {
+        const btn = document.createElement('button');
+        btn.className = 'pastille institution';
+        btn.textContent = inst;
+        btn.dataset.institution = inst;
+        institutionsContainer.appendChild(btn);
+    });
+
+    institutionsContainer.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('institution')) return;
+        const selectedInst = e.target.dataset.institution;
+        
+        document.querySelectorAll('.institution').forEach(btn => btn.classList.remove('selected'));
+        e.target.classList.add('selected');
+
+        fondsContainer.innerHTML = '';
+        data.institutions[selectedInst].forEach(fondKey => {
+            const pill = document.createElement('button');
+            pill.className = 'pastille fond';
+            pill.textContent = data.fonds_actifs[fondKey]?.nom || fondKey;
+            pill.dataset.fondKey = fondKey;
+            fondsContainer.appendChild(pill);
+        });
+        
+        document.getElementById('results-dashboard').style.display = 'none';
+        document.getElementById('charts-container').style.display = 'none';
+
+        if (fondsContainer.firstChild) {
+            fondsContainer.firstChild.click();
+        }
+    });
+
+    fondsContainer.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('fond')) return;
+        const selectedFondKey = e.target.dataset.fondKey;
+        document.querySelectorAll('.fond').forEach(pill => pill.classList.remove('selected'));
+        e.target.classList.add('selected');
+        displayComparison(data, selectedFondKey);
+    });
+    
+    if (institutionsContainer.firstChild) {
+        institutionsContainer.firstChild.click();
+    }
+});
+</script>
 </body>
 </html>
 
