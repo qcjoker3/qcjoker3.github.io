@@ -42,59 +42,90 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // ==================================================
-    // === METTEZ VOS CHIFFRES À JOUR ICI ===
+   // ==================================================
+    // === VOS CHIFFRES SONT DÉJÀ ICI ===
     // ==================================================
     const sp500Target = 6679; // La prévision cible pour la fin de l'année
     const sp500Current = 6688; // Le niveau actuel du S&P 500
     // ==================================================
 
-    // Calculs automatiques
-    const percentage = ((sp500Target / sp500Current) - 1) * 100;
-    const remaining = sp500Target - sp500Current;
-
-    // Mise à jour des éléments HTML
+    // Récupération des éléments HTML
     const percentageElement = document.getElementById('percentageGap');
+    // Note: .previousSibling peut être fragile. Utilisons une méthode plus robuste si possible,
+    // mais pour l'instant, nous gardons votre logique.
+    const gapLabelElement = percentageElement.previousSibling.previousSibling; 
     const currentLevelElement = document.getElementById('currentLevelText');
     const gaugeTargetElement = document.getElementById('gaugeTargetText');
     
+    // Variables pour la configuration du graphique qui seront définies dans la logique
+    let chartData;
+    let chartColors;
+    
+    // Mise à jour des textes qui sont toujours les mêmes
     currentLevelElement.textContent = `${sp500Current} pts`;
     gaugeTargetElement.innerHTML = `Cible: <strong>${sp500Target}</strong> pts`;
-    percentageElement.textContent = `${percentage >= 0 ? '+' : ''}${percentage.toFixed(2)}%`;
 
-    // Appliquer la bonne couleur (vert si positif, rouge si négatif)
-    if (percentage >= 0) {
-        percentageElement.classList.add('success');
-        percentageElement.classList.remove('failure');
+    // ----- LOGIQUE POUR GÉRER LES DEUX SCÉNARIOS -----
+
+    if (sp500Current > sp500Target) {
+        // --- CAS 1 : SURPERFORMANCE (le niveau actuel DÉPASSE la cible) ---
+
+        const surplus = sp500Current - sp500Target;
+        const percentage = (surplus / sp500Target) * 100; // Calcul du % de dépassement
+
+        // Le graphique montrera la cible + le surplus
+        chartData = [sp500Target, surplus];
+        chartColors = [
+            '#0D9488', // Couleur verte jusqu'à la cible
+            '#F59E0B'  // Couleur AMBRE pour le surplus qui dépasse
+        ];
+
+        // Mettre à jour le texte et la classe CSS
+        gapLabelElement.textContent = "Surperformance";
+        percentageElement.textContent = `+${percentage.toFixed(2)}%`;
+        percentageElement.className = 'warning'; // Applique la classe pour la couleur ambre
+
     } else {
-        percentageElement.classList.add('failure');
-        percentageElement.classList.remove('success');
+        // --- CAS 2 : NORMAL (le niveau actuel est EN DESSOUS de la cible) ---
+
+        const remaining = sp500Target - sp500Current;
+        const percentage = ((sp500Target / sp500Current) - 1) * 100;
+
+        // Le graphique montrera la progression et ce qu'il reste
+        chartData = [sp500Current, remaining];
+        chartColors = [
+            '#0D9488', // Couleur verte pour la progression
+            '#E5E7EB'  // Couleur grise pour ce qu'il reste
+        ];
+
+        // Mettre à jour le texte et la classe CSS
+        gapLabelElement.textContent = "Potentiel Haussier";
+        percentageElement.textContent = `+${percentage.toFixed(2)}%`;
+        percentageElement.className = 'success'; // Applique la classe pour la couleur verte
     }
 
-    // Configuration du graphique en jauge (demi-cercle)
+    // --- CRÉATION DU GRAPHIQUE AVEC LES DONNÉES PRÉPARÉES ---
     const ctx = document.getElementById('sp500Gauge').getContext('2d');
     new Chart(ctx, {
         type: 'doughnut',
         data: {
             datasets: [{
-                data: [sp500Current, remaining > 0 ? remaining : 0], // Affiche le remplissage et ce qu'il reste
-                backgroundColor: [
-                    '#0D9488', // Couleur principale (remplissage)
-                    '#E5E7EB'  // Couleur de fond (ce qu'il reste à atteindre)
-                ],
+                data: chartData, // Utilise les données du bon scénario
+                backgroundColor: chartColors, // Utilise les couleurs du bon scénario
                 borderWidth: 0,
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: true,
-            cutout: '80%', // Épaisseur de l'anneau
-            rotation: -90, // Fait commencer le graphique à gauche
-            circumference: 180, // Fait un demi-cercle
+            cutout: '80%',
+            rotation: -90,
+            circumference: 180,
             plugins: {
-                legend: { display: false }, // Cache la légende
-                tooltip: { enabled: false } // Désactive les infobulles
+                legend: { display: false },
+                tooltip: { enabled: false }
             }
         }
     });
+        });
     });
