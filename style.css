@@ -253,6 +253,9 @@ footer, .site-footer {
     display: flex;
     flex-direction: column;
     height: 100%;
+    
+    /* NOUVELLE LIGNE POUR FORCER LE CARRÉ */
+    aspect-ratio: 1 / 1;
 
     /* Style visuel copié des calculatrices */
     padding: 1.5rem;
