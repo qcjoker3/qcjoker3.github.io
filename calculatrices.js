@@ -54,14 +54,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // ==========================================================
     // === SYSTÈME DE NAVIGATION ENTRE CALCULATRICES (CORRIGÉ) ===
     // ==========================================================
-    const calcCards = document.querySelectorAll('#selection-calculatrices .card'); 
+    const calcCards = document.querySelectorAll('.card-grid .card[data-calc]');
     const calcSections = document.querySelectorAll('.calculator-card');
     const allExplications = document.querySelectorAll('.boite-explication');
 
     const showCalculator = (key) => {
         if (!key) return;
 
-        const targetSection = document.getElementById(`calculatrice-${key}`);
+        const targetSection = document.getElementById(`calc-${key}`);
         const targetExplication = document.getElementById(`explication-${key}`);
         
         calcSections.forEach(sec => sec.classList.remove('active'));
@@ -71,26 +71,26 @@ document.addEventListener('DOMContentLoaded', () => {
         if (targetSection) targetSection.classList.add('active');
         if (targetExplication) targetExplication.classList.add('active');
 
-        const selectedCard = document.querySelector(`#selection-calculatrices a[href="#${key}"]`);
+        const selectedCard = document.querySelector(`.card[data-calc='${key}']`);
         if (selectedCard) selectedCard.classList.add('selected');
 
         sessionStorage.setItem('derniereCalculatrice', key);
     };
 
     calcCards.forEach(card => {
-        card.addEventListener('click', (event) => {
-            event.preventDefault();
-            const calculatorId = card.getAttribute('href').substring(1);
+        card.addEventListener('click', () => {
+            const calculatorId = card.dataset.calc;
             showCalculator(calculatorId);
         });
     });
 
     // --- LOGIQUE D'AFFICHAGE INITIAL ---
     const ancreURL = window.location.hash.substring(1);
+    const cardForAncre = document.querySelector(`.card[data-calc='${ancreURL}']`);
 
-    if (ancreURL) {
+    if (ancreURL && cardForAncre) {
         showCalculator(ancreURL);
-        const calculatorElement = document.getElementById(`calculatrice-${ancreURL}`);
+        const calculatorElement = document.getElementById(`calc-${ancreURL}`);
         if (calculatorElement) {
             setTimeout(() => {
                 calculatorElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -98,14 +98,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     } else {
         const derniereCalc = sessionStorage.getItem('derniereCalculatrice');
-        if (derniereCalc) {
+        if (derniereCalc && document.querySelector(`.card[data-calc='${derniereCalc}']`)) {
             showCalculator(derniereCalc);
         } else if (calcCards.length > 0) {
-            const defaultCalcId = calcCards[0].getAttribute('href').substring(1);
+            const defaultCalcId = calcCards[0].dataset.calc;
             showCalculator(defaultCalcId);
         }
     }
-
 // =========================================================================
 // === NOUVELLE CALCULATRICE DE RETRAITE 360° ===
 // =========================================================================
