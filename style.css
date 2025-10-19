@@ -513,3 +513,12 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
         border-left-color: #0D9488;
     }
 }
+/* Ajout pour l'alignement des cartes d'articles */
+#articles .card {
+    display: flex;
+    flex-direction: column;
+}
+
+#articles .card p {
+    flex-grow: 1; /* Fait en sorte que le paragraphe prenne tout l'espace vertical disponible */
+}
