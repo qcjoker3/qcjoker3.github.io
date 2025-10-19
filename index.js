@@ -128,3 +128,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+document.addEventListener("DOMContentLoaded", function() {
+    fetch('footer.html') // Assurez-vous que le chemin est correct
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById("footer-placeholder").innerHTML = data;
+        });
+});
