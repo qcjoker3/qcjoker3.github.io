@@ -503,3 +503,103 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
         border-left-color: #0D9488;
     }
 }
+
+/* =============================================================== */
+/* === WIDGET DE PRÉVISION S&P 500 - PAGE D'ACCUEIL === */
+/* =============================================================== */
+
+/* Grille principale pour disposer le widget et le texte */
+.prediction-layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Deux colonnes de taille égale */
+    gap: 2.5rem; /* Espace entre les colonnes */
+    align-items: center;
+}
+
+/* Le conteneur du widget visuel */
+.prediction-widget {
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    text-align: center;
+}
+
+.prediction-widget h4 {
+    font-family: var(--font-body);
+    font-size: 1rem;
+    color: var(--subtle-text-color);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+}
+
+/* Conteneur pour le graphique (pour positionner le texte au centre) */
+.gauge-container {
+    position: relative;
+    max-width: 280px;
+    margin: 0 auto;
+}
+
+.gauge-target-text {
+    position: absolute;
+    top: 60%; /* Ajusté pour être bien centré dans la jauge */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-heading);
+    color: var(--heading-color);
+    font-size: 1.1rem;
+}
+.gauge-target-text strong {
+    display: block;
+    font-size: 2.5rem;
+}
+
+/* Section des données sous le graphique */
+.prediction-data {
+    margin-top: 1.5rem;
+}
+.current-level {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+.current-level span {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--subtle-text-color);
+    margin-top: 0.25rem;
+}
+
+/* L'encadré pour le pourcentage */
+.prediction-gap {
+    background-color: var(--section-bg-color);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+}
+.prediction-gap strong {
+    display: block;
+    font-size: 1.75rem;
+    font-family: var(--font-heading);
+    margin-top: 0.25rem;
+}
+
+/* Styles pour les couleurs du pourcentage */
+.prediction-gap .success { color: #10B981; } /* Vert */
+.prediction-gap .failure { color: #EF4444; } /* Rouge */
+
+/* Conteneur pour le texte explicatif */
+.prediction-explanation h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+.prediction-explanation p {
+    margin-bottom: 1rem;
+}
+
+/* ---- Responsive : une seule colonne sur mobile ---- */
+@media (max-width: 900px) {
+    .prediction-layout-grid {
+        grid-template-columns: 1fr; /* Passe à une seule colonne */
+    }
+}
