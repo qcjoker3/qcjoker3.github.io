@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // --- FONCTIONS UTILITAIRES ---
+    // --- FONCTIONS UTILITAIRES ---
     const fmtNombre = (n, isCurrency = true) => {
         if (isNaN(n) || n === null) return isCurrency ? "0,00 $" : "0";
         const options = {
@@ -24,21 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INITIALISATION D'AUTONUMERIC ---
     const anInputs = {};
-    const champsArgent = [
-        'ret-epargne-actuelle', 'ret-cotisation-mensuelle', 
-        'vf-montant-initial', 'vf-cotisation', 'hypo-montant', 'trex-montant', 
-        'trex-cotisation-annuelle', 'al-prix-propriete', 'al-mise-de-fonds', 
-        'al-taxes-annuelles', 'al-assurance-proprio', 'al-frais-condo', 
-        'al-loyer-mensuel', 'al-assurance-loc', 'hypo-prix-propriete', 'hypo-mise-de-fonds',
-        'duree-montant-initial','duree-retrait-annuel','fire-epargne-actuelle','fire-epargne-annuelle','fire-depenses-annuelles',
-        'reer-celi-montant-annuel','cout-montant-depense','fnb-montant-initial','fnb-cotisation-mensuelle'
-        
-    ];
-    const champsEntier = [
-        'ret-age-actuel', 'ret-age-retraite', // Nouveaux champs Retraite
-        //'vf-duree', 'hypo-duree', 'trex-duree', 'al-amortissement', 'al-horizon'
-        // 'age-actuel' et 'age-retraite' ont été retirés
-    ];
+    const champsArgent = ['ret-epargne-actuelle', 'ret-cotisation-mensuelle', 'vf-montant-initial', 'vf-cotisation', 'hypo-montant', 'trex-montant', 'trex-cotisation-annuelle', 'al-prix-propriete', 'al-mise-de-fonds', 'al-taxes-annuelles', 'al-assurance-proprio', 'al-frais-condo', 'al-loyer-mensuel', 'al-assurance-loc', 'hypo-prix-propriete', 'hypo-mise-de-fonds', 'duree-montant-initial','duree-retrait-annuel','fire-epargne-actuelle','fire-epargne-annuelle','fire-depenses-annuelles', 'reer-celi-montant-annuel','cout-montant-depense','fnb-montant-initial','fnb-cotisation-mensuelle'];
+    const champsEntier = ['ret-age-actuel', 'ret-age-retraite'];
     
     const optionsArgent = AutoNumeric.getPredefinedOptions().dollar;
     const optionsEntier = { decimalPlaces: 0, digitGroupSeparator: '' };
@@ -64,43 +51,45 @@ document.addEventListener('DOMContentLoaded', () => {
     let chartRevenu = null, chartTrajectoire = null, chartDureeCapital = null;
     let chartFire = null, chartReerCeli = null, chartCoutOpportunite = null, chartSimulateurFnb = null, chartFnbAllocation = null;
 
-    // --- SYSTÈME DE NAVIGATION ENTRE CALCULATRICES ---
-const showCalculator = (key) => {
-        if (!key) return; // Sécurité pour éviter les erreurs
+    // ==========================================================
+    // === SYSTÈME DE NAVIGATION ENTRE CALCULATRICES (CORRIGÉ) ===
+    // ==========================================================
+    const calcCards = document.querySelectorAll('#selection-calculatrices .card'); 
+    const calcSections = document.querySelectorAll('.calculator-card');
+    const allExplications = document.querySelectorAll('.boite-explication');
+
+    const showCalculator = (key) => {
+        if (!key) return;
 
         const targetSection = document.getElementById(`calculatrice-${key}`);
         const targetExplication = document.getElementById(`explication-${key}`);
         
-        // On cache toutes les sections
         calcSections.forEach(sec => sec.classList.remove('active'));
         allExplications.forEach(box => box.classList.remove('active'));
         calcCards.forEach(card => card.classList.remove('selected'));
 
-        // On affiche les bonnes sections
         if (targetSection) targetSection.classList.add('active');
         if (targetExplication) targetExplication.classList.add('active');
 
-        // On met en évidence la bonne carte de sélection
         const selectedCard = document.querySelector(`#selection-calculatrices a[href="#${key}"]`);
         if (selectedCard) selectedCard.classList.add('selected');
 
         sessionStorage.setItem('derniereCalculatrice', key);
     };
-    // CHANGÉ ICI : On ajoute la logique de clic
+
     calcCards.forEach(card => {
         card.addEventListener('click', (event) => {
-            event.preventDefault(); // Empêche la page de sauter à l'ancre
-            const calculatorId = card.getAttribute('href').substring(1); // On lit le href (ex: "#retraite" -> "retraite")
+            event.preventDefault();
+            const calculatorId = card.getAttribute('href').substring(1);
             showCalculator(calculatorId);
         });
     });
 
-    // --- LOGIQUE D'AFFICHAGE INITIAL (CORRIGÉE) ---
-    const ancreURL = window.location.hash.substring(1); // Récupère le mot après le #
+    // --- LOGIQUE D'AFFICHAGE INITIAL ---
+    const ancreURL = window.location.hash.substring(1);
 
     if (ancreURL) {
         showCalculator(ancreURL);
-        // Fait défiler la page jusqu'à la calculatrice pour une meilleure expérience
         const calculatorElement = document.getElementById(`calculatrice-${ancreURL}`);
         if (calculatorElement) {
             setTimeout(() => {
@@ -112,12 +101,10 @@ const showCalculator = (key) => {
         if (derniereCalc) {
             showCalculator(derniereCalc);
         } else if (calcCards.length > 0) {
-            // Affiche la première calculatrice par défaut
             const defaultCalcId = calcCards[0].getAttribute('href').substring(1);
             showCalculator(defaultCalcId);
         }
     }
-    
 // =========================================================================
 // === NOUVELLE CALCULATRICE DE RETRAITE 360° ===
 // =========================================================================
