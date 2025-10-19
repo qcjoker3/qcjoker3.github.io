@@ -517,14 +517,17 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 #articles .card {
     display: flex;
     flex-direction: column;
+    padding: 0; /* On retire le padding de la div extérieure */
 }
 
 #articles .card .card-link {
     display: flex;
     flex-direction: column;
     flex-grow: 1; 
+    height: 100%; /* Force le lien à prendre 100% de la hauteur */
+    padding: 2.5rem; /* On applique le padding directement sur le lien */
 }
 
 #articles .card .card-link p {
-    flex-grow: 1;
+    flex-grow: 1; /* Pousse le paragraphe vers le bas pour aligner les titres */
 }
