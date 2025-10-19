@@ -211,5 +211,69 @@
             <li><code>iShares Gold Bullion ETF (CGL.TO)</code> : Permet aux Canadiens d'investir directement dans des lingots d'or physiques.</li>
             <li><code>Horizons Silver ETF (HUZ.TO)</code> : Une façon simple d'investir dans le prix de l'argent via la bourse de Toronto.</li>
         </ul>
+         <div class="partage-social-container">
+        <h3>Partager cet article</h3>
+        <div class="boutons-partage">
+            <a href="#" class="partage-btn facebook" target="_blank" title="Partager sur Facebook">Facebook</a>
+            <a href="#" class="partage-btn twitter" target="_blank" title="Partager sur X">X (Twitter)</a>
+            <a href="#" class="partage-btn linkedin" target="_blank" title="Partager sur LinkedIn">LinkedIn</a>
+            <a href="#" class="partage-btn whatsapp" target="_blank" title="Partager sur WhatsApp">WhatsApp</a>
+            <a href="#" class="partage-btn email" title="Partager par courriel">Courriel</a>
+            <button class="partage-btn copy-link" title="Copier le lien">Copier le lien</button>
+        </div>
+        <span id="copy-confirmation" style="display:none; color: var(--primary-color); margin-left: 1rem; font-weight: 500;">Lien copié !</span>
+    </div>
+    
+    <a href="../blog.html" class="lien-retour">← Retour à tous les articles</a>
+    
+</main>
+    
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const pageUrl = window.location.href;
+        const articleTitle = document.querySelector('h1').innerText;
+
+        const encodedUrl = encodeURIComponent(pageUrl);
+        const encodedTitle = encodeURIComponent(articleTitle);
+
+        document.querySelector('.partage-btn.facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
+        document.querySelector('.partage-btn.twitter').href = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
+        document.querySelector('.partage-btn.linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`;
+        document.querySelector('.partage-btn.whatsapp').href = `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`;
+        document.querySelector('.partage-btn.email').href = `mailto:?subject=${encodedTitle}&body=Je pensais que cet article pourrait t'intéresser :%0A%0A${pageUrl}`;
+
+        const copyBtn = document.querySelector('.partage-btn.copy-link');
+        const copyConfirmation = document.getElementById('copy-confirmation');
         
+        if (copyBtn) {
+            copyBtn.addEventListener('click', () => {
+                try {
+                    navigator.clipboard.writeText(pageUrl).then(() => {
+                        copyConfirmation.style.display = 'inline';
+                        setTimeout(() => {
+                            copyConfirmation.style.display = 'none';
+                        }, 2000);
+                    });
+                } catch (err) {
+                    const textArea = document.createElement('textarea');
+                    textArea.value = pageUrl;
+                    document.body.appendChild(textArea);
+                    textArea.focus();
+                    textArea.select();
+                    try {
+                        document.execCommand('copy');
+                        copyConfirmation.style.display = 'inline';
+                        setTimeout(() => {
+                            copyConfirmation.style.display = 'none';
+                        }, 2000);
+                    } catch (err) {
+                        console.error('Impossible de copier le lien', err);
+                    }
+                    document.body.removeChild(textArea);
+                }
+            });
+        }
+    });
+</script>
+
     </article>
