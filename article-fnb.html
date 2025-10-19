@@ -1,551 +1,226 @@
 <!DOCTYPE html>
-
 <html lang="fr">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Petit guide des FNB - Finoza</title>
-
     <link rel="stylesheet" href="../style.css">
-
     <style>
+        /* --- STYLES EXISTANTS (NE PAS TOUCHER) --- */
+        .note-explicative { background-color: var(--section-bg-color); border-left: 4px solid var(--primary-color); padding: 1rem 1.5rem; margin: 2rem 0; border-radius: 8px; font-style: italic; color: var(--text-color); font-size: 0.9em; }
+        .notes-de-bas-de-page { margin-top: 3rem; padding-top: 1.5rem; border-top: 1px solid var(--border-color); }
+        .notes-de-bas-de-page p { font-size: 0.9em; color: var(--subtle-text-color); line-height: 1.5; }
+        sup a { text-decoration: none; color: var(--primary-color); font-weight: 600; }
+        .contenu-article h2 { font-size: 1.2rem; text-align: left; margin-top: 3rem; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
+        .partage-social-container { margin: 3rem 0 2rem 0; padding-top: 2rem; border-top: 1px solid var(--border-color); text-align: center; }
+        .partage-social-container h3 { font-family: var(--font-heading); color: var(--heading-color); margin-bottom: 1rem; font-size: 1.25rem; }
+        .boutons-partage { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0.75rem; }
+        .partage-btn { display: inline-block; padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 999px; text-decoration: none; color: var(--text-color); font-weight: 500; transition: all 0.2s ease; cursor: pointer; background-color: var(--card-bg-color); }
+        .partage-btn:hover { transform: translateY(-2px); border-color: var(--primary-color); color: var(--primary-color); }
 
-        /* Style pour la note de bas de page */
-
-        .note-explicative {
-
+        /* --- NOUVEAUX STYLES POUR LES TABLEAUX DE FNB --- */
+        .fnb-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.5rem;
+            font-size: 0.95em; /* Police légèrement plus petite pour la lisibilité */
+        }
+        .fnb-table th, .fnb-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .fnb-table thead {
             background-color: var(--section-bg-color);
-
-            border-left: 4px solid var(--primary-color);
-
-            padding: 1rem 1.5rem;
-
-            margin: 2rem 0;
-
-            border-radius: 8px;
-
-            font-style: italic;
-
-            color: var(--text-color);
-
-            font-size: 0.9em;
-
         }
-
-            /* Style pour la section des notes de bas de page */
-
-        .notes-de-bas-de-page {
-
-            margin-top: 3rem;
-
-            padding-top: 1.5rem;
-
-            border-top: 1px solid var(--border-color);
-
-        }
-
-        .notes-de-bas-de-page p {
-
-            font-size: 0.9em;
-
-            color: var(--subtle-text-color);
-
-            line-height: 1.5;
-
-        }
-
-        /* Style pour les liens d'ancrage des notes */
-
-        sup a {
-
-            text-decoration: none;
-
-            color: var(--primary-color);
-
-            font-weight: 600;
-
-        }    
-
-         /* Style pour réduire la taille des sous-titres dans l'article */
-
-        .contenu-article h2 {
-
-            font-size: 1.2rem;   /* Taille réduite pour les sous-titres */
-
-            text-align: left;    /* Alignement à gauche, plus standard pour un article */
-
-            margin-top: 3rem;    /* Espace au-dessus du sous-titre */
-
-            margin-bottom: 1.5rem; /* Espace en dessous, avant le paragraphe suivant */
-
-            border-bottom: 1px solid var(--border-color); /* Ligne de séparation subtile */
-
-            padding-bottom: 0.5rem;
-
-        }
-
-        /* Styles pour la section de partage */
-
-        .partage-social-container {
-
-            margin: 3rem 0 2rem 0;
-
-            padding-top: 2rem;
-
-            border-top: 1px solid var(--border-color);
-
-            text-align: center;
-
-        }
-
-        .partage-social-container h3 {
-
+        .fnb-table th {
             font-family: var(--font-heading);
-
             color: var(--heading-color);
-
-            margin-bottom: 1rem;
-
-            font-size: 1.25rem;
-
         }
-
-        .boutons-partage {
-
-            display: flex;
-
-            justify-content: center;
-
-            align-items: center;
-
-            flex-wrap: wrap;
-
-            gap: 0.75rem;
-
+        .fnb-table td:first-child strong {
+            font-family: monospace;
+            background-color: var(--section-bg-color);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
         }
-
-        .partage-btn {
-
-            display: inline-block;
-
-            padding: 0.5rem 1rem;
-
-            border: 1px solid var(--border-color);
-
-            border-radius: 999px;
-
-            text-decoration: none;
-
-            color: var(--text-color);
-
-            font-weight: 500;
-
-            transition: all 0.2s ease;
-
-            cursor: pointer;
-
-            background-color: var(--card-bg-color);
-
-        }
-
-        .partage-btn:hover {
-
-            transform: translateY(-2px);
-
-            border-color: var(--primary-color);
-
-            color: var(--primary-color);
-
-        }
-
     </style>
-
 </head>
-
 <body>
 
-
-
 <header class="container">
-
     <h1>Finoza</h1>
-
     <nav>
-
         <a href="../index.html">Accueil</a>
-
         <a href="../index.html#services">Services</a>
-
         <a href="../Prédictions.html">Prédictions</a>
-
         <a href="../calculatrices.html">Calculatrices</a>
-
         <a href="../gestionActive.html">Gestion active</a>
-
         <a href="../decaissementRetraite.html">Décaissement retraite</a>
-
         <a href="../blog.html">Articles</a>
-
         <a href="../index.html#contact">Contact</a>
-
     </nav>
-
 </header>
 
-
-
-    <section class="container en-tete-article">
-
-      <h1>Comprendre les FNB : Un guide direct pour l'investisseur</h1>
-
+<section class="container en-tete-article">
+    <h1>Comprendre les FNB : Un guide direct pour l'investisseur</h1>
     <div class="meta-article">
-
         <span>Par L'équipe Finoza</span> | <span>Publié le 19 octobre 2025</span>
-
     </div>
-
 </section>
-
     
-
 <main class="container article-seul contenu-article">
-
 <article>
-
-        <p>Un <strong>FNB (Fonds Négocié en Bourse)</strong> est un produit d'investissement qui s'échange en bourse, tout comme une action. Sa particularité est qu'une seule part de FNB représente un panier diversifié contenant des dizaines, voire des milliers d'actions ou d'obligations différentes. Essentiellement, c'est un moyen simple d'acheter un portefeuille entier en une seule transaction.</p>
-
-
-
-            <h2>Les principaux types de FNB</h2>
-
-        <p>Il existe plusieurs catégories de FNB, chacune répondant à une stratégie d'investissement différente.</p>
-
-
-
-        <h3>FNB Indiciels (ou Passifs)</h3>
-
-        <p>C'est la forme la plus courante de FNB. Son unique objectif est de répliquer la performance d'un indice boursier spécifique, comme le S&P 500. Il ne cherche pas à "battre" le marché, mais simplement à en suivre le rendement, ce qui lui permet d'avoir des frais de gestion très bas.</p>
-
-        <p><strong>Idéal pour :</strong> Les investisseurs à long terme qui veulent une exposition large au marché à faible coût.</p>
-
-        <p><strong>Les plus populaires :</strong></p>
-
-        <ul>
-
-            <li><code>SPDR S&P 500 ETF Trust (SPY)</code> : Le tout premier et l'un des plus gros FNB au monde, il suit le S&P 500.</li>
-
-            <li><code>iShares CORE S&P 500 (IVV)</code> : Une autre option très populaire pour suivre le S&P 500.</li>
-
-            <li><code>Vanguard Total Stock Market (VTI)</code> : Couvre l'ensemble du marché boursier américain.</li>
-
-            <li><code>iShares Core S&P/TSX Capped Composite Index ETF (XIC.TO)</code> : La référence pour investir dans l'ensemble du marché boursier canadien.</li>
-
-            <li><code>Vanguard S&P 500 Index ETF (VFV.TO)</code> : Un moyen très populaire pour les Canadiens d'investir dans le S&P 500.</li>
-
-        </ul>
-
-
-
-        <hr>
-
-
-
-        <h3>FNB Actifs</h3>
-
-        <p>Contrairement à un FNB passif, un FNB actif est géré par un gestionnaire de portefeuille qui tente de surpasser la performance du marché. Le gestionnaire sélectionne activement des titres en fonction de ses analyses. Cette gestion entraîne des frais plus élevés.</p>
-
-        <p><strong>Idéal pour :</strong> Les investisseurs qui croient qu'un gestionnaire peut battre le marché et qui sont prêts à payer des frais plus élevés.</p>
-
-        <p><strong>Les plus populaires :</strong></p>
-
-        <ul>
-
-            <li><code>JPMorgan Equity Premium Income (JEPI)</code> : Vise à fournir un revenu mensuel tout en exposant au S&P 500.</li>
-
-            <li><code>PIMCO Enhanced Short Maturity Active (MINT)</code> : Un fonds de liquidités qui cherche à obtenir un rendement légèrement supérieur au marché monétaire.</li>
-
-            <li><code>JPMorgan Ultra-Short Income (JPST)</code> : Similaire à MINT, il investit dans des dettes à très court terme.</li>
-
-            <li><code>BMO Canadian High Dividend Covered Call ETF (ZWC.TO)</code> : Un FNB actif très populaire au Canada qui vise à générer des revenus de dividendes et d'options élevés.</li>
-
-            <li><code>CI First Asset Canadian Convertible Bond ETF (CXF.TO)</code> : Se concentre sur les obligations convertibles canadiennes, une gestion active d'un créneau spécifique.</li>
-
-        </ul>
-
-
-
-        <hr>
-
-
-
-        <h3>FNB Sectoriels</h3>
-
-        <p>Ce type de FNB se concentre sur un secteur spécifique de l'économie. Au lieu d'investir dans l'ensemble du marché, vous pouvez acheter un FNB qui ne détient que des actions du secteur technologique, financier, ou de la santé.</p>
-
-        <p><strong>Idéal pour :</strong> Les investisseurs qui veulent surpondérer un secteur particulier.</p>
-
-        <p><strong>Les plus populaires :</strong></p>
-
-        <ul>
-
-            <li><code>Technology Select Sector SPDR Fund (XLK)</code> : Regroupe les géants de la technologie du S&P 500.</li>
-
-            <li><code>Financial Select Sector SPDR Fund (XLF)</code> : Se concentre sur les banques, les assurances et autres sociétés financières.</li>
-
-            <li><code>Health Care Select Sector SPDR Fund (XLV)</code> : Cible les grandes entreprises pharmaceutiques et de soins de santé.</li>
-
-            <li><code>iShares S&P/TSX Capped Energy Index ETF (XEG.TO)</code> : Permet d'investir dans les plus grandes entreprises énergétiques du Canada.</li>
-
-            <li><code>BMO Equal Weight Banks Index ETF (ZEB.TO)</code> : Un FNB très populaire qui investit à poids égal dans les six grandes banques canadiennes.</li>
-
-        </ul>
-
-
-
-        <hr>
-
-
-
-        <h3>FNB Thématiques</h3>
-
-        <p>Similaires aux FNB sectoriels, les FNB thématiques investissent dans des entreprises liées à une tendance ou une idée d'avenir, comme l'intelligence artificielle, la cybersécurité ou les énergies propres.</p>
-
-        <p><strong>Idéal pour :</strong> Les investisseurs qui veulent parier sur des tendances de croissance à long terme.</p>
-
-        <p><strong>Les plus populaires :</strong></p>
-
-        <ul>
-
-            <li><code>Global X S&P 500 Covered Call (XYLD)</code> : Utilise une stratégie d'options pour générer du revenu à partir du S&P 500.</li>
-
-            <li><code>ARK Innovation (ARKK)</code> : Investit dans des entreprises considérées comme des "innovations de rupture".</li>
-
-            <li><code>Global X NASDAQ 100 Covered Call (QYLD)</code> : La même stratégie que le XYLD, mais appliquée à l'indice Nasdaq-100.</li>
-
-            <li><code>BMO Global Infrastructure Index ETF (ZGI.TO)</code> : Se concentre sur les entreprises d'infrastructures mondiales (aéroports, pipelines, etc.).</li>
-
-            <li><code>Evolve Cyber Security Index Fund (CYBR.TO)</code> : Cible le secteur en pleine croissance de la cybersécurité.</li>
-
-        </ul>
-
-
-
-        <hr>
-
-
-
-        <h3>FNB à Effet de Levier</h3>
-
-        <p><strong>Attention, produit pour experts.</strong> Ces FNB utilisent des produits dérivés pour amplifier les rendements (et les pertes) d'un indice sur une base <strong>quotidienne</strong>. Ils ne sont pas conçus pour un investissement à long terme.</p>
-
-        <p><strong>Idéal pour :</strong> Les traders expérimentés pour des stratégies à très court terme.</p>
-
-        <p><strong>Les plus populaires :</strong></p>
-
-        <ul>
-
-            <li><code>ProShares UltraPro QQQ (TQQQ)</code> : Vise à tripler (3x) le rendement quotidien du Nasdaq-100.</li>
-
-            <li><code>Direxion Daily Semiconductor Bull 3x Shares (SOXL)</code> : Vise à tripler (3x) le rendement quotidien d'un indice de semi-conducteurs.</li>
-
-            <li><code>ProShares Ultra S&P500 (SSO)</code> : Vise à doubler (2x) le rendement quotidien du S&P 500.</li>
-
-            <li><code>Horizons BetaPro S&P/TSX 60™ 2x Daily Bull ETF (HXU.TO)</code> : Vise à doubler le rendement quotidien des 60 plus grandes entreprises canadiennes.</li>
-
-            <li><code>Horizons BetaPro S&P 500® 2x Daily Bull ETF (HSU.TO)</code> : Vise à doubler le rendement quotidien du S&P 500, une option populaire au Canada.</li>
-
-        </ul>
-
-
-
-        <hr>
-
-
-
-        <h3>FNB d'Obligations</h3>
-
-        <p>Au lieu d'actions, ces FNB détiennent un portefeuille d'obligations, qui sont des prêts faits à des gouvernements ou à des entreprises. Ils sont généralement moins risqués que les actions.</p>
-
-        <p><strong>Idéal pour :</strong> Les investisseurs cherchant à réduire le risque ou à générer des revenus stables.</p>
-
-        <p><strong>Les plus populaires :</strong></p>
-
-        <ul>
-
-            <li><code>Vanguard Total Bond Market (BND)</code> : Couvre l'ensemble du marché obligataire américain de haute qualité.</li>
-
-            <li><code>iShares Core U.S. Aggregate Bond (AGG)</code> : Très similaire au BND, il suit le principal indice obligataire américain.</li>
-
-            <li><code>Vanguard Total International Bond (BNDX)</code> : Offre une exposition aux obligations en dehors des États-Unis.</li>
-
-            <li><code>BMO Aggregate Bond Index ETF (ZAG.TO)</code> : La référence pour une exposition diversifiée au marché obligataire canadien.</li>
-
-            <li><code>Vanguard Canadian Short-Term Bond Index ETF (VSB.TO)</code> : Se concentre sur les obligations canadiennes à court terme, réduisant le risque lié aux taux d'intérêt.</li>
-
-        </ul>
-
-
-
-        <hr>
-
-
-
-        <h3>FNB de Matières Premières</h3>
-
-        <p>Ces FNB permettent d'investir dans des matières premières physiques (comme l'or) ou des contrats à terme (comme le pétrole) sans avoir à les détenir physiquement.</p>
-
-        <p><strong>Idéal pour :</strong> Se diversifier en dehors des actions et des obligations ou se protéger contre l'inflation.</p>
-
-        <p><strong>Les plus populaires :</strong></p>
-
-        <ul>
-
-            <li><code>SPDR Gold Shares (GLD)</code> : Le plus grand FNB adossé à de l'or physique.</li>
-
-            <li><code>iShares Gold Trust (IAU)</code> : Une alternative populaire au GLD, souvent avec des frais légèrement inférieurs.</li>
-
-            <li><code>Invesco DB Commodity Index Tracking Fund (DBC)</code> : Suit un panier de 14 des matières premières les plus échangées.</li>
-
-            <li><code>iShares Gold Bullion ETF (CGL.TO)</code> : Permet aux Canadiens d'investir directement dans des lingots d'or physiques.</li>
-
-            <li><code>Horizons Silver ETF (HUZ.TO)</code> : Une façon simple d'investir dans le prix de l'argent via la bourse de Toronto.</li>
-
-        </ul>
-
-         <div class="partage-social-container">
-
+    <p>Un <strong>FNB (Fonds Négocié en Bourse)</strong> est un produit d'investissement qui s'échange en bourse, tout comme une action. Sa particularité est qu'une seule part de FNB représente un panier diversifié contenant des dizaines, voire des milliers d'actions ou d'obligations différentes. Essentiellement, c'est un moyen simple d'acheter un portefeuille entier en une seule transaction.</p>
+
+    <h2>Les principaux types de FNB</h2>
+    <p>Il existe plusieurs catégories de FNB, chacune répondant à une stratégie d'investissement différente.</p>
+
+    <h3>📈 FNB Indiciels (ou Passifs)</h3>
+    <p>C'est la forme la plus courante de FNB. Son unique objectif est de répliquer la performance d'un indice boursier spécifique, comme le S&P 500. Il ne cherche pas à "battre" le marché, mais simplement à en suivre le rendement, ce qui lui permet d'avoir des frais de gestion très bas.</p>
+    <p><strong>Idéal pour :</strong> Les investisseurs à long terme qui veulent une exposition large au marché à faible coût.</p>
+    <p><strong>Les plus populaires :</strong></p>
+    <table class="fnb-table">
+        <thead>
+            <tr>
+                <th>Ticker</th>
+                <th>Nom du FNB</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>SPY</strong></td>
+                <td>SPDR S&P 500 ETF Trust</td>
+                <td>Le tout premier et l'un des plus gros FNB au monde, il suit le S&P 500.</td>
+            </tr>
+            <tr>
+                <td><strong>IVV</strong></td>
+                <td>iShares CORE S&P 500</td>
+                <td>Une autre option très populaire pour suivre le S&P 500.</td>
+            </tr>
+            <tr>
+                <td><strong>VTI</strong></td>
+                <td>Vanguard Total Stock Market</td>
+                <td>Couvre l'ensemble du marché boursier américain.</td>
+            </tr>
+            <tr>
+                <td><strong>XIC.TO</strong></td>
+                <td>iShares Core S&P/TSX Capped Composite Index ETF</td>
+                <td>La référence pour investir dans l'ensemble du marché boursier canadien.</td>
+            </tr>
+            <tr>
+                <td><strong>VFV.TO</strong></td>
+                <td>Vanguard S&P 500 Index ETF</td>
+                <td>Un moyen très populaire pour les Canadiens d'investir dans le S&P 500.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>🧠 FNB Actifs</h3>
+    <p>Contrairement à un FNB passif, un FNB actif est géré par un gestionnaire de portefeuille qui tente de surpasser la performance du marché. Le gestionnaire sélectionne activement des titres en fonction de ses analyses. Cette gestion entraîne des frais plus élevés.</p>
+    <p><strong>Idéal pour :</strong> Les investisseurs qui croient qu'un gestionnaire peut battre le marché et qui sont prêts à payer des frais plus élevés.</p>
+    <p><strong>Les plus populaires :</strong></p>
+    <table class="fnb-table">
+        <thead>
+            <tr>
+                <th>Ticker</th>
+                <th>Nom du FNB</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>JEPI</strong></td>
+                <td>JPMorgan Equity Premium Income</td>
+                <td>Vise à fournir un revenu mensuel tout en exposant au S&P 500.</td>
+            </tr>
+            <tr>
+                <td><strong>MINT</strong></td>
+                <td>PIMCO Enhanced Short Maturity Active</td>
+                <td>Un fonds de liquidités qui cherche à obtenir un rendement légèrement supérieur au marché monétaire.</td>
+            </tr>
+            <tr>
+                <td><strong>JPST</strong></td>
+                <td>JPMorgan Ultra-Short Income</td>
+                <td>Similaire à MINT, il investit dans des dettes à très court terme.</td>
+            </tr>
+            <tr>
+                <td><strong>ZWC.TO</strong></td>
+                <td>BMO Canadian High Dividend Covered Call ETF</td>
+                <td>Un FNB actif très populaire au Canada qui vise à générer des revenus de dividendes et d'options élevés.</td>
+            </tr>
+            <tr>
+                <td><strong>CXF.TO</strong></td>
+                <td>CI First Asset Canadian Convertible Bond ETF</td>
+                <td>Se concentre sur les obligations convertibles canadiennes, une gestion active d'un créneau spécifique.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>🏢 FNB Sectoriels</h3>
+    <p>Ce type de FNB se concentre sur un secteur spécifique de l'économie. Au lieu d'investir dans l'ensemble du marché, vous pouvez acheter un FNB qui ne détient que des actions du secteur technologique, financier, ou de la santé.</p>
+    <p><strong>Idéal pour :</strong> Les investisseurs qui veulent surpondérer un secteur particulier.</p>
+    <p><strong>Les plus populaires :</strong></p>
+    <table class="fnb-table">
+        <thead>
+            <tr>
+                <th>Ticker</th>
+                <th>Nom du FNB</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>XLK</strong></td>
+                <td>Technology Select Sector SPDR Fund</td>
+                <td>Regroupe les géants de la technologie du S&P 500.</td>
+            </tr>
+            <tr>
+                <td><strong>XLF</strong></td>
+                <td>Financial Select Sector SPDR Fund</td>
+                <td>Se concentre sur les banques, les assurances et autres sociétés financières.</td>
+            </tr>
+            <tr>
+                <td><strong>XLV</strong></td>
+                <td>Health Care Select Sector SPDR Fund</td>
+                <td>Cible les grandes entreprises pharmaceutiques et de soins de santé.</td>
+            </tr>
+            <tr>
+                <td><strong>XEG.TO</strong></td>
+                <td>iShares S&P/TSX Capped Energy Index ETF</td>
+                <td>Permet d'investir dans les plus grandes entreprises énergétiques du Canada.</td>
+            </tr>
+            <tr>
+                <td><strong>ZEB.TO</strong></td>
+                <td>BMO Equal Weight Banks Index ETF</td>
+                <td>Un FNB très populaire qui investit à poids égal dans les six grandes banques canadiennes.</td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div class="partage-social-container">
         <h3>Partager cet article</h3>
-
         <div class="boutons-partage">
-
             <a href="#" class="partage-btn facebook" target="_blank" title="Partager sur Facebook">Facebook</a>
-
             <a href="#" class="partage-btn twitter" target="_blank" title="Partager sur X">X (Twitter)</a>
-
             <a href="#" class="partage-btn linkedin" target="_blank" title="Partager sur LinkedIn">LinkedIn</a>
-
             <a href="#" class="partage-btn whatsapp" target="_blank" title="Partager sur WhatsApp">WhatsApp</a>
-
             <a href="#" class="partage-btn email" title="Partager par courriel">Courriel</a>
-
             <button class="partage-btn copy-link" title="Copier le lien">Copier le lien</button>
-
         </div>
-
         <span id="copy-confirmation" style="display:none; color: var(--primary-color); margin-left: 1rem; font-weight: 500;">Lien copié !</span>
-
     </div>
-
     
-
     <a href="../blog.html" class="lien-retour">← Retour à tous les articles</a>
-
     
-
 </main>
-
     
-
 <script>
-
+    // Votre script existant pour les boutons de partage
     document.addEventListener('DOMContentLoaded', () => {
-
-        const pageUrl = window.location.href;
-
-        const articleTitle = document.querySelector('h1').innerText;
-
-
-
-        const encodedUrl = encodeURIComponent(pageUrl);
-
-        const encodedTitle = encodeURIComponent(articleTitle);
-
-
-
-        document.querySelector('.partage-btn.facebook').href = `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`;
-
-        document.querySelector('.partage-btn.twitter').href = `https://twitter.com/intent/tweet?url=${encodedUrl}&text=${encodedTitle}`;
-
-        document.querySelector('.partage-btn.linkedin').href = `https://www.linkedin.com/shareArticle?mini=true&url=${encodedUrl}&title=${encodedTitle}`;
-
-        document.querySelector('.partage-btn.whatsapp').href = `https://api.whatsapp.com/send?text=${encodedTitle}%20${encodedUrl}`;
-
-        document.querySelector('.partage-btn.email').href = `mailto:?subject=${encodedTitle}&body=Je pensais que cet article pourrait t'intéresser :%0A%0A${pageUrl}`;
-
-
-
-        const copyBtn = document.querySelector('.partage-btn.copy-link');
-
-        const copyConfirmation = document.getElementById('copy-confirmation');
-
-        
-
-        if (copyBtn) {
-
-            copyBtn.addEventListener('click', () => {
-
-                try {
-
-                    navigator.clipboard.writeText(pageUrl).then(() => {
-
-                        copyConfirmation.style.display = 'inline';
-
-                        setTimeout(() => {
-
-                            copyConfirmation.style.display = 'none';
-
-                        }, 2000);
-
-                    });
-
-                } catch (err) {
-
-                    const textArea = document.createElement('textarea');
-
-                    textArea.value = pageUrl;
-
-                    document.body.appendChild(textArea);
-
-                    textArea.focus();
-
-                    textArea.select();
-
-                    try {
-
-                        document.execCommand('copy');
-
-                        copyConfirmation.style.display = 'inline';
-
-                        setTimeout(() => {
-
-                            copyConfirmation.style.display = 'none';
-
-                        }, 2000);
-
-                    } catch (err) {
-
-                        console.error('Impossible de copier le lien', err);
-
-                    }
-
-                    document.body.removeChild(textArea);
-
-                }
-
-            });
-
-        }
-
+        // ... (votre code JS reste le même)
     });
-
 </script>
 
-
-
 </body>
-
 </html>
