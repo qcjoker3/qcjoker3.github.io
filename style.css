@@ -496,19 +496,34 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
     }
 }
 
-/* ===== CORRECTION FINALE POUR L'ALIGNEMENT ET LA ZONE CLIQUABLE ===== */
+/* =================================================================== */
+/* === NOUVELLE CORRECTION POUR L'ALIGNEMENT DES CARTES D'ARTICLES === */
+/* =================================================================== */
+
+/* On s'assure que la grille dans la section #articles aligne bien ses éléments.
+   'stretch' est la valeur par défaut, mais être explicite ne fait pas de mal. */
+#articles .card-grid {
+    align-items: stretch;
+}
+
+/* 1. On cible la carte (<div class="card">) à l'intérieur de #articles */
 #articles .card {
-    display: flex;
-    flex-direction: column;
-    padding: 0;
+    height: 100%;               /* Force la carte à prendre toute la hauteur de la cellule de grille */
+    display: flex;              /* Transforme la carte en conteneur flex */
+    flex-direction: column;     /* Aligne ses enfants (ici, le lien <a>) verticalement */
+    padding: 0;                 /* On enlève le padding ici pour le mettre sur le lien cliquable */
 }
+
+/* 2. On cible le lien (<a class="card-link">) à l'intérieur de la carte */
 #articles .card .card-link {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    height: 100%;
-    padding: 2.5rem;
+    display: flex;              /* Le lien devient lui-même un conteneur flex */
+    flex-direction: column;     /* Pour organiser le H3 et le P verticalement */
+    flex-grow: 1;               /* Fait en sorte que le lien s'étire pour remplir la carte */
+    padding: 2.5rem;            /* On met le padding ici pour que toute la surface soit cliquable */
 }
+
+/* 3. On cible le paragraphe (<p>) à l'intérieur du lien */
 #articles .card .card-link p {
-    flex-grow: 1;
+    flex-grow: 1;               /* LA CLÉ : Le paragraphe prend tout l'espace vertical disponible,
+                                   ce qui aligne les titres en haut et assure une hauteur égale. */
 }
