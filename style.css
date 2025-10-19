@@ -234,36 +234,34 @@ footer, .site-footer {
 /* =============================================================== */
 
 /* --- Page: Blog & Articles --- */
-/* ===== CORRECTION POUR L'ALIGNEMENT DES CARTES ===== */
-.carte-article {
-    height: 100%; /* Force la carte à remplir la hauteur de sa cellule de grille */
+
+/* ===== CORRECTION DÉFINITIVE POUR L'ALIGNEMENT DES CARTES ===== */
+/* 1. On s'assure que les cellules de la grille s'étirent pour avoir la même hauteur */
+#articles .card-grid {
+    align-items: stretch;
+}
+
+/* 2. On transforme la carte en conteneur flex et on enlève son padding initial */
+#articles .card {
+    height: 100%;
     display: flex;
-    flex-direction: column; /* Organise le contenu en colonne */
-    background-color: var(--card-bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
-    transition: transform 0.3s ease, border-color 0.3s ease; /* Ajout d'une transition pour l'effet de survol */
+    flex-direction: column;
+    padding: 0; /* Le padding sera sur le lien pour que toute la zone soit cliquable */
 }
-.carte-article:hover {
-    transform: translateY(-5px);
+
+/* 3. Le lien <a> prend toute la place et devient aussi un conteneur flex */
+#articles .card .card-link {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1; /* Permet au lien de s'étirer pour remplir la carte */
+    padding: 2.5rem; /* On applique le padding sur le lien */
 }
-.carte-article h3 { 
-    margin-top: 0; 
+
+/* 4. Le paragraphe s'étire pour occuper l'espace restant */
+#articles .card .card-link p {
+    flex-grow: 1; /* C'est la clé : le paragraphe pousse le contenu vers le bas */
 }
-.carte-article .categorie {
-    display: inline-block;
-    background-color: var(--section-bg-color);
-    color: var(--subtle-text-color);
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.8em;
-    margin-bottom: 1rem;
-}
-.carte-article p {
-    flex-grow: 1; /* C'est la clé : le paragraphe prend tout l'espace vertical disponible */
-}
-/* ====================================================== */
+/* ===== FIN DE LA CORRECTION ===== */
 
 #filtres-categories {
     padding-top: 3rem;
@@ -494,36 +492,4 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
         background-color: #1F2937;
         border-left-color: #0D9488;
     }
-}
-
-/* =================================================================== */
-/* === NOUVELLE CORRECTION POUR L'ALIGNEMENT DES CARTES D'ARTICLES === */
-/* =================================================================== */
-
-/* On s'assure que la grille dans la section #articles aligne bien ses éléments.
-   'stretch' est la valeur par défaut, mais être explicite ne fait pas de mal. */
-#articles .card-grid {
-    align-items: stretch;
-}
-
-/* 1. On cible la carte (<div class="card">) à l'intérieur de #articles */
-#articles .card {
-    height: 100%;               /* Force la carte à prendre toute la hauteur de la cellule de grille */
-    display: flex;              /* Transforme la carte en conteneur flex */
-    flex-direction: column;     /* Aligne ses enfants (ici, le lien <a>) verticalement */
-    padding: 0;                 /* On enlève le padding ici pour le mettre sur le lien cliquable */
-}
-
-/* 2. On cible le lien (<a class="card-link">) à l'intérieur de la carte */
-#articles .card .card-link {
-    display: flex;              /* Le lien devient lui-même un conteneur flex */
-    flex-direction: column;     /* Pour organiser le H3 et le P verticalement */
-    flex-grow: 1;               /* Fait en sorte que le lien s'étire pour remplir la carte */
-    padding: 2.5rem;            /* On met le padding ici pour que toute la surface soit cliquable */
-}
-
-/* 3. On cible le paragraphe (<p>) à l'intérieur du lien */
-#articles .card .card-link p {
-    flex-grow: 1;               /* LA CLÉ : Le paragraphe prend tout l'espace vertical disponible,
-                                   ce qui aligne les titres en haut et assure une hauteur égale. */
 }
