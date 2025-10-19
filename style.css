@@ -234,34 +234,58 @@ footer, .site-footer {
 /* =============================================================== */
 
 /* --- Page: Blog & Articles --- */
+/* ================================================================= */
+/* === SOLUTION FINALE POUR L'ALIGNEMENT ET LA ZONE CLIQUABLE === */
+/* ================================================================= */
 
-/* ===== CORRECTION DÉFINITIVE POUR L'ALIGNEMENT DES CARTES ===== */
-/* 1. On s'assure que les cellules de la grille s'étirent pour avoir la même hauteur */
+/* On s'assure que la grille force les cartes de la même rangée à avoir la même hauteur. */
 #articles .card-grid {
     align-items: stretch;
 }
 
-/* 2. On transforme la carte en conteneur flex et on enlève son padding initial */
+/* 1. La DIV .card devient un conteneur FLEX simple et sans style direct. */
+/* Son seul rôle est de contenir le lien <a> et de le forcer à s'étirer. */
 #articles .card {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    padding: 0; /* Le padding sera sur le lien pour que toute la zone soit cliquable */
+    padding: 0;             /* On annule le padding de la règle .card générale. CRUCIAL. */
+    display: flex;          /* Transforme la div en conteneur flex. */
+    overflow: hidden;       /* Empêche tout débordement, y compris la zone cliquable. */
+    border: none;           /* On enlève la bordure du conteneur, elle sera sur le lien */
+    background-color: transparent; /* Le fond sera sur le lien */
 }
 
-/* 3. Le lien <a> prend toute la place et devient aussi un conteneur flex */
+/* 2. Le lien <a> devient la VRAIE carte visuelle et cliquable. */
 #articles .card .card-link {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Permet au lien de s'étirer pour remplir la carte */
-    padding: 2.5rem; /* On applique le padding sur le lien */
+    display: flex;          /* Devient lui-même un conteneur flex pour son contenu (h3, p). */
+    flex-direction: column; /* Aligne le titre et le paragraphe verticalement. */
+    width: 100%;            /* Prend toute la largeur de son parent. */
+    height: 100%;           /* Prend toute la hauteur de son parent. */
+    padding: 2.5rem;        /* On applique le padding ici. Toute la zone est maintenant cliquable. */
+    border: 1px solid var(--border-color); /* On applique la bordure ici */
+    border-radius: var(--border-radius); /* Et le radius ici */
+    background-color: var(--card-bg-color); /* Et le fond ici */
+    transition: transform 0.3s ease, border-color 0.3s ease; /* Ajout d'une transition */
 }
 
-/* 4. Le paragraphe s'étire pour occuper l'espace restant */
-#articles .card .card-link p {
-    flex-grow: 1; /* C'est la clé : le paragraphe pousse le contenu vers le bas */
+#articles .card .card-link:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-color);
 }
-/* ===== FIN DE LA CORRECTION ===== */
+
+/* 3. Le paragraphe <p> s'étire pour pousser le contenu et aligner les titres. */
+#articles .card .card-link p {
+    flex-grow: 1;           /* Le paragraphe prend tout l'espace vertical libre. */
+}
+
+/* 4. On s'assure que les marges par défaut des h3 et p n'interfèrent pas. */
+#articles .card .card-link h3,
+#articles .card .card-link p {
+    margin: 0;
+}
+
+#articles .card .card-link p {
+    margin-top: 1rem; /* On ajoute un espace contrôlé entre le titre et le paragraphe. */
+}
+/* ================================================================= */
 
 #filtres-categories {
     padding-top: 3rem;
