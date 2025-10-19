@@ -197,7 +197,7 @@ header.container {
     transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
     position: relative;
 }
-.card:hover { transform: translateY(-5px); /*border-color: var(--primary-color);*/ }
+.card:hover { transform: translateY(-5px); }
 .card h3 { font-size: 1.5rem; }
 .card p { margin-top: 1rem; }
 .card-link { display: block; color: inherit; text-decoration: none; }
@@ -221,7 +221,6 @@ header.container {
 
 /* --- Pied de Page (Footer) --- */
 footer, .site-footer {
-    /* [CORRECTION] Utilisation des variables de thème */
     background-color: var(--card-bg-color); 
     color: var(--subtle-text-color);
     text-align: center; 
@@ -235,15 +234,23 @@ footer, .site-footer {
 /* =============================================================== */
 
 /* --- Page: Blog & Articles --- */
+/* ===== CORRECTION POUR L'ALIGNEMENT DES CARTES ===== */
 .carte-article {
+    height: 100%; /* Force la carte à remplir la hauteur de sa cellule de grille */
+    display: flex;
+    flex-direction: column; /* Organise le contenu en colonne */
     background-color: var(--card-bg-color);
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
+    transition: transform 0.3s ease, border-color 0.3s ease; /* Ajout d'une transition pour l'effet de survol */
 }
-.carte-article h3 { margin-top: 0; }
+.carte-article:hover {
+    transform: translateY(-5px);
+}
+.carte-article h3 { 
+    margin-top: 0; 
+}
 .carte-article .categorie {
     display: inline-block;
     background-color: var(--section-bg-color);
@@ -253,14 +260,18 @@ footer, .site-footer {
     font-size: 0.8em;
     margin-bottom: 1rem;
 }
-.carte-article p { flex-grow: 1; }
+.carte-article p {
+    flex-grow: 1; /* C'est la clé : le paragraphe prend tout l'espace vertical disponible */
+}
+/* ====================================================== */
+
 #filtres-categories {
-    padding-top: 3rem; /* Espace au-dessus des filtres */
+    padding-top: 3rem;
     padding-bottom: 2rem;
     display: flex;
     gap: 0.5rem;
-    flex-wrap: wrap; /* Permet aux boutons de passer à la ligne sur mobile */
-    margin-bottom: 3rem; /* <-- AJOUT DE L'ESPACE ICI */
+    flex-wrap: wrap;
+    margin-bottom: 3rem;
 }
 .filtre-btn {
     background-color: var(--card-bg-color);
@@ -279,10 +290,8 @@ footer, .site-footer {
     transform: translateY(-2px);
 }
 #liste-articles {
-    margin-top: 3rem; /* Vous pouvez ajuster cette valeur (ex: 4rem, 60px) */
+    margin-top: 3rem;
 }
-.contenu-article { margin-top: 3rem; }
-.contenu-article { margin-top: 3rem; }
 .contenu-article { margin-top: 3rem; }
 .contenu-article p { margin-bottom: 1.6em; line-height: 1.7; }
 .en-tete-article { margin-bottom: 2.5rem; }
@@ -290,39 +299,33 @@ footer, .site-footer {
 #blog-intro { margin-bottom: 1.5rem; text-align: center; }
 
 /* --- Page: Calculatrices --- */
-
-/* 1. On ajuste le padding des sections conteneurs */
 #selection-calculatrices {
     padding-top: 1rem;
-    padding-bottom: 1.5rem; /* Espace entre le choix et l'explication */
+    padding-bottom: 1.5rem;
 }
 #explications-container {
     padding-top: 0;
     padding-bottom: 0;
 }
 #calculatrices-container {
-    padding-top: 1.5rem;   /* Espace entre l'explication et le formulaire */
-    padding-bottom: 3rem; /* Espace sous la calculatrice */
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
 }
-
-/* 2. On définit le style de la boîte d'explication */
 .boite-explication {
     display: none; 
     background-color: var(--bg-color); 
     border: 1px solid var(--border-color);
     padding: 1.5rem; 
-    margin: 0; /* On retire la marge verticale pour un contrôle total par le parent */
+    margin: 0;
     border-radius: 16px;
 }
 .boite-explication.active { 
     display: block; 
 }
-
-/* 3. On définit le style de la carte de la calculatrice */
 .calculator-card {
     display: none; 
     padding: 2.5rem; 
-    margin-top: 0; /* On retire la marge verticale */
+    margin-top: 0;
     border-radius: 16px; 
     background-color: var(--card-bg-color); 
     border: 1px solid var(--border-color);
@@ -331,8 +334,6 @@ footer, .site-footer {
     display: block; 
     animation: fadeIn 0.5s ease-out; 
 }
-
-/* 4. On conserve les autres styles de la page */
 .chart-container { 
     width: 100%; 
     height: 450px; 
@@ -346,8 +347,6 @@ footer, .site-footer {
     margin-bottom: 2rem;
     transition: background-color 0.3s ease, border-color 0.3s ease;
 }
-
-/* ... Le reste des styles */
 .advanced-options { margin-top: 2rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); overflow: hidden; }
 .advanced-options summary { padding: 1rem 1.5rem; font-family: var(--font-heading); font-weight: 600; color: var(--heading-color); background-color: var(--section-bg-color); cursor: pointer; transition: background-color 0.3s ease; }
 .advanced-options[open] > summary { border-bottom: 1px solid var(--border-color); }
@@ -377,23 +376,16 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 }
 .card-grid-scroller::-webkit-scrollbar { display: none; }
 #selection-calculatrices .card-grid {
-     /* CORRECTION CLÉ : Force la grille à s'adapter à la largeur de son contenu,
-       ce qui est parfait pour un conteneur qui défile horizontalement. */
     display: inline-grid;
-
-    /* On remplit les colonnes de haut en bas, puis on passe à la colonne suivante */
     grid-auto-flow: column;
-
-    /* On définit explicitement 2 RANGÉES dont la hauteur s'adapte au contenu */
     grid-template-rows: repeat(2, auto);
-
     gap: 1.5rem;
 }
 #selection-calculatrices .card {
-    width: 260px; /* Ajustez cette largeur pour voir plus ou moins de cartes */
+    width: 260px;
     padding: 1.5rem;
     text-align: center;
-    display: flex; /* Permet de mieux centrer le contenu verticalement */
+    display: flex;
     flex-direction: column;
     justify-content: center;
 }
@@ -421,19 +413,17 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
     box-shadow: var(--shadow-md);
     transition: all 0.2s ease;
 }
-/* [MODIFICATION] Règles spécifiques pour chaque flèche */
 #scroll-left-btn {
-    left: 0; /* Positionne la flèche à gauche, à l'extérieur du conteneur */
+    left: 0;
 }
 #scroll-right-btn {
-    right: 0; /* Positionne la flèche à droite, à l'extérieur */
+    right: 0;
 }
 .carousel-arrow:hover {
     background-color: var(--primary-color);
     color: var(--light-text-color);
     border-color: var(--primary-color);
 }
-/* [MODIFICATION] Rend la flèche complètement invisible et non cliquable quand elle est désactivée */
 .carousel-arrow:disabled {
     opacity: 0;
     pointer-events: none;
@@ -447,8 +437,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
     .carousel-arrow { display: none; }
 }
 
-/* =============================================================== */
-/* === Pastilles catégories et fonds === */
+/* --- Pastilles catégories et fonds --- */
 .categories-container, .fonds-container {
     display: flex;
     flex-wrap: wrap;
@@ -456,7 +445,6 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
     justify-content: center;
     margin-top: 1rem;
 }
-
 .pastille {
     padding: 8px 16px;
     border-radius: 20px;
@@ -468,13 +456,11 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
     transition: all 0.2s ease;
     font-size: 0.9rem;
 }
-
 .pastille:hover {
     background-color: var(--primary-color);
     color: var(--light-text-color);
     border-color: var(--primary-color);
 }
-
 .pastille.selected {
     background-color: var(--primary-color);
     color: var(--light-text-color);
@@ -487,8 +473,6 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
     margin: 2rem auto;
     display: block;
 }
-
-/* --- Responsive --- */
 @media (max-width: 700px) {
     #croissanceChart, #rendementAnnuelChart {
         max-width: 100%;
@@ -497,39 +481,34 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 }
 
 .encadre-explicatif {
-    background-color: #f7f9fa; /* Couleur de fond légèrement grise */
-    border-left: 4px solid #0D9488; /* Bordure de couleur d'accentuation */
+    background-color: #f7f9fa;
+    border-left: 4px solid #0D9488;
     padding: 20px;
-    margin: 30px 0; /* Marge en haut et en bas pour l'espacement */
+    margin: 30px 0;
     border-radius: 8px;
     font-size: 1.1em;
     line-height: 1.6;
 }
-
-/* Pour le mode sombre (si vous en avez un) */
 @media (prefers-color-scheme: dark) {
     .encadre-explicatif {
         background-color: #1F2937;
         border-left-color: #0D9488;
     }
 }
-/* 1. On s'assure que chaque carte prend 100% de la hauteur de sa cellule de grille. */
-.carte-article {
-    height: 100%; /* Très important pour que la carte remplisse l'espace */
+
+/* ===== CORRECTION FINALE POUR L'ALIGNEMENT ET LA ZONE CLIQUABLE ===== */
+#articles .card {
     display: flex;
-    flex-direction: column; /* On organise le contenu en colonne (titre, texte, etc.) */
-    background-color: var(--card-bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 1.5rem;
+    flex-direction: column;
+    padding: 0;
 }
-
-/* 2. On indique au paragraphe de description de prendre tout l'espace vertical disponible. */
-.carte-article p {
-    flex-grow: 1; /* C'est la clé ! Le texte s'étire et pousse le contenu suivant vers le bas. */
+#articles .card .card-link {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    height: 100%;
+    padding: 2.5rem;
 }
-
-/* Optionnel : Si vous avez un lien "Lire la suite", cette configuration l'alignera en bas. */
-.carte-article .lien-lire-suite {
-    margin-top: auto; /* S'assure que le lien reste bien en bas */
+#articles .card .card-link p {
+    flex-grow: 1;
 }
