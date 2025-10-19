@@ -238,26 +238,38 @@ footer, .site-footer {
 /* === SOLUTION FINALE POUR L'ALIGNEMENT ET LA ZONE CLIQUABLE === */
 /* ================================================================= */
 
-/* 1. On force la DIV .card-grid à se comporter comme une grille. */
-/* Cette règle est très spécifique et va écraser toute autre règle conflictuelle. */
+/* 1. On définit une grille responsive classique pour les articles. */
+/* C'est ce qui crée les "petits carrés un à côté de l'autre". */
 #articles .card-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
-    align-items: stretch; /* On garde l'alignement vertical */
+    align-items: stretch; /* Force les cartes de la même rangée à avoir la même hauteur. */
 }
 
-/* 2. On s'assure que la carte (le lien <a>) se comporte correctement DANS la grille. */
-/* Il est crucial que le lien soit un conteneur flex pour que son contenu s'aligne. */
-#articles .article-card {
+/* 2. On applique le style "calculatrice" à la carte d'article (le lien <a>). */
+#articles .card {
+    /* Comportement pour l'alignement interne */
     display: flex;
     flex-direction: column;
-    height: 100%; /* Important pour que 'stretch' fonctionne */
+    height: 100%;
+
+    /* Style visuel copié des calculatrices */
+    padding: 1.5rem;
+    text-align: center;
+    /* On NE MET PAS de 'width' ici, la grille s'en occupe. */
 }
 
-/* 3. Le paragraphe prend l'espace restant pour l'alignement vertical. */
-#articles .article-card p {
-    flex-grow: 1;
+/* 3. On applique les styles de police des calculatrices. */
+#articles .card h3 {
+    font-size: 1.1rem;
+}
+
+/* 4. On s'assure que le paragraphe s'étire pour un alignement parfait. */
+#articles .card p {
+    font-size: 0.9rem;
+    margin-top: 0.75rem;
+    flex-grow: 1; /* Règle la plus importante pour l'alignement vertical ! */
 }
 #filtres-categories {
     padding-top: 3rem;
