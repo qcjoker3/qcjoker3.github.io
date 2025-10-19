@@ -238,23 +238,27 @@ footer, .site-footer {
 /* === SOLUTION FINALE POUR L'ALIGNEMENT ET LA ZONE CLIQUABLE === */
 /* ================================================================= */
 
-/* On force la grille à étirer ses enfants (maintenant les liens <a>) */
+/* 1. On force la DIV .card-grid à se comporter comme une grille. */
+/* Cette règle est très spécifique et va écraser toute autre règle conflictuelle. */
 #articles .card-grid {
-    align-items: stretch;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    align-items: stretch; /* On garde l'alignement vertical */
 }
 
-/* 1. On cible directement le lien qui est maintenant la carte. */
+/* 2. On s'assure que la carte (le lien <a>) se comporte correctement DANS la grille. */
+/* Il est crucial que le lien soit un conteneur flex pour que son contenu s'aligne. */
 #articles .article-card {
-    display: flex;          /* Transforme le lien en conteneur flex. */
-    flex-direction: column; /* Aligne son contenu (h3, p) verticalement. */
-    height: 100%;           /* S'assure qu'il prend toute la hauteur disponible dans la grille. */
+    display: flex;
+    flex-direction: column;
+    height: 100%; /* Important pour que 'stretch' fonctionne */
 }
 
-/* 2. On cible le paragraphe à l'intérieur pour qu'il s'étire. */
+/* 3. Le paragraphe prend l'espace restant pour l'alignement vertical. */
 #articles .article-card p {
-    flex-grow: 1; /* C'est la règle qui pousse le contenu et garantit l'alignement. */
+    flex-grow: 1;
 }
-
 #filtres-categories {
     padding-top: 3rem;
     padding-bottom: 2rem;
