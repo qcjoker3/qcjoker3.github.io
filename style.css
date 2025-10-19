@@ -513,25 +513,23 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
         border-left-color: #0D9488;
     }
 }
-/* ===== CORRECTION FINALE POUR L'ALIGNEMENT ET LA ZONE CLIQUABLE ===== */
-
-/* 1. On rend la carte un conteneur flex vertical */
-#articles .card {
+/* 1. On s'assure que chaque carte prend 100% de la hauteur de sa cellule de grille. */
+.carte-article {
+    height: 100%; /* Très important pour que la carte remplisse l'espace */
     display: flex;
-    flex-direction: column;
-    padding: 0; /* On retire le padding de la div .card */
+    flex-direction: column; /* On organise le contenu en colonne (titre, texte, etc.) */
+    background-color: var(--card-bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
 }
 
-/* 2. On force le lien <a> à prendre toute la place disponible */
-#articles .card .card-link {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Permet au lien de s'étirer verticalement */
-    height: 100%; /* S'assure qu'il prend toute la hauteur */
-    padding: 2.5rem; /* On met le padding ici pour que toute la zone soit cliquable */
+/* 2. On indique au paragraphe de description de prendre tout l'espace vertical disponible. */
+.carte-article p {
+    flex-grow: 1; /* C'est la clé ! Le texte s'étire et pousse le contenu suivant vers le bas. */
 }
 
-/* 3. On force le paragraphe <p> à pousser le contenu */
-#articles .card .card-link p {
-    flex-grow: 1; /* Pousse le paragraphe vers le bas, alignant les titres en haut */
+/* Optionnel : Si vous avez un lien "Lire la suite", cette configuration l'alignera en bas. */
+.carte-article .lien-lire-suite {
+    margin-top: auto; /* S'assure que le lien reste bien en bas */
 }
