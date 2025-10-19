@@ -238,43 +238,21 @@ footer, .site-footer {
 /* === SOLUTION FINALE POUR L'ALIGNEMENT ET LA ZONE CLIQUABLE === */
 /* ================================================================= */
 
-/* On force la grille à étirer ses enfants pour qu'ils aient la même hauteur. */
+/* On force la grille à étirer ses enfants (maintenant les liens <a>) */
 #articles .card-grid {
     align-items: stretch;
 }
 
-/* 1. On cible notre nouvelle classe pour annuler les styles de .card qui posent problème. */
-/* Cette DIV devient un simple conteneur flex invisible. */
+/* 1. On cible directement le lien qui est maintenant la carte. */
 #articles .article-card {
-    padding: 0;
-    border: none;
-    background: none;
-    display: flex;
-    flex-direction: column;
+    display: flex;          /* Transforme le lien en conteneur flex. */
+    flex-direction: column; /* Aligne son contenu (h3, p) verticalement. */
+    height: 100%;           /* S'assure qu'il prend toute la hauteur disponible dans la grille. */
 }
 
-/* 2. On applique tous les styles visuels directement sur le lien. */
-#articles .article-card .card-link {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* Fait en sorte que le lien remplisse toute la hauteur de la carte. */
-    
-    /* On remet ici les styles visuels qu'on a enlevés du parent */
-    padding: 2.5rem;
-    background-color: var(--card-bg-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    transition: transform 0.3s ease, border-color 0.3s ease;
-}
-
-#articles .article-card .card-link:hover {
-    transform: translateY(-5px);
-    border-color: var(--primary-color);
-}
-
-/* 3. Le paragraphe prend l'espace restant pour aligner le contenu. */
-#articles .article-card .card-link p {
-    flex-grow: 1;
+/* 2. On cible le paragraphe à l'intérieur pour qu'il s'étire. */
+#articles .article-card p {
+    flex-grow: 1; /* C'est la règle qui pousse le contenu et garantit l'alignement. */
 }
 
 #filtres-categories {
