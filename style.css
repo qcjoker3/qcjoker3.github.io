@@ -607,3 +607,20 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 .prediction-gap .success { color: #10B981; } /* Vert */
 .prediction-gap .failure { color: #EF4444; } /* Rouge (si jamais vous en avez besoin) */
 .prediction-gap .warning { color: #F59E0B; } /* Ambre pour la surperformance */
+
+/* ========================================================== */
+/* NOTE DE BAS DE PAGE (DISCLAIMER) POUR LES PRÉVISIONS */
+/* ========================================================== */
+
+.footnote-disclaimer {
+    font-size: 0.9rem; /* Police légèrement plus petite */
+    font-style: italic; /* Style italique pour marquer la distinction */
+    color: var(--subtle-text-color, #6B7280); /* Utilise votre variable de couleur subtile */
+    text-align: center; /* Centré pour un look propre */
+    padding-top: 1.5rem; /* Espace au-dessus de la ligne */
+    margin-top: 2.5rem; /* Espace entre le graphique et la note */
+    border-top: 1px solid var(--border-color, #E5E7EB); /* Ligne de séparation */
+    max-width: 800px; /* Limite la largeur pour une meilleure lisibilité */
+    margin-left: auto; /* Centre le bloc */
+    margin-right: auto; /* Centre le bloc */
+}
