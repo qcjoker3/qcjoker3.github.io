@@ -583,7 +583,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
     font-family: var(--font-heading);
     margin-top: 0.25rem;
 }
-
+/*STYLE POUR LA SECTION DE PRÉVISION SUR LA PAGE D'ACCUEIL
 /* Styles pour les couleurs du pourcentage */
 .prediction-gap .success { color: #10B981; } /* Vert */
 .prediction-gap .failure { color: #EF4444; } /* Rouge */
@@ -603,3 +603,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
         grid-template-columns: 1fr; /* Passe à une seule colonne */
     }
 }
+/* Styles pour les couleurs du pourcentage */
+.prediction-gap .success { color: #10B981; } /* Vert */
+.prediction-gap .failure { color: #EF4444; } /* Rouge (si jamais vous en avez besoin) */
+.prediction-gap .warning { color: #F59E0B; } /* Ambre pour la surperformance */
