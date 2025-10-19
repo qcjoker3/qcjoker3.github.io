@@ -137,9 +137,7 @@ header.container nav a:hover { color: var(--heading-color); transform: translate
     color: var(--subtle-text-color);
     text-align: center;
     padding: 3rem 0;
-    margin-top: 5rem;
-    /* La ligne border-top a été supprimée comme demandé */
-}
+   }
 
 /* =============================================================== */
 /* === STYLES SPÉCIFIQUES AUX PAGES === */
