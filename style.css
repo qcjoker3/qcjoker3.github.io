@@ -239,8 +239,7 @@ header.container {
     text-align: center; 
     padding: 3rem 0; 
     margin-top: 5rem;
-    border-top: 1px solid var(--border-color);
-}
+   }
 
 /* =============================================================== */
 /* === STYLES SPÉCIFIQUES AUX PAGES === */
