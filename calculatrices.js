@@ -105,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             showCalculator(defaultCalcId);
         }
     }
+
 // =========================================================================
 // === NOUVELLE CALCULATRICE DE RETRAITE 360° ===
 // =========================================================================
