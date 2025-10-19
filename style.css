@@ -531,7 +531,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
     font-size: 1rem;
     color: var(--subtle-text-color);
     text-transform: uppercase;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
 }
 
 /* Conteneur pour le graphique (pour positionner le texte au centre) */
@@ -557,7 +557,7 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 
 /* Section des données sous le graphique */
 .prediction-data {
-    margin-top: 1rem;
+    margin-top: 0.5rem;
 }
 .current-level {
     font-size: 1.1rem;
