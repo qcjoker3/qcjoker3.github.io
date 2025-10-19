@@ -102,15 +102,48 @@
         </div>
     </section>
 
-    <section id="prédictions" class="container">
-        <h2>Prédictions de Wall Street</h2>
-        <div class="card-grid">
-            <a href="Prédictions.html#titre-vf" class="card card-link">
-                <h3>Les prévisions des "experts"</h3>
-                <p>Constatez l'efficacité des prédictions des gros joueurs de Wall Street.</p>
-            </a>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<section id="prédictions" class="container">
+    <h2>Prévision S&P 500 | Suivi 2025</h2>
+    
+    <div class="prediction-layout-grid">
+        
+        <div class="prediction-widget">
+            <h4>OBJECTIF FIN 2025 (Consensus)</h4>
+
+            <div class="gauge-container">
+                <canvas id="sp500Gauge"></canvas>
+                <div id="gaugeTargetText" class="gauge-target-text">
+                    </div>
+            </div>
+
+            <div class="prediction-data">
+                <div class="current-level">
+                    Niveau Actuel : <strong id="currentLevelText">...</strong>
+                    <span>(Mise à jour : Octobre 2025)</span>
+                </div>
+                
+                <div class="prediction-gap">
+                    Potentiel Haussier
+                    <strong id="percentageGap">...</strong> 
+                </div>
+            </div>
         </div>
-    </section>
+
+        <div class="prediction-explanation">
+            <h3>La boule de cristal de Wall Street</h3>
+            <p>
+                Chaque année, les grands stratèges de marché publient leur cible pour l'indice S&P 500. Une prédiction audacieuse... mais est-elle souvent juste ?
+            </p>
+            <p>
+                Découvrez notre analyse historique de leur performance pour savoir si vous devriez vraiment les écouter.
+            </p>
+            <a href="Prédictions.html" class="btn-primary" style="margin-top: 1rem;">Voir l'Analyse Historique</a>
+        </div>
+
+    </div>
+</section>
 
     <section id="articles" class="container">
         <h2>Articles récents</h2>
