@@ -45,8 +45,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // ==================================================
     // === METTEZ VOS CHIFFRES À JOUR ICI ===
     // ==================================================
-    const sp500Target = 5500; // La prévision cible pour la fin de l'année
-    const sp500Current = 5200; // Le niveau actuel du S&P 500
+    const sp500Target = 6679; // La prévision cible pour la fin de l'année
+    const sp500Current = 6688; // Le niveau actuel du S&P 500
     // ==================================================
 
     // Calculs automatiques
