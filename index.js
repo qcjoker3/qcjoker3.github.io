@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const percentageElement = document.getElementById('percentageGap');
     // Note: .previousSibling peut être fragile. Utilisons une méthode plus robuste si possible,
     // mais pour l'instant, nous gardons votre logique.
-    const gapLabelElement = percentageElement.previousSibling.previousSibling; 
+    const gapLabelElement = document.getElementById('gapLabel');
     const currentLevelElement = document.getElementById('currentLevelText');
     const gaugeTargetElement = document.getElementById('gaugeTargetText');
     
