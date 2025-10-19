@@ -65,66 +65,58 @@ document.addEventListener('DOMContentLoaded', () => {
     let chartFire = null, chartReerCeli = null, chartCoutOpportunite = null, chartSimulateurFnb = null, chartFnbAllocation = null;
 
     // --- SYSTÈME DE NAVIGATION ENTRE CALCULATRICES ---
-    const calcCards = document.querySelectorAll('.card-grid .card[data-calc]');
-    const calcSections = document.querySelectorAll('.calculator-card');
-    const allExplications = document.querySelectorAll('.boite-explication');
+const showCalculator = (key) => {
+        if (!key) return; // Sécurité pour éviter les erreurs
 
-    const showCalculator = (key) => {
-        const targetSection = document.getElementById(`calc-${key}`);
-        if (!targetSection) return;
-        calcSections.forEach(sec => sec.classList.remove('active'));
-        targetSection.classList.add('active');
-        calcCards.forEach(card => card.classList.toggle('selected', card.dataset.calc === key));
+        const targetSection = document.getElementById(`calculatrice-${key}`);
         const targetExplication = document.getElementById(`explication-${key}`);
+        
+        // On cache toutes les sections
+        calcSections.forEach(sec => sec.classList.remove('active'));
         allExplications.forEach(box => box.classList.remove('active'));
+        calcCards.forEach(card => card.classList.remove('selected'));
+
+        // On affiche les bonnes sections
+        if (targetSection) targetSection.classList.add('active');
         if (targetExplication) targetExplication.classList.add('active');
+
+        // On met en évidence la bonne carte de sélection
+        const selectedCard = document.querySelector(`#selection-calculatrices a[href="#${key}"]`);
+        if (selectedCard) selectedCard.classList.add('selected');
+
         sessionStorage.setItem('derniereCalculatrice', key);
     };
-    calcCards.forEach(card => card.addEventListener('click', () => showCalculator(card.dataset.calc)));
-    
-    // --- LOGIQUE SPÉCIFIQUE (sliders, etc.) ---
-    const typeCompteSelect = document.getElementById('al-type-compte');
-    const reinvestOptionDiv = document.getElementById('reinvest-reer-option');
-    function toggleReinvestOption() {
-        if (typeCompteSelect && reinvestOptionDiv) {
-            reinvestOptionDiv.style.display = (typeCompteSelect.value === 'reer') ? 'block' : 'none';
+    // CHANGÉ ICI : On ajoute la logique de clic
+    calcCards.forEach(card => {
+        card.addEventListener('click', (event) => {
+            event.preventDefault(); // Empêche la page de sauter à l'ancre
+            const calculatorId = card.getAttribute('href').substring(1); // On lit le href (ex: "#retraite" -> "retraite")
+            showCalculator(calculatorId);
+        });
+    });
+
+    // --- LOGIQUE D'AFFICHAGE INITIAL (CORRIGÉE) ---
+    const ancreURL = window.location.hash.substring(1); // Récupère le mot après le #
+
+    if (ancreURL) {
+        showCalculator(ancreURL);
+        // Fait défiler la page jusqu'à la calculatrice pour une meilleure expérience
+        const calculatorElement = document.getElementById(`calculatrice-${ancreURL}`);
+        if (calculatorElement) {
+            setTimeout(() => {
+                calculatorElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
+        }
+    } else {
+        const derniereCalc = sessionStorage.getItem('derniereCalculatrice');
+        if (derniereCalc) {
+            showCalculator(derniereCalc);
+        } else if (calcCards.length > 0) {
+            // Affiche la première calculatrice par défaut
+            const defaultCalcId = calcCards[0].getAttribute('href').substring(1);
+            showCalculator(defaultCalcId);
         }
     }
-    if (typeCompteSelect) typeCompteSelect.addEventListener('change', toggleReinvestOption);
-    toggleReinvestOption();
-
-// ---- DÉBUT DE L'AJOUT ----
-    // Fonction pour lire l'URL au chargement et afficher la bonne calculatrice
-    function showCalculatorFromURL() {
-        // 1. Récupère la partie de l'URL après le # (ex: #fire)
-        const hash = window.location.hash; 
-
-        if (hash) {
-            // 2. Enlève le '#' pour obtenir l'identifiant propre (ex: 'fire')
-            const calculatorId = hash.substring(1); 
-            
-            // 3. Trouve la carte de sélection qui a le bon data-calc
-            const cardToSelect = document.querySelector(`.card[data-calc='${calculatorId}']`);
-
-            if (cardToSelect) {
-                // 4. Simule un clic sur cette carte pour déclencher votre logique existante
-                cardToSelect.click(); 
-                
-                // 5. (Optionnel) Fait défiler la page jusqu'à la calculatrice pour une meilleure expérience
-                const calculatorElement = document.getElementById(`calc-${calculatorId}`);
-                if (calculatorElement) {
-                    setTimeout(() => { // Un petit délai pour s'assurer que l'élément est visible
-                        calculatorElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    }, 100);
-                }
-            }
-        }
-    }
-
-    // Exécute la fonction une fois que la page est chargée
-    showCalculatorFromURL();
-    // ---- FIN DE L'AJOUT ----
-
     
 // =========================================================================
 // === NOUVELLE CALCULATRICE DE RETRAITE 360° ===
