@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-    // --- FONCTIONS UTILITAIRES ---
+        // --- FONCTIONS UTILITAIRES ---
     const fmtNombre = (n, isCurrency = true) => {
         if (isNaN(n) || n === null) return isCurrency ? "0,00 $" : "0";
         const options = {
@@ -24,9 +24,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- INITIALISATION D'AUTONUMERIC ---
     const anInputs = {};
-    const champsArgent = ['ret-epargne-actuelle', 'ret-cotisation-mensuelle', 'vf-montant-initial', 'vf-cotisation', 'hypo-montant', 'trex-montant', 'trex-cotisation-annuelle', 'al-prix-propriete', 'al-mise-de-fonds', 'al-taxes-annuelles', 'al-assurance-proprio', 'al-frais-condo', 'al-loyer-mensuel', 'al-assurance-loc', 'hypo-prix-propriete', 'hypo-mise-de-fonds', 'duree-montant-initial','duree-retrait-annuel','fire-epargne-actuelle','fire-epargne-annuelle','fire-depenses-annuelles', 'reer-celi-montant-annuel','cout-montant-depense','fnb-montant-initial','fnb-cotisation-mensuelle'];
-    const champsEntier = ['ret-age-actuel', 'ret-age-retraite'];
-    
+    const champsArgent = [
+        'ret-epargne-actuelle', 'ret-cotisation-mensuelle', 
+        'vf-montant-initial', 'vf-cotisation', 'hypo-montant', 'trex-montant', 
+        'trex-cotisation-annuelle', 'al-prix-propriete', 'al-mise-de-fonds', 
+        'al-taxes-annuelles', 'al-assurance-proprio', 'al-frais-condo', 
+        'al-loyer-mensuel', 'al-assurance-loc', 'hypo-prix-propriete', 'hypo-mise-de-fonds',
+        'duree-montant-initial','duree-retrait-annuel','fire-epargne-actuelle','fire-epargne-annuelle','fire-depenses-annuelles',
+        'reer-celi-montant-annuel','cout-montant-depense','fnb-montant-initial','fnb-cotisation-mensuelle'
+
+    ];
+    const champsEntier = [
+        'ret-age-actuel', 'ret-age-retraite', // Nouveaux champs Retraite
+        //'vf-duree', 'hypo-duree', 'trex-duree', 'al-amortissement', 'al-horizon'
+        // 'age-actuel' et 'age-retraite' ont été retirés
+    ];
+
     const optionsArgent = AutoNumeric.getPredefinedOptions().dollar;
     const optionsEntier = { decimalPlaces: 0, digitGroupSeparator: '' };
 
@@ -51,60 +64,68 @@ document.addEventListener('DOMContentLoaded', () => {
     let chartRevenu = null, chartTrajectoire = null, chartDureeCapital = null;
     let chartFire = null, chartReerCeli = null, chartCoutOpportunite = null, chartSimulateurFnb = null, chartFnbAllocation = null;
 
-    // ==========================================================
-    // === SYSTÈME DE NAVIGATION ENTRE CALCULATRICES (CORRIGÉ) ===
-    // ==========================================================
+    // --- SYSTÈME DE NAVIGATION ENTRE CALCULATRICES ---
     const calcCards = document.querySelectorAll('.card-grid .card[data-calc]');
     const calcSections = document.querySelectorAll('.calculator-card');
     const allExplications = document.querySelectorAll('.boite-explication');
 
     const showCalculator = (key) => {
-        if (!key) return;
-
         const targetSection = document.getElementById(`calc-${key}`);
-        const targetExplication = document.getElementById(`explication-${key}`);
-        
+        if (!targetSection) return;
         calcSections.forEach(sec => sec.classList.remove('active'));
+        targetSection.classList.add('active');
+        calcCards.forEach(card => card.classList.toggle('selected', card.dataset.calc === key));
+        const targetExplication = document.getElementById(`explication-${key}`);
         allExplications.forEach(box => box.classList.remove('active'));
-        calcCards.forEach(card => card.classList.remove('selected'));
-
-        if (targetSection) targetSection.classList.add('active');
         if (targetExplication) targetExplication.classList.add('active');
-
-        const selectedCard = document.querySelector(`.card[data-calc='${key}']`);
-        if (selectedCard) selectedCard.classList.add('selected');
-
         sessionStorage.setItem('derniereCalculatrice', key);
     };
+    calcCards.forEach(card => card.addEventListener('click', () => showCalculator(card.dataset.calc)));
 
-    calcCards.forEach(card => {
-        card.addEventListener('click', () => {
-            const calculatorId = card.dataset.calc;
-            showCalculator(calculatorId);
-        });
-    });
-
-    // --- LOGIQUE D'AFFICHAGE INITIAL ---
-    const ancreURL = window.location.hash.substring(1);
-    const cardForAncre = document.querySelector(`.card[data-calc='${ancreURL}']`);
-
-    if (ancreURL && cardForAncre) {
-        showCalculator(ancreURL);
-        const calculatorElement = document.getElementById(`calc-${ancreURL}`);
-        if (calculatorElement) {
-            setTimeout(() => {
-                calculatorElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 100);
-        }
-    } else {
-        const derniereCalc = sessionStorage.getItem('derniereCalculatrice');
-        if (derniereCalc && document.querySelector(`.card[data-calc='${derniereCalc}']`)) {
-            showCalculator(derniereCalc);
-        } else if (calcCards.length > 0) {
-            const defaultCalcId = calcCards[0].dataset.calc;
-            showCalculator(defaultCalcId);
+    // --- LOGIQUE SPÉCIFIQUE (sliders, etc.) ---
+    const typeCompteSelect = document.getElementById('al-type-compte');
+    const reinvestOptionDiv = document.getElementById('reinvest-reer-option');
+    function toggleReinvestOption() {
+        if (typeCompteSelect && reinvestOptionDiv) {
+            reinvestOptionDiv.style.display = (typeCompteSelect.value === 'reer') ? 'block' : 'none';
         }
     }
+    if (typeCompteSelect) typeCompteSelect.addEventListener('change', toggleReinvestOption);
+    toggleReinvestOption();
+
+// ---- DÉBUT DE L'AJOUT ----
+    // Fonction pour lire l'URL au chargement et afficher la bonne calculatrice
+    function showCalculatorFromURL() {
+        // 1. Récupère la partie de l'URL après le # (ex: #fire)
+        const hash = window.location.hash; 
+
+        if (hash) {
+            // 2. Enlève le '#' pour obtenir l'identifiant propre (ex: 'fire')
+            const calculatorId = hash.substring(1); 
+            
+            // 3. Trouve la carte de sélection qui a le bon data-calc
+            const cardToSelect = document.querySelector(`.card[data-calc='${calculatorId}']`);
+
+            if (cardToSelect) {
+                // 4. Simule un clic sur cette carte pour déclencher votre logique existante
+                cardToSelect.click(); 
+                
+                // 5. (Optionnel) Fait défiler la page jusqu'à la calculatrice pour une meilleure expérience
+                const calculatorElement = document.getElementById(`calc-${calculatorId}`);
+                if (calculatorElement) {
+                    setTimeout(() => { // Un petit délai pour s'assurer que l'élément est visible
+                        calculatorElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            }
+        }
+    }
+
+    // Exécute la fonction une fois que la page est chargée
+    showCalculatorFromURL();
+    // ---- FIN DE L'AJOUT ----
+
+    
 // =========================================================================
 // === NOUVELLE CALCULATRICE DE RETRAITE 360° ===
 // =========================================================================
@@ -127,7 +148,7 @@ if (formRetraite) {
         if (e.target.matches('[data-next]')) { goToStep(parseInt(e.target.dataset.next)); }
         else if (e.target.matches('[data-prev]')) { goToStep(parseInt(e.target.dataset.prev)); }
     });
-    
+
     function goToStep(step) {
         if (step > 0 && step <= wizardSteps.length) {
             wizardSteps[currentStep - 1].classList.remove('active');
@@ -143,7 +164,7 @@ if (formRetraite) {
             const el = document.getElementById(id);
             if(el) el.classList.toggle('hidden', !isCouple);
         });
-        
+
         ['alloc-reer2', 'alloc-celi2'].forEach(id => {
             const el = document.getElementById(id);
             if(el) {
@@ -168,7 +189,7 @@ if (formRetraite) {
     document.getElementById('epargneAnnuelle').addEventListener('input', validateAllocation);
     allocationInputs.forEach(input => input.addEventListener('input', validateAllocation));
     handleConjointView();
-    
+
     // --- SOUMISSION ET ORCHESTRATION DE LA SIMULATION ---
     formRetraite.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -209,7 +230,7 @@ if (formRetraite) {
                     bestResult = allResults.sort((a, b) => b.medianCapital - a.medianCapital)[0];
                     break;
             }
-            
+
             displayResults(bestResult, plan);
 
         } catch (error) {
@@ -244,7 +265,7 @@ function getPlanInputs() {
         }
     };
 }
-        
+
     const K = {
         fed: { bpa: 15705, ageAmount: 8790, ageAmountThreshold: 42335, pensionAmount: 2000, brackets: [[55867, 0.15], [111733, 0.205], [173205, 0.26], [246752, 0.29], [Infinity, 0.33]] },
         qc: { bpa: 18056, ageAmount: 3464, pensionAmount: 3464, brackets: [[51780, 0.14], [103545, 0.19], [126000, 0.24], [Infinity, 0.2575]] },
@@ -264,7 +285,7 @@ function getPlanInputs() {
         for (let i = 0; i < contributingYears; i++) {
             const year = currentYear - (person.age - person.ageDebutTravail) + i;
             const ympeYear = Object.keys(K.ympe).reduce((prev, curr) => Math.abs(curr - year) < Math.abs(prev - year) ? curr : prev);
-            
+
             const salary = person.revenu * Math.pow(1 + croissanceRevenu, i);
             totalNormalizedEarnings += Math.min(salary, K.ympe[ympeYear]) / K.ympe[ympeYear];
         }
@@ -331,7 +352,7 @@ function getPlanInputs() {
         }
         return { finalCapital: capitalTrajectory.slice(-1)[0].capital, totalTax, capitalTrajectory, incomeTrajectory, decaissementTrajectory };
     }
-    
+
     // --- MOTEUR FISCAL ET FINANCIER ---
     function calculateYearlyFinances(soldes, depenseVisee, plan, ages, inflation, strategy) {
         const { p1, p2, isCouple } = plan;
@@ -342,10 +363,10 @@ function getPlanInputs() {
             pension1: calculatePension(p1.pension.amount, plan.commun.ageRetraite, plan.commun.ageRetraite, ages.age1, inflation, false, p1.pension.isIndexed),
             travail1: (ages.age1 < p1.travail.ageFin) ? p1.travail.amount * inflation : 0,
         };
-    
+
         const retraits = { reer1: 0, cri1: 0, celi1: 0, nonEnr: 0, reer2: 0, cri2: 0, celi2: 0 };
         let besoinRetraitNet = Math.max(0, depenseVisee - (revenus.rrq1 + revenus.pension1 + revenus.travail1));
-    
+
         // Retraits FERR/FRV minimums (bruts, donc ils réduisent le besoin de retrait net)
         ['p1', 'p2'].forEach(p_key => {
             if (!plan[p_key]) return;
@@ -359,7 +380,7 @@ function getPlanInputs() {
             });
         });
         const retraitsMinimauxImposables = retraits.reer1 + retraits.cri1 + retraits.reer2 + retraits.cri2;
-    
+
         // Le besoin de retrait brut est estimé. Une version avancée serait itérative.
         let besoinRetraitBrut = Math.max(0, besoinRetraitNet / 0.75 - retraitsMinimauxImposables);
 
@@ -385,19 +406,19 @@ function getPlanInputs() {
                 }
             }
         }
-    
+
         const gainCapitalRealise = (retraits.nonEnr / soldes.commun.nonEnr) * (soldes.commun.nonEnr - soldes.commun.nonEnrCoutBase) || 0;
         const coutBaseConsomme = retraits.nonEnr - gainCapitalRealise;
-    
+
         const incomeP1 = { 
             ordinaire: revenus.rrq1 + revenus.pension1 + revenus.travail1 + retraits.reer1 + retraits.cri1, 
             gainCapital: gainCapitalRealise, 
             pension: revenus.pension1 + retraits.reer1 + retraits.cri1,
             travail: revenus.travail1
         };
-        
+
         const fiscalP1 = calculateTaxesAndBenefits(incomeP1, revenus.psv1, ages.age1, inflation, isCouple);
-    
+
         return { 
             totalTax: fiscalP1.totalTax, 
             retraits, 
@@ -407,23 +428,23 @@ function getPlanInputs() {
             netIncome: fiscalP1.netIncome
         };
     }
-    
+
     function calculateTaxesAndBenefits(income, psv, age, inflationMultiplier, isCouple) {
         const i = (val) => val * inflationMultiplier;
         let netIncomeForBenefits = income.ordinaire + income.gainCapital;
-        
+
         const gisIncome = Math.max(0, netIncomeForBenefits - (income.travail > 0 ? i(K.gis.exemption) : 0));
         const gisClawback = gisIncome * K.gis.clawbackRate;
         const gisAmount = Math.max(0, i(K.gis.maxAmountSingle) - gisClawback);
-    
+
         const solidarityClawback = Math.max(0, (netIncomeForBenefits - i(K.solidarity.threshold)) * K.solidarity.clawbackRate);
         const solidarityAmount = Math.max(0, i(K.solidarity.maxAmountSingle) - solidarityClawback);
-    
+
         const oasClawback = Math.max(0, (netIncomeForBenefits - i(K.oas.clawbackThreshold)) * 0.15);
         const psvNet = Math.max(0, psv - oasClawback);
-        
+
         let taxableIncome = income.ordinaire + (income.gainCapital * 0.5) + psvNet;
-    
+
         const calcBracketTax = (brackets) => {
             let tax = 0; let lastLimit = 0;
             for (const [limit, rate] of brackets) {
@@ -434,10 +455,10 @@ function getPlanInputs() {
         };
         let fedTax = calcBracketTax(K.fed.brackets);
         let qcTax = calcBracketTax(K.qc.brackets);
-    
+
         let fedCredits = i(K.fed.bpa);
         let qcCredits = i(K.qc.bpa);
-    
+
         if (age >= 65) {
             const fedAgeAmountReduction = Math.max(0, (netIncomeForBenefits - i(K.fed.ageAmountThreshold)) * 0.15);
             fedCredits += Math.max(0, i(K.fed.ageAmount) - fedAgeAmountReduction);
@@ -447,13 +468,13 @@ function getPlanInputs() {
             fedCredits += Math.min(i(K.fed.pensionAmount), income.pension);
             qcCredits += Math.min(i(K.qc.pensionAmount), income.pension);
         }
-    
+
         fedTax = Math.max(0, fedTax - (fedCredits * 0.15));
         qcTax = Math.max(0, qcTax - (qcCredits * 0.14));
         const totalTax = fedTax + qcTax;
-        
+
         const netIncome = netIncomeForBenefits + psvNet + gisAmount + solidarityAmount - totalTax;
-    
+
         return { 
             totalTax: totalTax, 
             gis: gisAmount, 
@@ -461,35 +482,35 @@ function getPlanInputs() {
             netIncome: netIncome
         };
     }
-    
+
     function calculatePension(base, baseAge, startAge, currentAge, inflationMultiplier, isRrq, isIndexed) {
         if (currentAge < startAge || !base) return 0;
         const factor = isRrq ? (startAge > baseAge ? 0.007 : -0.006) : (startAge > baseAge ? 0.006 : -0.006);
         const adjustment = (startAge - baseAge) * 12 * factor;
         let adjustedBase = base * (1 + adjustment);
-        
+
         if(isIndexed === false){ // Unindexed private pension
             // Value is fixed at retirement date in future dollars, then stays constant
             const yearsToRetirement = plan.commun.ageRetraite - plan.p1.age;
             return base * Math.pow(1 + plan.commun.inflation, yearsToRetirement);
         }
-        
+
         // Government pensions and indexed private pensions are inflated every year
         return adjustedBase * inflationMultiplier;
     }
-    
+
     // --- AFFICHAGE DES RÉSULTATS ---
     function displayResults(result, plan) {
         console.log("ÉTAPE 3 : Affichage des résultats demandé.", result); // <-- AJOUTEZ CECI
         const { successRate, medianCapital, medianTax, projections, medianProjection, strategyName } = result;
         const fmt = (val) => (val || 0).toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
-        
+
         document.getElementById('tauxSucces').textContent = `${successRate.toFixed(1)}%`;
         document.getElementById('capitalMedian').textContent = fmt(medianCapital);
         document.getElementById('strategieOptimale').textContent = strategyName;
         document.getElementById('impotMedian').textContent = fmt(medianTax); 
         document.getElementById('tauxSucces').className = `result-value ${successRate >= 85 ? 'success' : successRate >= 60 ? 'warning' : 'danger'}`;
-        
+
         const firstYearRetirementIncome = result.medianProjection.incomeTrajectory[0];
         if (firstYearRetirementIncome && firstYearRetirementIncome.netIncome) {
             document.getElementById('revenuNetAnnuel').textContent = fmt(firstYearRetirementIncome.netIncome);
@@ -498,14 +519,14 @@ function getPlanInputs() {
         }
 
         generateRecommendations(result, plan);
-        
+
         const labels = projections[0].map(p => p.age);
         const p10 = labels.map((_, i) => ss.quantile(projections.map(p => p[i] ? p[i].capital : 0), 0.1));
         const p50 = labels.map((_, i) => ss.quantile(projections.map(p => p[i] ? p[i].capital : 0), 0.5));
         const p90 = labels.map((_, i) => ss.quantile(projections.map(p => p[i] ? p[i].capital : 0), 0.9));
 
         renderChart('chartMonteCarlo', { type: 'line', data: { labels, datasets: [ { label: 'Pire 10% (P10)', data: p10, borderColor: 'rgba(239, 68, 68, 0.5)', fill: '+1', backgroundColor: 'rgba(239, 68, 68, 0.1)'}, { label: 'Médian (P50)', data: p50, borderColor: '#0D9488', borderWidth: 2.5 }, { label: 'Meilleur 10% (P90)', data: p90, borderColor: 'rgba(16, 185, 129, 0.5)', fill: false }]}});
-        
+
         const incomeData = medianProjection.incomeTrajectory;
         renderChart('chartSourcesFonds', { type: 'bar', data: { labels: incomeData.map(d => d.age), datasets: [ { label: 'Retrait REER/CRI', data: incomeData.map(d => (d.retraits.reer1 || 0) + (d.retraits.reer2 || 0) + (d.retraits.cri1 || 0) + (d.retraits.cri2 || 0)), backgroundColor: '#4338CA' }, { label: 'Retrait Non-Enr.', data: incomeData.map(d => d.retraits.nonEnr || 0), backgroundColor: '#A855F7' }, { label: 'Pension Employeur', data: incomeData.map(d => (d.revenus.pension1 || 0) + (d.revenus.pension2 || 0)), backgroundColor: '#6D28D9'}, { label: 'Revenu de Travail', data: incomeData.map(d => (d.revenus.travail1 || 0) + (d.revenus.travail2 || 0)), backgroundColor: '#be185d'}, { label: 'RRQ/PSV & Prestations', data: incomeData.map(d => (d.revenus.rrq1 || 0) + (d.revenus.rrq2 || 0) + (d.revenus.psv1 || 0) + (d.revenus.psv2 || 0) + (d.credits.gis || 0) + (d.credits.solidarity || 0)), backgroundColor: '#10B981' }, ] }, options: { scales: { x: { stacked: true }, y: { stacked: true } } }});
 
@@ -519,12 +540,12 @@ function getPlanInputs() {
             creditsList.insertAdjacentHTML('beforeend', `<li>Crédit d'impôt pour solidarité: <strong>${fmt(firstYearRetirementIncome.credits.solidarity)}</strong></li>`);
         }
     }
-    
+
     function generateRecommendations({successRate}, plan) {
         const recList = document.getElementById('recommendationsList');
         recList.innerHTML = '';
         const addRec = (text) => recList.insertAdjacentHTML('beforeend', `<li>${text}</li>`);
-        
+
         if (successRate >= 85) { addRec(`Félicitations! Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est très robuste.`);
         } else if (successRate < 60) { addRec(`Attention: avec <strong>${successRate.toFixed(1)}%</strong> de succès, des ajustements significatifs sont recommandés.`);
         } else { addRec(`Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est viable mais pourrait être renforcé.`); }
@@ -550,7 +571,7 @@ function getPlanInputs() {
     function renderChart(canvasId, config) {
         const ctx = document.getElementById(canvasId).getContext('2d');
         if (charts[canvasId]) { charts[canvasId].destroy(); }
-        
+
         const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
         const textColor = isDarkMode ? '#F9FAFB' : '#374151';
@@ -578,14 +599,14 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
 
     // [MODIFICATION] On lit la valeur depuis le nouvel input au lieu qu'elle soit fixe
     const tauxInflation = getVal('vf-inflation') / 100;
-    
+
     // [MODIFICATION] On récupère la valeur en % pour l'afficher dans le texte du résultat
     const inflationPourcent = getVal('vf-inflation');
 
     const m = freq === 'mensuelle' ? 12 : 1;
     const nP = duree * m;
     const rP = taux > 0 ? Math.pow(1 + taux, 1 / m) - 1 : 0;
-    
+
     let fvTotal;
     if (taux > 0) {
         fvTotal = (montantInitial * Math.pow(1 + rP, nP)) + (cotisation * ((Math.pow(1 + rP, nP) - 1) / rP));
@@ -598,11 +619,11 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
     // [MODIFICATION] L'affichage du résultat est maintenant dynamique
     resultatVF.innerHTML = `Valeur future estimée : <strong>${fmtNombre(fvTotal)}</strong><br>
                             En dollars d'aujourd'hui (inflation ${inflationPourcent}%) : <strong>${fmtNombre(fvReelle)}</strong>`;
-    
+
     const ctx = document.getElementById('chart-vf')?.getContext('2d');
     if (!ctx || !isFinite(fvTotal)) return;
     if (chartVF) chartVF.destroy();
-    
+
     const labels = [];
     const valeurNominaleData = [];
     const valeurReelleData = [];
@@ -617,12 +638,12 @@ document.getElementById('form-vf')?.addEventListener('submit', e => {
         } else {
             valeurNominaleAnnee = montantInitial + (cotisation * nP_i);
         }
-        
+
         valeurNominaleData.push(valeurNominaleAnnee);
         // Le calcul ici utilise déjà la variable `tauxInflation`, donc il se met à jour automatiquement
         valeurReelleData.push(valeurNominaleAnnee / Math.pow(1 + tauxInflation, i));
     }
-    
+
     chartVF = new Chart(ctx, { 
         type: 'line', 
         data: { 
@@ -667,7 +688,7 @@ if (formHypotheque) {
         const prixPropriete = getVal('hypo-prix-propriete');
         const miseDeFonds = getVal('hypo-mise-de-fonds');
         const montantPret = Math.max(0, prixPropriete - miseDeFonds);
-        
+
         // On utilise l'instance AutoNumeric pour mettre à jour le champ formaté
         if (anInputs['hypo-montant']) {
             anInputs['hypo-montant'].set(montantPret);
@@ -679,7 +700,7 @@ if (formHypotheque) {
         prixProprieteInput.addEventListener('input', updateMontantPret);
         miseDeFondsInput.addEventListener('input', updateMontantPret);
     }
-    
+
     // On conserve la logique existante pour le bouton "Calculer"
     formHypotheque.addEventListener('submit', e => {
         e.preventDefault();
@@ -687,7 +708,7 @@ if (formHypotheque) {
         const montantPret = getVal('hypo-montant');
         const tauxHypo = getVal('hypo-taux') / 100;
         const dureeHypo = getVal('hypo-duree');
-        
+
         const rMensuel = tauxHypo / 12, n = dureeHypo * 12;
         if (rMensuel <= 0 || montantPret <= 0) {
             resultatHypo.textContent = "Veuillez entrer des valeurs valides.";
@@ -696,11 +717,11 @@ if (formHypotheque) {
         }
         const mensualite = montantPret * rMensuel / (1 - Math.pow(1 + rMensuel, -n));
         resultatHypo.textContent = `Mensualité estimée : ${fmtNombre(mensualite)}`;
-        
+
         const ctx = document.getElementById('chart-hypotheque')?.getContext('2d');
         if (!ctx || !isFinite(mensualite)) return;
         if (chartHypo) chartHypo.destroy();
-        
+
         const labels = [], capitalRestantData = [], capitalRembourseData = [];
         let capitalRestant = montantPret;
         for (let i = 0; i <= dureeHypo; i++) {
@@ -725,10 +746,10 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
     const duree = getVal('trex-duree');
     const rendementBrut = getVal('trex-rendement-brut') / 100;
     const fraisAnnuel = getVal('trex-taux') / 100;
-    
+
     const rendementNet = rendementBrut - fraisAnnuel;
     const fv = (P, r, n, C) => P * Math.pow(1 + r, n) + (C * ((Math.pow(1 + r, n) - 1) / r));
-    
+
     const capitalAvecFrais = fv(montantInitial, rendementNet, duree, cotisationAnnuelle);
     const capitalSansFrais = fv(montantInitial, rendementBrut, duree, cotisationAnnuelle);
 
@@ -747,11 +768,11 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
         <p class="impact-frais">Impact total des frais : ${fmtNombre(capitalSansFrais - capitalAvecFrais)}</p>
     `;
     // ▲▲▲ FIN DE LA MODIFICATION ▲▲▲
-    
+
     const ctx = document.getElementById('chart-trex')?.getContext('2d');
     if (!ctx) return;
     if (chartTrex) chartTrex.destroy();
-    
+
     chartTrex = new Chart(ctx, { 
         type: 'bar', 
         data: { 
@@ -804,14 +825,14 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
         const montantPret = prixPropriete - miseDeFonds;
         const tauxHypoMensuel = tauxHypoAnnuel / 12;
         if (tauxHypoMensuel <= 0 && montantPret > 0) return;
-        
+
         const paiementHypothecaire = (montantPret > 0) ? (montantPret * tauxHypoMensuel * Math.pow(1 + tauxHypoMensuel, amortissement * 12)) / (Math.pow(1 + tauxHypoMensuel, amortissement * 12) - 1) : 0;
-        
+
         let valeurPropriete = prixPropriete;
         let soldeHypotheque = montantPret;
         let portefeuilleLocataire = miseDeFonds;
         let retourImpotPrecedent = 0;
-        
+
         const labels = ['Année 0'], dataProprio = [miseDeFonds], dataLocataire = [portefeuilleLocataire];
 
         for (let an = 1; an <= horizon; an++) {
@@ -827,7 +848,7 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
             const coutsProprio = (paiementHypothecaire * 12) + taxesAnnuelles + (valeurPropriete * entretienPct) + (assuranceProprioM * 12) + (fraisCondoM * 12);
             const coutsLocataire = (loyerMensuel * 12) + (assuranceLocM * 12);
             const investissementAnnuel = Math.max(0, coutsProprio - coutsLocataire);
-            
+
             if (typeCompte === 'reer' && reinvestirRetourImpot) {
                 retourImpotPrecedent = investissementAnnuel * tauxMarginal;
             } else {
@@ -841,25 +862,25 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
             portefeuilleLocataire += gainPlacement;
             portefeuilleLocataire += investissementAnnuel;
             valeurPropriete *= (1 + croissanceImmo);
-            
+
             labels.push(`Année ${an}`);
             dataProprio.push(valeurPropriete - soldeHypotheque);
-            
+
             let valeurNetteLocataire = portefeuilleLocataire;
             if (typeCompte === 'reer') {
                 valeurNetteLocataire *= (1 - tauxMarginal);
             }
             dataLocataire.push(valeurNetteLocataire);
-            
+
             loyerMensuel *= (1 + augmentationLoyer);
         }
-        
+
         const resultatFinalProprio = dataProprio[dataProprio.length - 1];
         const resultatFinalLocataire = dataLocataire[dataLocataire.length - 1];
         const difference = resultatFinalProprio - resultatFinalLocataire;
-        
+
         document.getElementById('resultat-acheter-louer').textContent = `Après ${horizon} ans, l'actif net du propriétaire est de ${fmtNombre(resultatFinalProprio)} et celui du locataire de ${fmtNombre(resultatFinalLocataire)}. Différence : ${fmtNombre(Math.abs(difference))} en faveur du ${difference > 0 ? 'propriétaire' : 'locataire'}.`;
-        
+
         const ctx = document.getElementById('chart-acheter-louer')?.getContext('2d');
         if (!ctx) return;
         if (chartAcheterLouer) chartAcheterLouer.destroy();
@@ -868,7 +889,7 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
      // =========================================================================
     // === CALCULATRICE DE DURÉE DU CAPITAL (DÉCAISSEMENT) ===
     // =========================================================================   
-    
+
     //let chartDureeCapital = null;
     const formDureeCapital = document.getElementById('form-duree-capital');
 
@@ -949,7 +970,7 @@ resultatDiv.innerHTML = messageFinal;
             resultatDiv.scrollIntoView({ behavior: 'smooth' });
         });
     }
-    
+
 // =========================================================================
     // === CALCULATRICE D'INDÉPENDANCE FINANCIÈRE (FIRE) ===
     // =========================================================================
@@ -1040,7 +1061,7 @@ resultatDiv.innerHTML = messageFinal;
                 slider.addEventListener('input', () => { display.textContent = `${slider.value} %`; });
             }
         });
-        
+
         formReerCeli.addEventListener('submit', e => {
             e.preventDefault();
             const montantAnnuel = getVal('reer-celi-montant-annuel');
@@ -1050,7 +1071,7 @@ resultatDiv.innerHTML = messageFinal;
             const tauxRetraite = getVal('reer-celi-taux-retraite') / 100;
             const resultatDiv = document.getElementById('resultat-reer-celi');
             const chartContainer = resultatDiv.nextElementSibling;
-            
+
             let patrimoineCeli = 0;
             const trajectoireCeli = [0];
             for(let i=0; i < duree; i++) {
@@ -1067,10 +1088,10 @@ resultatDiv.innerHTML = messageFinal;
                 trajectoireReer.push(patrimoineBrutReer * (1 - tauxRetraite));
             }
             const patrimoineNetReer = patrimoineBrutReer * (1 - tauxRetraite);
-            
+
             const gagnant = patrimoineNetReer > patrimoineCeli ? 'REER' : 'CÉLI';
             const difference = Math.abs(patrimoineNetReer - patrimoineCeli);
-            
+
             resultatDiv.innerHTML = `
                  <div class="results-dashboard">
                     <div class="result-box">
@@ -1086,7 +1107,7 @@ resultatDiv.innerHTML = messageFinal;
             `;
             resultatDiv.style.display = 'block';
             chartContainer.style.display = 'block';
-            
+
             const ctx = document.getElementById('chart-reer-celi').getContext('2d');
             if (chartReerCeli) chartReerCeli.destroy();
             const labels = Array.from({ length: duree + 1 }, (_, i) => `Année ${i}`);
@@ -1176,7 +1197,7 @@ resultatDiv.innerHTML = messageFinal;
             const duree = getVal('fnb-duree');
             const resultatDiv = document.getElementById('resultat-simulateur-fnb');
             const chartContainer = resultatDiv.nextElementSibling;
-            
+
             const rendementNet = (fnb.rendement - fnb.frais) / 100;
             const n = duree * 12;
             const r = Math.pow(1 + rendementNet, 1/12) - 1;
@@ -1201,7 +1222,7 @@ resultatDiv.innerHTML = messageFinal;
             `;
             resultatDiv.style.display = 'block';
             chartContainer.style.display = 'block';
-            
+
             const ctxAlloc = document.getElementById('chart-fnb-allocation').getContext('2d');
             if (chartFnbAllocation) chartFnbAllocation.destroy();
             chartFnbAllocation = new Chart(ctxAlloc, {
@@ -1234,8 +1255,8 @@ resultatDiv.innerHTML = messageFinal;
             resultatDiv.scrollIntoView({ behavior: 'smooth' });
         });
     }
-    
-    
+
+
 // Logique d'affichage initial améliorée
 const ancreURL = window.location.hash.substring(1); // Récupère le mot après le # (ex: "hypotheque")
 
