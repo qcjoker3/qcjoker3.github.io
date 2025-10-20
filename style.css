@@ -173,8 +173,8 @@ header.container {
 }
 .hero > .container { position: relative; z-index: 1; }
 .hero h1 {
-    font-size: 4rem; background: var(--primary-gradient);
-    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    font-size: 4rem; /*background: var(--primary-gradient);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;*/
     margin-bottom: 1.5rem;
 }
 .hero .subtitle { font-size: 1.25rem; color: var(--text-color); max-width: 700px; margin: 0 auto 2.5rem auto; }
