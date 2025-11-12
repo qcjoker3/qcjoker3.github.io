@@ -1253,6 +1253,37 @@ resultatDiv.innerHTML = messageFinal;
                 options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: v => fmtNombre(v) } } } }
             });
             resultatDiv.scrollIntoView({ behavior: 'smooth' });
+            
+    // =========================================================================
+    // === CALCULATRICE DE COTISATION CELI ===
+    // =========================================================================
+            const celiLimits = {
+              2009: 5000, 2010: 5000, 2011: 5000, 2012: 5000,
+              2013: 5500, 2014: 5500, 2015: 10000, 2016: 5500,
+              2017: 5500, 2018: 5500, 2019: 6000, 2020: 6000,
+              2021: 6000, 2022: 6000, 2023: 6500, 2024: 7000,
+              2025: 7000
+            };
+
+            function calculateCeliRoom() {
+              const birthYear = parseInt(document.getElementById("birthYear").value);
+              const currentYear = parseInt(document.getElementById("currentYear").value);
+              const eligibilityYear = birthYear + 18;
+
+              if (eligibilityYear > currentYear) {
+                document.getElementById("celiResult").innerHTML = "<strong>Vous n'avez pas encore atteint l'âge de cotisation.</strong>";
+                return;
+              }
+
+              let totalRoom = 0;
+              for (let year = Math.max(eligibilityYear, 2009); year <= currentYear; year++) {
+                totalRoom += celiLimits[year] || 0;
+              }
+
+              document.getElementById("celiResult").innerHTML =
+                `<strong>Droit de cotisation total :</strong> ${totalRoom.toLocaleString()} $`;
+            }            
+            
         });
     }
 
