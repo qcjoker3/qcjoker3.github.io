@@ -1271,7 +1271,7 @@ resultatDiv.innerHTML = messageFinal;
               const eligibilityYear = birthYear + 18;
 
               if (eligibilityYear > currentYear) {
-                document.getElementById("celiResult").innerHTML = "<strong>Vous n'avez pas encore atteint l'âge de cotisation.</strong>";
+                document.getElementById("resultat-calculatrice-celi").innerHTML = "<strong>Vous n'avez pas encore atteint l'âge de cotisation.</strong>";
                 return;
               }
 
@@ -1280,7 +1280,7 @@ resultatDiv.innerHTML = messageFinal;
                 totalRoom += celiLimits[year] || 0;
               }
 
-              document.getElementById("celiResult").innerHTML =
+              document.getElementById("resultat-calculatrice-celi").innerHTML =
                 `<strong>Droit de cotisation total :</strong> ${totalRoom.toLocaleString()} $`;
             }            
             
