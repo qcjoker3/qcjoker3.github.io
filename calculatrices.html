@@ -422,14 +422,32 @@
                         <h3 class="form-divider" style="margin-top: 1.5rem;">Paramètres Communs</h3>
                         <div class="form-group"><label for="al-horizon">Horizon d'analyse (années)</label><input type="number" id="al-horizon" value="25"></div>
                         <div class="form-group"><label for="al-rendement-placement">Rendement annuel des placements (%)</label><input type="number" id="al-rendement-placement" value="7.0" step="any"></div>
-                        <div class="form-group">
-                            <label for="al-type-compte">Type de compte pour l'investissement</label>
-                            <select id="al-type-compte" class="form-input" style="padding: 0.5rem; width: 100%; border: 1px solid var(--border-color); border-radius: 6px;">
-                                <option value="celi">CELI (non imposable)</option>
-                                <option value="reer" selected>REER (imposable au retrait)</option>
-                                <option value="non-enregistre">Non-enregistré (imposable annuellement)</option>
+                        
+                        <div class="form-group" style="background: rgba(13, 148, 136, 0.05); padding: 1rem; border-radius: 8px; border-left: 3px solid var(--primary-color); margin-top: 1rem;">
+                            <label style="color: var(--primary-color); font-weight: bold; margin-bottom: 0.5rem; display:block; font-size:1.1em;">⚙️ Cascade Fiscale (Limites ARC)</label>
+                            <p class="helper" style="margin-bottom: 1rem;">L'algorithme remplit vos comptes enregistrés jusqu'aux plafonds légaux. L'excédent déborde en compte imposable.</p>
+
+                            <label for="al-salaire-brut" style="margin-top:0.5rem;">Salaire annuel brut</label>
+                            <input type="text" id="al-salaire-brut" value="80000" style="margin-bottom: 0.2rem; width: 100%;">
+                            <p class="helper" style="margin-bottom: 0.5rem;">Détermine votre limite légale REER (18%).</p>
+                            
+                            <label for="al-espace-celi">Droits CELI inutilisés initiaux</label>
+                            <input type="text" id="al-espace-celi" value="15000" style="margin-bottom: 0.5rem; width: 100%;">
+                            
+                            <label for="al-type-compte">Ordre de priorité d'investissement</label>
+                            <select id="al-type-compte" class="form-input" style="padding: 0.5rem; width: 100%; border: 1px solid var(--border-color); border-radius: 6px; margin-bottom: 0.5rem;">
+                                <option value="celi" selected>1. CELI ➔ 2. REER ➔ 3. Non-Enregistré</option>
+                                <option value="reer">1. REER ➔ 2. CELI ➔ 3. Non-Enregistré</option>
                             </select>
+
+                            <label for="al-taux-marginal" style="margin-top: 0.5rem;">Taux d'imposition actuel (%)</label>
+                            <input type="number" id="al-taux-marginal" value="37" step="any" style="margin-bottom: 0.5rem; width: 100%;">
+                            
+                            <label for="al-taux-retraite">Taux d'imposition à la retraite (%)</label>
+                            <input type="number" id="al-taux-retraite" value="30" step="any" style="margin-bottom: 0.2rem; width: 100%;">
+                            <p class="helper" style="margin-top: 0;">Sert à imposer le REER lors de l'encaissement final.</p>
                         </div>
+
                         <div class="form-group" id="reinvest-reer-option" style="margin-top: 1rem;">
                             <label style="display:flex; align-items:center; gap:10px; cursor: pointer;" for="al-reinvestir-reer">
                                 <input type="checkbox" id="al-reinvestir-reer" checked style="width:auto; height:20px; margin: 0;"> Réinvestir le retour d'impôt du REER
