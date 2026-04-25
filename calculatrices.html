@@ -31,7 +31,7 @@
         #calc-retraite .btn { padding: 0.75rem 1.5rem; border-radius: 50px; cursor: pointer; font-weight: 600; text-align:center; transition: all 0.2s ease; border: 1px solid var(--border-color); background-color: transparent; color: var(--text-color); }
         #calc-retraite .btn-primary { background: var(--primary-gradient); color: var(--light-text-color) !important; border: none; font-size: 1.1rem; padding: 0.8rem 2.5rem; }
         
-        /* === SPINNER AMÉLIORÉ (Expérience Utilisateur Pro) === */
+        /* === SPINNER AMÉLIORÉ === */
         #calc-retraite #spinner { display: none; text-align: center; margin: 2rem auto; }
         #calc-retraite .spinner-circle { margin: 0 auto 1rem auto; width: 50px; height: 50px; border: 5px solid var(--border-color); border-top-color: var(--primary-color); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -40,9 +40,12 @@
         #financial-plan-form .wizard-step.active { display: block; }
         #calc-retraite .wizard-nav { display: flex; justify-content: space-between; margin-top: 2rem; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        #calc-retraite .tooltip { cursor: help; background: var(--subtle-text-color); color: white; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; justify-content: center; align-items: center; font-size: 12px; position: relative; }
-        #calc-retraite .tooltip .tooltip-text { visibility: hidden; width: 220px; background-color: #333; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 10; bottom: 150%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; font-family: var(--font-body); font-weight: 400; }
-        #calc-retraite .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+        
+        /* Tooltip globalisé pour toutes les calculatrices */
+        .tooltip { cursor: help; background: var(--subtle-text-color); color: white; border-radius: 50%; width: 18px; height: 18px; display: inline-flex; justify-content: center; align-items: center; font-size: 12px; position: relative; margin-left: 5px;}
+        .tooltip .tooltip-text { visibility: hidden; width: 220px; background-color: #333; color: #fff; text-align: center; border-radius: 6px; padding: 8px; position: absolute; z-index: 10; bottom: 150%; left: 50%; margin-left: -110px; opacity: 0; transition: opacity 0.3s; font-family: var(--font-body); font-weight: 400; }
+        .tooltip:hover .tooltip-text { visibility: visible; opacity: 1; }
+        
         #calc-retraite .hidden { display: none !important; }
         #calc-retraite .results-dashboard { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
         #calc-retraite .result-box, #calc-retraite .result-card { background: var(--card-bg-color); padding: 1.5rem; text-align: center; border-radius: var(--border-radius); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); }
@@ -51,7 +54,7 @@
         #calc-retraite .result-value.success { color: #10B981; } 
         #calc-retraite .result-value.danger { color: #EF4444; } 
         #calc-retraite .result-value.warning { color: #f59e0b; }
-        #calc-retraite .chart-container { height: 450px; margin-top: 1rem; }
+        .chart-container { height: 450px; margin-top: 1rem; }
         #calc-retraite .recommendation-box { background-color: rgba(13, 148, 136, 0.05); border-left: 4px solid var(--primary-color); padding: 1.5rem; border-radius: 8px; text-align: left; }
         @media (max-width: 1200px) { #calc-retraite .main-grid { grid-template-columns: 1fr; } }
     </style>
@@ -108,6 +111,7 @@
     </section>
     
     <section id="calculatrices-container">
+        
         <section id="calc-fire" class="calculator-card">
             <h2>Calculateur d'indépendance financière</h2>
             <form id="form-fire">
@@ -196,16 +200,13 @@
         <section id="calc-retraite" class="calculator-card active">
             <h2>Calculatrice de Revenu de Retraite 360°</h2>
             <form id="financial-plan-form">
-        
                 <div id="step1" class="wizard-step active">
                     <h3>Étape 1: Profil et Objectifs</h3>
-                    
                     <div class="form-group">
                         <label style="display:flex; align-items:center; gap:10px;">
                             <input type="checkbox" id="toggleConjoint" style="width:auto; height:20px;"> Planification pour un couple
                         </label>
                     </div>
-                    
                     <div class="main-grid">
                         <div>
                             <h4>Personne 1</h4>
@@ -231,16 +232,13 @@
                             <div class="form-group"><label>Âge début de carrière</label><input id="ageDebutTravail2" type="number" value="24"></div>
                         </div>
                     </div>
-        
                     <hr style="margin: 2rem 0; border:0; border-top: 1px solid var(--border-color);">
-        
                     <h4>Objectifs Communs</h4>
                     <div class="form-grid">
                         <div class="form-group"><label>Âge de Retraite</label><input id="ageRetraite" type="number" value="65"></div>
                         <div class="form-group"><label>Espérance de Vie</label><input id="esperanceVie" type="number" value="95"></div>
                         <div class="form-group"><label>Dépense Annuelle Nette Voulue</label><input id="depenseVisee" type="number" value="36000"><p class="helper">En dollars d'aujourd'hui.</p></div>
                     </div>
-        
                     <div class="wizard-nav">
                         <span></span>
                         <button type="button" class="btn-primary" data-next="2">Suivant</button>
@@ -282,7 +280,7 @@
                             <h5>Régime de retraite d'employeur</h5>
                             <div class="form-grid">
                                 <div class="form-group"><label>Rente Annuelle<p class="helper">(en dollars d'aujourd'hui)</p></label><input id="pension1" type="number" value="0"></div>
-                                <div class="form-group"><label>100% Indexée?</label><input type="checkbox" id="pensionIndexee1" style="width: auto; height: 20px;"></div>
+                                <div class="form-group"><label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" id="pensionIndexee1" style="width: auto; height: 18px;"> 100% Indexée?</label></div>
                             </div>
                             <h5>Revenu de travail à la retraite</h5>
                             <div class="form-grid">
@@ -297,7 +295,7 @@
                             <h5>Régime de retraite d'employeur</h5>
                             <div class="form-grid">
                                 <div class="form-group"><label>Rente Annuelle<p class="helper">(en dollars d'aujourd'hui)</p></label><input id="pension2" type="number" value="0"></div>
-                                <div class="form-group"><label>100% Indexée?</label><input type="checkbox" id="pensionIndexee2" style="width: auto; height: 20px;"></div>
+                                <div class="form-group"><label style="display:flex; align-items:center; gap:8px;"><input type="checkbox" id="pensionIndexee2" style="width: auto; height: 18px;"> 100% Indexée?</label></div>
                             </div>
                             <h5>Revenu de travail à la retraite</h5>
                             <div class="form-grid">
@@ -329,7 +327,7 @@
                 <div id="step5" class="wizard-step">
                     <h3>Étape 5: Hypothèses & Objectif</h3>
                     <div class="form-grid">
-                        <div class="form-group"><label>Rendement Annuel Moyen <span class="tooltip">?<span class="tooltip-text">Rendement espéré avant inflation. Ex: 6.5% pour un portefeuille équilibré 60/40.</span></span></label><input id="rendementMoyen" type="number" value="6" step="0.1"></div>
+                        <div class="form-group"><label>Rendement Annuel Moyen <span class="tooltip">?<span class="tooltip-text">Rendement espéré avant inflation. Ex: 6.5% pour un portefeuille équilibré 60/40.</span></span></label><input id="rendementMoyen" type="number" value="6.5" step="0.1"></div>
                         <div class="form-group"><label>Volatilité (Écart-Type) <span class="tooltip">?<span class="tooltip-text">Mesure du risque. Un portefeuille 60/40 a typiquement 10-12% de volatilité. Plus le chiffre est élevé, plus les rendements varient.</span></span></label><input id="volatilite" type="number" value="10.0" step="0.1"></div>
                         <div class="form-group"><label>Taux d'Inflation Moyen</label><input id="inflation" type="number" value="2.5" step="0.1"></div>
                     </div>
@@ -388,6 +386,70 @@
                 </div>
             </div>
         </section>
+
+        <section id="calc-acheter-louer" class="calculator-card">
+            <h2>Calculatrice : acheter ou louer ?</h2>
+            <form id="form-acheter-louer">
+                <div class="form-columns">
+                    <div class="form-column">
+                        <h3>Scénario propriétaire</h3>
+                        <div class="form-group">
+                            <label for="al-prix-propriete">Prix d'achat de la propriété 
+                                <span class="tooltip">?<span class="tooltip-text">Nous ajoutons automatiquement ~1,5 % + 1500$ pour simuler les frais de clôture (taxe de bienvenue, notaire). Le locataire placera ce montant sauvé.</span></span>
+                            </label>
+                            <input type="text" id="al-prix-propriete" value="450000">
+                        </div>
+                        <div class="form-group">
+                            <label for="al-mise-de-fonds">Mise de fonds 
+                                <span class="tooltip">?<span class="tooltip-text">Si la mise de fonds est inférieure à 20%, la prime d'assurance SCHL sera calculée et ajoutée à l'hypothèque.</span></span>
+                            </label>
+                            <input type="text" id="al-mise-de-fonds" value="90000">
+                        </div>
+                        <div class="form-group"><label for="al-taux-hypotheque">Taux d'intérêt hypothécaire annuel (%)</label><input type="number" id="al-taux-hypotheque" value="4.5" step="any"></div>
+                        <div class="form-group"><label for="al-amortissement">Amortissement de l'hypothèque (années)</label><input type="number" id="al-amortissement" value="25" step="any"></div>
+                        <div class="form-group"><label for="al-taxes-annuelles">Taxes (municipales, scolaires) annuelles</label><input type="text" id="al-taxes-annuelles" value="4000" step="any"></div>
+                        <div class="form-group"><label for="al-entretien-annuel">Entretien annuel (% du prix d'achat)</label><input type="number" id="al-entretien-annuel" value="1.5" step="any"></div>
+                        <div class="form-group"><label for="al-assurance-proprio">Assurance habitation mensuelle</label><input type="text" id="al-assurance-proprio" value="150"></div>
+                        <div class="form-group"><label for="al-frais-condo">Frais de condo mensuels (0 si aucun)</label><input type="text" id="al-frais-condo" value="0"></div>
+                        <div class="form-group"><label for="al-croissance-immo">Croissance annuelle de l'immobilier (%)</label><input type="number" id="al-croissance-immo" value="3.0" step="any"></div>
+                    </div>
+                    <div class="form-column">
+                        <h3>Scénario locataire</h3>
+                        <div class="form-group"><label for="al-loyer-mensuel">Loyer mensuel équivalent</label><input type="text" id="al-loyer-mensuel" value="1800"></div>
+                        <div class="form-group"><label for="al-augmentation-loyer">Augmentation annuelle du loyer (%)</label><input type="number" id="al-augmentation-loyer" value="2.5" step="any"></div>
+                        <div class="form-group"><label for="al-assurance-loc">Assurance locataire mensuelle</label><input type="text" id="al-assurance-loc" value="30"></div>
+                        
+                        <h3 class="form-divider" style="margin-top: 1.5rem;">Paramètres Communs</h3>
+                        <div class="form-group"><label for="al-horizon">Horizon d'analyse (années)</label><input type="number" id="al-horizon" value="25"></div>
+                        <div class="form-group"><label for="al-rendement-placement">Rendement annuel des placements (%)</label><input type="number" id="al-rendement-placement" value="7.0" step="any"></div>
+                        <div class="form-group">
+                            <label for="al-type-compte">Type de compte pour l'investissement</label>
+                            <select id="al-type-compte" class="form-input" style="padding: 0.5rem; width: 100%; border: 1px solid var(--border-color); border-radius: 6px;">
+                                <option value="celi">CELI (non imposable)</option>
+                                <option value="reer" selected>REER (imposable au retrait)</option>
+                                <option value="non-enregistre">Non-enregistré (imposable annuellement)</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="reinvest-reer-option" style="margin-top: 1rem;">
+                            <label style="display:flex; align-items:center; gap:10px; cursor: pointer;" for="al-reinvestir-reer">
+                                <input type="checkbox" id="al-reinvestir-reer" checked style="width:auto; height:20px; margin: 0;"> Réinvestir le retour d'impôt du REER
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="al-taux-marginal">Taux d'imposition marginal (%)</label>
+                            <input type="number" id="al-taux-marginal" value="37" step="any">
+                            <p class="helper">Sert à calculer le retour d'impôt du REER.</p>
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="margin-top: 1rem; width: 100%;">Comparer les scénarios</button>
+            </form>
+            
+            <div id="resultat-acheter-louer" class="results-container" style="display: none; margin-top: 1.5rem; line-height: 1.6;"></div>
+            
+            <div class="chart-container" style="display: none; margin-top: 2rem;"><canvas id="chart-acheter-louer"></canvas></div>
+        </section>
+
         <section id="calc-vf" class="calculator-card">
             <h2>Calculatrice de valeur future</h2>
             <form id="form-vf">
@@ -400,7 +462,7 @@
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-vf"></p>
-            <div class="chart-container"><canvas id="chart-vf"></canvas></div>
+            <div class="chart-container" style="display:none;"><canvas id="chart-vf"></canvas></div>
         </section>
         
         <section id="calc-hypotheque" class="calculator-card">
@@ -414,7 +476,7 @@
                 <button type="submit" class="btn-primary">Calculer la mensualité</button>
             </form>
             <p class="resultat" id="resultat-hypotheque"></p>
-            <div class="chart-container"><canvas id="chart-hypotheque"></canvas></div>
+            <div class="chart-container" style="display:none;"><canvas id="chart-hypotheque"></canvas></div>
         </section>
         
         <section id="calc-trex" class="calculator-card">
@@ -428,53 +490,7 @@
                 <button type="submit" class="btn-primary">Calculer</button>
             </form>
             <p class="resultat" id="resultat-trex"></p>
-            <div class="chart-container"><canvas id="chart-trex"></canvas></div>
-        </section>
-        
-        <section id="calc-acheter-louer" class="calculator-card">
-            <h2>Calculatrice : acheter ou louer ?</h2>
-            <form id="form-acheter-louer">
-                <div class="form-columns">
-                    <div class="form-column">
-                        <h3>Scénario propriétaire</h3>
-                        <div class="form-group"><label for="al-prix-propriete">Prix d'achat de la propriété</label><input type="text" id="al-prix-propriete" placeholder="ex: 450 000,00 $"></div>
-                        <div class="form-group"><label for="al-mise-de-fonds">Mise de fonds</label><input type="text" id="al-mise-de-fonds" placeholder="ex: 90 000,00 $"></div>
-                        <div class="form-group"><label for="al-taux-hypotheque">Taux d'intérêt hypothécaire annuel (%)</label><input type="number" id="al-taux-hypotheque" placeholder="ex: 4.5" step="any"></div>
-                        <div class="form-group"><label for="al-amortissement">Amortissement de l'hypothèque (années)</label><input type="number" id="al-amortissement" placeholder="ex: 25" step="any"></div>
-                        <div class="form-group"><label for="al-taxes-annuelles">Taxes (municipales, scolaires) annuelles</label><input type="text" id="al-taxes-annuelles" placeholder="ex: 4 000,00 $" step="any"></div>
-                        <div class="form-group"><label for="al-entretien-annuel">Entretien annuel (% du prix d'achat)</label><input type="number" id="al-entretien-annuel" placeholder="ex: 1"></div>
-                        <div class="form-group"><label for="al-assurance-proprio">Assurance habitation mensuelle</label><input type="text" id="al-assurance-proprio" placeholder="ex: 100,00 $"></div>
-                        <div class="form-group"><label for="al-frais-condo">Frais de condo mensuels (0 si aucun)</label><input type="text" id="al-frais-condo" placeholder="ex: 0,00 $"></div>
-                        <div class="form-group"><label for="al-croissance-immo">Croissance annuelle de l'immobilier (%)</label><input type="number" id="al-croissance-immo" placeholder="ex: 3" step="any"></div>
-                    </div>
-                    <div class="form-column">
-                        <h3>Scénario locataire</h3>
-                        <div class="form-group"><label for="al-loyer-mensuel">Loyer mensuel équivalent</label><input type="text" id="al-loyer-mensuel" placeholder="ex: 1 800,00 $"></div>
-                        <div class="form-group"><label for="al-augmentation-loyer">Augmentation annuelle du loyer (%)</label><input type="number" id="al-augmentation-loyer" placeholder="ex: 2" step="any"></div>
-                        <div class="form-group"><label for="al-assurance-loc">Assurance locataire mensuelle</label><input type="text" id="al-assurance-loc" placeholder="ex: 30,00 $"></div>
-                        <h3 class="form-divider">Paramètres Communs</h3>
-                        <div class="form-group"><label for="al-horizon">Horizon d'analyse (années)</label><input type="number" id="al-horizon" placeholder="ex: 25"></div>
-                        <div class="form-group"><label for="al-rendement-placement">Rendement annuel des placements (%)</label><input type="number" id="al-rendement-placement" placeholder="ex: 7" step="any"></div>
-                        <div class="form-group">
-                            <label for="al-type-compte">Type de compte pour l'investissement</label>
-                            <select id="al-type-compte">
-                                <option value="celi">CELI (non imposable)</option>
-                                <option value="reer" selected>REER (imposable au retrait)</option>
-                                <option value="non-enregistre">Non-enregistré (imposable annuellement)</option>
-                            </select>
-                        </div>
-                        <div class="form-group" id="reinvest-reer-option">
-                            <label for="al-reinvestir-reer">Réinvestir le retour d'impôt du REER<input type="checkbox" id="al-reinvestir-reer" checked></label>
-                        </div>
-                        <div class="form-group">
-                            <label for="al-taux-marginal">Taux d'imposition marginal (%)</label><input type="number" id="al-taux-marginal" placeholder="ex: 40" step="any">
-                        </div>
-                    </div>
-                </div>
-                <button type="submit" class="btn-primary">Comparer les scénarios</button>
-            </form>
-            <p class="resultat" id="resultat-acheter-louer"></p>
-            <div class="chart-container"><canvas id="chart-acheter-louer"></canvas></div>
+            <div class="chart-container" style="display:none;"><canvas id="chart-trex"></canvas></div>
         </section>
 
         <section id="calc-duree-capital" class="calculator-card">
