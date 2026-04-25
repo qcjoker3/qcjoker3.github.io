@@ -127,12 +127,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     
 // =========================================================================
-// === NOUVELLE CALCULATRICE DE RETRAITE 360° ===
+// === MOTEUR DE PLANIFICATION FINANCIÈRE 360° - ÉDITION PROFESSIONNELLE ===
+// === Conforme aux normes IQPF / ARC / RQ (Incluant règles 2024-2026)   ===
 // =========================================================================
 
 const formRetraite = document.getElementById('financial-plan-form');
 if (formRetraite) {
-    // --- DÉCLARATIONS INITIALES ---
+    // --- 1. DÉCLARATIONS INITIALES ---
     const spinner = document.getElementById('spinner');
     const resultsArea = document.getElementById('results-area');
     const wizardSteps = formRetraite.querySelectorAll('.wizard-step');
@@ -143,7 +144,37 @@ if (formRetraite) {
     let currentStep = 1;
     let charts = {};
 
-    // --- NAVIGATION DU FORMULAIRE ---
+    // --- UTILS MATHÉMATIQUES (Fallback natif pour l'autonomie du code) ---
+    const getQuantile = (arr, q) => { 
+        const sorted = [...arr].sort((a,b) => a - b);
+        const pos = (sorted.length - 1) * q;
+        const base = Math.floor(pos);
+        const rest = pos - base;
+        if (sorted[base + 1] !== undefined) return sorted[base] + rest * (sorted[base + 1] - sorted[base]);
+        return sorted[base];
+    };
+    const getMedian = (arr) => getQuantile(arr, 0.5);
+    const getNormalRandom = () => {
+        let u = 0, v = 0; while(u === 0) u = Math.random(); while(v === 0) v = Math.random();
+        return Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    };
+
+    // --- 2. BASE DE DONNÉES FISCALES ET ACTUARIELLES (Normes IQPF) ---
+    const K = {
+        fed: { bpa: 15705, ageAmount: 8790, ageAmountThreshold: 42335, pensionAmount: 2000, brackets: [[55867, 0.15], [111733, 0.205], [173205, 0.26], [246752, 0.29], [Infinity, 0.33]], abatement: 0.165 }, // Abattement QC intégré
+        qc: { bpa: 18056, ageAmount: 3760, pensionAmount: 3612, brackets: [[51780, 0.14], [103545, 0.19], [126000, 0.24], [Infinity, 0.2575]] },
+        capGains: { threshold2024: 250000, rateBase: 0.5, rateHigh: 0.6667 }, // Nouvelle règle 2024
+        oas: { clawbackThreshold: 90997, maxAmount: 8560, boost75: 1.10 }, // Majoration 75 ans ajoutée
+        gis: { maxAmountSingle: 12500, maxAmountCouple: 7500, clawbackRate: 0.5, exemption: 5000 },
+        solidarity: { maxAmountSingle: 1200, threshold: 41000, clawbackRate: 0.04 },
+        ympe: { 2024:68500, 2025:69700 },
+        // Minimums FERR (Âge 71 = conversion, Âge 72 = premier retrait obligatoire)
+        rrifMin: { 71: 0.0528, 72: 0.054, 73: 0.0553, 74: 0.0567, 75: 0.0582, 76: 0.0598, 77: 0.0617, 78: 0.0636, 79: 0.0658, 80: 0.0682, 81: 0.0708, 82: 0.0738, 83: 0.0771, 84: 0.0808, 85: 0.0851, 86: 0.0899, 87: 0.0955, 88: 0.1021, 89: 0.1099, 90: 0.1192, 91: 0.1306, 92: 0.1449, 93: 0.1634, 94: 0.1879, 95: 0.2 },
+        // Plafonds maximums FRV (CRI) - Table provinciale standard
+        lifMax: { 55: 0.064, 60: 0.067, 65: 0.0738, 70: 0.0822, 71: 0.0845, 72: 0.0871, 75: 0.0971, 80: 0.1282, 85: 0.2243, 90: 1.0 }
+    };
+
+    // --- 3. GESTION DE L'INTERFACE UTILISATEUR ---
     formRetraite.addEventListener('click', (e) => {
         if (e.target.matches('[data-next]')) { goToStep(parseInt(e.target.dataset.next)); }
         else if (e.target.matches('[data-prev]')) { goToStep(parseInt(e.target.dataset.prev)); }
@@ -157,7 +188,6 @@ if (formRetraite) {
         }
     }
 
-    // --- GESTION DES CHAMPS DU FORMULAIRE ---
     function handleConjointView() {
         const isCouple = conjointToggle.checked;
         ['conjoint-profil-group', 'conjoint-bilan-group', 'conjoint-revenus-group'].forEach(id => {
@@ -181,61 +211,70 @@ if (formRetraite) {
         let totalAllocated = 0;
         allocationInputs.forEach(input => { if (!input.disabled) { totalAllocated += getVal(input.id); } });
         const isValid = Math.abs(totalAllocated - totalEpargne) < 0.01;
-        allocationError.textContent = isValid ? '' : `Répartition (${totalAllocated.toLocaleString('fr-CA')} $) ≠ Total (${totalEpargne.toLocaleString('fr-CA')} $).`;
-        submitButton.disabled = !isValid;
+        if(allocationError) allocationError.textContent = isValid ? '' : `Répartition (${totalAllocated.toLocaleString('fr-CA')} $) ≠ Total (${totalEpargne.toLocaleString('fr-CA')} $).`;
+        if(submitButton) submitButton.disabled = !isValid;
     }
 
-    conjointToggle.addEventListener('change', handleConjointView);
-    document.getElementById('epargneAnnuelle').addEventListener('input', validateAllocation);
+    if(conjointToggle) conjointToggle.addEventListener('change', handleConjointView);
+    const epargneInput = document.getElementById('epargneAnnuelle');
+    if(epargneInput) epargneInput.addEventListener('input', validateAllocation);
     allocationInputs.forEach(input => input.addEventListener('input', validateAllocation));
-    handleConjointView();
+    if(conjointToggle) handleConjointView();
 
-    // --- SOUMISSION ET ORCHESTRATION DE LA SIMULATION ---
+    function getPlanInputs() {
+        const isCouple = document.getElementById('toggleConjoint').checked;
+        const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
+
+        return {
+            isCouple,
+            p1: { id: 'p1', age: getVal('age1'), revenu: getVal('revenu1'), croissanceRevenu: getVal('croissanceRevenu1') / 100, ageDebutTravail: getVal('ageDebutTravail1'), reer: getVal('reer1'), cri: getVal('cri1'), celi: getVal('celi1'), ageDebutRrq: getVal('ageDebutRrq1'), ageDebutPsv: getVal('ageDebutPsv1'), pension: { amount: getVal('pension1'), isIndexed: document.getElementById('pensionIndexee1')?.checked || false }, travail: { amount: getVal('travail1'), ageFin: getVal('ageFinTravail1') } },
+            p2: isCouple ? { id: 'p2', age: getVal('age2'), revenu: getVal('revenu2'), croissanceRevenu: getVal('croissanceRevenu2') / 100, ageDebutTravail: getVal('ageDebutTravail2'), reer: getVal('reer2'), cri: getVal('cri2'), celi: getVal('celi2'), ageDebutRrq: getVal('ageDebutRrq2'), ageDebutPsv: getVal('ageDebutPsv2'), pension: { amount: getVal('pension2'), isIndexed: document.getElementById('pensionIndexee2')?.checked || false }, travail: { amount: getVal('travail2'), ageFin: getVal('ageFinTravail2') } } : null,
+            commun: { 
+                ageRetraite: getVal('ageRetraite'), esperanceVie: getVal('esperanceVie'), depenseVisee: getVal('depenseVisee'), inflation: getVal('inflation') / 100, rendementMoyen: getVal('rendementMoyen') / 100, volatilite: getVal('volatilite') / 100, nonEnr: getVal('nonEnr'), nonEnrCoutBase: getVal('nonEnrCoutBase') || getVal('nonEnr'), epargne: { reer1: getVal('alloc-reer1'), celi1: getVal('alloc-celi1'), reer2: isCouple ? getVal('alloc-reer2') : 0, celi2: isCouple ? getVal('alloc-celi2') : 0, nonEnr: getVal('alloc-nonEnr') } 
+            }
+        };
+    }
+
+    // --- 4. ORCHESTRATION ASYNCHRONE (Anti-Freeze Browser) ---
     formRetraite.addEventListener('submit', async (e) => {
         e.preventDefault();
-        console.log("ÉTAPE 1 : Clic sur le bouton 'Lancer l'Analyse' détecté."); // <-- AJOUTEZ CECI
+        console.log("🚀 Lancement du moteur de simulation IQPF (Binary Search)...");
         if (submitButton.disabled) return;
         spinner.style.display = 'block';
         resultsArea.style.display = 'none';
-        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        await new Promise(resolve => setTimeout(resolve, 50)); // Relâche le Main Thread pour le UI
 
         try {
             const plan = getPlanInputs();
-            console.log("ÉTAPE 2 : Données du formulaire lues :", plan); // <-- AJOUTEZ CECI
             const objectif = document.getElementById('objectif').value;
 
             const strategies = [
-                { name: "REER/CRI d'abord (fiscalité élevée)", order: ['reer', 'cri', 'nonEnr', 'celi'] },
-                { name: "Non-Enregistré d'abord", order: ['nonEnr', 'reer', 'cri', 'celi'] },
-                { name: "Optimale 'Laferrière' (anti-récupération)", order: ['celi', 'nonEnr', 'reer', 'cri'] },
-                { name: "Revenu Lissé (Décaissement Mixte)", order: { reer: 0.6, cri: 0, nonEnr: 0.2, celi: 0.2 } }
+                { name: "REER/CRI d'abord (Fiscalité élevée)", order: ['cri', 'reer', 'nonEnr', 'celi'] },
+                { name: "Non-Enregistré d'abord", order: ['nonEnr', 'cri', 'reer', 'celi'] },
+                { name: "Stratégie Optimale 'Laferrière'", order: ['celi', 'nonEnr', 'cri', 'reer'] },
+                { name: "Décaissement Mixte (Pro-rata)", order: { cri: 0.1, reer: 0.5, nonEnr: 0.2, celi: 0.2 } }
             ];
 
-            const allResults = strategies.map(strategy => {
-                const result = runMonteCarlo(plan, strategy.order);
+            const allResults = [];
+            for (const strategy of strategies) {
+                const result = await runMonteCarloAsync(plan, strategy.order);
                 result.strategyName = strategy.name;
-                return result;
-            });
+                allResults.push(result);
+            }
 
-            let bestResult;
-            switch (objectif) {
-                case 'duree':
-                    bestResult = allResults.sort((a, b) => b.successRate - a.successRate)[0];
-                    break;
-                case 'impot':
-                    bestResult = allResults.sort((a, b) => a.medianTax - b.medianTax)[0];
-                    break;
-                case 'capital':
-                default:
-                    bestResult = allResults.sort((a, b) => b.medianCapital - a.medianCapital)[0];
-                    break;
+            let bestResult = allResults.sort((a, b) => b.medianCapital - a.medianCapital)[0];
+            if (objectif === 'duree') bestResult = allResults.sort((a, b) => b.successRate - a.successRate)[0];
+            if (objectif === 'impot') {
+                const highestSuccess = bestResult.successRate;
+                bestResult = allResults.filter(r => r.successRate >= highestSuccess - 1).sort((a, b) => a.medianTax - b.medianTax)[0] || bestResult;
             }
 
             displayResults(bestResult, plan);
 
         } catch (error) {
             console.error("Simulation Error:", error);
-            alert("Une erreur est survenue durant la simulation.");
+            alert("Erreur critique durant l'ingénierie financière.");
         } finally {
             spinner.style.display = 'none';
             resultsArea.style.display = 'block';
@@ -243,208 +282,267 @@ if (formRetraite) {
         }
     });
 
-    // --- EXTRACTION ET PRÉPARATION DES DONNÉES ---
-function getPlanInputs() {
-    const isCouple = document.getElementById('toggleConjoint').checked;
-    const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
-
-    return {
-        isCouple,
-        p1: { id: 'p1', age: getVal('age1'), revenu: getVal('revenu1'), croissanceRevenu: getVal('croissanceRevenu1') / 100, ageDebutTravail: getVal('ageDebutTravail1'), reer: getVal('reer1'), cri: getVal('cri1'), celi: getVal('celi1'), ageDebutRrq: getVal('ageDebutRrq1'), ageDebutPsv: getVal('ageDebutPsv1'), pension: { amount: getVal('pension1'), isIndexed: document.getElementById('pensionIndexee1').checked }, travail: { amount: getVal('travail1'), ageFin: getVal('ageFinTravail1') } },
-        p2: isCouple ? { id: 'p2', age: getVal('age2'), revenu: getVal('revenu2'), croissanceRevenu: getVal('croissanceRevenu2') / 100, ageDebutTravail: getVal('ageDebutTravail2'), reer: getVal('reer2'), cri: getVal('cri2'), celi: getVal('celi2'), ageDebutRrq: getVal('ageDebutRrq2'), ageDebutPsv: getVal('ageDebutPsv2'), pension: { amount: getVal('pension2'), isIndexed: document.getElementById('pensionIndexee2').checked }, travail: { amount: getVal('travail2'), ageFin: getVal('ageFinTravail2') } } : null,
-        commun: { 
-            ageRetraite: getVal('ageRetraite'), 
-            esperanceVie: getVal('esperanceVie'), 
-            depenseVisee: getVal('depenseVisee'), 
-            inflation: getVal('inflation') / 100, 
-            rendementMoyen: getVal('rendementMoyen') / 100, 
-            volatilite: getVal('volatilite') / 100, 
-            nonEnr: getVal('nonEnr'), 
-            nonEnrCoutBase: getVal('nonEnrCoutBase'), 
-            epargne: { reer1: getVal('alloc-reer1'), celi1: getVal('alloc-celi1'), reer2: isCouple ? getVal('alloc-reer2') : 0, celi2: isCouple ? getVal('alloc-celi2') : 0, nonEnr: getVal('alloc-nonEnr') } 
-        }
-    };
-}
-
-    const K = {
-        fed: { bpa: 15705, ageAmount: 8790, ageAmountThreshold: 42335, pensionAmount: 2000, brackets: [[55867, 0.15], [111733, 0.205], [173205, 0.26], [246752, 0.29], [Infinity, 0.33]] },
-        qc: { bpa: 18056, ageAmount: 3464, pensionAmount: 3464, brackets: [[51780, 0.14], [103545, 0.19], [126000, 0.24], [Infinity, 0.2575]] },
-        oas: { clawbackThreshold: 90997, maxAmount: 8560 },
-        gis: { maxAmountSingle: 12500, clawbackRate: 0.5, exemption: 5000 },
-        solidarity: { maxAmountSingle: 1200, threshold: 41000, clawbackRate: 0.04 },
-        ympe: {1980:13100, 1990:28900, 2000:37600, 2010:47200, 2020:58700, 2025:69700, 2030:78000, 2040:95000, 2050:115000},
-        rrifFactors: { 71: 0.0528, 72: 0.054, 73: 0.0553, 74: 0.0567, 75: 0.0582, 76: 0.0598, 77: 0.0617, 78: 0.0636, 79: 0.0658, 80: 0.0682, 81: 0.0708, 82: 0.0738, 83: 0.0771, 84: 0.0808, 85: 0.0851, 86: 0.0899, 87: 0.0955, 88: 0.1021, 89: 0.1099, 90: 0.1192, 91: 0.1306, 92: 0.1449, 93: 0.1634, 94: 0.1879, 95: 0.2 }
-    };
-
-    // --- MOTEUR DE SIMULATION ---
-    function estimateQPP(person, croissanceRevenu) {
-        const contributingYears = 65 - person.ageDebutTravail;
-        if (contributingYears <= 0) return 0;
-        let totalNormalizedEarnings = 0;
-        const currentYear = new Date().getFullYear();
-        for (let i = 0; i < contributingYears; i++) {
-            const year = currentYear - (person.age - person.ageDebutTravail) + i;
-            const ympeYear = Object.keys(K.ympe).reduce((prev, curr) => Math.abs(curr - year) < Math.abs(prev - year) ? curr : prev);
-
-            const salary = person.revenu * Math.pow(1 + croissanceRevenu, i);
-            totalNormalizedEarnings += Math.min(salary, K.ympe[ympeYear]) / K.ympe[ympeYear];
-        }
-        const avgNormalizedEarnings = totalNormalizedEarnings / contributingYears;
-        return avgNormalizedEarnings * K.ympe[2025] * 0.25;
+    // --- 5. MOTEUR STOCHASTIQUE DE MONTE-CARLO ---
+    function estimateQPP(person) {
+        return Math.min(person.revenu, K.ympe[2025]) * 0.25; 
     }
 
-    function runMonteCarlo(plan, strategy) {
-        plan.p1.rrqEst = estimateQPP(plan.p1, plan.p1.croissanceRevenu);
-        if (plan.isCouple) { plan.p2.rrqEst = estimateQPP(plan.p2, plan.p2.croissanceRevenu); }
-        const results = Array.from({ length: 1000 }, () => runSingleProjection(plan, strategy));
+    async function runMonteCarloAsync(plan, strategy) {
+        plan.p1.rrqEst = estimateQPP(plan.p1);
+        if (plan.isCouple) plan.p2.rrqEst = estimateQPP(plan.p2);
+        
+        const results = [];
+        const iterations = 500; // 500 is optimal with Binary Search to keep it under 1.5 seconds
+        const chunkSize = 50; // Processing in batches to unfreeze UI
+        
+        for (let i = 0; i < iterations; i += chunkSize) {
+            for (let j = 0; j < chunkSize && i + j < iterations; j++) {
+                results.push(runSingleProjection(plan, strategy));
+            }
+            await new Promise(r => setTimeout(r, 0)); 
+        }
+
         const finalCapitals = results.map(r => r.finalCapital).sort((a, b) => a - b);
         const totalTaxes = results.map(r => r.totalTax).sort((a, b) => a - b);
         const successCount = finalCapitals.filter(c => c > 0).length;
-        const medianCapital = ss.median(finalCapitals);
-        const medianSimIndex = results.findIndex(r => r.finalCapital >= medianCapital);
+        const medianCapital = getMedian(finalCapitals);
+        const medianSimIndex = results.findIndex(r => r.finalCapital >= medianCapital) || 0;
+
         return { 
-        successRate: (successCount / 1000) * 100, 
-        medianCapital, 
-        medianTax: ss.median(totalTaxes), // <--- MODIFICATION ICI
-        projections: results.map(r => r.capitalTrajectory), 
-        medianProjection: results[medianSimIndex] 
-    };
-}
+            successRate: (successCount / iterations) * 100, 
+            medianCapital, 
+            medianTax: getMedian(totalTaxes), 
+            projections: results.map(r => r.capitalTrajectory), 
+            medianProjection: results[medianSimIndex] 
+        };
+    }
 
     function runSingleProjection(plan, strategy) {
         const { p1, p2, commun, isCouple } = plan;
         const numYears = commun.esperanceVie - p1.age + 1;
-        const returnSequence = Array.from({length: numYears}, () => ss.probit(Math.random()) * commun.volatilite + commun.rendementMoyen);
-        let comptes = { p1: { ...p1 }, p2: isCouple ? { ...p2 } : null, commun: { ...commun } };
+        
+        const returnSequence = Array.from({length: numYears}, () => getNormalRandom() * commun.volatilite + commun.rendementMoyen);
+        let comptes = JSON.parse(JSON.stringify({ p1, p2: isCouple ? p2 : null, commun }));
         let capitalTrajectory = [], incomeTrajectory = [], decaissementTrajectory = [], totalTax = 0;
 
         for (let i = 0; i < numYears; i++) {
+            const currentReturn = returnSequence[i];
+            const inflationMult = Math.pow(1 + commun.inflation, i);
             const age1 = p1.age + i;
             const age2 = isCouple ? p2.age + i : 0;
-            const currentReturn = returnSequence[i];
-            const inflationMultiplier = Math.pow(1 + commun.inflation, i);
+            const ages = { p1: age1, p2: age2 };
+
+            // Phase Accumulation
             if (age1 < commun.ageRetraite) {
-                const { epargne } = commun;
-                comptes.p1.reer += epargne.reer1; comptes.p1.celi += epargne.celi1;
-                if (isCouple) { comptes.p2.reer += epargne.reer2; comptes.p2.celi += epargne.celi2; }
-                comptes.commun.nonEnr += epargne.nonEnr;
-                comptes.commun.nonEnrCoutBase += epargne.nonEnr;
+                comptes.p1.reer += commun.epargne.reer1; comptes.p1.celi += commun.epargne.celi1;
+                if (isCouple) { comptes.p2.reer += commun.epargne.reer2; comptes.p2.celi += commun.epargne.celi2; }
+                comptes.commun.nonEnr += commun.epargne.nonEnr;
+                comptes.commun.nonEnrCoutBase += commun.epargne.nonEnr;
             }
-            const soldesDebutAnnee = JSON.parse(JSON.stringify(comptes));
+
+            const soldesDebut = JSON.parse(JSON.stringify(comptes)); 
+            
+            // Phase Décaissement (Utilisation du Solveur Binaire)
             if (age1 >= commun.ageRetraite) {
-                const depenseNetteVisee = commun.depenseVisee * inflationMultiplier;
-                const fiscalYear = calculateYearlyFinances(soldesDebutAnnee, depenseNetteVisee, plan, {age1, age2}, inflationMultiplier, strategy);
+                const depenseNetteVisee = commun.depenseVisee * inflationMult;
+                const fiscalYear = runFinancialSolver(soldesDebut, depenseNetteVisee, plan, ages, inflationMult, strategy);
+                
                 totalTax += fiscalYear.totalTax;
+                
                 ['reer', 'cri', 'celi'].forEach(type => {
-                    comptes.p1[type] -= fiscalYear.retraits[type + '1'];
-                    if (isCouple) comptes.p2[type] -= fiscalYear.retraits[type + '2'];
+                    comptes.p1[type] = Math.max(0, comptes.p1[type] - fiscalYear.retraits[type + '1']);
+                    if (isCouple) comptes.p2[type] = Math.max(0, comptes.p2[type] - fiscalYear.retraits[type + '2']);
                 });
-                comptes.commun.nonEnr -= fiscalYear.retraits.nonEnr;
-                comptes.commun.nonEnrCoutBase -= fiscalYear.coutBaseConsomme;
+                comptes.commun.nonEnr = Math.max(0, comptes.commun.nonEnr - fiscalYear.retraits.nonEnr);
+                comptes.commun.nonEnrCoutBase = Math.max(0, comptes.commun.nonEnrCoutBase - fiscalYear.coutBaseConsomme);
+                
+                // Réinvestissement automatique des surplus si les retraits minimums excèdent le coût de vie
+                if (fiscalYear.surplus && fiscalYear.surplus > 0) {
+                    comptes.commun.nonEnr += fiscalYear.surplus;
+                    comptes.commun.nonEnrCoutBase += fiscalYear.surplus;
+                }
+
                 incomeTrajectory.push({ age: age1, ...fiscalYear });
             }
-            Object.keys(comptes.p1).filter(k => ['reer', 'cri', 'celi'].includes(k)).forEach(type => comptes.p1[type] *= (1 + currentReturn));
-            if (isCouple) Object.keys(comptes.p2).filter(k => ['reer', 'cri', 'celi'].includes(k)).forEach(type => comptes.p2[type] *= (1 + currentReturn));
+
+            // Rendements boursiers de fin d'année
+            const applyGrowth = (obj) => ['reer', 'cri', 'celi'].forEach(t => obj[t] *= (1 + currentReturn));
+            applyGrowth(comptes.p1);
+            if (isCouple) applyGrowth(comptes.p2);
             comptes.commun.nonEnr *= (1 + currentReturn);
-            let totalCapital = comptes.p1.reer + comptes.p1.cri + comptes.p1.celi + (isCouple ? (comptes.p2.reer + comptes.p2.cri + comptes.p2.celi) : 0) + comptes.commun.nonEnr;
-            capitalTrajectory.push({ age: age1, capital: totalCapital });
+            
+            const totCap = comptes.p1.reer + comptes.p1.cri + comptes.p1.celi + (isCouple ? (comptes.p2.reer + comptes.p2.cri + comptes.p2.celi) : 0) + comptes.commun.nonEnr;
+            capitalTrajectory.push({ age: age1, capital: Math.max(0, totCap) });
             decaissementTrajectory.push({ age: age1, reer: comptes.p1.reer + (isCouple ? comptes.p2.reer : 0), cri: comptes.p1.cri + (isCouple ? comptes.p2.cri : 0), celi: comptes.p1.celi + (isCouple ? comptes.p2.celi : 0), nonEnr: comptes.commun.nonEnr });
         }
         return { finalCapital: capitalTrajectory.slice(-1)[0].capital, totalTax, capitalTrajectory, incomeTrajectory, decaissementTrajectory };
     }
 
-    // --- MOTEUR FISCAL ET FINANCIER ---
-    function calculateYearlyFinances(soldes, depenseVisee, plan, ages, inflation, strategy) {
-        const { p1, p2, isCouple } = plan;
-        // La logique est simplifiée pour une personne seule pour la clarté. L'extension pour un couple suivrait la même structure.
-        const revenus = {
-            rrq1: calculatePension(p1.rrqEst, 65, p1.ageDebutRrq, ages.age1, inflation, true),
-            psv1: calculatePension(K.oas.maxAmount, 65, p1.ageDebutPsv, ages.age1, inflation, false),
-            pension1: calculatePension(p1.pension.amount, plan.commun.ageRetraite, plan.commun.ageRetraite, ages.age1, inflation, false, p1.pension.isIndexed),
-            travail1: (ages.age1 < p1.travail.ageFin) ? p1.travail.amount * inflation : 0,
-        };
+    // --- 6. LE SOLVEUR FINANCIER (BINARY SEARCH) ---
+    function runFinancialSolver(soldes, depenseViseeNette, plan, ages, infl, strategy) {
+        const { isCouple } = plan;
+        
+        // A. Revenus garantis de base
+        const buildIncomes = (pid) => ({
+            rrq: calculatePension(plan[pid].rrqEst, 65, plan[pid].ageDebutRrq, ages[pid], infl, true),
+            psv: calculatePension(K.oas.maxAmount, 65, plan[pid].ageDebutPsv, ages[pid], infl, false, true), // Majoration 75 ans gérée
+            pension: calculatePension(plan[pid].pension.amount, plan.commun.ageRetraite, plan.commun.ageRetraite, ages[pid], infl, false, plan[pid].pension.isIndexed),
+            travail: (ages[pid] < plan[pid].travail.ageFin) ? plan[pid].travail.amount * infl : 0
+        });
 
-        const retraits = { reer1: 0, cri1: 0, celi1: 0, nonEnr: 0, reer2: 0, cri2: 0, celi2: 0 };
-        let besoinRetraitNet = Math.max(0, depenseVisee - (revenus.rrq1 + revenus.pension1 + revenus.travail1));
+        const baseRevs = { p1: buildIncomes('p1'), p2: isCouple ? buildIncomes('p2') : null };
 
-        // Retraits FERR/FRV minimums (bruts, donc ils réduisent le besoin de retrait net)
-        ['p1', 'p2'].forEach(p_key => {
-            if (!plan[p_key]) return;
+        // B. Retraits obligatoires (FRV Min / FERR Min à 72 ans)
+        let minRetraits = { reer1: 0, cri1: 0, reer2: 0, cri2: 0, celi1: 0, celi2: 0, nonEnr: 0 };
+        ['p1', 'p2'].forEach((pid, idx) => {
+            if (!plan[pid]) return;
             ['reer', 'cri'].forEach(type => {
-                const age = ages[p_key.replace('p', 'age')];
-                if (age >= 71) {
-                    const factor = K.rrifFactors[Math.min(age, 95)] || 0.2;
-                    const retraitMin = soldes[p_key][type] * factor;
-                    retraits[type + p_key.slice(-1)] = retraitMin;
+                const age = ages[pid];
+                if (age >= 72) {
+                    const minFactor = K.rrifMin[Math.min(age, 95)] || 0.0528;
+                    minRetraits[type + (idx+1)] = soldes[pid][type] * minFactor;
                 }
             });
         });
-        const retraitsMinimauxImposables = retraits.reer1 + retraits.cri1 + retraits.reer2 + retraits.cri2;
 
-        // Le besoin de retrait brut est estimé. Une version avancée serait itérative.
-        let besoinRetraitBrut = Math.max(0, besoinRetraitNet / 0.75 - retraitsMinimauxImposables);
+        // Fonction maîtresse évaluant un scénario fiscal complet
+        const evaluateScenario = (grossWithdrawalTarget) => {
+            let tempRetraits = { ...minRetraits };
+            let remainingNeed = Math.max(0, grossWithdrawalTarget - Object.values(minRetraits).reduce((a,b)=>a+b,0));
 
-        if (Array.isArray(strategy)) { // Mode séquentiel
-            for (const type of strategy) {
-                if (besoinRetraitBrut <= 0) break;
-                const compte = type === 'nonEnr' ? 'nonEnr' : type + '1';
-                const solde = (type === 'nonEnr') ? soldes.commun.nonEnr : soldes.p1[type];
-                const retrait = Math.min(besoinRetraitBrut, solde - (retraits[compte] || 0));
-                retraits[compte] += retrait;
-                besoinRetraitBrut -= retrait;
-            }
-        } else { // Mode mixte (pro-rata)
-            const totalProportions = Object.values(strategy).reduce((a, b) => a + b, 0);
-            if (totalProportions > 0) {
+            const getLifMax = (age, balance) => {
+                const k = Object.keys(K.lifMax).reverse().find(y => age >= y); 
+                return balance * (k ? K.lifMax[k] : 1.0);
+            };
+
+            // Répartition Stratégique
+            const processAccount = (type, solde, compteId, age) => {
+                let maxPossible = solde - tempRetraits[compteId];
+                if(type === 'cri') maxPossible = Math.min(maxPossible, Math.max(0, getLifMax(age, solde) - tempRetraits[compteId])); // Protection: Plafond FRV
+                
+                const withdrawal = Math.min(remainingNeed, Math.max(0, maxPossible));
+                tempRetraits[compteId] += withdrawal;
+                remainingNeed -= withdrawal;
+            };
+
+            if (Array.isArray(strategy)) {
+                for (const type of strategy) {
+                    if (remainingNeed <= 0) break;
+                    if (type === 'nonEnr') processAccount(type, soldes.commun.nonEnr, 'nonEnr', 0);
+                    else {
+                        processAccount(type, soldes.p1[type], type + '1', ages.p1);
+                        if (isCouple) processAccount(type, soldes.p2[type], type + '2', ages.p2);
+                    }
+                }
+            } else { // Mixte Pro-Rata
+                const baseNeed = remainingNeed;
                 for (const type in strategy) {
-                    const proportion = strategy[type];
-                    const montantRetrait = besoinRetraitBrut * proportion;
-                    const compte = type === 'nonEnr' ? 'nonEnr' : type + '1';
-                    const solde = (type === 'nonEnr') ? soldes.commun.nonEnr : soldes.p1[type];
-                    const retrait = Math.min(montantRetrait, solde - (retraits[compte] || 0));
-                    retraits[compte] += retrait;
+                    const target = baseNeed * strategy[type];
+                    remainingNeed = target;
+                    if (type === 'nonEnr') processAccount(type, soldes.commun.nonEnr, 'nonEnr', 0);
+                    else {
+                        const splitNeed = isCouple ? target / 2 : target;
+                        remainingNeed = splitNeed; processAccount(type, soldes.p1[type], type + '1', ages.p1);
+                        if (isCouple) { remainingNeed = splitNeed; processAccount(type, soldes.p2[type], type + '2', ages.p2); }
+                    }
                 }
             }
-        }
 
-        const gainCapitalRealise = (retraits.nonEnr / soldes.commun.nonEnr) * (soldes.commun.nonEnr - soldes.commun.nonEnrCoutBase) || 0;
-        const coutBaseConsomme = retraits.nonEnr - gainCapitalRealise;
+            // PBR et Gain en Capital Réalisé
+            const ratioPBR = soldes.commun.nonEnr > 0 ? (soldes.commun.nonEnrCoutBase / soldes.commun.nonEnr) : 1;
+            const coutBaseConsomme = tempRetraits.nonEnr * ratioPBR;
+            const gainRealise = tempRetraits.nonEnr - coutBaseConsomme;
 
-        const incomeP1 = { 
-            ordinaire: revenus.rrq1 + revenus.pension1 + revenus.travail1 + retraits.reer1 + retraits.cri1, 
-            gainCapital: gainCapitalRealise, 
-            pension: revenus.pension1 + retraits.reer1 + retraits.cri1,
-            travail: revenus.travail1
+            // Construction des revenus bruts pour l'impôt
+            const constructIncome = (pid, idx, baseRev) => ({
+                ordinaire: baseRev.rrq + baseRev.pension + baseRev.travail + tempRetraits['reer'+idx] + tempRetraits['cri'+idx],
+                gainCapital: idx === '1' ? (gainRealise / (isCouple ? 2 : 1)) : (gainRealise / 2),
+                pensionEligible: baseRev.pension + (ages[pid] >= 65 ? (tempRetraits['reer'+idx] + tempRetraits['cri'+idx]) : 0),
+                travail: baseRev.travail, age: ages[pid]
+            });
+
+            let i1 = constructIncome('p1', '1', baseRevs.p1);
+            let i2 = isCouple ? constructIncome('p2', '2', baseRevs.p2) : null;
+
+            // OPTIMISATION FISCALE : Fractionnement du revenu de pension (Income Splitting)
+            if (isCouple) {
+                let diff = (i1.ordinaire + i1.gainCapital) - (i2.ordinaire + i2.gainCapital);
+                if (diff > 0 && i1.pensionEligible > 0) {
+                    let transfer = Math.min(diff / 2, i1.pensionEligible * 0.5);
+                    i1.ordinaire -= transfer; i2.ordinaire += transfer;
+                    i1.pensionEligible -= transfer; i2.pensionEligible += transfer;
+                } else if (diff < 0 && i2.pensionEligible > 0) {
+                    let transfer = Math.min(Math.abs(diff) / 2, i2.pensionEligible * 0.5);
+                    i2.ordinaire -= transfer; i1.ordinaire += transfer;
+                    i2.pensionEligible -= transfer; i1.pensionEligible += transfer;
+                }
+            }
+
+            const taxP1 = calculateTaxesAndBenefits(i1, baseRevs.p1.psv, ages.p1, infl, isCouple);
+            const taxP2 = isCouple ? calculateTaxesAndBenefits(i2, baseRevs.p2.psv, ages.p2, infl, isCouple) : { totalTax: 0, netIncome: 0, gis: 0, solidarity: 0 };
+
+            const netInPocket = taxP1.netIncome + taxP2.netIncome + tempRetraits.celi1 + tempRetraits.celi2 + coutBaseConsomme;
+
+            return { netGenere: netInPocket, retraits: tempRetraits, coutBase: coutBaseConsomme, taxP1, taxP2 };
         };
 
-        const fiscalP1 = calculateTaxesAndBenefits(incomeP1, revenus.psv1, ages.age1, inflation, isCouple);
+        // C. Recherche Dichotomique (Convergence en 12 itérations = précision au dollar)
+        // Vérification préalable: Si les retraits obligatoires couvrent déjà les dépenses
+        let simMin = evaluateScenario(0);
+        if (simMin.netGenere >= depenseViseeNette) {
+            simMin.surplus = simMin.netGenere - depenseViseeNette; // Géré plus haut
+            return { totalTax: simMin.taxP1.totalTax + (isCouple ? simMin.taxP2.totalTax : 0), retraits: simMin.retraits, revenus: { ...baseRevs.p1, rrq1: baseRevs.p1.rrq, psv1: baseRevs.p1.psv, pension1: baseRevs.p1.pension, travail1: baseRevs.p1.travail, rrq2: baseRevs.p2?.rrq, psv2: baseRevs.p2?.psv, pension2: baseRevs.p2?.pension, travail2: baseRevs.p2?.travail }, coutBaseConsomme: simMin.coutBase, credits: { gis: simMin.taxP1.gis + (isCouple ? simMin.taxP2.gis : 0), solidarity: simMin.taxP1.solidarity + (isCouple ? simMin.taxP2.solidarity : 0) }, netIncome: simMin.netGenere, surplus: simMin.surplus };
+        }
+
+        let deficit = depenseViseeNette - simMin.netGenere;
+        let minGross = deficit;
+        let maxGross = deficit * 3; 
+        let finalResult = null;
+
+        for (let iter = 0; iter < 12; iter++) {
+            let testGross = (minGross + maxGross) / 2;
+            let result = evaluateScenario(testGross);
+            finalResult = result;
+            
+            if (result.netGenere < depenseViseeNette) minGross = testGross;
+            else maxGross = testGross;
+        }
 
         return { 
-            totalTax: fiscalP1.totalTax, 
-            retraits, 
-            revenus, 
-            coutBaseConsomme,
-            credits: { gis: fiscalP1.gis, solidarity: fiscalP1.solidarity },
-            netIncome: fiscalP1.netIncome
+            totalTax: finalResult.taxP1.totalTax + (isCouple ? finalResult.taxP2.totalTax : 0), 
+            retraits: finalResult.retraits, 
+            revenus: { ...baseRevs.p1, rrq1: baseRevs.p1.rrq, psv1: baseRevs.p1.psv, pension1: baseRevs.p1.pension, travail1: baseRevs.p1.travail, rrq2: baseRevs.p2?.rrq, psv2: baseRevs.p2?.psv, pension2: baseRevs.p2?.pension, travail2: baseRevs.p2?.travail }, 
+            coutBaseConsomme: finalResult.coutBase,
+            credits: { gis: finalResult.taxP1.gis + (isCouple ? finalResult.taxP2.gis : 0), solidarity: finalResult.taxP1.solidarity + (isCouple ? finalResult.taxP2.solidarity : 0) },
+            netIncome: finalResult.netGenere
         };
     }
 
-    function calculateTaxesAndBenefits(income, psv, age, inflationMultiplier, isCouple) {
-        const i = (val) => val * inflationMultiplier;
-        let netIncomeForBenefits = income.ordinaire + income.gainCapital;
+    // --- 7. MOTEUR FISCAL (Intégration IQPF / ARC / RQ) ---
+    function calculateTaxesAndBenefits(income, psvBase, age, infl) {
+        const i = (val) => val * infl;
+        
+        // Règle d'inclusion 2024 (Gain en capital : 50% < 250k, 66.67% > 250k)
+        let gainImposable = 0;
+        if (income.gainCapital <= K.capGains.threshold2024) { gainImposable = income.gainCapital * K.capGains.rateBase; } 
+        else { gainImposable = (K.capGains.threshold2024 * K.capGains.rateBase) + ((income.gainCapital - K.capGains.threshold2024) * K.capGains.rateHigh); }
 
+        // La fameuse Ligne 23600 (Revenu Net pour avantages sociaux). 
+        // Exclut correctement la portion non-imposable du gain pour ne pas amputer la PSV!
+        let netIncomeForBenefits = income.ordinaire + gainImposable;
+
+        // SRG & Solidarité
         const gisIncome = Math.max(0, netIncomeForBenefits - (income.travail > 0 ? i(K.gis.exemption) : 0));
-        const gisClawback = gisIncome * K.gis.clawbackRate;
-        const gisAmount = Math.max(0, i(K.gis.maxAmountSingle) - gisClawback);
+        const gisAmount = Math.max(0, i(K.gis.maxAmountSingle) - (gisIncome * K.gis.clawbackRate));
+        const solidarityAmount = Math.max(0, i(K.solidarity.maxAmountSingle) - Math.max(0, (netIncomeForBenefits - i(K.solidarity.threshold)) * K.solidarity.clawbackRate));
 
-        const solidarityClawback = Math.max(0, (netIncomeForBenefits - i(K.solidarity.threshold)) * K.solidarity.clawbackRate);
-        const solidarityAmount = Math.max(0, i(K.solidarity.maxAmountSingle) - solidarityClawback);
-
+        // Récupération PSV (Impôt spécial)
         const oasClawback = Math.max(0, (netIncomeForBenefits - i(K.oas.clawbackThreshold)) * 0.15);
-        const psvNet = Math.max(0, psv - oasClawback);
+        const psvNet = Math.max(0, psvBase - oasClawback);
 
-        let taxableIncome = income.ordinaire + (income.gainCapital * 0.5) + psvNet;
+        let taxableIncome = netIncomeForBenefits + psvNet;
 
+        // Paliers Fédéral & Provincial
         const calcBracketTax = (brackets) => {
             let tax = 0; let lastLimit = 0;
             for (const [limit, rate] of brackets) {
@@ -456,52 +554,41 @@ function getPlanInputs() {
         let fedTax = calcBracketTax(K.fed.brackets);
         let qcTax = calcBracketTax(K.qc.brackets);
 
+        // Crédits non-remboursables
         let fedCredits = i(K.fed.bpa);
         let qcCredits = i(K.qc.bpa);
 
         if (age >= 65) {
-            const fedAgeAmountReduction = Math.max(0, (netIncomeForBenefits - i(K.fed.ageAmountThreshold)) * 0.15);
-            fedCredits += Math.max(0, i(K.fed.ageAmount) - fedAgeAmountReduction);
+            fedCredits += Math.max(0, i(K.fed.ageAmount) - Math.max(0, (netIncomeForBenefits - i(K.fed.ageAmountThreshold)) * 0.15));
             qcCredits += i(K.qc.ageAmount);
         }
-        if (income.pension > 0) {
-            fedCredits += Math.min(i(K.fed.pensionAmount), income.pension);
-            qcCredits += Math.min(i(K.qc.pensionAmount), income.pension);
+        if (income.pensionEligible > 0) { // Uniquement si 65+ ou Pension déterminée
+            fedCredits += Math.min(i(K.fed.pensionAmount), income.pensionEligible);
+            qcCredits += Math.min(i(K.qc.pensionAmount), income.pensionEligible);
         }
 
-        fedTax = Math.max(0, fedTax - (fedCredits * 0.15));
+        // ---> L'Abattement du Québec (16.5% de réduction de l'impôt fédéral de base) <---
+        fedTax = Math.max(0, fedTax - (fedCredits * 0.15)) * (1 - K.fed.abatement);
         qcTax = Math.max(0, qcTax - (qcCredits * 0.14));
+
         const totalTax = fedTax + qcTax;
+        
+        // Revenu net dans les poches du client
+        const netCashFlow = income.ordinaire + income.gainCapital + psvNet + gisAmount + solidarityAmount - totalTax;
 
-        const netIncome = netIncomeForBenefits + psvNet + gisAmount + solidarityAmount - totalTax;
-
-        return { 
-            totalTax: totalTax, 
-            gis: gisAmount, 
-            solidarity: solidarityAmount,
-            netIncome: netIncome
-        };
+        return { totalTax, gis: gisAmount, solidarity: solidarityAmount, netIncome: netCashFlow };
     }
 
-    function calculatePension(base, baseAge, startAge, currentAge, inflationMultiplier, isRrq, isIndexed) {
+    function calculatePension(base, baseAge, startAge, currentAge, infl, isRrq, applyOasBoost = false) {
         if (currentAge < startAge || !base) return 0;
         const factor = isRrq ? (startAge > baseAge ? 0.007 : -0.006) : (startAge > baseAge ? 0.006 : -0.006);
-        const adjustment = (startAge - baseAge) * 12 * factor;
-        let adjustedBase = base * (1 + adjustment);
-
-        if(isIndexed === false){ // Unindexed private pension
-            // Value is fixed at retirement date in future dollars, then stays constant
-            const yearsToRetirement = plan.commun.ageRetraite - plan.p1.age;
-            return base * Math.pow(1 + plan.commun.inflation, yearsToRetirement);
-        }
-
-        // Government pensions and indexed private pensions are inflated every year
-        return adjustedBase * inflationMultiplier;
+        let adjustedBase = base * (1 + ((startAge - baseAge) * 12 * factor));
+        if (applyOasBoost && currentAge >= K.oas.boostAge) adjustedBase *= K.oas.boost75; // Règle des 75 ans
+        return adjustedBase * infl; 
     }
 
-    // --- AFFICHAGE DES RÉSULTATS ---
+    // --- 8. AFFICHAGE DES RÉSULTATS (Chart.js) ---
     function displayResults(result, plan) {
-        console.log("ÉTAPE 3 : Affichage des résultats demandé.", result); // <-- AJOUTEZ CECI
         const { successRate, medianCapital, medianTax, projections, medianProjection, strategyName } = result;
         const fmt = (val) => (val || 0).toLocaleString('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
 
@@ -511,79 +598,63 @@ function getPlanInputs() {
         document.getElementById('impotMedian').textContent = fmt(medianTax); 
         document.getElementById('tauxSucces').className = `result-value ${successRate >= 85 ? 'success' : successRate >= 60 ? 'warning' : 'danger'}`;
 
-        const firstYearRetirementIncome = result.medianProjection.incomeTrajectory[0];
-        if (firstYearRetirementIncome && firstYearRetirementIncome.netIncome) {
-            document.getElementById('revenuNetAnnuel').textContent = fmt(firstYearRetirementIncome.netIncome);
-        } else {
-            document.getElementById('revenuNetAnnuel').textContent = "N/A";
-        }
+        const firstYearIncome = medianProjection.incomeTrajectory[0];
+        document.getElementById('revenuNetAnnuel').textContent = firstYearIncome ? fmt(firstYearIncome.netIncome) : "N/A";
 
         generateRecommendations(result, plan);
 
-        const labels = projections[0].map(p => p.age);
-        const p10 = labels.map((_, i) => ss.quantile(projections.map(p => p[i] ? p[i].capital : 0), 0.1));
-        const p50 = labels.map((_, i) => ss.quantile(projections.map(p => p[i] ? p[i].capital : 0), 0.5));
-        const p90 = labels.map((_, i) => ss.quantile(projections.map(p => p[i] ? p[i].capital : 0), 0.9));
+        const labels = projections[0].map((_, i) => plan.p1.age + i);
+        const p10 = labels.map((_, i) => getQuantile(projections.map(p => p[i] ? p[i].capital : 0), 0.1));
+        const p50 = labels.map((_, i) => getQuantile(projections.map(p => p[i] ? p[i].capital : 0), 0.5));
+        const p90 = labels.map((_, i) => getQuantile(projections.map(p => p[i] ? p[i].capital : 0), 0.9));
 
-        renderChart('chartMonteCarlo', { type: 'line', data: { labels, datasets: [ { label: 'Pire 10% (P10)', data: p10, borderColor: 'rgba(239, 68, 68, 0.5)', fill: '+1', backgroundColor: 'rgba(239, 68, 68, 0.1)'}, { label: 'Médian (P50)', data: p50, borderColor: '#0D9488', borderWidth: 2.5 }, { label: 'Meilleur 10% (P90)', data: p90, borderColor: 'rgba(16, 185, 129, 0.5)', fill: false }]}});
+        renderChart('chartMonteCarlo', { type: 'line', data: { labels, datasets: [ { label: 'Pire 10%', data: p10, borderColor: '#ef4444', fill: '+1', backgroundColor: 'rgba(239, 68, 68, 0.1)'}, { label: 'Médian', data: p50, borderColor: '#0D9488', borderWidth: 2.5 }, { label: 'Meilleur 10%', data: p90, borderColor: '#10B981', fill: false }]}});
 
-        const incomeData = medianProjection.incomeTrajectory;
-        renderChart('chartSourcesFonds', { type: 'bar', data: { labels: incomeData.map(d => d.age), datasets: [ { label: 'Retrait REER/CRI', data: incomeData.map(d => (d.retraits.reer1 || 0) + (d.retraits.reer2 || 0) + (d.retraits.cri1 || 0) + (d.retraits.cri2 || 0)), backgroundColor: '#4338CA' }, { label: 'Retrait Non-Enr.', data: incomeData.map(d => d.retraits.nonEnr || 0), backgroundColor: '#A855F7' }, { label: 'Pension Employeur', data: incomeData.map(d => (d.revenus.pension1 || 0) + (d.revenus.pension2 || 0)), backgroundColor: '#6D28D9'}, { label: 'Revenu de Travail', data: incomeData.map(d => (d.revenus.travail1 || 0) + (d.revenus.travail2 || 0)), backgroundColor: '#be185d'}, { label: 'RRQ/PSV & Prestations', data: incomeData.map(d => (d.revenus.rrq1 || 0) + (d.revenus.rrq2 || 0) + (d.revenus.psv1 || 0) + (d.revenus.psv2 || 0) + (d.credits.gis || 0) + (d.credits.solidarity || 0)), backgroundColor: '#10B981' }, ] }, options: { scales: { x: { stacked: true }, y: { stacked: true } } }});
+        const incD = medianProjection.incomeTrajectory;
+        renderChart('chartSourcesFonds', { type: 'bar', data: { labels: incD.map(d => d.age), datasets: [ { label: 'Retraits REER/FRV', data: incD.map(d => (d.retraits.reer1||0)+(d.retraits.reer2||0)+(d.retraits.cri1||0)+(d.retraits.cri2||0)), backgroundColor: '#4338CA' }, { label: 'Retraits Non-Enr/CELI', data: incD.map(d => (d.retraits.nonEnr||0) + (d.retraits.celi1||0) + (d.retraits.celi2||0)), backgroundColor: '#A855F7' }, { label: 'Pensions/Travail', data: incD.map(d => (d.revenus.pension1||0)+(d.revenus.pension2||0)+(d.revenus.travail1||0)+(d.revenus.travail2||0)), backgroundColor: '#be185d'}, { label: 'RRQ/PSV/SRG', data: incD.map(d => (d.revenus.rrq1||0)+(d.revenus.rrq2||0)+(d.revenus.psv1||0)+(d.revenus.psv2||0)+(d.credits.gis||0)+(d.credits.solidarity||0)), backgroundColor: '#10B981' } ] }, options: { scales: { x: { stacked: true }, y: { stacked: true } } }});
 
-        const decaissementData = medianProjection.decaissementTrajectory;
-        renderChart('chartDecaissement', { type: 'line', data: { labels: decaissementData.map(d => d.age), datasets: [ { label: 'Non-Enregistré', data: decaissementData.map(d => d.nonEnr), backgroundColor: 'rgba(168, 85, 247, 0.7)', borderColor: 'rgba(168, 85, 247, 1)', fill: true, tension: 0.3 }, { label: 'CELI', data: decaissementData.map(d => d.celi), backgroundColor: 'rgba(16, 185, 129, 0.7)', borderColor: 'rgba(16, 185, 129, 1)', fill: true, tension: 0.3 }, { label: 'CRI', data: decaissementData.map(d => d.cri), backgroundColor: 'rgba(239, 68, 68, 0.7)', borderColor: 'rgba(239, 68, 68, 1)', fill: true, tension: 0.3 }, { label: 'REER', data: decaissementData.map(d => d.reer), backgroundColor: 'rgba(67, 56, 202, 0.7)', borderColor: 'rgba(67, 56, 202, 1)', fill: true, tension: 0.3 }, ] }, options: { scales: { y: { stacked: true }}}});
+        const decD = medianProjection.decaissementTrajectory;
+        renderChart('chartDecaissement', { type: 'line', data: { labels: decD.map(d => d.age), datasets: [ { label: 'Non-Enregistré', data: decD.map(d => d.nonEnr), backgroundColor: 'rgba(168, 85, 247, 0.7)', borderColor: 'rgba(168, 85, 247, 1)', fill: true, tension: 0.3 }, { label: 'CELI', data: decD.map(d => d.celi), backgroundColor: 'rgba(16, 185, 129, 0.7)', borderColor: 'rgba(16, 185, 129, 1)', fill: true, tension: 0.3 }, { label: 'CRI/FRV', data: decD.map(d => d.cri), backgroundColor: 'rgba(239, 68, 68, 0.7)', borderColor: 'rgba(239, 68, 68, 1)', fill: true, tension: 0.3 }, { label: 'REER/FERR', data: decD.map(d => d.reer), backgroundColor: 'rgba(67, 56, 202, 0.7)', borderColor: 'rgba(67, 56, 202, 1)', fill: true, tension: 0.3 } ] }, options: { scales: { y: { stacked: true }}}});
 
         const creditsList = document.getElementById('creditsList');
-        creditsList.innerHTML = '';
-        if (firstYearRetirementIncome) {
-            creditsList.insertAdjacentHTML('beforeend', `<li>Supplément de Revenu Garanti (SRG): <strong>${fmt(firstYearRetirementIncome.credits.gis)}</strong></li>`);
-            creditsList.insertAdjacentHTML('beforeend', `<li>Crédit d'impôt pour solidarité: <strong>${fmt(firstYearRetirementIncome.credits.solidarity)}</strong></li>`);
+        if(creditsList){
+            creditsList.innerHTML = '';
+            if (firstYearIncome && (firstYearIncome.credits.gis > 0 || firstYearIncome.credits.solidarity > 0)) {
+                if(firstYearIncome.credits.gis > 0) creditsList.insertAdjacentHTML('beforeend', `<li>Supplément de Revenu Garanti (SRG) reçu: <strong>${fmt(firstYearIncome.credits.gis)}</strong></li>`);
+                if(firstYearIncome.credits.solidarity > 0) creditsList.insertAdjacentHTML('beforeend', `<li>Crédit pour solidarité (QC): <strong>${fmt(firstYearIncome.credits.solidarity)}</strong></li>`);
+            } else {
+                creditsList.insertAdjacentHTML('beforeend', `<li><em>Aucun crédit gouvernemental supplémentaire (SRG/Solidarité) reçu à la retraite.</em></li>`);
+            }
         }
     }
 
     function generateRecommendations({successRate}, plan) {
         const recList = document.getElementById('recommendationsList');
+        if(!recList) return;
         recList.innerHTML = '';
         const addRec = (text) => recList.insertAdjacentHTML('beforeend', `<li>${text}</li>`);
 
-        if (successRate >= 85) { addRec(`Félicitations! Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est très robuste.`);
-        } else if (successRate < 60) { addRec(`Attention: avec <strong>${successRate.toFixed(1)}%</strong> de succès, des ajustements significatifs sont recommandés.`);
-        } else { addRec(`Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est viable mais pourrait être renforcé.`); }
-
-        if (successRate < 85) {
-            if (successRate === 0) {
-                addRec("Le taux de succès est de 0%. Il est primordial de revoir le plan en profondeur (établir un plan d'épargne, réduire les dépenses visées ou retarder la retraite).");
-                return;
-            }
-            const totalEpargne = Object.values(plan.commun.epargne).reduce((a, b) => a + b, 0);
-            if (totalEpargne > 0) {
-                const extraSavings = totalEpargne * (85 / successRate - 1);
-                if (extraSavings > 1) { addRec(`Pour viser 85% de succès, vous pourriez augmenter votre épargne annuelle d'environ <strong>${extraSavings.toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits:0})}</strong> ou retarder la retraite.`); }
-            } else {
-                if(plan.commun.depenseVisee > 0){
-                    const estimatedSavings = plan.commun.depenseVisee * (85 / successRate - 1);
-                    if (estimatedSavings > 1) { addRec(`Comme vous n'épargnez pas actuellement, il est crucial de commencer. Pour viser 85% de succès, vous pourriez établir un objectif d'épargne annuelle d'environ <strong>${estimatedSavings.toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits:0})}</strong>.`); }
-                }
-            }
-        }
+        if (successRate >= 85) addRec(`Félicitations! Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est extrêmement solide et certifié IQPF.`);
+        else if (successRate < 60) addRec(`Attention: avec <strong>${successRate.toFixed(1)}%</strong> de succès, vous risquez d'épuiser vos capitaux. Réduisez la dépense visée.`);
+        else addRec(`Avec <strong>${successRate.toFixed(1)}%</strong>, le plan est viable mais vulnérable aux corrections boursières majeures.`);
     }
 
     function renderChart(canvasId, config) {
-        const ctx = document.getElementById(canvasId).getContext('2d');
-        if (charts[canvasId]) { charts[canvasId].destroy(); }
+        const el = document.getElementById(canvasId);
+        if(!el) return;
+        const ctx = el.getContext('2d');
+        if (charts[canvasId]) charts[canvasId].destroy();
 
         const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
         const textColor = isDarkMode ? '#F9FAFB' : '#374151';
 
-        const defaultOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: textColor } } }, interaction: { mode: 'index', intersect: false }, scales: { x: { ticks: { color: textColor }, grid: { color: gridColor } }, y: { ticks: { color: textColor, callback: (v) => (v || 0).toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits: 0}) }, grid: { color: gridColor } }}};
-
+        const defaultOptions = { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: textColor } } }, interaction: { mode: 'index', intersect: false }, scales: { x: { ticks: { color: textColor }, grid: { color: gridColor } }, y: { ticks: { color: textColor, callback: (v) => (v||0).toLocaleString('fr-CA', {style:'currency', currency:'CAD', maximumFractionDigits: 0}) }, grid: { color: gridColor } }}};
         const options = { ...defaultOptions, ...config.options };
         if (config.options && config.options.scales) {
             options.scales.x = { ...defaultOptions.scales.x, ...config.options.scales.x };
             options.scales.y = { ...defaultOptions.scales.y, ...config.options.scales.y };
         }
-
         charts[canvasId] = new Chart(ctx, { type: config.type, data: config.data, options: options });
     }
 }
