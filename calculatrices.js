@@ -870,57 +870,41 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
     });
 });
 // =========================================================================
-// === CALCULATRICE ACHETER OU LOUER (ÉDITION PRO FINOZA - V2 BLINDÉE)   ===
+// === CALCULATRICE ACHETER OU LOUER (ÉDITION PRO FINOZA - V3 CASCADE)   ===
 // =========================================================================
 
 document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
     e.preventDefault();
     
-    // --- 1. PARSEUR DE DONNÉES INTELLIGENT (Correction du bug des 895$) ---
+    // --- 1. PARSEUR DE DONNÉES BLINDÉ ---
     const getVal = id => {
         let el = document.getElementById(id);
         if(!el) return 0;
-        let valStr = el.value.toString().trim();
-        
-        // Nettoie les espaces, espaces insécables, symboles $ et %
-        valStr = valStr.replace(/[\s\u00A0\u202F\$%]/g, '');
-        
-        // Gestion intelligente des formats (virgules vs points)
+        let valStr = el.value.toString().trim().replace(/[\s\u00A0\u202F\$%]/g, '');
         if (valStr.includes(',') && valStr.includes('.')) {
             if (valStr.indexOf(',') < valStr.indexOf('.')) valStr = valStr.replace(/,/g, ''); 
             else valStr = valStr.replace(/\./g, '').replace(',', '.'); 
         } else if (valStr.includes(',')) {
             let parts = valStr.split(',');
-            if (parts.length > 2) valStr = valStr.replace(/,/g, ''); 
-            else if (parts[1].length === 3) valStr = valStr.replace(/,/g, ''); 
+            if (parts.length > 2 || (parts[1] && parts[1].length === 3)) valStr = valStr.replace(/,/g, ''); 
             else valStr = valStr.replace(',', '.'); 
         }
-        
-        valStr = valStr.replace(/[^0-9.-]/g, ''); // Garde que les chiffres et décimales
+        valStr = valStr.replace(/[^0-9.-]/g, '');
         let num = parseFloat(valStr) || 0;
-        
-        // Auto-correction Finoza : Si on tape "450" pour une maison, on assume "450 000"
-        if ((id === 'al-prix-propriete' || id === 'al-mise-de-fonds') && num > 0 && num <= 5000) {
-            num = num * 1000;
-        }
+        if ((id === 'al-prix-propriete' || id === 'al-mise-de-fonds' || id === 'al-salaire-brut') && num > 0 && num <= 5000) num *= 1000;
         return num;
     };
-
     const sel = id => document.getElementById(id).value;
     const pct = id => getVal(id) / 100;
     const fmtNombre = (val) => new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(val);
 
     // --- 2. COLLECTE DES VARIABLES ---
     const prixPropriete = getVal('al-prix-propriete');
-    const miseDeFonds = Math.min(getVal('al-mise-de-fonds'), prixPropriete); // Sécurité
+    const miseDeFonds = Math.min(getVal('al-mise-de-fonds'), prixPropriete);
     const tauxHypoAnnuel = pct('al-taux-hypotheque');
     const amortissement = getVal('al-amortissement');
     let taxesAnnuelles = getVal('al-taxes-annuelles');
-    const entretienPct = pct('al-entretien-annuel');
-    
-    // Correction de l'entretien: Basé sur le prix d'achat initial
-    let entretienAnnuel = prixPropriete * entretienPct; 
-    
+    let entretienAnnuel = prixPropriete * pct('al-entretien-annuel'); 
     let assuranceProprioA = getVal('al-assurance-proprio') * 12;
     let fraisCondoA = getVal('al-frais-condo') * 12;
     
@@ -930,23 +914,30 @@ document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
     const horizon = getVal('al-horizon');
     const croissanceImmo = pct('al-croissance-immo');
     const augmentationLoyer = pct('al-augmentation-loyer');
-    const inflationGenerale = 0.02; // Inflation standard à 2% pour coûts d'opération
+    const inflationGenerale = 0.02; 
     const rendementPlacement = pct('al-rendement-placement');
-    const typeCompte = sel('al-type-compte');
-    const tauxMarginal = pct('al-taux-marginal');
+    
+    // Nouveaux Paramètres de Cascade
+    let salaireBrut = getVal('al-salaire-brut') || 80000;
+    const espaceCeliInit = getVal('al-espace-celi');
+    const prioriteEpargne = sel('al-type-compte'); // 'celi' ou 'reer'
+    const tauxActuel = pct('al-taux-marginal');
+    const tauxRetraite = pct('al-taux-retraite');
     const reinvestirRetourImpot = document.getElementById('al-reinvestir-reer')?.checked || false;
 
     if (prixPropriete <= 0 || horizon <= 0) return;
 
-    // --- 3. INGÉNIERIE HYPOTHÉCAIRE (Normes du marché) ---
-    // Frais de clôture estimés (Taxe de bienvenue, notaire ~ 1.5% + 1500$)
-    const fraisCloture = (prixPropriete * 0.015) + 1500;
+    // --- 3. INGÉNIERIE IMMOBILIÈRE ---
+    // Calcul Exact de la Taxe de bienvenue (Québec base)
+    let taxeBienvenue = 0;
+    if (prixPropriete <= 58900) taxeBienvenue = prixPropriete * 0.005;
+    else if (prixPropriete <= 294600) taxeBienvenue = (58900 * 0.005) + ((prixPropriete - 58900) * 0.01);
+    else taxeBienvenue = (58900 * 0.005) + ((294600 - 58900) * 0.01) + ((prixPropriete - 294600) * 0.015);
+    const fraisCloture = taxeBienvenue + 1500; // Notaire/Inspection
     
-    // Prime SCHL (Si mise de fonds < 20%)
     const ratioMiseFonds = miseDeFonds / prixPropriete;
     let primeSCHL = 0;
     let montantPretBase = prixPropriete - miseDeFonds;
-    
     if (ratioMiseFonds < 0.20 && ratioMiseFonds >= 0.05) {
         if (ratioMiseFonds < 0.10) primeSCHL = montantPretBase * 0.040;
         else if (ratioMiseFonds < 0.15) primeSCHL = montantPretBase * 0.031;
@@ -954,116 +945,135 @@ document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
     }
     const montantPretTotal = montantPretBase + primeSCHL;
 
-    // Formule légale canadienne (composition semi-annuelle)
     const tauxMensuelEffectif = Math.pow(Math.pow(1 + (tauxHypoAnnuel / 2), 2), 1/12) - 1;
     const nbPaiements = amortissement * 12;
     const paiementHypoMensuel = (montantPretTotal > 0 && tauxMensuelEffectif > 0) 
-        ? (montantPretTotal * tauxMensuelEffectif * Math.pow(1 + tauxMensuelEffectif, nbPaiements)) / (Math.pow(1 + tauxMensuelEffectif, nbPaiements) - 1)
-        : (montantPretTotal / nbPaiements || 0);
+        ? (montantPretTotal * tauxMensuelEffectif * Math.pow(1 + tauxMensuelEffectif, nbPaiements)) / (Math.pow(1 + tauxMensuelEffectif, nbPaiements) - 1) : (montantPretTotal / nbPaiements || 0);
 
-    // --- 4. INITIALISATION DES PORTEFEUILLES ---
+    // --- 4. INITIALISATION DES SEAUX (BUCKETS) ---
     let valeurPropriete = prixPropriete;
     let soldeHypotheque = montantPretTotal;
     
-    // Le locataire place sa mise de fonds ET les frais de clôture qu'il a sauvés
-    let portefeuilleLocataire = miseDeFonds + fraisCloture;
-    let portefeuilleProprio = 0; 
+    let portLoc = { celi: 0, reer: 0, nonEnr: 0 };
+    let portProp = { celi: 0, reer: 0, nonEnr: 0 };
+    
+    // Droits initiaux
+    let droitsLoc = { celi: espaceCeliInit, reer: Math.min(salaireBrut * 0.18, 33530) };
+    let droitsProp = { celi: espaceCeliInit, reer: Math.min(salaireBrut * 0.18, 33530) };
 
-    let retourImpotLocataire = 0;
+    // ALGORITHME DE CASCADE FISCALE (WATERFALL)
+    const verserArgent = (montant, port, droits) => {
+        let restant = montant;
+        let impotGenere = 0;
+        
+        const remplir = (type) => {
+            if (restant <= 0) return;
+            let depot = Math.min(restant, droits[type]);
+            port[type] += depot;
+            droits[type] -= depot;
+            restant -= depot;
+            if (type === 'reer') impotGenere += depot * tauxActuel; // Génère retour d'impôt
+        };
+
+        if (prioriteEpargne === 'celi') { remplir('celi'); remplir('reer'); }
+        else { remplir('reer'); remplir('celi'); }
+        
+        port.nonEnr += restant; // Le débordement va en imposable
+        return impotGenere;
+    };
+
+    // Jour 1 : Le locataire place la mise de fonds + les frais de clôture sauvés
+    let cashLocInitial = miseDeFonds + fraisCloture;
+    let retourImpotLocataire = verserArgent(cashLocInitial, portLoc, droitsLoc);
     let retourImpotProprio = 0;
 
-    const labels = ['Année 0'];
-    const applyExitTax = solde => typeCompte === 'reer' ? solde * (1 - tauxMarginal) : solde;
-    
-    // Valeur liquidative au Jour 1
-    let valNettePropInit = Math.max(0, (prixPropriete * 0.95) - soldeHypotheque);
-    const dataProprio = [valNettePropInit]; 
-    const dataLocataire = [applyExitTax(portefeuilleLocataire)];
+    const getNetLiquid = (p, valMaison = 0, soldeMaison = 0) => {
+        let celiNet = p.celi;
+        let reerNet = p.reer * (1 - tauxRetraite); // Imposé au décaissement
+        let nonEnrNet = p.nonEnr;
+        let equiteMaison = 0;
+        if (valMaison > 0) equiteMaison = Math.max(0, valMaison - soldeMaison - (valMaison * 0.05)); // -5% courtier
+        return celiNet + reerNet + nonEnrNet + equiteMaison;
+    };
 
-    // --- 5. MOTEUR DE SIMULATION TEMPORELLE ---
+    const labels = ['An 0'];
+    const dataProprio = [getNetLiquid(portProp, prixPropriete, soldeHypotheque)]; 
+    const dataLocataire = [getNetLiquid(portLoc)];
+
+    let plafondCeliAnnuel = 7000;
+
+    // --- 5. MOTEUR DE SIMULATION ANNUELLE ---
     for (let an = 1; an <= horizon; an++) {
         
-        // A. Réinvestissement des retours d'impôt (Printemps)
-        portefeuilleLocataire += retourImpotLocataire;
-        portefeuilleProprio += retourImpotProprio;
+        // A. Génération des nouveaux droits de l'année
+        plafondCeliAnnuel *= (1 + inflationGenerale);
+        let nouveauxDroitsCeli = Math.round(plafondCeliAnnuel / 500) * 500; // Arrondi selon la loi de l'ARC
+        
+        salaireBrut *= (1 + inflationGenerale); 
+        let limiteReerMax = 33530 * Math.pow(1 + inflationGenerale, an);
+        let nouveauxDroitsReer = Math.min(salaireBrut * 0.18, limiteReerMax);
 
-        // B. Rendement des placements boursiers
-        const applyGrowth = (solde) => {
-            let gain = solde * rendementPlacement;
-            if (typeCompte === 'non-enregistre') gain *= (1 - (tauxMarginal * 0.5)); // Impôt annuel sur gain
-            return solde + gain;
+        droitsLoc.celi += nouveauxDroitsCeli; droitsLoc.reer += nouveauxDroitsReer;
+        droitsProp.celi += nouveauxDroitsCeli; droitsProp.reer += nouveauxDroitsReer;
+
+        // B. Réinvestissement des retours d'impôt (Au Printemps)
+        if (reinvestirRetourImpot) {
+            retourImpotLocataire = verserArgent(retourImpotLocataire, portLoc, droitsLoc);
+            retourImpotProprio = verserArgent(retourImpotProprio, portProp, droitsProp);
+        } else {
+            retourImpotLocataire = 0; retourImpotProprio = 0;
+        }
+
+        // C. Rendements Boursiers
+        const faireFructifier = (p) => {
+            p.celi *= (1 + rendementPlacement);
+            p.reer *= (1 + rendementPlacement);
+            // Non-Enregistré : Soumis au frein fiscal annuel (Tax Drag). Assume 50% d'inclusion de gain en capital.
+            let gain = p.nonEnr * rendementPlacement;
+            let impotSurGain = gain * (tauxActuel * 0.5); 
+            p.nonEnr += (gain - impotSurGain);
         };
-        portefeuilleLocataire = applyGrowth(portefeuilleLocataire);
-        portefeuilleProprio = applyGrowth(portefeuilleProprio);
+        faireFructifier(portLoc);
+        faireFructifier(portProp);
 
-        // C. Amortissement hypothécaire (Arrêt strict à 0$)
+        // D. Amortissement hypothécaire
         let paiementsHypoAnnee = 0;
         if (soldeHypotheque > 0) {
             for (let mois = 1; mois <= 12; mois++) {
                 if (soldeHypotheque <= 0) break;
-                let interetMois = soldeHypotheque * tauxMensuelEffectif;
-                let principal = paiementHypoMensuel - interetMois;
-                
+                let interet = soldeHypotheque * tauxMensuelEffectif;
+                let principal = paiementHypoMensuel - interet;
                 let paiementReel = paiementHypoMensuel;
-                if (soldeHypotheque - principal < 0) {
-                    principal = soldeHypotheque; // Dernier mois de l'hypothèque
-                    paiementReel = principal + interetMois;
-                }
+                if (soldeHypotheque - principal < 0) { principal = soldeHypotheque; paiementReel = principal + interet; }
                 soldeHypotheque -= principal;
                 paiementsHypoAnnee += paiementReel;
             }
         }
 
-        // D. Calcul des flux de trésorerie (Lequel coûte le plus cher à habiter ?)
+        // E. Différence de coût de vie (Cashflow)
         const coutsProprio = paiementsHypoAnnee + taxesAnnuelles + entretienAnnuel + assuranceProprioA + fraisCondoA;
         const coutsLocataire = loyerAnnuel + assuranceLocA;
+        const diffCashFlow = coutsProprio - coutsLocataire;
 
-        const differenceCashFlow = coutsProprio - coutsLocataire;
-        
-        let invLocataire = 0;
-        let invProprio = 0;
-
-        if (differenceCashFlow > 0) {
-            // Propriétaire paie plus cher pour vivre. Le locataire place l'excédent en bourse.
-            invLocataire = differenceCashFlow;
+        if (diffCashFlow > 0) {
+            retourImpotLocataire += verserArgent(diffCashFlow, portLoc, droitsLoc);
         } else {
-            // Locataire paie plus cher (ex: hypothèque finie). Le proprio place l'excédent.
-            invProprio = Math.abs(differenceCashFlow);
-        }
-        
-        portefeuilleLocataire += invLocataire;
-        portefeuilleProprio += invProprio;
-
-        // E. Calcul des retours d'impôt REER pour l'an prochain
-        if (typeCompte === 'reer' && reinvestirRetourImpot) {
-            retourImpotLocataire = invLocataire * tauxMarginal;
-            retourImpotProprio = invProprio * tauxMarginal;
-        } else {
-            retourImpotLocataire = 0;
-            retourImpotProprio = 0;
+            retourImpotProprio += verserArgent(Math.abs(diffCashFlow), portProp, droitsProp);
         }
 
-        // F. Inflation et appréciation pour l'an prochain
+        // F. Appréciation et Inflation
         valeurPropriete *= (1 + croissanceImmo);
         loyerAnnuel *= (1 + augmentationLoyer);
-        
         taxesAnnuelles *= (1 + inflationGenerale);
-        entretienAnnuel *= (1 + inflationGenerale); // Croît avec l'inflation, pas avec l'immobilier
+        entretienAnnuel *= (1 + inflationGenerale); 
         assuranceProprioA *= (1 + inflationGenerale);
         fraisCondoA *= (1 + inflationGenerale);
         assuranceLocA *= (1 + inflationGenerale);
 
-        // G. Évaluation finale des actifs nets liquidables
+        // G. Validation Actifs Nets
         labels.push(`An ${an}`);
-        let actifNetLocataire = applyExitTax(portefeuilleLocataire);
-
-        // Le proprio perd 5% de commission de courtier à la revente
-        const fraisVenteMaison = valeurPropriete * 0.05;
-        let equiteMaison = Math.max(0, valeurPropriete - soldeHypotheque - fraisVenteMaison);
-        let actifNetProprio = equiteMaison + applyExitTax(portefeuilleProprio);
-        
-        dataLocataire.push(actifNetLocataire);
-        dataProprio.push(actifNetProprio);
+        dataLocataire.push(getNetLiquid(portLoc));
+        dataProprio.push(getNetLiquid(portProp, valeurPropriete, soldeHypotheque));
     }
 
     // --- 6. AFFICHAGE DES RÉSULTATS ---
@@ -1084,17 +1094,16 @@ document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
                 💰 Verdict : ${isProprioGagnant ? 'L\'ACHAT' : 'LA LOCATION'} bâtit plus de richesse (Écart de ${fmtNombre(Math.abs(difference))}).
             </div>
             <div style="font-size: 0.85em; color: var(--subtle-text-color); margin-top: 15px; text-align: left; line-height: 1.4;">
-                <em><strong>* Note méthodologique Finoza :</strong> L'actif final du propriétaire a été amputé de 5 % pour simuler la commission de revente. L'hypothèque respecte la loi canadienne. Le locataire débute avec un placement équivalent à la mise de fonds + les frais de notaire/taxe qu'il a sauvés (${fmtNombre(fraisCloture)}). L'entretien augmente sagement avec l'inflation (2%).
-                ${primeSCHL > 0 ? `<br>⚠️ Une prime SCHL de <strong>${fmtNombre(primeSCHL)}</strong> a été incluse dans le montant de l'hypothèque.` : ''}</em>
+                <em><strong>* Note méthodologique (Cascade Fiscale) :</strong> L'algorithme Finoza limite automatiquement vos placements selon les règles de l'ARC. Tout surplus d'épargne (le "débordement") est forcé dans un compte Non-Enregistré et subit un frottement fiscal annuel, ce qui freine l'enrichissement du locataire à long terme. Le REER est imposé au taux de retraite choisi (${tauxRetraite*100}%).
+                ${primeSCHL > 0 ? `<br>⚠️ Une prime SCHL de <strong>${fmtNombre(primeSCHL)}</strong> a été incluse dans l'hypothèque.` : ''}</em>
             </div>
         `;
         divRes.style.display = 'block';
     }
 
-    // --- 7. GRAPHIQUE (CHART.JS) ---
+    // --- 7. GRAPHIQUE ---
     const ctx = document.getElementById('chart-acheter-louer')?.getContext('2d');
     if (!ctx) return;
-    
     if (window.chartAcheterLouer) window.chartAcheterLouer.destroy();
     
     const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -1103,24 +1112,16 @@ document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
 
     window.chartAcheterLouer = new Chart(ctx, { 
         type: 'line', 
-        data: { 
-            labels, 
-            datasets: [ 
-                { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#0D9488', backgroundColor: 'rgba(13, 148, 136, 0.1)', fill: true, tension: 0.3, borderWidth: 3 }, 
-                { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', fill: true, tension: 0.3, borderWidth: 3 } 
-            ] 
-        }, 
+        data: { labels, datasets: [ 
+            { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#0D9488', backgroundColor: 'rgba(13, 148, 136, 0.1)', fill: true, tension: 0.3, borderWidth: 3 }, 
+            { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', fill: true, tension: 0.3, borderWidth: 3 } 
+        ]}, 
         options: { 
-            maintainAspectRatio: false, 
-            interaction: { mode: 'index', intersect: false },
+            maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
             plugins: { legend: { labels: { color: textColor } }, tooltip: { callbacks: { label: function(context) { return context.dataset.label + ': ' + fmtNombre(context.raw); } } } },
-            scales: { 
-                x: { ticks: { color: textColor }, grid: { color: gridColor } },
-                y: { ticks: { color: textColor, callback: value => fmtNombre(value) }, grid: { color: gridColor } } 
-            } 
+            scales: { x: { ticks: { color: textColor }, grid: { color: gridColor } }, y: { ticks: { color: textColor, callback: value => fmtNombre(value) }, grid: { color: gridColor } } } 
         } 
     });
-    
     const chartContainer = document.getElementById('chart-acheter-louer').parentElement;
     if (chartContainer) chartContainer.querySelector('.chart-container').style.display = 'block';
 });
