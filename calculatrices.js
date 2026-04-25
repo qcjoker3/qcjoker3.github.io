@@ -634,7 +634,7 @@ if (formRetraite) {
         recList.innerHTML = '';
         const addRec = (text) => recList.insertAdjacentHTML('beforeend', `<li>${text}</li>`);
 
-        if (successRate >= 85) addRec(`Félicitations! Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est extrêmement solide et certifié IQPF.`);
+        if (successRate >= 85) addRec(`Félicitations! Avec <strong>${successRate.toFixed(1)}%</strong> de succès, votre plan est extrêmement solide.`);
         else if (successRate < 60) addRec(`Attention: avec <strong>${successRate.toFixed(1)}%</strong> de succès, vous risquez d'épuiser vos capitaux. Réduisez la dépense visée.`);
         else addRec(`Avec <strong>${successRate.toFixed(1)}%</strong>, le plan est viable mais vulnérable aux corrections boursières majeures.`);
     }
