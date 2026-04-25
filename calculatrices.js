@@ -869,94 +869,235 @@ document.getElementById('form-trex')?.addEventListener('submit', e => {
         } 
     });
 });
-    // --- Calculatrice Acheter ou Louer ---
-    document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
-        e.preventDefault();
-        const sel = id => document.getElementById(id).value;
-        const pct = id => getVal(id) / 100;
+// =========================================================================
+// === CALCULATRICE ACHETER OU LOUER (ÉDITION PRO FINOZA)                ===
+// =========================================================================
 
-        const prixPropriete = getVal('al-prix-propriete');
-        const miseDeFonds = getVal('al-mise-de-fonds');
-        const tauxHypoAnnuel = pct('al-taux-hypotheque');
-        const amortissement = getVal('al-amortissement');
-        const taxesAnnuelles = getVal('al-taxes-annuelles');
-        const entretienPct = pct('al-entretien-annuel');
-        const assuranceProprioM = getVal('al-assurance-proprio');
-        const fraisCondoM = getVal('al-frais-condo');
-        let loyerMensuel = getVal('al-loyer-mensuel');
-        const assuranceLocM = getVal('al-assurance-loc');
-        const horizon = getVal('al-horizon');
-        const croissanceImmo = pct('al-croissance-immo');
-        const augmentationLoyer = pct('al-augmentation-loyer');
-        const rendementPlacement = pct('al-rendement-placement');
-        const typeCompte = sel('al-type-compte');
-        const tauxMarginal = pct('al-taux-marginal');
-        const reinvestirRetourImpot = document.getElementById('al-reinvestir-reer').checked;
+document.getElementById('form-acheter-louer')?.addEventListener('submit', e => {
+    e.preventDefault();
+    
+    // Utilitaires robustes de lecture de données
+    const getVal = id => {
+        let el = document.getElementById(id);
+        if(!el) return 0;
+        let cleanValue = el.value.toString().replace(/\s/g, '').replace(/\$/g, '').replace(/,/g, '.');
+        return parseFloat(cleanValue) || 0;
+    };
+    const sel = id => document.getElementById(id).value;
+    const pct = id => getVal(id) / 100;
+    const fmtNombre = (val) => new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(val);
 
-        const montantPret = prixPropriete - miseDeFonds;
-        const tauxHypoMensuel = tauxHypoAnnuel / 12;
-        if (tauxHypoMensuel <= 0 && montantPret > 0) return;
+    // --- 1. COLLECTE DES DONNÉES ---
+    const prixPropriete = getVal('al-prix-propriete');
+    const miseDeFonds = getVal('al-mise-de-fonds');
+    const tauxHypoAnnuel = pct('al-taux-hypotheque');
+    const amortissement = getVal('al-amortissement');
+    let taxesAnnuelles = getVal('al-taxes-annuelles');
+    const entretienPct = pct('al-entretien-annuel');
+    let assuranceProprioA = getVal('al-assurance-proprio') * 12;
+    let fraisCondoA = getVal('al-frais-condo') * 12;
+    
+    let loyerAnnuel = getVal('al-loyer-mensuel') * 12;
+    let assuranceLocA = getVal('al-assurance-loc') * 12;
+    
+    const horizon = getVal('al-horizon');
+    const croissanceImmo = pct('al-croissance-immo');
+    const augmentationLoyer = pct('al-augmentation-loyer');
+    const inflationDepensesProprio = 0.02; // Taxes et assurances gonflent à ~2% par an
+    const rendementPlacement = pct('al-rendement-placement');
+    const typeCompte = sel('al-type-compte');
+    const tauxMarginal = pct('al-taux-marginal');
+    const reinvestirRetourImpot = document.getElementById('al-reinvestir-reer')?.checked || false;
 
-        const paiementHypothecaire = (montantPret > 0) ? (montantPret * tauxHypoMensuel * Math.pow(1 + tauxHypoMensuel, amortissement * 12)) / (Math.pow(1 + tauxHypoMensuel, amortissement * 12) - 1) : 0;
+    if (prixPropriete <= 0 || horizon <= 0) return;
 
-        let valeurPropriete = prixPropriete;
-        let soldeHypotheque = montantPret;
-        let portefeuilleLocataire = miseDeFonds;
-        let retourImpotPrecedent = 0;
+    // --- 2. CALCULS HYPOTHÉCAIRES & FRAIS INITIAUX ---
+    
+    // A. Frais de clôture estimés (Taxe de bienvenue, notaire, inspection ~1.5% + 1500$)
+    const fraisCloture = (prixPropriete * 0.015) + 1500;
+    
+    // B. Prime SCHL si mise de fonds < 20%
+    const ratioMiseFonds = miseDeFonds / prixPropriete;
+    let primeSCHL = 0;
+    let montantPretBase = prixPropriete - miseDeFonds;
+    
+    if (ratioMiseFonds < 0.20 && ratioMiseFonds >= 0.05) {
+        if (ratioMiseFonds < 0.10) primeSCHL = montantPretBase * 0.040;
+        else if (ratioMiseFonds < 0.15) primeSCHL = montantPretBase * 0.031;
+        else primeSCHL = montantPretBase * 0.028;
+    }
+    const montantPretTotal = montantPretBase + primeSCHL;
 
-        const labels = ['Année 0'], dataProprio = [miseDeFonds], dataLocataire = [portefeuilleLocataire];
+    // C. Formule exacte du paiement hypothécaire canadien (composition semi-annuelle convertie au mois)
+    const tauxMensuelEffectif = Math.pow(Math.pow(1 + (tauxHypoAnnuel / 2), 2), 1/12) - 1;
+    const nbPaiements = amortissement * 12;
+    const paiementHypoMensuel = (montantPretTotal > 0 && tauxMensuelEffectif > 0) 
+        ? (montantPretTotal * tauxMensuelEffectif * Math.pow(1 + tauxMensuelEffectif, nbPaiements)) / (Math.pow(1 + tauxMensuelEffectif, nbPaiements) - 1)
+        : (montantPretTotal / nbPaiements || 0); // Cas si taux = 0%
+    const paiementHypoAnnuel = paiementHypoMensuel * 12;
 
-        for (let an = 1; an <= horizon; an++) {
-            portefeuilleLocataire += retourImpotPrecedent;
-            if (soldeHypotheque > 0) {
-                for (let mois = 1; mois <= 12; mois++) {
-                    let interetMois = soldeHypotheque * tauxHypoMensuel;
-                    soldeHypotheque -= (paiementHypothecaire - interetMois);
-                }
+    // --- 3. INITIALISATION DES ACTIFS ---
+    let valeurPropriete = prixPropriete;
+    let soldeHypotheque = montantPretTotal;
+    
+    // Le locataire débute avec la mise de fonds + les frais d'acquisition (notaire) qu'il a sauvés !
+    let portefeuilleLocataire = miseDeFonds + fraisCloture;
+    // Le proprio investira ici si, plus tard, l'hypothèque devient moins chère que le loyer
+    let portefeuilleProprio = 0; 
+
+    let retourImpotLocataire = 0;
+    let retourImpotProprio = 0;
+
+    const labels = ['Année 0'];
+    
+    // Valeur de revente fictive à l'année 0 (-5% de commission) moins l'hypothèque (qui inclut la SCHL)
+    let valNettePropInit = Math.max(0, (prixPropriete * 0.95) - soldeHypotheque);
+    const dataProprio = [valNettePropInit]; 
+    
+    // Si placé en REER, la valeur nette est amputée de l'impôt au retrait
+    const applyExitTax = solde => typeCompte === 'reer' ? solde * (1 - tauxMarginal) : solde;
+    const dataLocataire = [applyExitTax(portefeuilleLocataire)];
+
+    // --- 4. SIMULATION ANNUELLE ---
+    for (let an = 1; an <= horizon; an++) {
+        
+        // A. Intégration du retour d'impôt REER de l'année précédente
+        portefeuilleLocataire += retourImpotLocataire;
+        portefeuilleProprio += retourImpotProprio;
+
+        // B. Rendement des placements boursiers
+        const applyGrowth = (solde) => {
+            let gain = solde * rendementPlacement;
+            // Tax drag (Froissement fiscal) annuel si compte Non-Enregistré (Inclusion de 50%)
+            if (typeCompte === 'non-enregistre') gain *= (1 - (tauxMarginal * 0.5)); 
+            return solde + gain;
+        };
+        portefeuilleLocataire = applyGrowth(portefeuilleLocataire);
+        portefeuilleProprio = applyGrowth(portefeuilleProprio);
+
+        // C. Remboursement hypothécaire
+        if (soldeHypotheque > 0) {
+            for (let mois = 1; mois <= 12; mois++) {
+                if (soldeHypotheque <= 0) break;
+                let interetMois = soldeHypotheque * tauxMensuelEffectif;
+                let principal = paiementHypoMensuel - interetMois;
+                if (soldeHypotheque - principal < 0) principal = soldeHypotheque; 
+                soldeHypotheque -= principal;
             }
-            soldeHypotheque = Math.max(0, soldeHypotheque);
-
-            const coutsProprio = (paiementHypothecaire * 12) + taxesAnnuelles + (valeurPropriete * entretienPct) + (assuranceProprioM * 12) + (fraisCondoM * 12);
-            const coutsLocataire = (loyerMensuel * 12) + (assuranceLocM * 12);
-            const investissementAnnuel = Math.max(0, coutsProprio - coutsLocataire);
-
-            if (typeCompte === 'reer' && reinvestirRetourImpot) {
-                retourImpotPrecedent = investissementAnnuel * tauxMarginal;
-            } else {
-                retourImpotPrecedent = 0;
-            }
-            portefeuilleLocataire += investissementAnnuel;
-        let gainPlacement = portefeuilleLocataire * rendementPlacement;
-        if (typeCompte === 'non-enregistre') {
-            gainPlacement *= (1 - (tauxMarginal * 0.5));
         }
-            portefeuilleLocataire += gainPlacement;
-            portefeuilleLocataire += investissementAnnuel;
-            valeurPropriete *= (1 + croissanceImmo);
 
-            labels.push(`Année ${an}`);
-            dataProprio.push(valeurPropriete - soldeHypotheque);
+        // D. Comparatif des flux de trésorerie (Coût de vie annuel)
+        const coutsProprio = paiementHypoAnnuel + taxesAnnuelles + (valeurPropriete * entretienPct) + assuranceProprioA + fraisCondoA;
+        const coutsLocataire = loyerAnnuel + assuranceLocA;
 
-            let valeurNetteLocataire = portefeuilleLocataire;
-            if (typeCompte === 'reer') {
-                valeurNetteLocataire *= (1 - tauxMarginal);
-            }
-            dataLocataire.push(valeurNetteLocataire);
+        const differenceCashFlow = coutsProprio - coutsLocataire;
+        
+        let invLocataire = 0;
+        let invProprio = 0;
 
-            loyerMensuel *= (1 + augmentationLoyer);
+        if (differenceCashFlow > 0) {
+            // Acheter coûte plus cher cette année-là. Le locataire investit la différence.
+            invLocataire = differenceCashFlow;
+        } else {
+            // Louer coûte plus cher (Souvent vrai après 10-15 ans). Le PROPRIÉTAIRE investit l'excédent !
+            invProprio = Math.abs(differenceCashFlow);
+        }
+        
+        portefeuilleLocataire += invLocataire;
+        portefeuilleProprio += invProprio;
+
+        // E. Calcul des retours d'impôt REER pour l'année suivante
+        if (typeCompte === 'reer' && reinvestirRetourImpot) {
+            retourImpotLocataire = invLocataire * tauxMarginal;
+            retourImpotProprio = invProprio * tauxMarginal;
+        } else {
+            retourImpotLocataire = 0;
+            retourImpotProprio = 0;
         }
 
-        const resultatFinalProprio = dataProprio[dataProprio.length - 1];
-        const resultatFinalLocataire = dataLocataire[dataLocataire.length - 1];
-        const difference = resultatFinalProprio - resultatFinalLocataire;
+        // F. Appréciation immobilière et inflation
+        valeurPropriete *= (1 + croissanceImmo);
+        loyerAnnuel *= (1 + augmentationLoyer);
+        
+        taxesAnnuelles *= (1 + inflationDepensesProprio);
+        assuranceProprioA *= (1 + inflationDepensesProprio);
+        fraisCondoA *= (1 + inflationDepensesProprio);
+        assuranceLocA *= (1 + inflationDepensesProprio);
 
-        document.getElementById('resultat-acheter-louer').textContent = `Après ${horizon} ans, l'actif net du propriétaire est de ${fmtNombre(resultatFinalProprio)} et celui du locataire de ${fmtNombre(resultatFinalLocataire)}. Différence : ${fmtNombre(Math.abs(difference))} en faveur du ${difference > 0 ? 'propriétaire' : 'locataire'}.`;
+        // G. Calcul des Valeurs Nettes Liquidatives
+        labels.push(`An ${an}`);
 
-        const ctx = document.getElementById('chart-acheter-louer')?.getContext('2d');
-        if (!ctx) return;
-        if (chartAcheterLouer) chartAcheterLouer.destroy();
-        chartAcheterLouer = new Chart(ctx, { type: 'line', data: { labels, datasets: [ { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', fill: true }, { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f97316', backgroundColor: 'rgba(249, 115, 22, 0.1)', fill: true } ] }, options: { maintainAspectRatio: false, scales: { y: { ticks: { callback: value => fmtNombre(value) } } } } });
+        // Locataire: Ses placements boursiers
+        let actifNetLocataire = applyExitTax(portefeuilleLocataire);
+
+        // Proprio: Équité de la maison - Frais de revente (5%) + Ses placements boursiers
+        const fraisVenteMaison = valeurPropriete * 0.05;
+        let equiteMaison = Math.max(0, valeurPropriete - soldeHypotheque - fraisVenteMaison);
+        let actifNetProprio = equiteMaison + applyExitTax(portefeuilleProprio);
+        
+        dataLocataire.push(actifNetLocataire);
+        dataProprio.push(actifNetProprio);
+    }
+
+    // --- 5. AFFICHAGE DES RÉSULTATS ---
+    const resProprio = dataProprio[dataProprio.length - 1];
+    const resLocataire = dataLocataire[dataLocataire.length - 1];
+    const difference = resProprio - resLocataire;
+    const isProprioGagnant = difference > 0;
+
+    const divRes = document.getElementById('resultat-acheter-louer');
+    if(divRes) {
+        divRes.innerHTML = `
+            <div style="font-size: 1.1em; margin-bottom: 15px;">
+                Après <strong>${horizon} ans</strong>, l'actif net liquidable (après impôts et tous les frais de vente) est de :<br>
+                🏡 Propriétaire : <strong>${fmtNombre(resProprio)}</strong><br>
+                🔑 Locataire : <strong>${fmtNombre(resLocataire)}</strong>
+            </div>
+            <div style="font-size: 1.2em; font-weight: bold; color: ${isProprioGagnant ? '#0D9488' : '#f59e0b'}; padding: 15px; background: ${isProprioGagnant ? 'rgba(13, 148, 136, 0.1)' : 'rgba(245, 158, 11, 0.1)'}; border-radius: 8px; border-left: 4px solid ${isProprioGagnant ? '#0D9488' : '#f59e0b'};">
+                💰 Avantage financier : ${isProprioGagnant ? 'L\'ACHAT' : 'LA LOCATION'} est plus rentable de ${fmtNombre(Math.abs(difference))}.
+            </div>
+            <div style="font-size: 0.85em; color: var(--subtle-text-color); margin-top: 15px; text-align: left; line-height: 1.4;">
+                <em>*Modélisation stricte Finoza : L'actif final du propriétaire a été amputé de 5 % pour simuler la commission du courtier à la revente afin de le rendre comparable (liquide). Le calcul de l'hypothèque respecte la composition semi-annuelle canadienne. Le locataire commence en plaçant l'équivalent de la mise de fonds + les frais de clôture (notaire/mutation) qu'il a sauvés.
+                ${primeSCHL > 0 ? `<br>⚠️ Une prime SCHL de <strong>${fmtNombre(primeSCHL)}</strong> a été ajoutée à l'hypothèque (mise de fonds < 20 %).` : ''}</em>
+            </div>
+        `;
+        divRes.style.display = 'block';
+    }
+
+    // --- 6. GRAPHIQUE (CHART.JS) ---
+    const ctx = document.getElementById('chart-acheter-louer')?.getContext('2d');
+    if (!ctx) return;
+    
+    // Évite le bug de superposition en détruisant l'ancien graphique
+    if (window.chartAcheterLouer) window.chartAcheterLouer.destroy();
+    
+    const isDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const textColor = isDarkMode ? '#F9FAFB' : '#374151';
+    const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+    window.chartAcheterLouer = new Chart(ctx, { 
+        type: 'line', 
+        data: { 
+            labels, 
+            datasets: [ 
+                { label: 'Actif Net Propriétaire', data: dataProprio, borderColor: '#0D9488', backgroundColor: 'rgba(13, 148, 136, 0.1)', fill: true, tension: 0.3, borderWidth: 3 }, 
+                { label: 'Actif Net Locataire', data: dataLocataire, borderColor: '#f59e0b', backgroundColor: 'rgba(245, 158, 11, 0.1)', fill: true, tension: 0.3, borderWidth: 3 } 
+            ] 
+        }, 
+        options: { 
+            maintainAspectRatio: false, 
+            interaction: { mode: 'index', intersect: false },
+            plugins: { legend: { labels: { color: textColor } } },
+            scales: { 
+                x: { ticks: { color: textColor }, grid: { color: gridColor } },
+                y: { ticks: { color: textColor, callback: value => fmtNombre(value) }, grid: { color: gridColor } } 
+            } 
+        } 
     });
+    
+    const chartContainer = document.getElementById('chart-acheter-louer').parentElement;
+    if (chartContainer) chartContainer.querySelector('.chart-container').style.display = 'block';
+});
      // =========================================================================
     // === CALCULATRICE DE DURÉE DU CAPITAL (DÉCAISSEMENT) ===
     // =========================================================================   
