@@ -201,6 +201,12 @@ function calculateCreditCard() {
     resultDiv.className = "tool-result-box mt-4";
     resultDiv.style.borderLeftColor = "#EF4444"; 
 }
+// 3. Pour les boutons de la carte de crédit
+document.querySelectorAll('#cc-balance, #cc-payment').forEach(input => {
+    input.addEventListener('input', () => {
+        document.querySelectorAll('.credit-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    });
+});
 
 // Piège 4 : Inflation
 function calculateInflation() {
