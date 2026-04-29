@@ -429,6 +429,7 @@ a.article-card {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
+    margin-top: 1.5rem; /* Ajout d'aération (padding) au-dessus des boutons */
 }
 .chip {
     padding: 8px 16px;
