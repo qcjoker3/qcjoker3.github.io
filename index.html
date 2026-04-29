@@ -179,18 +179,40 @@
 
                     <div class="tab-pane" id="tab-argent-dort">
                         <h3>L'illusion du compte chèque</h3>
-                        <p>Penser que votre argent est en sécurité à 0% d'intérêt est le plus grand risque financier.</p>
+                        <p>Penser que votre argent est en sécurité à 0 % d'intérêt est le plus grand risque financier. Glissez les curseurs pour voir l'inflation dévorer votre capital.</p>
                         
-                        <div class="preset-chips mb-3">
-                            <button class="chip" onclick="setInflationPreset(15000)">🐷 Fonds d'urgence (15 000$)</button>
-                            <button class="chip" onclick="setInflationPreset(50000)">🏠 Mise de fonds (50 000$)</button>
+                        <div class="preset-chips mb-4">
+                            <button class="chip inflation-chip" onclick="setInflationPreset(10000, this)">🐷 Coussin (10 000$)</button>
+                            <button class="chip inflation-chip" onclick="setInflationPreset(25000, this)">🚗 Auto (25 000$)</button>
+                            <button class="chip inflation-chip" onclick="setInflationPreset(80000, this)">🏠 Mise de fonds (80 000$)</button>
                         </div>
 
-                        <div class="input-group-row">
-                            <label for="cash-balance">Montant dormant dans votre compte ($)</label>
-                            <input type="number" id="cash-balance" value="15000" />
+                        <div class="form-columns">
+                            <div>
+                                <div class="input-group-row mb-3">
+                                    <label for="cash-balance" style="color: var(--primary-color);">Montant dormant dans le compte ($)</label>
+                                    <input type="number" id="cash-balance" value="15000" oninput="calculateInflation()" />
+                                </div>
+                            </div>
+                            <div>
+                                <div class="slider-container mb-3" style="padding: 1rem;">
+                                    <label for="inflation-years" class="d-flex justify-between align-center mb-2" style="margin: 0;">
+                                        <span>Durée de l'inaction :</span>
+                                        <strong id="years-val" style="color: var(--primary-color); font-size: 1.1rem;">10 ans</strong>
+                                    </label>
+                                    <input type="range" id="inflation-years" min="1" max="40" value="10" oninput="calculateInflation()">
+                                </div>
+                                
+                                <div class="slider-container" style="padding: 1rem;">
+                                    <label for="inflation-rate" class="d-flex justify-between align-center mb-2" style="margin: 0;">
+                                        <span>Taux d'inflation annuel :</span>
+                                        <strong id="rate-val" style="color: #EF4444; font-size: 1.1rem;">3.0 %</strong>
+                                    </label>
+                                    <input type="range" id="inflation-rate" min="0.5" max="10.0" step="0.1" value="3.0" oninput="calculateInflation()">
+                                </div>
+                            </div>
                         </div>
-                        <button class="btn-primary-small mt-3" onclick="calculateInflation()">Voir l'effet de l'inflation</button>
+                        
                         <div id="inflation-result" class="tool-result-box hidden mt-4"></div>
                     </div>
 
