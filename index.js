@@ -38,10 +38,19 @@ const formatCurrency = (amount) => {
 // ==========================================
 // 2. FONCTIONS DE PRÉSÉLECTION (CHIPS)
 // ==========================================
-function setAutoPreset(price, m, r) {
+function setAutoPreset(price, m, r, btnElement) {
     document.getElementById('new-car-price').value = price;
     document.getElementById('car-months').value = m;
     document.getElementById('car-rate').value = r;
+
+    // Éteindre toutes les pastilles de l'auto
+    document.querySelectorAll('.auto-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    
+    // Allumer la pastille cliquée
+    if (btnElement) {
+        btnElement.classList.add('selected-primary');
+    }
+
     calculateAuto();
 }
 function setExpensePreset(amount) {
@@ -70,13 +79,11 @@ function calculateAuto() {
     const annualRate = parseFloat(document.getElementById('car-rate').value) / 100;
     const resultDiv = document.getElementById('auto-result');
     
-    // Vérification de sécurité
     if (isNaN(repairCost) || isNaN(newCarPrice) || isNaN(months) || isNaN(annualRate) || newCarPrice <= 0 || months <= 0 || repairCost < 0) {
         resultDiv.classList.add('hidden');
         return;
     }
 
-    // Calcul mathématique du paiement mensuel (Amortissement)
     const monthlyRate = annualRate / 12;
     let monthlyPayment = 0;
     if (monthlyRate > 0) {
@@ -85,19 +92,21 @@ function calculateAuto() {
         monthlyPayment = newCarPrice / months;
     }
     
-    // Totaux
     const totalPaid = monthlyPayment * months;
     const totalInterest = totalPaid - newCarPrice;
-    
-    // Équivalence réparation vs mois de paiement
     const monthsEquivalent = (repairCost / monthlyPayment).toFixed(1);
-    
-    // Le montant payé "dans le vide"
     const differenceInutile = totalPaid - repairCost;
 
-    resultDiv.innerHTML = `Une facture de garage de <strong>${formatCurrency(repairCost)}</strong> fait mal au cœur. Pourtant, ce montant représente à peine <strong>${monthsEquivalent} mois</strong> de paiements de votre nouvelle voiture (qui vous coûtera <strong>${formatCurrency(monthlyPayment)}/mois</strong>) !<br><br>En fuyant cette réparation, vous vous engagez à débourser <strong>${formatCurrency(totalPaid)}</strong> sur ${months / 12} ans. Vous paierez donc <strong>${formatCurrency(differenceInutile)} de plus</strong> que votre facture de garage, sans compter les ${formatCurrency(totalInterest)} jetés par les fenêtres en purs intérêts.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Changer d'auto pour éviter de réparer l'ancienne est un désastre financier. Gardez votre ancienne voiture, elle fait encore le travail !</span>`;
+    resultDiv.innerHTML = `Une facture de garage de <strong>${formatCurrency(repairCost)}</strong> fait mal au cœur. Pourtant, ce montant représente à peine <strong>${monthsEquivalent} mois</strong> de paiements de votre nouvelle voiture (qui vous coûtera <strong>${formatCurrency(monthlyPayment)}/mois</strong>) !<br><br>En fuyant cette réparation, vous vous engagez à débourser <strong>${formatCurrency(totalPaid)}</strong> sur ${months / 12} ans. Vous paierez donc <strong>${formatCurrency(differenceInutile)} de plus</strong> que votre facture de garage, sans compter les ${formatCurrency(totalInterest)} jetés par les fenêtres en purs intérêts.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Changer d'auto pour éviter de réparer l'ancienne est un désastre mathématique. Gardez votre voiture !</span>`;
     resultDiv.classList.remove('hidden');
 }
+
+// Optionnel : Éteindre les boutons auto si l'utilisateur modifie les chiffres manuellement
+document.querySelectorAll('#new-car-price, #car-months, #car-rate').forEach(input => {
+    input.addEventListener('input', () => {
+        document.querySelectorAll('.auto-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    });
+});
 
 // Piège 2 : Micro-dépenses
 function toggleHabit(btn) {
@@ -138,6 +147,15 @@ function calculateExpense() {
     resultDiv.innerHTML = `Si vous aviez investi ces <strong>${formatCurrency(weekly)}/semaine</strong> dans la bourse (~7% réel) plutôt que de les dépenser :<br><br>Dans 10 ans, vous auriez <strong>${formatCurrency(futureValue10)}</strong> dans vos poches.<br><span style="font-size:0.85rem; color:var(--subtle-text-color);">Dont <strong>${formatCurrency(profit10)}</strong> générés purement par la magie des intérêts composés.</span><br><br><span style="font-size:1.05rem; color:var(--primary-color); font-weight:bold;">Sur 25 ans ? Vos habitudes valent une fortune : ${formatCurrency(futureValue25)} !</span>`;
     
     resultDiv.classList.remove('hidden');
+}
+
+// 2. Pour les boutons des dépenses
+const weeklyExpenseInput = document.getElementById('weekly-expense');
+if (weeklyExpenseInput) {
+    weeklyExpenseInput.addEventListener('input', () => {
+        // Si l'utilisateur tape un chiffre, on éteint toutes les pastilles rouges
+        document.querySelectorAll('.expense-habit').forEach(btn => btn.classList.remove('selected'));
+    });
 }
 
 // Piège 3 : Carte de crédit
