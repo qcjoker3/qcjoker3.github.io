@@ -38,7 +38,8 @@ const formatCurrency = (amount) => {
 // ==========================================
 // 2. FONCTIONS DE PRÉSÉLECTION (CHIPS)
 // ==========================================
-function setAutoPreset(pmt, m, r) {
+function setAutoPreset(repair, pmt, m, r) {
+    document.getElementById('repair-cost').value = repair;
     document.getElementById('car-payment').value = pmt;
     document.getElementById('car-months').value = m;
     document.getElementById('car-rate').value = r;
@@ -64,13 +65,15 @@ function setInflationPreset(amount) {
 
 // Piège 1 : Auto Neuve
 function calculateAuto() {
+    const repairCost = parseFloat(document.getElementById('repair-cost').value);
     const payment = parseFloat(document.getElementById('car-payment').value);
     const months = parseInt(document.getElementById('car-months').value);
     const annualRate = parseFloat(document.getElementById('car-rate').value) / 100;
     const resultDiv = document.getElementById('auto-result');
     
-    if (isNaN(payment) || isNaN(months) || isNaN(annualRate) || payment <= 0 || months <= 0) return;
+    if (isNaN(repairCost) || isNaN(payment) || isNaN(months) || isNaN(annualRate) || payment <= 0 || months <= 0 || repairCost < 0) return;
 
+    // Retrouver la valeur du prêt à partir du paiement
     const monthlyRate = annualRate / 12;
     let principal = 0;
     if (monthlyRate > 0) {
@@ -81,8 +84,11 @@ function calculateAuto() {
     
     const totalPaid = payment * months;
     const totalInterest = totalPaid - principal;
+    
+    // Équivalence réparation vs mois de paiement
+    const monthsEquivalent = (repairCost / payment).toFixed(1);
 
-    resultDiv.innerHTML = `Le vendeur vous dira que c'est "seulement ${formatCurrency(payment)}/mois".<br><br>En réalité, vous vous engagez à payer un montant total faramineux de <strong>${formatCurrency(totalPaid)}</strong> sur ${months / 12} ans.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Le vrai crime : Vous donnerez ${formatCurrency(totalInterest)} en pur intérêt à la banque pour un objet qui perd de la valeur chaque jour.</span>`;
+    resultDiv.innerHTML = `Une facture de garage de <strong>${formatCurrency(repairCost)}</strong> fait mal au cœur. Pourtant, cela représente à peine <strong>${monthsEquivalent} mois</strong> de paiements de la voiture neuve !<br><br>En signant pour cette nouvelle auto, vous vous engagez à payer <strong>${formatCurrency(totalPaid)}</strong> sur ${months / 12} ans.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Pire encore : Vous paierez ${formatCurrency(totalInterest)} en pur intérêt à la banque. C'est beaucoup plus cher que n'importe quelle réparation ! Conservez votre voiture.</span>`;
     resultDiv.classList.remove('hidden');
 }
 
