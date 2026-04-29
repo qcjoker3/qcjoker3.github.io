@@ -1,23 +1,19 @@
-/**
- * FINOZA - index.js
- * Gestion des onglets, des calculateurs rapides et de la jauge S&P 500
- */
-
+// --- 1. GESTION DES ONGLETS (Sécurisée) ---
 document.addEventListener('DOMContentLoaded', () => {
-    
-    // --- 1. GESTION DES ONGLETS (Outils Rapides) ---
-    const tabs = document.querySelectorAll('.tab-btn');
-    const panes = document.querySelectorAll('.tab-pane');
+    try {
+        const tabs = document.querySelectorAll('.tab-btn');
+        const panes = document.querySelectorAll('.tab-pane');
 
-    if (tabs.length > 0) {
         tabs.forEach(tab => {
             tab.addEventListener('click', function() {
-                // Retirer la classe active de tous les boutons et contenus
+                // 1. Enlever la classe active partout
                 tabs.forEach(t => t.classList.remove('active'));
                 panes.forEach(p => p.classList.remove('active'));
                 
-                // Activer le bouton cliqué et son contenu
+                // 2. Ajouter la classe active au bouton cliqué
                 this.classList.add('active');
+                
+                // 3. Afficher le panneau correspondant
                 const targetId = this.getAttribute('data-tab');
                 const targetPane = document.getElementById('tab-' + targetId);
                 if (targetPane) {
@@ -25,16 +21,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             });
         });
+        console.log("Onglets chargés avec succès !");
+    } catch (error) {
+        console.error("Erreur avec les onglets :", error);
     }
 
     // --- 2. INITIALISATION DE LA JAUGE S&P 500 ---
-    // Cette partie utilise vos IDs originaux pour ne pas briser votre widget
-    initSP500Gauge();
-
+    try {
+        initSP500Gauge();
+    } catch (error) {
+        console.error("Erreur avec la jauge S&P 500 :", error);
+    }
 });
 
-// --- 3. FONCTIONS DE CALCUL (Accessibles par les boutons HTML) ---
-
+// --- 3. FONCTIONS DE CALCUL DES ONGLETS ---
 const formatCurrency = (amount) => {
     return new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(amount);
 };
@@ -43,15 +43,14 @@ function calculateAuto() {
     const repairCost = parseFloat(document.getElementById('repair-cost').value);
     const newCarPrice = parseFloat(document.getElementById('new-car-price').value);
     const resultDiv = document.getElementById('auto-result');
-    
     if (isNaN(repairCost) || isNaN(newCarPrice) || repairCost <= 0 || newCarPrice <= 0) return;
 
-    // Hypothèse : 8% intérêt sur 7 ans
-    const rate = 0.08;
-    const monthlyPayment = (newCarPrice * (1 + (rate * 7))) / (7 * 12);
+    const rate = 0.08; const years = 7;
+    const totalInterest = (newCarPrice * rate * years) * 0.55; 
+    const monthlyPayment = (newCarPrice + totalInterest) / (years * 12);
     const monthsEquivalent = Math.round(repairCost / monthlyPayment);
 
-    resultDiv.innerHTML = `Cette réparation de <strong>${formatCurrency(repairCost)}</strong> représente environ <strong>${monthsEquivalent} mois</strong> de paiements pour votre nouvelle auto. En achetant neuf, vous paierez des milliers de dollars en intérêts. Réparez !`;
+    resultDiv.innerHTML = `Cette réparation de <strong>${formatCurrency(repairCost)}</strong> représente seulement <strong>${monthsEquivalent} mois</strong> de paiement de votre nouvelle voiture. En achetant neuf, vous paierez environ <strong>${formatCurrency(totalInterest)} juste en intérêts</strong>. Considérez réparer !`;
     resultDiv.classList.remove('hidden');
 }
 
@@ -60,9 +59,78 @@ function calculateRent() {
     const resultDiv = document.getElementById('rent-result');
     if (isNaN(rent) || rent <= 0) return;
 
-    // Calcul cumulatif sur 25 ans avec 2.5% d'augmentation annuelle
-    let totalPaid = 0;
-    let currentRent = rent;
+    let totalPaid = 0; let currentRent = rent;
+    for (let i = 0; i < 25; i++) { totalPaid += currentRent * 12; currentRent *= 1.025; }
+
+    resultDiv.innerHTML = `En 25 ans, vous aurez payé <strong>${formatCurrency(totalPaid)}</strong> en loyer. <strong>Cependant</strong>, si vous investissez judicieusement l'argent sauvé en taxes et entretien, la location pourrait tout de même vous rendre plus riche.`;
+    resultDiv.classList.remove('hidden');
+}
+
+function calculateIndependence(targetIncome) {
+    const resultDiv = document.getElementById('independence-result');
+    const capitalNeeded = targetIncome * 25; 
+    resultDiv.innerHTML = `Pour générer <strong>${formatCurrency(targetIncome)}</strong> par an (règle des 4%), votre portefeuille devra atteindre <strong>${formatCurrency(capitalNeeded)}</strong>.`;
+    resultDiv.classList.remove('hidden');
+}
+
+function calculateExpense() {
+    const weekly = parseFloat(document.getElementById('weekly-expense').value);
+    const resultDiv = document.getElementById('expense-result');
+    if (isNaN(weekly) || weekly <= 0) return;
+
+    const monthlyInvestment = (weekly * 52) / 12;
+    const rate = 0.07 / 12; const months = 10 * 12; 
+    const futureValue = monthlyInvestment * ((Math.pow(1 + rate, months) - 1) / rate);
+
+    resultDiv.innerHTML = `Si vous aviez investi ces <strong>${formatCurrency(weekly)}</strong> par semaine dans le S&P 500 (~7% de rendement réel) pendant 10 ans, vous auriez <strong>${formatCurrency(futureValue)}</strong> en banque aujourd'hui.`;
+    resultDiv.classList.remove('hidden');
+}
+
+// --- 4. LE VRAI CODE DE LA JAUGE (Chart.js) ---
+function initSP500Gauge() {
+    // Remplacer ces variables par vos vrais chiffres de consensus si nécessaire
+    const currentLevel = 5100;
+    const targetLevel = 5500;
+    const potential = (((targetLevel - currentLevel) / currentLevel) * 100).toFixed(1);
+
+    // Mettre à jour les textes dans le HTML
+    const currentTextEl = document.getElementById('currentLevelText');
+    const targetTextEl = document.getElementById('gaugeTargetText');
+    const gapTextEl = document.getElementById('percentageGap');
+
+    if (currentTextEl) currentTextEl.innerText = currentLevel.toLocaleString() + " pts";
+    if (targetTextEl) targetTextEl.innerHTML = `<strong>${targetLevel.toLocaleString()}</strong> Points`;
+    if (gapTextEl) gapTextEl.innerText = `+${potential}%`;
+
+    // Dessiner la jauge si Chart.js est disponible
+    const ctx = document.getElementById('sp500Gauge');
+    if (ctx && typeof Chart !== 'undefined') {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Niveau Actuel', 'Potentiel'],
+                datasets: [{
+                    data: [currentLevel, targetLevel - currentLevel],
+                    backgroundColor: ['#E2E8F0', '#0D9488'], // Gris pâle et Teal Finoza
+                    borderWidth: 0,
+                    circumference: 180, // Fait un demi-cercle (jauge)
+                    rotation: 270 // Commence à gauche
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '80%', // Épaisseur de l'anneau
+                plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                }
+            }
+        });
+    } else {
+        console.warn("Chart.js n'est pas chargé ou le canvas sp500Gauge est introuvable.");
+    }
+}    let currentRent = rent;
     for (let i = 0; i < 25; i++) {
         totalPaid += currentRent * 12;
         currentRent *= 1.025;
