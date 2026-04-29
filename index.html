@@ -105,21 +105,21 @@
                             <div>
                                 <div class="input-group-row mb-3">
                                     <label for="repair-cost" style="color: var(--primary-color);">Coût estimé des réparations ($)</label>
-                                    <input type="number" id="repair-cost" value="2000" />
+                                    <input type="number" id="repair-cost" value="2000" oninput="calculateAuto()"/>
                                 </div>
                                 <div class="input-group-row">
                                     <label for="car-payment">Paiement mensuel auto neuve ($)</label>
-                                    <input type="number" id="car-payment" value="500" />
+                                    <input type="number" id="car-payment" value="500" oninput="calculateAuto()"/>
                                 </div>
                             </div>
                             <div>
                                 <div class="input-group-row">
                                     <label for="car-months">Durée du prêt (en mois)</label>
-                                    <input type="number" id="car-months" value="84" />
+                                    <input type="number" id="car-months" value="84" oninput="calculateAuto()"/>
                                 </div>
                                 <div class="input-group-row">
                                     <label for="car-rate">Taux d'intérêt annuel (%)</label>
-                                    <input type="number" id="car-rate" value="4.0" step="0.1" />
+                                    <input type="number" id="car-rate" value="4.0" step="0.1" oninput="calculateAuto()"/>
                                 </div>
                             </div>
                         </div>
