@@ -189,14 +189,21 @@
             <div id="tab-opportunite" class="tab-content">
                 <div class="calc-simple">
                     <h3>Le coût réel de vos petites habitudes</h3>
-                    <p class="text-small mb-3">L'effet boule de neige appliqué à vos dépenses récurrentes.</p>
-                    <label for="cafe-input">Combien dépensez-vous par semaine pour des extras (cafés, restos) ? ($)</label>
+                    <p class="text-small mb-3">L'effet boule de neige appliqué à vos dépenses récurrentes (calculé sur 10 ans à 6%).</p>
+        
+                    <div class="preset-buttons mb-3">
+                        <button class="preset-btn" data-value="25">☕ Café (25$/sem)</button>
+                        <button class="preset-btn" data-value="15">📺 Abonnements (15$/sem)</button>
+                        <button class="preset-btn" data-value="50">🍔 Restos (50$/sem)</button>
+                    </div>
+
+                    <label for="cafe-input">Ou entrez un montant par semaine ($) :</label>
                     <input type="number" id="cafe-input" placeholder="Ex: 35" class="input-large">
-                    
+        
                     <div id="opportunite-result" class="result-box hidden">
-                        <p>Investi à la bourse (6%), cet argent représenterait dans 10 ans :</p>
+                        <p>Placé en bourse, cet argent représenterait dans 10 ans :</p>
                         <h4 class="text-red giant-number" id="opportunite-cible">...</h4>
-                        <a href="simulateurs.html#cout-opportunite" class="btn-primary-small dynamic-btn">Voir l'impact sur 25 ans →</a>
+                        <a href="simulateurs.html#cout-opportunite" class="btn-primary-small dynamic-btn">Voir l'impact colossal sur 25 ans →</a>
                     </div>
                 </div>
             </div>
