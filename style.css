@@ -150,7 +150,12 @@ p { margin-bottom: 1rem; }
 .main-nav .logo {
     font-size: 1.5rem;
     color: var(--primary-color);
-    text-decoration: none;
+    text-decoration: none; /* Enlève le soulignement */
+    display: inline-block;
+}
+
+.main-nav .logo:hover {
+    color: var(--primary-color); /* Garde la couleur originale au survol */
 }
 .main-nav nav a {
     margin-left: 1.5rem;
