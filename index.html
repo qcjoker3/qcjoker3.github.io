@@ -4,41 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
-    <title>Finoza | Finances Personnelles, Calculatrices & Retraite au Québec</title>
-    <meta name="description" content="Gérez votre budget, planifiez votre retraite (REER, CELI) et optimisez vos investissements avec les calculateurs financiers gratuits et experts de Finoza.">
+    <title>Investissements & Placements | Finoza</title>
+    <meta name="description" content="Découvrez nos topos clairs sur la bourse, les FNB, la gestion active vs passive et utilisez nos calculateurs de rendement.">
     
-    <link rel="canonical" href="https://finoza.ca/">
-
-    <meta property="og:title" content="Finoza | Votre intelligence financière">
-    <meta property="og:description" content="Découvrez nos simulateurs gratuits pour hypothèque, REER, CELI et planification de retraite.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://finoza.ca/">
-
     <link rel="stylesheet" href="style.css">
-    
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@graph": [
-        {
-          "@type": "WebSite",
-          "@id": "https://finoza.ca/#website",
-          "url": "https://finoza.ca/",
-          "name": "Finoza",
-          "description": "Outils et éducation en finances personnelles au Québec",
-          "publisher": {"@id": "https://finoza.ca/#organization"}
-        },
-        {
-          "@type": "Organization",
-          "@id": "https://finoza.ca/#organization",
-          "name": "Finoza",
-          "url": "https://finoza.ca/"
-        }
-      ]
-    }
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
     <script src="index.js" defer></script>
 </head>
 <body>
@@ -51,10 +20,10 @@
     </div>
     <nav aria-label="Navigation principale">
         <ul class="nav-links">
-            <li><a href="index.html" aria-current="page">Accueil</a></li>
+            <li><a href="index.html">Accueil</a></li>
             <li><a href="budget-quotidien.html">Budget & Quotidien</a></li>
             <li><a href="credit-propriete.html">Crédit & Propriété</a></li>
-            <li><a href="investissements.html">Investissements</a></li>
+            <li><a href="investissements.html" aria-current="page" class="active">Investissements</a></li>
             <li><a href="retraite-patrimoine.html">Retraite & Patrimoine</a></li>
             <li><a href="simulateurs.html">Simulateurs</a></li>
             <li><a href="articles.html">Articles</a></li>
@@ -63,6 +32,72 @@
     </nav>
 </header>
 
+<main id="contenu-principal">
+    <section class="page-hero bg-light section-padding">
+        <div class="container text-center">
+            <h1>Investissements & Marchés</h1>
+            <p class="subtitle">Des topos clairs et des outils précis pour faire fructifier votre argent intelligemment, sans jargon inutile.</p>
+        </div>
+    </section>
+
+    <section class="container section-padding">
+        
+        <div class="section-header">
+            <h2>Les concepts fondamentaux</h2>
+        </div>
+
+        <div class="card-grid">
+            
+            <article class="card interactive-card">
+                <span class="icon" aria-hidden="true">📊</span>
+                <h3>Actions & Obligations</h3>
+                <p class="topo">Le topo de base. Comprenez la différence fondamentale entre posséder une part d'entreprise et prêter votre argent avec intérêts.</p>
+                <a href="article-actions-obligations.html" class="btn-outline-small">Lire le topo</a>
+            </article>
+
+            <article class="card interactive-card">
+                <span class="icon" aria-hidden="true">🛒</span>
+                <h3>Le guide des FNB</h3>
+                <p class="topo">Les Fonds Négociés en Bourse ont révolutionné l'investissement. Découvrez comment bâtir un portefeuille diversifié à très faible coût.</p>
+                <a href="article-fnb.html" class="btn-outline-small">Lire le topo</a>
+            </article>
+
+            <article class="card interactive-card">
+                <span class="icon" aria-hidden="true">🕵️‍♂️</span>
+                <h3>Active vs Passive</h3>
+                <p class="topo">Méfiez-vous du "closet indexing". Apprenez à démasquer les fonds mutuels qui vous chargent le prix fort pour copier le marché.</p>
+                <a href="article-closet-indexing.html" class="btn-outline-small">Lire l'analyse</a>
+            </article>
+
+            <article class="card interactive-card highlight-card">
+                <span class="icon" aria-hidden="true">🧮</span>
+                <h3>Simulateur de frais de gestion</h3>
+                <p class="topo">Le tueur silencieux de la richesse. Calculez exactement combien de milliers de dollars vous perdez à cause de frais de 2%.</p>
+                <a href="simulateurs.html#frais-gestion" class="btn-primary btn-small">Lancer l'outil</a>
+            </article>
+
+            <article class="card interactive-card">
+                <span class="icon" aria-hidden="true">🔮</span>
+                <h3>Prévisions S&P 500</h3>
+                <p class="topo">Suivi des cibles de Wall Street pour 2025 et analyse historique de la fiabilité des prédictions des experts financiers.</p>
+                <a href="article-previsions-sp500.html" class="btn-outline-small">Voir les données</a>
+            </article>
+            
+             <article class="card interactive-card highlight-card">
+                <span class="icon" aria-hidden="true">📈</span>
+                <h3>Simulateur de portefeuille FNB</h3>
+                <p class="topo">Projetez la croissance d'un portefeuille passif basé sur vos cotisations mensuelles et le rendement espéré.</p>
+                <a href="simulateurs.html#simulateur-fnb" class="btn-primary btn-small">Lancer l'outil</a>
+            </article>
+
+        </div>
+    </section>
+</main>
+
+<footer id="footer-placeholder"></footer>
+
+</body>
+</html>
 <main id="contenu-principal">
     <section id="accueil" class="hero">
         <div class="container">
