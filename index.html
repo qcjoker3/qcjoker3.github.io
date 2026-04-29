@@ -3,460 +3,218 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Finoza | Maîtrisez vos finances</title>
-    <meta name="description" content="Simulateurs financiers, stratégies d'investissement (REER, CELI, FNB) et analyses de marché. Bâtissez votre indépendance financière avec Finoza.">
-    <link rel="canonical" href="https://finoza.ca/">
-
-    <meta property="og:title" content="Finoza | Votre intelligence financière">
-    <meta property="og:description" content="Découvrez nos simulateurs gratuits pour hypothèque, REER, CELI et votre plan d'indépendance financière.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://finoza.ca/">
-
+    <title>Finoza - Prenez une longueur d'avance sur votre avenir financier</title>
     <link rel="stylesheet" href="style.css">
-    
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Finoza",
-      "url": "https://finoza.ca/",
-      "description": "Plateforme québécoise d'outils et d'éducation en finances personnelles"
-    }
-    </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
-    <script src="index.js" defer></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
 </head>
-<body class="home-page">
+<body>
 
-<a href="#contenu-principal" class="skip-link">Aller au contenu principal</a>
-
-<header class="site-header">
-    <div class="container header-flex">
-        <div class="logo">
-            <a href="index.html" aria-label="Retour à l'accueil de Finoza"><strong>Finoza</strong></a>
+    <header class="main-nav">
+        <div class="container d-flex justify-between align-center">
+            <div class="logo"><strong>FINOZA<span style="color: var(--accent-color);">.</span></strong></div>
+            <nav>
+                <a href="#ecosysteme">Articles</a>
+                <a href="#outils-rapides">Outils</a>
+                <a href="#simulateur-retraite" class="btn-primary-small">Simulateur</a>
+            </nav>
         </div>
-        <nav aria-label="Navigation principale">
-            <ul class="nav-links">
-                <li><a href="index.html" aria-current="page" class="active">Accueil</a></li>
-                <li><a href="budget-quotidien.html">Budget & Quotidien</a></li>
-                <li><a href="credit-propriete.html">Crédit & Propriété</a></li>
-                <li><a href="investissements.html">Investissements</a></li>
-                <li><a href="retraite-patrimoine.html">Retraite & Patrimoine</a></li>
-                <li><a href="simulateurs.html" class="nav-highlight">Simulateurs</a></li>
-                <li><a href="articles.html">Articles</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
+    </header>
 
-<div class="market-ticker" aria-hidden="true">
-    <div class="container ticker-content">
-        <span>Taux directeur BdC : <strong>4.50%</strong></span>
-        <span class="separator">|</span>
-        <span>Inflation (IPC) : <strong>2.8%</strong></span>
-        <span class="separator">|</span>
-        <span>Plafond CELI 2026 : <strong>7 000 $</strong></span>
-    </div>
-</div>
-
-<main id="contenu-principal">
-    
     <section class="hero-modern">
-        <div class="container hero-grid">
-            <div class="hero-text">
-                <span class="badge">Outils 100% gratuits</span>
+        <div class="container hero-centered">
+            <div class="hero-text text-center">
+                <span class="badge">Outils 100 % gratuits et impartiaux</span>
                 <h1 class="gradient-text">Prenez une longueur d'avance sur votre avenir financier.</h1>
                 <p>Des calculateurs de précision et des stratégies sans jargon pour faire fructifier votre argent, payer moins d'impôt et planifier votre indépendance au Québec.</p>
-                <div class="cta-group">
-                    <a href="simulateurs.html" class="btn-primary-large">Explorer les outils</a>
-                    <a href="#analyseur" class="btn-secondary-large outline">Faire un test rapide ↓</a>
+                <div class="cta-group justify-center">
+                    <a href="#simulateur-retraite" class="btn-primary-large">Créer mon plan de match</a>
+                    <a href="#outils-rapides" class="btn-secondary-large outline">Outils rapides ↓</a>
                 </div>
-            </div>
-            <div class="hero-visual">
-                <div class="glass-card mockup-card">
-                    <div class="mockup-header">Croissance Projetée</div>
-                    <div class="mockup-body">📈 Richesse nette à 65 ans : <br><strong>1 250 000 $</strong></div>
-                </div>
+                <p class="trust-note mt-3 text-small text-muted">Conçu pour la fiscalité québécoise. Aucune affiliation bancaire.</p>
             </div>
         </div>
     </section>
 
-    <section class="bento-section container section-padding">
-        <div class="section-heading text-center">
-            <h2>L'écosystème financier complet</h2>
-            <p>Tout ce dont vous avez besoin pour optimiser chaque dollar de votre patrimoine.</p>
-        </div>
-        
-        <div class="bento-grid">
-            <a href="budget-quotidien.html" class="bento-card bg-budget">
-                <div class="bento-content">
-                    <span class="icon" aria-hidden="true">💳</span>
-                    <h3>Budget & Quotidien</h3>
-                    <p>Coût d'opportunité et optimisation de vos liquidités.</p>
-                </div>
-            </a>
-            
-            <a href="investissements.html" class="bento-card bg-invest large-card">
-                <div class="bento-content">
-                    <span class="icon" aria-hidden="true">📈</span>
-                    <h3>Investissements & Marchés</h3>
-                    <p>Fonds Négociés en Bourse (FNB), gestion indicielle, analyse des frais de gestion et prévisions boursières.</p>
-                </div>
-            </a>
-            
-            <a href="credit-propriete.html" class="bento-card bg-credit">
-                <div class="bento-content">
-                    <span class="icon" aria-hidden="true">🏠</span>
+    <section class="ecosystem-section section-padding" id="ecosysteme">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2>L'écosystème Finoza</h2>
+                <p>Maîtrisez les 4 piliers de vos finances personnelles avec nos guides complets.</p>
+            </div>
+            <div class="bento-grid-3">
+                <a href="investissements.html" class="bento-card bento-large">
+                    <div class="bento-icon">📈</div>
+                    <h3>Investissements & Fiscalité</h3>
+                    <p>Optimisez vos rendements avec des stratégies adaptées au CELI, REER et comptes non enregistrés. Comprenez enfin l'impact de l'impôt sur vos gains.</p>
+                </a>
+                <a href="budget.html" class="bento-card bento-small">
+                    <div class="bento-icon">📊</div>
+                    <h3>Budget & Cash-flow</h3>
+                    <p>Reprenez le contrôle de vos liquidités sans vous priver.</p>
+                </a>
+                <a href="credit.html" class="bento-card bento-small">
+                    <div class="bento-icon">💳</div>
                     <h3>Crédit & Propriété</h3>
-                    <p>Stratégies hypothécaires et comparateurs d'achat vs location.</p>
-                </div>
-            </a>
-            
-            <a href="retraite-patrimoine.html" class="bento-card bg-retraite large-card">
-                <div class="bento-content">
-                    <span class="icon" aria-hidden="true">🌳</span>
+                    <p>Démystifiez les cotes de crédit et l'achat immobilier.</p>
+                </a>
+                <a href="retraite.html" class="bento-card bento-large">
+                    <div class="bento-icon">🌴</div>
                     <h3>Retraite & Patrimoine</h3>
-                    <p>Optimisation REER/CELI/CELIAPP, décaissement stratégique et succession.</p>
-                </div>
-            </a>
+                    <p>Planifiez votre indépendance financière. Calculez combien il vous faut et comment décaisser stratégiquement pour ne jamais manquer d'argent.</p>
+                </a>
+            </div>
         </div>
     </section>
 
-    <section id="analyseur" class="analyzer-section container section-padding">
-        <div class="section-heading text-center">
-            <h2>L'Analyseur Finoza</h2>
-            <p>Prenez le pouls de vos finances en 10 secondes chrono.</p>
-        </div>
-
-        <div class="analyzer-box glass-panel">
-            <div class="tab-buttons">
-                <button class="tab-btn active" data-target="tab-sp500">📊 Marché</button>
-                <button class="tab-btn" data-target="tab-dette">💳 Dette</button>
-                <button class="tab-btn" data-target="tab-independance">🌴 Indépendance</button>
-                <button class="tab-btn" data-target="tab-opportunite">☕ Dépenses</button>
+    <section class="quick-tools-section section-padding bg-light" id="outils-rapides">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2>Outils Rapides</h2>
+                <p>Prenez des décisions éclairées en quelques secondes.</p>
             </div>
+            
+            <div class="tools-container">
+                <div class="tools-tabs">
+                    <button class="tab-btn active" data-tab="marche">Marché</button>
+                    <button class="tab-btn" data-tab="auto">Auto vs Réparation</button>
+                    <button class="tab-btn" data-tab="locataire">Choc du Locataire</button>
+                    <button class="tab-btn" data-tab="independance">Indépendance</button>
+                    <button class="tab-btn" data-tab="depenses">Dépenses</button>
+                </div>
 
-            <div id="tab-sp500" class="tab-content active">
-                <div class="sp500-layout">
-                    <div class="sp500-gauge-area">
-                        <p class="widget-label">CONSENSUS FIN 2026</p>
-                        <canvas id="sp500Gauge" height="150" aria-label="Jauge S&P 500" role="img"></canvas>
-                        <div class="widget-stats text-center mt-2">
-                            <p>Actuel : <strong id="currentLevelText">...</strong></p>
-                            <p>Potentiel : <strong id="percentageGap" class="text-green">...</strong></p>
+                <div class="tab-content-wrapper">
+                    <div class="tab-pane active" id="tab-marche">
+                        <h3>La force du marché boursier (S&P 500)</h3>
+                        <p>Historiquement, le marché boursier américain a doublé la valeur des investissements environ tous les 7 à 10 ans. Ne laissez pas l'inflation gruger votre épargne dans un compte chèque.</p>
+                        <div class="tool-result-box mb-3 mt-3">Rendement moyen historique : <strong>~8% à 10% par an</strong></div>
+                        <a href="investissements.html" class="btn-text">Découvrir comment investir en bourse →</a>
+                    </div>
+
+                    <div class="tab-pane" id="tab-auto">
+                        <h3>Le piège du prêt auto</h3>
+                        <div class="input-group-row">
+                            <label for="repair-cost">Coût réparation auto actuelle ($)</label>
+                            <input type="number" id="repair-cost" placeholder="Ex: 2000" />
                         </div>
-                    </div>
-                    <div class="sp500-text-area">
-                        <h3>La boule de cristal de Wall Street</h3>
-                        <p>Les grandes banques prévoient une croissance du marché boursier. Mais devez-vous baser vos investissements sur leurs prédictions ?</p>
-                        <a href="investissements.html#previsions" class="btn-primary-small mt-3">Découvrir si les experts se trompent →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-dette" class="tab-content">
-                <div class="calc-simple">
-                    <h3>Le piège du paiement minimum</h3>
-                    <p class="text-small mb-3">Voyez l'impact réel des taux d'intérêt de cartes de crédit.</p>
-                    <label for="dette-input">Entrez le solde de votre carte de crédit ($) :</label>
-                    <input type="number" id="dette-input" placeholder="Ex: 3000" class="input-large">
-                    
-                    <div id="dette-result" class="result-box hidden">
-                        <p>En payant seulement le minimum (taux ~21%), il vous faudra <strong class="text-red" id="dette-annees">...</strong> ans pour régler cette dette.</p>
-                        <p>Vous paierez <strong class="text-red" id="dette-interets">...</strong> juste en intérêts à la banque.</p>
-                        <a href="budget-quotidien.html" class="btn-primary-small dynamic-btn">Créer un plan de remboursement accéléré →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-independance" class="tab-content">
-                <div class="calc-simple">
-                    <h3>Votre capital d'indépendance financière</h3>
-                    <p class="text-small mb-3">Découvrez le montant exact à accumuler pour ne plus jamais avoir l'obligation de travailler.</p>
-                    <label for="depenses-input">Quel est le revenu annuel net dont vous auriez besoin ? ($)</label>
-                    <input type="number" id="depenses-input" placeholder="Ex: 50000" class="input-large">
-                    
-                    <div id="independance-result" class="result-box hidden">
-                        <p>Pour vivre uniquement des rendements de vos investissements, votre cible est de :</p>
-                        <h4 class="text-green giant-number" id="independance-cible">...</h4>
-                        <a href="simulateurs.html#independance" class="btn-primary-small dynamic-btn">Dans combien d'années l'atteindrez-vous ? →</a>
-                    </div>
-                </div>
-            </div>
-
-            <div id="tab-opportunite" class="tab-content">
-                <div class="calc-simple">
-                    <h3>Le coût réel de vos petites habitudes</h3>
-                    <p class="text-small mb-3">L'effet boule de neige appliqué à vos dépenses récurrentes (calculé sur 10 ans à 6%).</p>
-        
-                    <div class="preset-buttons mb-3">
-                        <button class="preset-btn" data-value="25">☕ Café (25$/sem)</button>
-                        <button class="preset-btn" data-value="15">📺 Abonnements (15$/sem)</button>
-                        <button class="preset-btn" data-value="50">🍔 Restos (50$/sem)</button>
+                        <div class="input-group-row">
+                            <label for="new-car-price">Prix du véhicule neuf désiré ($)</label>
+                            <input type="number" id="new-car-price" placeholder="Ex: 40000" />
+                        </div>
+                        <button class="btn-primary-small mt-3" onclick="calculateAuto()">Calculer l'impact</button>
+                        <div id="auto-result" class="tool-result-box hidden mt-4"></div>
                     </div>
 
-                    <label for="cafe-input">Ou entrez un montant par semaine ($) :</label>
-                    <input type="number" id="cafe-input" placeholder="Ex: 35" class="input-large">
-        
-                    <div id="opportunite-result" class="result-box hidden">
-                        <p>Placé en bourse, cet argent représenterait dans 10 ans :</p>
-                        <h4 class="text-red giant-number" id="opportunite-cible">...</h4>
-                        <a href="simulateurs.html#cout-opportunite" class="btn-primary-small dynamic-btn">Voir l'impact colossal sur 25 ans →</a>
+                    <div class="tab-pane" id="tab-locataire">
+                        <h3>Le Choc du Locataire</h3>
+                        <div class="input-group-row">
+                            <label for="rent-cost">Loyer mensuel actuel ($)</label>
+                            <input type="number" id="rent-cost" placeholder="Ex: 1500" />
+                        </div>
+                        <button class="btn-primary-small mt-3" onclick="calculateRent()">Voir sur 25 ans</button>
+                        <div id="rent-result" class="tool-result-box hidden mt-4"></div>
+                        <div class="mt-4"><a href="simulateurs.html" class="btn-text">Acheter vs Louer : Le simulateur complet →</a></div>
+                    </div>
+
+                    <div class="tab-pane" id="tab-independance">
+                        <h3>Capital cible pour l'indépendance</h3>
+                        <p>Combien de revenu annuel désirez-vous sans avoir à travailler ?</p>
+                        <div class="preset-buttons">
+                            <button onclick="calculateIndependence(40000)">40 000 $</button>
+                            <button onclick="calculateIndependence(70000)">70 000 $</button>
+                            <button onclick="calculateIndependence(100000)">100 000 $</button>
+                        </div>
+                        <div id="independence-result" class="tool-result-box hidden mt-4"></div>
+                    </div>
+
+                    <div class="tab-pane" id="tab-depenses">
+                        <h3>Le coût d'opportunité</h3>
+                        <div class="input-group-row">
+                            <label for="weekly-expense">Dépense inutile par semaine ($)</label>
+                            <input type="number" id="weekly-expense" placeholder="Ex: 35" />
+                        </div>
+                        <button class="btn-primary-small mt-3" onclick="calculateExpense()">Calculer sur 10 ans</button>
+                        <div id="expense-result" class="tool-result-box hidden mt-4"></div>
                     </div>
                 </div>
-            </div>
-
-        </div>
-    </section>
-
-    <section class="tools-section container section-padding">
-        <div class="section-heading text-center">
-            <h2>Des chiffres, pas des devinettes</h2>
-        </div>
-        <div class="tools-grid">
-            <div class="tool-card">
-                <h3>REER vs CELI</h3>
-                <p>Le calculateur fiscal ultime.</p>
-                <a href="simulateurs.html#reer-celi" class="stretched-link" aria-label="Calculateur REER vs CELI"></a>
-            </div>
-            <div class="tool-card">
-                <h3>Acheter vs Louer</h3>
-                <p>Le simulateur immobilier 360°.</p>
-                <a href="simulateurs.html#acheter-louer" class="stretched-link" aria-label="Calculateur Acheter ou Louer"></a>
-            </div>
-            <div class="tool-card">
-                <h3>Durée du capital</h3>
-                <p>Préparez votre décaissement.</p>
-                <a href="simulateurs.html#duree-capital" class="stretched-link" aria-label="Calculateur durée du capital"></a>
-            </div>
-            <div class="tool-card explore-more">
-                <h3>Voir les 10+ outils</h3>
-                <span class="arrow" aria-hidden="true">→</span>
-                <a href="simulateurs.html" class="stretched-link"></a>
             </div>
         </div>
     </section>
 
-    <section class="container section-padding seo-section">
-        <div class="seo-text-block">
-            <h2>Planification de retraite et patrimoine au Québec</h2>
-            <div class="text-columns">
-                <p>Finoza vous accompagne dans la gestion de vos <strong>finances personnelles</strong> avec une expertise pointue sur la fiscalité québécoise. Comprendre quand cotiser à son <strong>REER</strong> plutôt qu'à son <strong>CELI</strong> est crucial pour maximiser votre remboursement d'impôt et votre épargne retraite.</p>
-                <p>Notre mission est de fournir des outils impartiaux pour évaluer l'impact des <strong>frais de gestion</strong>, simuler vos projets immobiliers et planifier votre <strong>indépendance financière</strong>. Prenez des décisions basées sur des données réelles et optimisez chaque dollar de votre patrimoine.</p>
+    <section class="star-feature-section" id="simulateur-retraite">
+        <div class="container star-container">
+            <div class="star-content">
+                <span class="badge badge-accent">Outil Populaire</span>
+                <h2>Serez-vous prêt pour la retraite ?</h2>
+                <p>Ne laissez pas votre avenir au hasard. Notre simulateur complet prend en compte l'inflation, vos placements (REER/CELI), et les rentes gouvernementales (RRQ/PSV) pour créer votre plan de décaissement exact.</p>
+                <a href="simulateur-retraite.html" class="btn-primary-large mt-4">Lancer le simulateur de retraite</a>
+            </div>
+            <div class="star-visual">
+                <div class="mockup-chart">
+                    <div class="bar bar-1"></div>
+                    <div class="bar bar-2"></div>
+                    <div class="bar bar-3"></div>
+                    <div class="bar bar-4"></div>
+                    <div class="bar bar-5"></div>
+                </div>
             </div>
         </div>
     </section>
 
-    <section id="contact" class="newsletter-section section-padding">
-        <div class="container newsletter-box text-center">
-            <h2>Bâtissons Finoza ensemble</h2>
-            <p>Recevez nos nouveaux calculateurs et topos exclusifs directement dans votre boîte de réception. Zéro spam, 100% éducation financière.</p>
-            <form class="subscribe-form d-flex justify-center mt-4">
-                <label for="email-sub" class="sr-only">Votre courriel</label>
-                <input type="email" id="email-sub" placeholder="nom@courriel.com" required autocomplete="email">
-                <button type="submit" class="btn-primary">S'abonner</button>
+    <section class="articles-section section-padding">
+        <div class="container">
+            <div class="section-header d-flex justify-between align-center mb-5">
+                <h2>À ne pas manquer</h2>
+                <a href="articles.html" class="btn-text d-none-mobile">Voir tous les articles →</a>
+            </div>
+            <div class="articles-grid">
+                <article class="article-card">
+                    <div class="article-img placeholder-img"></div>
+                    <div class="article-content">
+                        <span class="article-time">⏱️ 4 min de lecture</span>
+                        <h3>Fonds Mutuels vs FNB : Le vrai coût caché</h3>
+                        <p>Découvrez comment les frais de gestion grugent votre portefeuille sur le long terme.</p>
+                    </div>
+                </article>
+                <article class="article-card">
+                    <div class="article-img placeholder-img"></div>
+                    <div class="article-content">
+                        <span class="article-time">⏱️ 6 min de lecture</span>
+                        <h3>La stratégie de décaissement REER optimale</h3>
+                        <p>Comment retirer votre argent sans payer le prix fort en impôts à la retraite.</p>
+                    </div>
+                </article>
+                <article class="article-card">
+                    <div class="article-img placeholder-img"></div>
+                    <div class="article-content">
+                        <span class="article-time">⏱️ 5 min de lecture</span>
+                        <h3>CELI ou REER : Par quoi commencer ?</h3>
+                        <p>Le guide définitif pour choisir le bon compte selon votre salaire et vos objectifs.</p>
+                    </div>
+                </article>
+            </div>
+            <div class="text-center mt-4 d-block-mobile hidden">
+                <a href="articles.html" class="btn-secondary-large outline">Voir tous les articles</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="newsletter-section section-padding text-center">
+        <div class="container newsletter-container">
+            <h2>L'infolettre Finoza</h2>
+            <p>Rejoignez des milliers de Québécois qui optimisent leurs finances chaque semaine.</p>
+            <form class="newsletter-form mt-4">
+                <input type="email" placeholder="Votre adresse courriel" required>
+                <button type="submit" class="btn-primary-large">S'abonner</button>
             </form>
         </div>
     </section>
 
-</main>
-
-<footer id="footer-placeholder"></footer>
-
-</body>
-</html>            <article class="card interactive-card">
-                <span class="icon" aria-hidden="true">🕵️‍♂️</span>
-                <h3>Active vs Passive</h3>
-                <p class="topo">Méfiez-vous du "closet indexing". Apprenez à démasquer les fonds mutuels qui vous chargent le prix fort pour copier le marché.</p>
-                <a href="article-closet-indexing.html" class="btn-outline-small">Lire l'analyse</a>
-            </article>
-
-            <article class="card interactive-card highlight-card">
-                <span class="icon" aria-hidden="true">🧮</span>
-                <h3>Simulateur de frais de gestion</h3>
-                <p class="topo">Le tueur silencieux de la richesse. Calculez exactement combien de milliers de dollars vous perdez à cause de frais de 2%.</p>
-                <a href="simulateurs.html#frais-gestion" class="btn-primary btn-small">Lancer l'outil</a>
-            </article>
-
-            <article class="card interactive-card">
-                <span class="icon" aria-hidden="true">🔮</span>
-                <h3>Prévisions S&P 500</h3>
-                <p class="topo">Suivi des cibles de Wall Street pour 2025 et analyse historique de la fiabilité des prédictions des experts financiers.</p>
-                <a href="article-previsions-sp500.html" class="btn-outline-small">Voir les données</a>
-            </article>
-            
-             <article class="card interactive-card highlight-card">
-                <span class="icon" aria-hidden="true">📈</span>
-                <h3>Simulateur de portefeuille FNB</h3>
-                <p class="topo">Projetez la croissance d'un portefeuille passif basé sur vos cotisations mensuelles et le rendement espéré.</p>
-                <a href="simulateurs.html#simulateur-fnb" class="btn-primary btn-small">Lancer l'outil</a>
-            </article>
-
-        </div>
-    </section>
-</main>
-
-<footer id="footer-placeholder"></footer>
-
-</body>
-</html>
-<main id="contenu-principal">
-    <section id="accueil" class="hero">
+    <footer style="background: var(--primary-color); color: white; padding: 2rem 0; text-align: center;">
         <div class="container">
-            <h1>L'intelligence financière à votre portée</h1>
-            <p class="subtitle">Des guides clairs et des calculateurs de précision pour maîtriser votre budget, vos régimes fiscaux et vos investissements au Québec.</p>
-            <div class="hero-btns">
-                <a href="#selection-calculatrices" class="btn-primary">Utiliser nos outils gratuits</a>
-                <a href="retraite-patrimoine.html" class="btn-secondary">Planifier ma retraite</a>
-            </div>
+            <p>&copy; 2024 Finoza. Tous droits réservés.</p>
         </div>
-    </section>
+    </footer>
 
-    <section class="container section-padding">
-        <div class="section-header text-center">
-            <h2>Votre parcours financier complet</h2>
-        </div>
-        <div class="card-grid">
-            <article class="card">
-                <span class="icon" aria-hidden="true">💳</span>
-                <h3>Budget & Quotidien</h3>
-                <p>Maîtrisez vos liquidités et calculez le <strong>coût d'opportunité</strong> de vos dépenses courantes.</p>
-                <a href="budget-quotidien.html" class="link-text">Gérer mes comptes →</a>
-            </article>
-            <article class="card">
-                <span class="icon" aria-hidden="true">🏠</span>
-                <h3>Crédit & Propriété</h3>
-                <p>Simulateurs d'<strong>hypothèque</strong> et comparatifs achat vs location pour vos projets immobiliers.</p>
-                <a href="credit-propriete.html" class="link-text">Financer mes projets →</a>
-            </article>
-            <article class="card">
-                <span class="icon" aria-hidden="true">📈</span>
-                <h3>Investissements</h3>
-                <p>Comprenez l'<strong>investissement indiciel (FNB)</strong>, la gestion active et les prévisions de rendement boursier.</p>
-                <a href="investissements.html" class="link-text">Apprendre à investir →</a>
-            </article>
-            <article class="card">
-                <span class="icon" aria-hidden="true">🌳</span>
-                <h3>Retraite & Patrimoine</h3>
-                <p>Optimisez vos régimes <strong>REER, CELI, CELIAPP</strong>, vos stratégies de décaissement et votre succession.</p>
-                <a href="retraite-patrimoine.html" class="link-text">Bâtir mon avenir →</a>
-            </article>
-        </div>
-    </section>
-
-    <section id="selection-calculatrices" class="container bg-light section-padding">
-        <div class="section-header text-center">
-            <h2>Nos simulateurs les plus populaires</h2>
-            <p>Des chiffres précis pour des décisions éclairées.</p>
-        </div>
-        <div class="carousel-wrapper">
-            <div class="card-grid-scroller" id="calculators-scroller">  
-                <div class="card-grid">
-                    <a href="simulateurs.html#retraite" class="card card-link">
-                        <h3>Retraite 360°</h3>
-                        <p>Simulez votre capital de fin de carrière.</p>
-                    </a>
-                    <a href="simulateurs.html#reer-celi" class="card card-link">
-                        <h3>REER vs CELI</h3>
-                        <p>Choisissez le meilleur abri fiscal selon votre revenu.</p>
-                    </a>
-                    <a href="simulateurs.html#hypotheque" class="card card-link">
-                        <h3>Hypothèque</h3>
-                        <p>Calculez vos paiements et intérêts.</p>
-                    </a>
-                    <a href="simulateurs.html#acheter-louer" class="card card-link">
-                        <h3>Acheter ou Louer</h3>
-                        <p>Comparez la richesse nette à long terme.</p>
-                    </a>
-                </div>
-            </div>
-            <button id="scroll-left-btn" class="carousel-arrow" aria-label="Gauche">&lt;</button>
-            <button id="scroll-right-btn" class="carousel-arrow" aria-label="Droite">&gt;</button>
-        </div>
-    </section>
-
-    <section id="predictions" class="container section-padding">
-        <div class="prediction-layout-grid">
-            <div class="prediction-widget">
-                <p class="widget-label">CONSENSUS MARCHÉ FIN 2025</p>
-                <div class="gauge-container">
-                    <canvas id="sp500Gauge" aria-label="Jauge de prédiction du S&P 500" role="img"></canvas>
-                    <div id="gaugeTargetText" class="gauge-target-text" aria-live="polite"></div>
-                </div>
-                <div class="prediction-data">
-                    <div class="current-level">
-                        S&P 500 Actuel : <strong id="currentLevelText">...</strong>
-                    </div>
-                    <div class="prediction-gap">
-                        <span id="gapLabel">Potentiel</span>
-                        <strong id="percentageGap">...</strong> 
-                    </div>
-                </div>
-            </div>
-            <div class="prediction-explanation">
-                <h2>Analyses et Marchés Boursiers</h2>
-                <p>Le volet <strong>Investissements</strong> de Finoza décortique les prédictions des experts et compare les rendements historiques pour vous aider à bâtir un portefeuille robuste.</p>
-                <a href="investissements.html" class="btn-primary">Découvrir les stratégies</a>
-            </div>
-        </div>
-    </section>
-
-    <section class="container section-padding seo-section">
-        <div class="seo-text-block">
-            <h2>Planification de retraite et patrimoine au Québec</h2>
-            <div class="text-columns">
-                <p>Finoza vous accompagne dans la gestion de vos <strong>finances personnelles</strong> avec une expertise pointue sur la fiscalité québécoise. Comprendre quand cotiser à son <strong>REER</strong> plutôt qu'à son <strong>CELI</strong> est crucial pour maximiser votre remboursement d'impôt et votre épargne retraite.</p>
-                <p>Notre mission est de fournir des outils impartiaux pour évaluer l'impact des <strong>frais de gestion</strong>, simuler vos projets immobiliers et planifier votre <strong>indépendance financière (FIRE)</strong>. Prenez des décisions basées sur des données réelles et optimisez chaque dollar de votre patrimoine.</p>
-            </div>
-        </div>
-    </section>
-
-    <section id="articles" class="container section-padding bg-light">
-        <div class="section-header text-center">
-            <h2>Articles et Guides Récents</h2>
-        </div>
-        <div class="card-grid">
-            <article class="card">
-                <a href="article-frais-de-gestion.html" class="card-link">
-                    <h3>Les frais de gestion : L'impact sur 25 ans</h3>
-                    <p>Découvrez comment 2% de frais peuvent gruger 40% de votre capital.</p>
-                </a>
-            </article>
-            <article class="card">
-                <a href="article-celi.html" class="card-link">
-                    <h3>Guide complet du CELIAPP</h3>
-                    <p>Le véhicule hybride idéal pour votre première propriété.</p>
-                </a>
-            </article>
-            <article class="card">
-                <a href="article-closet-indexing.html" class="card-link">
-                    <h3>Gestion Active vs Passive</h3>
-                    <p>Pourquoi les indices battent souvent les gestionnaires de fonds.</p>
-                </a>
-            </article>
-        </div>
-    </section>
-
-    <section id="contact" class="contact-section section-padding">
-        <div class="container">
-            <div class="contact-box">
-                <h2>Bâtissons Finoza ensemble</h2>
-                <p>Une question sur un régime ou un calcul ? Écrivez-nous.</p>
-                <form class="contact-form">
-                    <div class="form-row">
-                        <label for="contact-email" class="sr-only">Votre courriel</label>
-                        <input type="email" id="contact-email" name="email" placeholder="Entrez votre courriel" required autocomplete="email">
-                        <button type="submit" class="btn-primary">S'abonner</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
-</main>
-
-<footer id="footer-placeholder"></footer>
-
+    <script src="script.js"></script>
 </body>
 </html>
