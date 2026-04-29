@@ -432,11 +432,11 @@ a.article-card {
     margin-top: 1.5rem; /* Ajout d'aération (padding) au-dessus des boutons */
 }
 .chip {
-    padding: 8px 16px;
+    padding: 12px 22px; /* Beaucoup plus d'espace en haut/bas et sur les côtés */
     background: var(--bg-color);
     border: 1px solid var(--border-color);
     border-radius: 50px;
-    font-size: 0.9rem;
+    font-size: 1.05rem; /* Texte plus grand et plus lisible */
     font-weight: 600;
     color: var(--text-color);
     cursor: pointer;
