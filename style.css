@@ -424,12 +424,27 @@ a.article-card {
     max-width: 900px;
     margin: 0 auto;
 }
-/* Style des pastilles et boîte interactive */
+/* --- RÉGLAGE DE L'ESPACEMENT DES PASTILLES --- */
 .preset-chips {
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 1.5rem; /* Ajout d'aération (padding) au-dessus des boutons */
+    margin-top: 1rem; /* Réduit l'espace vide trop grand au-dessus */
+    margin-bottom: 0.5rem; /* Ajuste l'espace en dessous */
+}
+
+/* --- ILLUMINATION POUR LES CHOIX UNIQUES (AUTO) --- */
+.chip.selected-primary {
+    background: var(--primary-color); /* Utilise votre couleur de thème au lieu du rouge */
+    color: white;
+    border-color: var(--primary-color);
+    transform: scale(0.95);
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.2);
+}
+.chip.selected-primary:hover {
+    background: var(--primary-color);
+    border-color: var(--primary-color);
+    transform: scale(0.95);
 }
 .chip {
     padding: 12px 22px; /* Beaucoup plus d'espace en haut/bas et sur les côtés */
