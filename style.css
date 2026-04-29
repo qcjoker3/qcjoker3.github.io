@@ -399,3 +399,29 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 .prediction-gap .success { color: #10B981; } .prediction-gap .failure { color: #EF4444; } .prediction-gap .warning { color: #F59E0B; }
 .footnote-disclaimer { font-size: 0.9rem; font-style: italic; color: var(--subtle-text-color); text-align: center; padding-top: 1.5rem; margin-top: 2.5rem; border-top: 1px solid var(--border-color); max-width: 800px; margin-left: auto; margin-right: auto; }
 @media (max-width: 900px) { .prediction-layout-grid { grid-template-columns: 1fr; } }
+
+/* --- Ajustements demandés --- */
+
+/* 1. Badge toujours gris (désactive le bleu/mauve) */
+.badge.badge-gris {
+    color: var(--subtle-text-color);
+    border-color: var(--border-color);
+}
+
+/* 2. Le lien "Voir tous les articles" en Mauve */
+.btn-text-mauve {
+    color: #A855F7; /* Le code hexadécimal de votre mauve */
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+.btn-text-mauve:hover {
+    color: var(--primary-color);
+}
+
+/* 3. Propreté des cartes d'articles devenues des liens */
+a.article-card {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+}
