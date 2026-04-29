@@ -70,7 +70,7 @@
         </div>
     </section>
 
-<section class="quick-tools-section section-padding bg-light" id="outils-rapides">
+    <section class="quick-tools-section section-padding bg-light" id="outils-rapides">
         <div class="container">
             <div class="section-header text-center mb-5">
                 <h2>Outils Rapides</h2>
@@ -79,9 +79,9 @@
             
             <div class="tools-container">
                 <div class="tools-tabs">
-                    <button class="tab-btn active" data-tab="marche">Marché</button>
-                    <button class="tab-btn" data-tab="auto">Voiture</button>
-                    <button class="tab-btn" data-tab="locataire">Logement</button>
+                    <button class="tab-btn active" data-tab="marche">Marché (S&P 500)</button>
+                    <button class="tab-btn" data-tab="auto">Auto vs Réparation</button>
+                    <button class="tab-btn" data-tab="locataire">Choc du Locataire</button>
                     <button class="tab-btn" data-tab="independance">Indépendance</button>
                     <button class="tab-btn" data-tab="depenses">Dépenses</button>
                 </div>
@@ -90,30 +90,31 @@
                     
                     <div class="tab-pane active" id="tab-marche">
                         <div class="prediction-layout-grid">
-                            <div class="prediction-explanation">
-                                <h3>Prévisions du S&P 500</h3>
-                                <p>Découvrez le consensus et les cibles de fin d'année fixées par les plus grandes institutions financières mondiales (Goldman Sachs, JP Morgan, Morgan Stanley, etc.).</p>
-                                <a href="investissements.html" class="btn-primary-small mt-3">Comprendre ces prévisions →</a>
-                            </div>
                             
                             <div class="prediction-widget">
-                                <h4>Cible Moyenne des Banques</h4>
+                                <p class="widget-label" style="font-weight: 600; font-size: 0.9rem; color: var(--subtle-text-color); margin-bottom: 1rem;">CONSENSUS MARCHÉ FIN 2025</p>
                                 <div class="gauge-container">
-                                    <canvas id="predictionChart" height="150"></canvas>
-                                    <div class="gauge-target-text">
-                                        <strong>5 500</strong>
-                                        Points
-                                    </div>
+                                    <canvas id="sp500Gauge" aria-label="Jauge de prédiction du S&P 500" role="img"></canvas>
+                                    <div id="gaugeTargetText" class="gauge-target-text" aria-live="polite"></div>
                                 </div>
                                 <div class="prediction-data">
-                                    <div class="current-level">Niveau actuel : <span>~5 100 pts</span></div>
+                                    <div class="current-level">
+                                        S&P 500 Actuel : <strong id="currentLevelText">...</strong>
+                                    </div>
                                     <div class="prediction-gap">
-                                        Potentiel : <strong class="success">+7.8%</strong>
+                                        <span id="gapLabel">Potentiel</span>
+                                        <strong id="percentageGap">...</strong> 
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="prediction-explanation">
+                                <h2>Analyses et Marchés Boursiers</h2>
+                                <p>Le volet <strong>Investissements</strong> de Finoza décortique les prédictions des experts et compare les rendements historiques pour vous aider à bâtir un portefeuille robuste.</p>
+                                <a href="investissements.html" class="btn-primary mt-3">Découvrir les stratégies</a>
+                            </div>
+
                         </div>
-                        <p class="footnote-disclaimer mt-4">* Ces prévisions sont des estimations d'institutions tierces et ne constituent pas des conseils financiers.</p>
                     </div>
 
                     <div class="tab-pane" id="tab-auto">
