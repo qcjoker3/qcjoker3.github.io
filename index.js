@@ -38,12 +38,11 @@ const formatCurrency = (amount) => {
 // ==========================================
 // 2. FONCTIONS DE PRÉSÉLECTION (CHIPS)
 // ==========================================
-function setAutoPreset(pmt, m, r) {
-    document.getElementById('car-payment').value = pmt;
+function setAutoPreset(price, m, r) {
+    document.getElementById('new-car-price').value = price;
     document.getElementById('car-months').value = m;
     document.getElementById('car-rate').value = r;
     calculateAuto();
-};
 }
 function setExpensePreset(amount) {
     document.getElementById('weekly-expense').value = amount;
@@ -66,36 +65,37 @@ function setInflationPreset(amount) {
 // Piège 1 : Auto Neuve
 function calculateAuto() {
     const repairCost = parseFloat(document.getElementById('repair-cost').value);
-    const payment = parseFloat(document.getElementById('car-payment').value);
+    const newCarPrice = parseFloat(document.getElementById('new-car-price').value);
     const months = parseInt(document.getElementById('car-months').value);
     const annualRate = parseFloat(document.getElementById('car-rate').value) / 100;
     const resultDiv = document.getElementById('auto-result');
     
-    // Si un champ est vide ou invalide, on cache le résultat
-    if (isNaN(repairCost) || isNaN(payment) || isNaN(months) || isNaN(annualRate) || payment <= 0 || months <= 0 || repairCost < 0) {
+    // Vérification de sécurité
+    if (isNaN(repairCost) || isNaN(newCarPrice) || isNaN(months) || isNaN(annualRate) || newCarPrice <= 0 || months <= 0 || repairCost < 0) {
         resultDiv.classList.add('hidden');
         return;
     }
 
-    // Retrouver la valeur du prêt à partir du paiement
+    // Calcul mathématique du paiement mensuel (Amortissement)
     const monthlyRate = annualRate / 12;
-    let principal = 0;
+    let monthlyPayment = 0;
     if (monthlyRate > 0) {
-        principal = payment * ((1 - Math.pow(1 + monthlyRate, -months)) / monthlyRate);
+        monthlyPayment = newCarPrice * (monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
     } else {
-        principal = payment * months;
+        monthlyPayment = newCarPrice / months;
     }
     
-    const totalPaid = payment * months;
-    const totalInterest = totalPaid - principal;
+    // Totaux
+    const totalPaid = monthlyPayment * months;
+    const totalInterest = totalPaid - newCarPrice;
     
     // Équivalence réparation vs mois de paiement
-    const monthsEquivalent = (repairCost / payment).toFixed(1);
+    const monthsEquivalent = (repairCost / monthlyPayment).toFixed(1);
     
-    // Le montant payé "dans le vide" juste pour avoir une auto neuve
+    // Le montant payé "dans le vide"
     const differenceInutile = totalPaid - repairCost;
 
-    resultDiv.innerHTML = `Une facture de garage de <strong>${formatCurrency(repairCost)}</strong> fait mal au cœur. Pourtant, ce montant représente à peine <strong>${monthsEquivalent} mois</strong> de paiements de votre nouvelle voiture !<br><br>En fuyant cette réparation, vous vous engagez à débourser <strong>${formatCurrency(totalPaid)}</strong> sur ${months / 12} ans. Vous paierez donc <strong>${formatCurrency(differenceInutile)} de plus</strong> que votre facture de garage, sans compter les ${formatCurrency(totalInterest)} jetés par les fenêtres en purs intérêts.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Changer d'auto pour éviter de réparer l'ancienne est un désastre mathématique. Gardez votre voiture !</span>`;
+    resultDiv.innerHTML = `Une facture de garage de <strong>${formatCurrency(repairCost)}</strong> fait mal au cœur. Pourtant, ce montant représente à peine <strong>${monthsEquivalent} mois</strong> de paiements de votre nouvelle voiture (qui vous coûtera <strong>${formatCurrency(monthlyPayment)}/mois</strong>) !<br><br>En fuyant cette réparation, vous vous engagez à débourser <strong>${formatCurrency(totalPaid)}</strong> sur ${months / 12} ans. Vous paierez donc <strong>${formatCurrency(differenceInutile)} de plus</strong> que votre facture de garage, sans compter les ${formatCurrency(totalInterest)} jetés par les fenêtres en purs intérêts.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Changer d'auto pour éviter de réparer l'ancienne est un désastre mathématique. Gardez votre voiture !</span>`;
     resultDiv.classList.remove('hidden');
 }
 
