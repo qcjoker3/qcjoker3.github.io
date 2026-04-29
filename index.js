@@ -38,12 +38,12 @@ const formatCurrency = (amount) => {
 // ==========================================
 // 2. FONCTIONS DE PRÉSÉLECTION (CHIPS)
 // ==========================================
-function setAutoPreset(repair, pmt, m, r) {
-    document.getElementById('repair-cost').value = repair;
+function setAutoPreset(pmt, m, r) {
     document.getElementById('car-payment').value = pmt;
     document.getElementById('car-months').value = m;
     document.getElementById('car-rate').value = r;
     calculateAuto();
+};
 }
 function setExpensePreset(amount) {
     document.getElementById('weekly-expense').value = amount;
@@ -71,7 +71,11 @@ function calculateAuto() {
     const annualRate = parseFloat(document.getElementById('car-rate').value) / 100;
     const resultDiv = document.getElementById('auto-result');
     
-    if (isNaN(repairCost) || isNaN(payment) || isNaN(months) || isNaN(annualRate) || payment <= 0 || months <= 0 || repairCost < 0) return;
+    // Si un champ est vide ou invalide, on cache le résultat
+    if (isNaN(repairCost) || isNaN(payment) || isNaN(months) || isNaN(annualRate) || payment <= 0 || months <= 0 || repairCost < 0) {
+        resultDiv.classList.add('hidden');
+        return;
+    }
 
     // Retrouver la valeur du prêt à partir du paiement
     const monthlyRate = annualRate / 12;
@@ -87,8 +91,11 @@ function calculateAuto() {
     
     // Équivalence réparation vs mois de paiement
     const monthsEquivalent = (repairCost / payment).toFixed(1);
+    
+    // Le montant payé "dans le vide" juste pour avoir une auto neuve
+    const differenceInutile = totalPaid - repairCost;
 
-    resultDiv.innerHTML = `Une facture de garage de <strong>${formatCurrency(repairCost)}</strong> fait mal au cœur. Pourtant, cela représente à peine <strong>${monthsEquivalent} mois</strong> de paiements de la voiture neuve !<br><br>En signant pour cette nouvelle auto, vous vous engagez à payer <strong>${formatCurrency(totalPaid)}</strong> sur ${months / 12} ans.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Pire encore : Vous paierez ${formatCurrency(totalInterest)} en pur intérêt à la banque. C'est beaucoup plus cher que n'importe quelle réparation ! Conservez votre voiture.</span>`;
+    resultDiv.innerHTML = `Une facture de garage de <strong>${formatCurrency(repairCost)}</strong> fait mal au cœur. Pourtant, ce montant représente à peine <strong>${monthsEquivalent} mois</strong> de paiements de votre nouvelle voiture !<br><br>En fuyant cette réparation, vous vous engagez à débourser <strong>${formatCurrency(totalPaid)}</strong> sur ${months / 12} ans. Vous paierez donc <strong>${formatCurrency(differenceInutile)} de plus</strong> que votre facture de garage, sans compter les ${formatCurrency(totalInterest)} jetés par les fenêtres en purs intérêts.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Changer d'auto pour éviter de réparer l'ancienne est un désastre mathématique. Gardez votre voiture !</span>`;
     resultDiv.classList.remove('hidden');
 }
 
