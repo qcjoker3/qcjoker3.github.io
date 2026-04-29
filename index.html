@@ -151,22 +151,29 @@
 
                     <div class="tab-pane" id="tab-credit">
                         <h3>Le fléau du paiement minimum</h3>
-                        <p>À 20,99% d'intérêt, le paiement minimum est conçu pour vous garder endetté à vie.</p>
+                        <p>À 20,99% d'intérêt, le paiement minimum de la carte de crédit est conçu par les banques pour vous garder endetté le plus longtemps possible.</p>
                         
-                        <div class="preset-chips mb-3">
-                            <button class="chip" onclick="setCreditPreset(2500, 75)">💳 Petite dette (2 500$)</button>
-                            <button class="chip" onclick="setCreditPreset(8000, 240)">🛍️ Grosse dette (8 000$)</button>
+                        <div class="preset-chips mb-4">
+                            <button class="chip credit-chip" onclick="setCreditPreset(2500, 75, this)">💳 Petite dette (2 500$)</button>
+                            <button class="chip credit-chip" onclick="setCreditPreset(5000, 150, this)">🛒 Dette moyenne (5 000$)</button>
+                            <button class="chip credit-chip" onclick="setCreditPreset(10000, 220, this)">🛍️ Grosse dette (10 000$)</button>
                         </div>
 
-                        <div class="input-group-row">
-                            <label for="cc-balance">Solde de la carte de crédit ($)</label>
-                            <input type="number" id="cc-balance" value="2500" />
+                        <div class="form-columns">
+                            <div>
+                                <div class="input-group-row">
+                                    <label for="cc-balance" style="color: var(--primary-color);">Solde de la carte de crédit ($)</label>
+                                    <input type="number" id="cc-balance" value="2500" oninput="calculateCreditCard()" />
+                                </div>
+                            </div>
+                            <div>
+                                <div class="input-group-row">
+                                    <label for="cc-payment">Paiement mensuel que vous faites ($)</label>
+                                    <input type="number" id="cc-payment" value="75" oninput="calculateCreditCard()" />
+                                </div>
+                            </div>
                         </div>
-                        <div class="input-group-row">
-                            <label for="cc-payment">Paiement mensuel que vous faites ($)</label>
-                            <input type="number" id="cc-payment" value="75" />
-                        </div>
-                        <button class="btn-primary-small mt-3" onclick="calculateCreditCard()">Analyser ma dette</button>
+                        
                         <div id="cc-result" class="tool-result-box hidden mt-4"></div>
                     </div>
 
