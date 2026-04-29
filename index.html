@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="fr-CA">
-<html lang="fr-CA">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,25 +7,25 @@
     
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-
-    <script src="donnees.js"></script> 
+    
+    <script src="donnees.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3"></script>
-
 </head>
 <body>
+
     <header class="main-nav">
         <div class="container d-flex justify-between align-center">
             <a href="index.html" class="logo">
-                <strong><span style="color: var(--accent-color);">Finoza.</span></strong>
-            </a> <nav>
-                <a href="depense.html">Dépenses courantes</a>
-                <a href="credit.html">Crédit</a>
-                <a href="financement.html">Financement</a>
-                <a href="investissement.html">Investissement</a>
-                <a href="retraite.html">Retraite</a>
-                <a href="patrimoine.html">Patrimoine</a>
+                <strong>Finoza<span style="color: var(--accent-color);">.</span></strong>
+            </a>
+            <nav>
+                <a href="budget-quotidien.html">Budget et Quotidien</a>
+                <a href="credit-propriete.html">Crédit et Financement</a>
+                <a href="investissements.html">Investissements</a>
+                <a href="retraite-patrimoine.html">Retraite et Patrimoine</a>
                 <a href="calculateurs.html">Calculateurs</a>
-                <a href="articles.html">Articles</a> </nav>
+                <a href="articles.html">Articles</a>
+            </nav>
         </div>
     </header>
 
@@ -35,7 +34,11 @@
             <div class="hero-text text-center">
                 <span class="badge badge-gris">Outils 100 % gratuits</span>
                 <h1 class="gradient-text">Prenez une longueur d'avance sur votre avenir financier.</h1>
-                <p>Des calculateurs précis et des stratégies simples pour faire fructifier votre argent, payer moins d'impôt et planifier votre indépendance financière.</p>
+                <p>Des calculateurs de précision et des stratégies sans jargon pour faire fructifier votre argent, payer moins d'impôt et planifier votre indépendance au Québec.</p>
+                <div class="cta-group justify-center">
+                    <a href="#simulateur-retraite" class="btn-primary-large">Créer mon plan de match</a>
+                    <a href="#pieges-financiers" class="btn-secondary-large outline">Les pièges à éviter ↓</a>
+                </div>
             </div>
         </div>
     </section>
@@ -43,8 +46,8 @@
     <section class="ecosystem-section section-padding" id="ecosysteme">
         <div class="container">
             <div class="section-header text-center mb-5">
-                <h2>Les concepts clés</h2>
-                <p>Maîtrisez les piliers de vos finances personnelles.</p>
+                <h2>L'écosystème Finoza</h2>
+                <p>Maîtrisez les 4 piliers de vos finances personnelles.</p>
             </div>
             <div class="bento-grid-3">
                 <a href="investissements.html" class="bento-card bento-large">
@@ -54,13 +57,268 @@
                 </a>
                 <a href="budget.html" class="bento-card bento-small">
                     <div class="bento-icon">📊</div>
-                    <h3>Budget & Quotidien</h3>
+                    <h3>Budget & Cash-flow</h3>
                     <p>Reprenez le contrôle de vos liquidités sans vous priver.</p>
                 </a>
                 <a href="credit.html" class="bento-card bento-small">
                     <div class="bento-icon">💳</div>
                     <h3>Crédit & Propriété</h3>
                     <p>Démystifiez les cotes de crédit et l'achat immobilier.</p>
+                </a>
+                <a href="retraite.html" class="bento-card bento-large">
+                    <div class="bento-icon">🌴</div>
+                    <h3>Retraite & Patrimoine</h3>
+                    <p>Planifiez votre indépendance financière. Calculez combien il vous faut et comment décaisser stratégiquement pour ne jamais manquer d'argent.</p>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section class="quick-tools-section section-padding bg-light" id="pieges-financiers">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2>Les pires pièges financiers à éviter</h2>
+                <p>Déjouez les illusions mathématiques qui grugent silencieusement votre patrimoine au quotidien.</p>
+            </div>
+            
+            <div class="tools-container">
+                <div class="tools-tabs">
+                    <button class="tab-btn active" data-tab="auto">La voiture neuve</button>
+                    <button class="tab-btn" data-tab="depenses">Les dépenses quotidiennes</button>
+                    <button class="tab-btn" data-tab="credit">Le paiement minimum</button>
+                    <button class="tab-btn" data-tab="argent-dort">L'argent qui dort</button>
+                    <button class="tab-btn" data-tab="style-vie">L'inflation du style de vie</button>
+                </div>
+
+                <div class="tab-content-wrapper">
+                    
+                    <div class="tab-pane active" id="tab-auto">
+                        <h3>Le gouffre du prêt automobile</h3>
+                        <p>Ne vous fiez jamais au paiement mensuel. Regardez ce que la voiture vous coûte *réellement*.</p>
+                        
+                        <div class="preset-chips mb-3">
+                            <button class="chip" onclick="setAutoPreset(850, 84, 8)">🚙 VUS Moyen (850$/m, 84m)</button>
+                            <button class="chip" onclick="setAutoPreset(1200, 96, 9)">🛻 Pick-up (1200$/m, 96m)</button>
+                            <button class="chip" onclick="setAutoPreset(600, 72, 7)">⚡ Compacte (600$/m, 72m)</button>
+                        </div>
+
+                        <div class="form-columns">
+                            <div>
+                                <div class="input-group-row">
+                                    <label for="car-payment">Paiement mensuel de l'auto ($)</label>
+                                    <input type="number" id="car-payment" value="850" />
+                                </div>
+                                <div class="input-group-row">
+                                    <label for="car-months">Durée du prêt (en mois)</label>
+                                    <input type="number" id="car-months" value="84" />
+                                </div>
+                            </div>
+                            <div>
+                                <div class="input-group-row">
+                                    <label for="car-rate">Taux d'intérêt annuel (%)</label>
+                                    <input type="number" id="car-rate" value="8.0" step="0.1" />
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn-primary-small mt-3" onclick="calculateAuto()">Calculer l'impact réel</button>
+                        <div id="auto-result" class="tool-result-box hidden mt-4"></div>
+                    </div>
+
+                    <div class="tab-pane" id="tab-depenses">
+                        <h3>Le coût d'opportunité</h3>
+                        <p>Découvrez la valeur réelle de vos petites habitudes si elles étaient investies sur 10 ans.</p>
+                        
+                        <div class="preset-chips mb-3">
+                            <button class="chip" onclick="setExpensePreset(25)">☕ Café (25$/sem)</button>
+                            <button class="chip" onclick="setExpensePreset(15)">📺 Streaming (15$/sem)</button>
+                            <button class="chip" onclick="setExpensePreset(75)">🍽️ Restos (75$/sem)</button>
+                        </div>
+
+                        <div class="input-group-row">
+                            <label for="weekly-expense">Ou entrez votre montant ($/semaine)</label>
+                            <input type="number" id="weekly-expense" placeholder="Ex: 35" value="25" />
+                        </div>
+                        <button class="btn-primary-small mt-3" onclick="calculateExpense()">Calculer sur 10 ans</button>
+                        <div id="expense-result" class="tool-result-box hidden mt-4"></div>
+                    </div>
+
+                    <div class="tab-pane" id="tab-credit">
+                        <h3>Le fléau du paiement minimum</h3>
+                        <p>À 20,99% d'intérêt, le paiement minimum est conçu pour vous garder endetté à vie.</p>
+                        
+                        <div class="preset-chips mb-3">
+                            <button class="chip" onclick="setCreditPreset(2500, 75)">💳 Petite dette (2 500$)</button>
+                            <button class="chip" onclick="setCreditPreset(8000, 240)">🛍️ Grosse dette (8 000$)</button>
+                        </div>
+
+                        <div class="input-group-row">
+                            <label for="cc-balance">Solde de la carte de crédit ($)</label>
+                            <input type="number" id="cc-balance" value="2500" />
+                        </div>
+                        <div class="input-group-row">
+                            <label for="cc-payment">Paiement mensuel que vous faites ($)</label>
+                            <input type="number" id="cc-payment" value="75" />
+                        </div>
+                        <button class="btn-primary-small mt-3" onclick="calculateCreditCard()">Analyser ma dette</button>
+                        <div id="cc-result" class="tool-result-box hidden mt-4"></div>
+                    </div>
+
+                    <div class="tab-pane" id="tab-argent-dort">
+                        <h3>L'illusion du compte chèque</h3>
+                        <p>Penser que votre argent est en sécurité à 0% d'intérêt est le plus grand risque financier.</p>
+                        
+                        <div class="preset-chips mb-3">
+                            <button class="chip" onclick="setInflationPreset(15000)">🐷 Fonds d'urgence (15 000$)</button>
+                            <button class="chip" onclick="setInflationPreset(50000)">🏠 Mise de fonds (50 000$)</button>
+                        </div>
+
+                        <div class="input-group-row">
+                            <label for="cash-balance">Montant dormant dans votre compte ($)</label>
+                            <input type="number" id="cash-balance" value="15000" />
+                        </div>
+                        <button class="btn-primary-small mt-3" onclick="calculateInflation()">Voir l'effet de l'inflation</button>
+                        <div id="inflation-result" class="tool-result-box hidden mt-4"></div>
+                    </div>
+
+                    <div class="tab-pane" id="tab-style-vie">
+                        <h3>L'illusion de l'augmentation</h3>
+                        <p>Une hausse de salaire brut fond vite après l'impôt. Voyez comment quelques "récompenses" font disparaître votre promotion.</p>
+
+                        <div class="form-columns mb-3">
+                            <div class="input-group-row">
+                                <label for="salary-before">Salaire brut AVANT ($/an)</label>
+                                <input type="number" id="salary-before" value="60000" oninput="updateLifestyle()" />
+                            </div>
+                            <div class="input-group-row">
+                                <label for="salary-after">Salaire brut APRÈS ($/an)</label>
+                                <input type="number" id="salary-after" value="70000" oninput="updateLifestyle()" />
+                            </div>
+                        </div>
+
+                        <div id="raise-breakdown" class="breakdown-box hidden"></div>
+
+                        <p class="mb-2" style="font-size: 0.95rem; font-weight:600;">Sélectionnez les "récompenses" que vous ajoutez à votre style de vie :</p>
+                        <div class="preset-chips mb-4" id="lifestyle-expenses">
+                            <button class="chip expense-toggle" data-cost="450" onclick="toggleExpense(this)">🚙 Changer d'auto (450$/m)</button>
+                            <button class="chip expense-toggle" data-cost="150" onclick="toggleExpense(this)">🍽️ +1 Resto/sem (150$/m)</button>
+                            <button class="chip expense-toggle" data-cost="200" onclick="toggleExpense(this)">✈️ Voyage annuel (200$/m)</button>
+                            <button class="chip expense-toggle" data-cost="60" onclick="toggleExpense(this)">📺 Abonnements (60$/m)</button>
+                            <button class="chip expense-toggle" data-cost="300" onclick="toggleExpense(this)">🏠 Rénovations (300$/m)</button>
+                        </div>
+
+                        <div id="lifestyle-result" class="tool-result-box hidden"></div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="predictions" class="container section-padding">
+        <div class="prediction-layout-grid">
+            <div class="prediction-widget">
+                <p class="widget-label" style="font-weight: 600; font-size: 0.9rem; color: var(--subtle-text-color); margin-bottom: 1rem;">CONSENSUS MARCHÉ FIN D'ANNÉE</p>
+                <div class="gauge-container">
+                    <canvas id="sp500Gauge" aria-label="Jauge de prédiction du S&P 500" role="img"></canvas>
+                    <div id="gaugeTargetText" class="gauge-target-text" aria-live="polite"></div>
+                </div>
+                <div class="prediction-data">
+                    <div class="current-level">
+                        S&P 500 Actuel : <strong id="currentLevelText">...</strong>
+                    </div>
+                    <div class="prediction-gap">
+                        <span id="gapLabel">Potentiel</span>
+                        <strong id="percentageGap">...</strong> 
+                    </div>
+                </div>
+            </div>
+            <div class="prediction-explanation">
+                <h2>Le Consensus de Wall Street</h2>
+                <p>À chaque début d'année, les stratégistes des grandes banques dévoilent leurs prédictions. Nous compilons la moyenne exacte de ces institutions pour vous donner le pouls du marché.</p>
+                <a href="predictions.html" class="btn-primary mt-3">Voir l'analyse des experts</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="star-feature-section" id="simulateur-retraite">
+        <div class="container star-container">
+            <div class="star-content">
+                <span class="badge badge-accent">Outil Populaire</span>
+                <h2>Serez-vous prêt pour la retraite ?</h2>
+                <p>Ne laissez pas votre avenir au hasard. Notre simulateur complet prend en compte l'inflation, vos placements (REER/CELI), et les rentes gouvernementales (RRQ/PSV) pour créer votre plan de décaissement exact.</p>
+                <a href="simulateur-retraite.html" class="btn-primary-large mt-4">Lancer le simulateur</a>
+            </div>
+            <div class="star-visual">
+                <div class="mockup-chart">
+                    <div class="bar bar-1"></div>
+                    <div class="bar bar-2"></div>
+                    <div class="bar bar-3"></div>
+                    <div class="bar bar-4"></div>
+                    <div class="bar bar-5"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="articles-section section-padding">
+        <div class="container">
+            <div class="section-header d-flex justify-between align-center mb-5">
+                <h2>À ne pas manquer</h2>
+                <a href="articles.html" class="btn-text-mauve d-none-mobile">Voir tous les articles →</a>
+            </div>
+            
+            <div class="articles-grid">
+                <a href="article-fonds-mutuels.html" class="article-card">
+                    <div class="article-img placeholder-img"></div>
+                    <div class="article-content">
+                        <span class="article-time">⏱️ 4 min de lecture</span>
+                        <h3>Fonds Mutuels vs FNB : Le vrai coût caché</h3>
+                        <p>Découvrez comment les frais de gestion grugent votre portefeuille sur le long terme.</p>
+                    </div>
+                </a>
+                <a href="article-decaissement.html" class="article-card">
+                    <div class="article-img placeholder-img"></div>
+                    <div class="article-content">
+                        <span class="article-time">⏱️ 6 min de lecture</span>
+                        <h3>La stratégie de décaissement REER optimale</h3>
+                        <p>Comment retirer votre argent sans payer le prix fort en impôts à la retraite.</p>
+                    </div>
+                </a>
+                <a href="article-celi-reer.html" class="article-card">
+                    <div class="article-img placeholder-img"></div>
+                    <div class="article-content">
+                        <span class="article-time">⏱️ 5 min de lecture</span>
+                        <h3>CELI ou REER : Par quoi commencer ?</h3>
+                        <p>Le guide définitif pour choisir le bon compte selon votre salaire et vos objectifs.</p>
+                    </div>
+                </a>
+            </div>
+            <div class="text-center mt-4 d-block-mobile hidden">
+                <a href="articles.html" class="btn-text-mauve">Voir tous les articles →</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="newsletter-section section-padding text-center">
+        <div class="container newsletter-container">
+            <h2>L'infolettre Finoza</h2>
+            <p>Rejoignez des milliers de Québécois qui optimisent leurs finances chaque semaine.</p>
+            <form class="newsletter-form mt-4">
+                <input type="email" placeholder="Votre adresse courriel" required>
+                <button type="submit" class="btn-primary-large">S'abonner</button>
+            </form>
+        </div>
+    </section>
+
+    <footer style="background: var(--primary-color); color: white; padding: 2rem 0; text-align: center;">
+        <div class="container">
+            <p>&copy; 2024 Finoza. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="index.js"></script>
+</body>
+</html>                    <p>Démystifiez les cotes de crédit et l'achat immobilier.</p>
                 </a>
                 <a href="retraite.html" class="bento-card bento-large">
                     <div class="bento-icon">🌴</div>
