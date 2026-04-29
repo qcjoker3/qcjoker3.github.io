@@ -153,7 +153,7 @@ function calculateExpense() {
     const months25 = 25 * 12;
     const futureValue25 = monthlyInvestment * ((Math.pow(1 + rate, months25) - 1) / rate);
 
-    resultDiv.innerHTML = `Si vous aviez investi ces <strong>${formatCurrency(weekly)}/semaine</strong> dans la bourse (~7% réel) plutôt que de les dépenser :<br><br>Dans 10 ans, vous auriez <strong>${formatCurrency(futureValue10)}</strong> dans vos poches.<br><span style="font-size:0.85rem; color:var(--subtle-text-color);">Dont <strong>${formatCurrency(profit10)}</strong> générés purement par la magie des intérêts composés.</span><br><br><span style="font-size:1.05rem; color:var(--primary-color); font-weight:bold;">Sur 25 ans ? Vos habitudes valent une fortune : ${formatCurrency(futureValue25)} !</span>`;
+    resultDiv.innerHTML = `Si vous aviez investi ces <strong>${formatCurrency(weekly)}/semaine</strong> dans les marchés (7%) plutôt que de les dépenser :<br><br>Dans 10 ans, vous auriez <strong>${formatCurrency(futureValue10)}</strong> dans vos poches.<br><span style="font-size:0.85rem; color:var(--subtle-text-color);">Dont <strong>${formatCurrency(profit10)}</strong> générés purement par la magie des intérêts composés.</span><br><br><span style="font-size:1.05rem; color:var(--primary-color); font-weight:bold;">Sur 25 ans ? Vos habitudes valent une fortune : ${formatCurrency(futureValue25)} !</span>`;
     
     resultDiv.classList.remove('hidden');
 }
@@ -195,7 +195,7 @@ function calculateCreditCard() {
     const totalPaid = monthsNeeded * payment;
     const totalInterest = totalPaid - balance;
 
-    resultDiv.innerHTML = `À coup de ${formatCurrency(payment)}/mois, il vous faudra <strong>${yearsNeeded} années</strong> (soit ${Math.ceil(monthsNeeded)} mois) pour rembourser ce solde.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Le vrai crime : Vous paierez ${formatCurrency(totalInterest)} uniquement en intérêts.</span><br><br>C'est comme si chaque article que vous aviez acheté avec cette carte vous coûtait près du double de son prix en magasin. Augmentez votre paiement d'urgence !`;
+    resultDiv.innerHTML = `À coup de ${formatCurrency(payment)}/mois, il vous faudra <strong>${yearsNeeded} années</strong> (soit ${Math.ceil(monthsNeeded)} mois) pour rembourser ce solde.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Le vrai crime : Vous paierez ${formatCurrency(totalInterest)} en intérêts.</span><br><br>C'est comme si chaque article que vous aviez acheté avec cette carte vous coûtait près du double de son prix en magasin. Augmentez votre paiement d'urgence !`;
     
     // On force la bordure rouge pour ce résultat car une dette de carte de crédit est toujours une urgence
     resultDiv.className = "tool-result-box mt-4";
