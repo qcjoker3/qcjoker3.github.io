@@ -1,3 +1,6 @@
+// MODIFIEZ CE CHIFFRE QUAND VOUS LE DÉSIREZ (ex: une fois par mois)
+const niveauActuelSP500 = 6528;
+
 // La base de données centrale de Finoza pour les prédictions
 const chartDataByYear = {
     "2020": { real: 3756, institutions: ["Goldman Sachs", "JP Morgan", "Bank of America", "Morgan Stanley", "UBS", "Wells Fargo", "Barclays", "RBC", "Deutsche Bank", "Credit Suisse", "BMO", "Oppenheimer"], previsions: [3400, 3400, 3300, 3000, 3000, 3300, 3300, 3350, 3250, 3425, 3400, 3500] },
