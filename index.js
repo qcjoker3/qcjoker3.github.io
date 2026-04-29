@@ -86,23 +86,44 @@ function calculateExpense() {
     resultDiv.classList.remove('hidden');
 }
 
-// --- 4. LE VRAI CODE DE LA JAUGE (Chart.js) ---
+// --- 4. LE VRAI CODE DE LA JAUGE S&P 500 (100% Statique et Rapide) ---
 function initSP500Gauge() {
-    // Remplacer ces variables par vos vrais chiffres de consensus si nécessaire
-    const currentLevel = 5100;
-    const targetLevel = 5500;
-    const potential = (((targetLevel - currentLevel) / currentLevel) * 100).toFixed(1);
+    // 1. S'assurer que les données existent
+    if (typeof chartDataByYear === 'undefined' || typeof niveauActuelSP500 === 'undefined') {
+        console.warn("Fichier donnees.js introuvable ou incomplet.");
+        return;
+    }
 
-    // Mettre à jour les textes dans le HTML
+    // 2. Aller chercher les prévisions de l'année en cours
+    const annees = Object.keys(chartDataByYear).sort();
+    const anneeRecente = annees[annees.length - 1];
+    const previsionsBanques = chartDataByYear[anneeRecente].previsions;
+    
+    // 3. UTILISER VOTRE CHIFFRE MANUEL
+    const niveauActuel = niveauActuelSP500; 
+
+    // 4. CALCUL DU CONSENSUS (Moyenne)
+    const sommePrevisions = previsionsBanques.reduce((a, b) => a + b, 0);
+    const cibleMoyenne = Math.round(sommePrevisions / previsionsBanques.length);
+    
+    // 5. CALCUL DU POTENTIEL
+    const ecart = cibleMoyenne - niveauActuel;
+    const potentielPourcentage = ((ecart / niveauActuel) * 100).toFixed(1);
+    const signe = ecart >= 0 ? '+' : '';
+
+    // 6. MISE À JOUR DU TEXTE HTML
     const currentTextEl = document.getElementById('currentLevelText');
     const targetTextEl = document.getElementById('gaugeTargetText');
     const gapTextEl = document.getElementById('percentageGap');
 
-    if (currentTextEl) currentTextEl.innerText = currentLevel.toLocaleString() + " pts";
-    if (targetTextEl) targetTextEl.innerHTML = `<strong>${targetLevel.toLocaleString()}</strong> Points`;
-    if (gapTextEl) gapTextEl.innerText = `+${potential}%`;
+    if (currentTextEl) currentTextEl.innerText = niveauActuel.toLocaleString('fr-CA') + " pts";
+    if (targetTextEl) targetTextEl.innerHTML = `<strong>${cibleMoyenne.toLocaleString('fr-CA')}</strong><br>Points`;
+    if (gapTextEl) {
+        gapTextEl.innerText = `${signe}${potentielPourcentage}%`;
+        gapTextEl.className = ecart >= 0 ? 'success' : 'failure';
+    }
 
-    // Dessiner la jauge si Chart.js est disponible
+    // 7. CRÉATION DU GRAPHIQUE
     const ctx = document.getElementById('sp500Gauge');
     if (ctx && typeof Chart !== 'undefined') {
         new Chart(ctx, {
@@ -110,31 +131,22 @@ function initSP500Gauge() {
             data: {
                 labels: ['Niveau Actuel', 'Potentiel'],
                 datasets: [{
-                    data: [currentLevel, targetLevel - currentLevel],
-                    backgroundColor: ['#E2E8F0', '#0D9488'], // Gris pâle et Teal Finoza
+                    data: [niveauActuel, Math.abs(ecart)],
+                    backgroundColor: ['#E2E8F0', ecart >= 0 ? '#0D9488' : '#EF4444'],
                     borderWidth: 0,
-                    circumference: 180, // Fait un demi-cercle (jauge)
-                    rotation: 270 // Commence à gauche
+                    circumference: 180,
+                    rotation: 270
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '80%', // Épaisseur de l'anneau
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                }
+                cutout: '80%',
+                plugins: { legend: { display: false }, tooltip: { enabled: false } }
             }
         });
-    } else {
-        console.warn("Chart.js n'est pas chargé ou le canvas sp500Gauge est introuvable.");
     }
-}    let currentRent = rent;
-    for (let i = 0; i < 25; i++) {
-        totalPaid += currentRent * 12;
-        currentRent *= 1.025;
-    }
+}
 
     resultDiv.innerHTML = `En 25 ans, vous aurez versé <strong>${formatCurrency(totalPaid)}</strong> à votre propriétaire. Est-ce vraiment mieux que d'acheter ? Utilisez notre comparateur complet.`;
     resultDiv.classList.remove('hidden');
