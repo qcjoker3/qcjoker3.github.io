@@ -70,7 +70,7 @@
         </div>
     </section>
 
-    <section class="quick-tools-section section-padding bg-light" id="outils-rapides">
+<section class="quick-tools-section section-padding bg-light" id="outils-rapides">
         <div class="container">
             <div class="section-header text-center mb-5">
                 <h2>Outils Rapides</h2>
@@ -80,18 +80,40 @@
             <div class="tools-container">
                 <div class="tools-tabs">
                     <button class="tab-btn active" data-tab="marche">Marché</button>
-                    <button class="tab-btn" data-tab="auto">Auto vs Réparation</button>
-                    <button class="tab-btn" data-tab="locataire">Choc du Locataire</button>
+                    <button class="tab-btn" data-tab="auto">Voiture</button>
+                    <button class="tab-btn" data-tab="locataire">Logement</button>
                     <button class="tab-btn" data-tab="independance">Indépendance</button>
                     <button class="tab-btn" data-tab="depenses">Dépenses</button>
                 </div>
 
                 <div class="tab-content-wrapper">
+                    
                     <div class="tab-pane active" id="tab-marche">
-                        <h3>La force du marché boursier (S&P 500)</h3>
-                        <p>Historiquement, le marché boursier américain a doublé la valeur des investissements environ tous les 7 à 10 ans. Ne laissez pas l'inflation gruger votre épargne dans un compte chèque.</p>
-                        <div class="tool-result-box mb-3 mt-3">Rendement moyen historique : <strong>~8% à 10% par an</strong></div>
-                        <a href="investissements.html" class="btn-text">Découvrir comment investir en bourse →</a>
+                        <div class="prediction-layout-grid">
+                            <div class="prediction-explanation">
+                                <h3>Prévisions du S&P 500</h3>
+                                <p>Découvrez le consensus et les cibles de fin d'année fixées par les plus grandes institutions financières mondiales (Goldman Sachs, JP Morgan, Morgan Stanley, etc.).</p>
+                                <a href="investissements.html" class="btn-primary-small mt-3">Comprendre ces prévisions →</a>
+                            </div>
+                            
+                            <div class="prediction-widget">
+                                <h4>Cible Moyenne des Banques</h4>
+                                <div class="gauge-container">
+                                    <canvas id="predictionChart" height="150"></canvas>
+                                    <div class="gauge-target-text">
+                                        <strong>5 500</strong>
+                                        Points
+                                    </div>
+                                </div>
+                                <div class="prediction-data">
+                                    <div class="current-level">Niveau actuel : <span>~5 100 pts</span></div>
+                                    <div class="prediction-gap">
+                                        Potentiel : <strong class="success">+7.8%</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="footnote-disclaimer mt-4">* Ces prévisions sont des estimations d'institutions tierces et ne constituent pas des conseils financiers.</p>
                     </div>
 
                     <div class="tab-pane" id="tab-auto">
@@ -116,7 +138,6 @@
                         </div>
                         <button class="btn-primary-small mt-3" onclick="calculateRent()">Voir sur 25 ans</button>
                         <div id="rent-result" class="tool-result-box hidden mt-4"></div>
-                        <div class="mt-4"><a href="simulateurs.html" class="btn-text">Acheter vs Louer : Le simulateur complet →</a></div>
                     </div>
 
                     <div class="tab-pane" id="tab-independance">
