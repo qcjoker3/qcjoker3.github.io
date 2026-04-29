@@ -100,17 +100,43 @@ function calculateAuto() {
 }
 
 // Piège 2 : Micro-dépenses
+function toggleHabit(btn) {
+    btn.classList.toggle('selected'); // Utilise la pastille rouge
+    
+    let total = 0;
+    // Additionne toutes les pastilles qui sont sélectionnées
+    document.querySelectorAll('.expense-habit.selected').forEach(b => {
+        total += parseFloat(b.getAttribute('data-cost'));
+    });
+    
+    // Met à jour le champ texte et lance le calcul
+    document.getElementById('weekly-expense').value = total > 0 ? total : '';
+    calculateExpense();
+}
 function calculateExpense() {
     const weekly = parseFloat(document.getElementById('weekly-expense').value);
     const resultDiv = document.getElementById('expense-result');
-    if (isNaN(weekly) || weekly <= 0) return;
+    
+    // Si vide ou invalide, on cache
+    if (isNaN(weekly) || weekly <= 0) {
+        resultDiv.classList.add('hidden');
+        return;
+    }
 
     const monthlyInvestment = (weekly * 52) / 12;
-    const rate = 0.07 / 12; const months = 10 * 12; 
-    const futureValue = monthlyInvestment * ((Math.pow(1 + rate, months) - 1) / rate);
-    const profit = futureValue - (weekly * 52 * 10);
+    const rate = 0.07 / 12; // 7% rendement historique réel
+    
+    // Calcul sur 10 ans
+    const months10 = 10 * 12; 
+    const futureValue10 = monthlyInvestment * ((Math.pow(1 + rate, months10) - 1) / rate);
+    const profit10 = futureValue10 - (weekly * 52 * 10);
 
-    resultDiv.innerHTML = `Si vous aviez investi ces <strong>${formatCurrency(weekly)}</strong> par semaine dans la bourse (~7% réel) pendant 10 ans, vous auriez <strong>${formatCurrency(futureValue)}</strong> aujourd'hui.<br><br><span style="font-size:0.9rem; color:var(--subtle-text-color);">Dont <strong>${formatCurrency(profit)}</strong> générés par la magie des intérêts composés !</span>`;
+    // Calcul sur 25 ans (L'effet "Wow")
+    const months25 = 25 * 12;
+    const futureValue25 = monthlyInvestment * ((Math.pow(1 + rate, months25) - 1) / rate);
+
+    resultDiv.innerHTML = `Si vous aviez investi ces <strong>${formatCurrency(weekly)}/semaine</strong> dans la bourse (~7% réel) plutôt que de les dépenser :<br><br>Dans 10 ans, vous auriez <strong>${formatCurrency(futureValue10)}</strong> dans vos poches.<br><span style="font-size:0.85rem; color:var(--subtle-text-color);">Dont <strong>${formatCurrency(profit10)}</strong> générés purement par la magie des intérêts composés.</span><br><br><span style="font-size:1.05rem; color:var(--primary-color); font-weight:bold;">Sur 25 ans ? Vos habitudes valent une fortune : ${formatCurrency(futureValue25)} !</span>`;
+    
     resultDiv.classList.remove('hidden');
 }
 
