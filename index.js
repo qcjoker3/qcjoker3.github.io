@@ -57,9 +57,18 @@ function setExpensePreset(amount) {
     document.getElementById('weekly-expense').value = amount;
     calculateExpense();
 }
-function setCreditPreset(bal, pmt) {
+function setCreditPreset(bal, pmt, btnElement) {
     document.getElementById('cc-balance').value = bal;
     document.getElementById('cc-payment').value = pmt;
+
+    // Éteindre toutes les pastilles de crédit
+    document.querySelectorAll('.credit-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    
+    // Allumer la pastille cliquée
+    if (btnElement) {
+        btnElement.classList.add('selected-primary');
+    }
+
     calculateCreditCard();
 }
 function setInflationPreset(amount) {
@@ -163,24 +172,34 @@ function calculateCreditCard() {
     const balance = parseFloat(document.getElementById('cc-balance').value);
     const payment = parseFloat(document.getElementById('cc-payment').value);
     const resultDiv = document.getElementById('cc-result');
-    if (isNaN(balance) || isNaN(payment) || balance <= 0 || payment <= 0) return;
-
-    const annualRate = 0.2099; 
-    const monthlyRate = annualRate / 12;
-
-    if (payment <= balance * monthlyRate) {
-        resultDiv.innerHTML = `🚨 <strong>Alerte Rouge :</strong> Votre paiement ne couvre même pas les intérêts mensuels. Votre dette augmentera à l'infini !`;
-        resultDiv.classList.remove('hidden');
+    
+    if (isNaN(balance) || isNaN(payment) || balance <= 0 || payment <= 0) {
+        resultDiv.classList.add('hidden');
         return;
     }
 
+    const annualRate = 0.2099; // Taux de carte de crédit standard au Québec
+    const monthlyRate = annualRate / 12;
+
+    // Avertissement critique si le paiement est trop bas
+    if (payment <= balance * monthlyRate) {
+        resultDiv.innerHTML = `🚨 <strong>Alerte Rouge :</strong> Votre paiement de ${formatCurrency(payment)} ne couvre même pas les intérêts mensuels de ${formatCurrency(balance * monthlyRate)} générés par votre dette. <br><br>Il est mathématiquement impossible de rembourser cette carte de cette façon. Votre solde augmentera à l'infini !`;
+        resultDiv.className = "tool-result-box mt-4";
+        resultDiv.style.borderLeftColor = "#EF4444";
+        return;
+    }
+
+    // Calcul du temps de remboursement et des intérêts totaux
     const monthsNeeded = -Math.log(1 - (monthlyRate * balance) / payment) / Math.log(1 + monthlyRate);
     const yearsNeeded = (monthsNeeded / 12).toFixed(1);
     const totalPaid = monthsNeeded * payment;
     const totalInterest = totalPaid - balance;
 
-    resultDiv.innerHTML = `À coup de ${formatCurrency(payment)}/mois, il vous faudra <strong>${yearsNeeded} années</strong> pour rembourser.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Vous paierez ${formatCurrency(totalInterest)} uniquement en intérêts.</span> Remboursez d'urgence !`;
-    resultDiv.classList.remove('hidden');
+    resultDiv.innerHTML = `À coup de ${formatCurrency(payment)}/mois, il vous faudra <strong>${yearsNeeded} années</strong> (soit ${Math.ceil(monthsNeeded)} mois) pour rembourser ce solde.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Le vrai crime : Vous paierez ${formatCurrency(totalInterest)} uniquement en intérêts.</span><br><br>C'est comme si chaque article que vous aviez acheté avec cette carte vous coûtait près du double de son prix en magasin. Augmentez votre paiement d'urgence !`;
+    
+    // On force la bordure rouge pour ce résultat car une dette de carte de crédit est toujours une urgence
+    resultDiv.className = "tool-result-box mt-4";
+    resultDiv.style.borderLeftColor = "#EF4444"; 
 }
 
 // Piège 4 : Inflation
