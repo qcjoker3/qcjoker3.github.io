@@ -279,7 +279,7 @@ footer, .site-footer {
 .tab-pane.active { display: block; }
 
 .tab-pane h3 { font-size: 1.5rem; margin-top: 0; margin-bottom: 1rem; color: var(--heading-color); }
-.input-group-row { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 1rem; max-width: 400px; }
+.input-group-row { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 1rem; margin-top: 1.5rem; max-width: 400px; }
 .input-group-row label { font-size: 0.9rem; font-weight: 600; color: var(--text-color); }
 .input-group-row input { padding: 12px 15px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; background: var(--bg-color); color: var(--text-color); }
 .input-group-row input:focus { outline: none; border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring); }
