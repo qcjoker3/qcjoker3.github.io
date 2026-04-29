@@ -443,6 +443,23 @@ a.article-card {
     transition: all 0.3s ease;
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
+
+/* --- L'EFFET ILLUMINÉ POUR TOUTES LES PASTILLES SÉLECTIONNÉES --- */
+.chip.selected {
+    background: #EF4444; /* Le rouge alerte qui montre qu'on perd de l'argent */
+    color: white;
+    border-color: #EF4444;
+    transform: scale(0.95); /* Effet d'enfoncement très satisfaisant au clic */
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.2); /* Ombre à l'intérieur du bouton */
+}
+
+/* On s'assure que le hover ne brise pas l'état sélectionné */
+.chip.selected:hover {
+    background: #DC2626; /* Un rouge juste un peu plus foncé au survol */
+    border-color: #DC2626;
+    transform: scale(0.95);
+}
+
 .chip:hover {
     border-color: var(--primary-color);
     color: white;
