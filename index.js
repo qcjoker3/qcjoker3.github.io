@@ -211,16 +211,30 @@ document.querySelectorAll('#cc-balance, #cc-payment').forEach(input => {
 // Piège 4 : Inflation
 function calculateInflation() {
     const balance = parseFloat(document.getElementById('cash-balance').value);
+    const years = parseInt(document.getElementById('inflation-years').value);
+    const rateInput = parseFloat(document.getElementById('inflation-rate').value);
     const resultDiv = document.getElementById('inflation-result');
-    if (isNaN(balance) || balance <= 0) return;
+    
+    // Mettre à jour l'affichage des valeurs des sliders en direct
+    document.getElementById('years-val').innerText = years + (years > 1 ? " ans" : " an");
+    document.getElementById('rate-val').innerText = rateInput.toFixed(1) + " %";
 
-    const inflationRate = 0.028; 
-    const years = 10;
+    // Vérification de sécurité
+    if (isNaN(balance) || balance <= 0) {
+        resultDiv.classList.add('hidden');
+        return;
+    }
+
+    const inflationRate = rateInput / 100; 
+    
+    // Formule de la perte de pouvoir d'achat
     const purchasingPower = balance / Math.pow(1 + inflationRate, years);
     const loss = balance - purchasingPower;
 
-    resultDiv.innerHTML = `Dans 10 ans, vos <strong>${formatCurrency(balance)}</strong> seront toujours dans votre compte... mais à cause de l'inflation, leur pouvoir d'achat réel ne vaudra plus que <strong>${formatCurrency(purchasingPower)}</strong> en dollars d'aujourd'hui.<br><br>Ne rien faire avec votre argent vient de vous coûter <strong>${formatCurrency(loss)}</strong> de manière invisible.`;
-    resultDiv.classList.remove('hidden');
+    resultDiv.innerHTML = `Dans <strong>${years} ans</strong>, vos <strong>${formatCurrency(balance)}</strong> seront toujours physiquement dans votre compte... mais à cause de l'inflation de ${rateInput.toFixed(1)} %, leur pouvoir d'achat réel ne vaudra plus que <strong>${formatCurrency(purchasingPower)}</strong> en dollars d'aujourd'hui.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">L'illusion de la sécurité vient de vous coûter ${formatCurrency(loss)} en perte de valeur.</span> L'inaction est le plus grand des risques !`;
+    
+    resultDiv.className = "tool-result-box mt-4";
+    resultDiv.style.borderLeftColor = "#EF4444"; 
 }
 
 // Piège 5 : Style de vie (Interactif)
