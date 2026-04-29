@@ -400,17 +400,13 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 .footnote-disclaimer { font-size: 0.9rem; font-style: italic; color: var(--subtle-text-color); text-align: center; padding-top: 1.5rem; margin-top: 2.5rem; border-top: 1px solid var(--border-color); max-width: 800px; margin-left: auto; margin-right: auto; }
 @media (max-width: 900px) { .prediction-layout-grid { grid-template-columns: 1fr; } }
 
-/* --- Ajustements demandés --- */
-
-/* 1. Badge toujours gris (désactive le bleu/mauve) */
+/* --- AJOUTS FINOZA PREMIUM --- */
 .badge.badge-gris {
     color: var(--subtle-text-color);
     border-color: var(--border-color);
 }
-
-/* 2. Le lien "Voir tous les articles" en Mauve */
 .btn-text-mauve {
-    color: #A855F7; /* Le code hexadécimal de votre mauve */
+    color: #A855F7; 
     font-weight: 600;
     text-decoration: none;
     transition: color 0.2s ease;
@@ -418,10 +414,62 @@ input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: v
 .btn-text-mauve:hover {
     color: var(--primary-color);
 }
-
-/* 3. Propreté des cartes d'articles devenues des liens */
 a.article-card {
     text-decoration: none;
     color: inherit;
     display: flex;
+}
+/* Largeur de l'infolettre corrigée */
+.newsletter-container {
+    max-width: 900px;
+    margin: 0 auto;
+}
+/* Style des pastilles et boîte interactive */
+.preset-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+.chip {
+    padding: 8px 16px;
+    background: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+.chip:hover {
+    border-color: var(--primary-color);
+    color: white;
+    background: var(--primary-gradient);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+.chip.expense-toggle.selected {
+    background: #EF4444;
+    color: white;
+    border-color: #EF4444;
+    transform: scale(0.95);
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.2);
+}
+.breakdown-box {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+}
+.breakdown-grid {
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+    margin-top: 10px;
+}
+.breakdown-grid strong {
+    font-size: 1.2rem;
+    color: var(--primary-color);
 }
