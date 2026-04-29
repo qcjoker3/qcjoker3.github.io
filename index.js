@@ -88,7 +88,7 @@ function calculateExpense() {
 
 // --- 4. LE VRAI CODE DE LA JAUGE S&P 500 (100% Statique et Rapide) ---
 function initSP500Gauge() {
-    // 1. S'assurer que les données existent
+    // 1. S'assurer que les données existent dans donnees.js
     if (typeof chartDataByYear === 'undefined' || typeof niveauActuelSP500 === 'undefined') {
         console.warn("Fichier donnees.js introuvable ou incomplet.");
         return;
@@ -145,56 +145,7 @@ function initSP500Gauge() {
                 plugins: { legend: { display: false }, tooltip: { enabled: false } }
             }
         });
+    } else {
+        console.warn("Chart.js n'est pas chargé ou l'élément canvas sp500Gauge est introuvable.");
     }
-}
-
-    resultDiv.innerHTML = `En 25 ans, vous aurez versé <strong>${formatCurrency(totalPaid)}</strong> à votre propriétaire. Est-ce vraiment mieux que d'acheter ? Utilisez notre comparateur complet.`;
-    resultDiv.classList.remove('hidden');
-}
-
-function calculateIndependence(targetIncome) {
-    const resultDiv = document.getElementById('independence-result');
-    const capitalNeeded = targetIncome * 25; // Règle du 4%
-    resultDiv.innerHTML = `Pour un revenu de <strong>${formatCurrency(targetIncome)}/an</strong>, vous avez besoin d'un capital de <strong>${formatCurrency(capitalNeeded)}</strong>.`;
-    resultDiv.classList.remove('hidden');
-}
-
-function calculateExpense() {
-    const weekly = parseFloat(document.getElementById('weekly-expense').value);
-    const resultDiv = document.getElementById('expense-result');
-    if (isNaN(weekly) || weekly <= 0) return;
-
-    // Rendement 7% sur 10 ans
-    const months = 120;
-    const monthlyRate = 0.07 / 12;
-    const monthlyInv = (weekly * 52) / 12;
-    const futureVal = monthlyInv * ((Math.pow(1 + monthlyRate, months) - 1) / monthlyRate);
-
-    resultDiv.innerHTML = `Investir ces <strong>${formatCurrency(weekly)}</strong> par semaine rapporterait <strong>${formatCurrency(futureVal)}</strong> dans 10 ans.`;
-    resultDiv.classList.remove('hidden');
-}
-
-/**
- * Logique de la jauge S&P 500
- * Remettez ici votre code Chart.js original si vous en aviez un spécifique.
- */
-function initSP500Gauge() {
-    const canvas = document.getElementById('sp500Gauge');
-    const currentText = document.getElementById('currentLevelText');
-    const targetText = document.getElementById('gaugeTargetText');
-    const gapText = document.getElementById('percentageGap');
-
-    if (!canvas) return;
-
-    // Vos chiffres réels (Exemple à mettre à jour avec vos données)
-    const currentLevel = 5150; 
-    const targetLevel = 5600; 
-    const potential = ((targetLevel - currentLevel) / currentLevel * 100).toFixed(1);
-
-    if(currentText) currentText.innerText = currentLevel.toLocaleString() + " pts";
-    if(targetText) targetText.innerHTML = `<strong>${targetLevel.toLocaleString()}</strong> Points`;
-    if(gapText) gapText.innerText = `+${potential}%`;
-
-    // Ici, vous pouvez ajouter le "new Chart(...)" pour dessiner la jauge
-    console.log("Jauge S&P 500 initialisée avec succès.");
 }
