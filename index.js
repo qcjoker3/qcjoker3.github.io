@@ -1,243 +1,103 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- GESTION DES ONGLETS (Outils Rapides) ---
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panes = document.querySelectorAll('.tab-pane');
 
-    // ===============================================
-    // SECTION 1 : CHARGEMENT DU PIED DE PAGE (FOOTER)
-    // ===============================================
-    fetch('footer.html')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('footer.html non trouvé');
-            }
-            return response.text();
-        })
-        .then(data => {
-            const footerPlaceholder = document.getElementById("footer-placeholder");
-            if (footerPlaceholder) {
-                footerPlaceholder.innerHTML = data;
-            }
-        })
-        .catch(error => {
-            console.error('Erreur lors du chargement du footer:', error);
-        });
-
-
-    // ===============================================
-    // SECTION 2 : LOGIQUE DU CARROUSEL DES CALCULATRICES
-    // ===============================================
-    const scroller = document.getElementById('calculators-scroller');
-    if (scroller) {
-        const leftBtn = document.getElementById('scroll-left-btn');
-        const rightBtn = document.getElementById('scroll-right-btn');
-        const cardGrid = scroller.querySelector('.card-grid');
-
-        if (leftBtn && rightBtn && cardGrid) {
-            const cardCount = cardGrid.children.length;
-
-            if (cardCount > 6) {
-                function updateArrowState() {
-                    const scrollLeft = scroller.scrollLeft;
-                    const maxScroll = scroller.scrollWidth - scroller.clientWidth;
-                    leftBtn.disabled = scrollLeft <= 0;
-                    rightBtn.disabled = scrollLeft >= maxScroll - 5;
-                }
-                leftBtn.addEventListener('click', () => {
-                    scroller.scrollLeft -= scroller.clientWidth * 0.8;
-                });
-                rightBtn.addEventListener('click', () => {
-                    scroller.scrollLeft += scroller.clientWidth * 0.8;
-                });
-                scroller.addEventListener('scroll', updateArrowState);
-                
-                // Initialisation
-                updateArrowState();
-                leftBtn.style.display = 'block';
-                rightBtn.style.display = 'block';
-            } else {
-                leftBtn.style.display = 'none';
-                rightBtn.style.display = 'none';
-            }
-        }
-    }
-
-
-    // ===============================================
-    // SECTION 3 : NAVIGATION DES ONGLETS (L'ANALYSEUR)
-    // ===============================================
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const tabContents = document.querySelectorAll('.tab-content');
-
-    if(tabButtons.length > 0) {
-        tabButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                // 1. Retirer la classe 'active' de tous les boutons et contenus
-                tabButtons.forEach(btn => btn.classList.remove('active'));
-                tabContents.forEach(content => content.classList.remove('active'));
-
-                // 2. Ajouter la classe 'active' au bouton cliqué et à sa cible
-                button.classList.add('active');
-                const targetId = button.getAttribute('data-target');
-                document.getElementById(targetId).classList.add('active');
-            });
-        });
-    }
-
-
-    // ===============================================
-    // SECTION 4 : WIDGET DE PRÉVISION S&P 500 (ONGLET 1)
-    // ===============================================
-    const sp500Target = 6679;
-    const sp500Current = 6688;
-
-    const percentageElement = document.getElementById('percentageGap');
-    const gapLabelElement = document.getElementById('gapLabel');
-    const currentLevelElement = document.getElementById('currentLevelText');
-    const gaugeCanvas = document.getElementById('sp500Gauge');
-
-    if (percentageElement && gapLabelElement && currentLevelElement && gaugeCanvas) {
-        let chartData;
-        let chartColors;
-        
-        currentLevelElement.textContent = `${sp500Current} pts`;
-
-        if (sp500Current > sp500Target) {
-            const surplus = sp500Current - sp500Target;
-            const percentage = (surplus / sp500Target) * 100;
-            chartData = [sp500Target, surplus];
-            chartColors = ['#0D9488', '#F59E0B']; // Vert Finoza et Orange (Avertissement)
-            gapLabelElement.textContent = "Surperformance";
-            percentageElement.textContent = `+${percentage.toFixed(2)}%`;
-            percentageElement.className = 'text-green warning'; // Ajout optionnel de couleur
-        } else {
-            const remaining = sp500Target - sp500Current;
-            const percentage = ((sp500Target / sp500Current) - 1) * 100;
-            chartData = [sp500Current, remaining];
-            chartColors = ['#0D9488', '#E5E7EB']; // Vert Finoza et Gris pâle
-            gapLabelElement.textContent = "Potentiel Haussier";
-            percentageElement.textContent = `+${percentage.toFixed(2)}%`;
-            percentageElement.className = 'text-green success';
-        }
-
-        const ctx = gaugeCanvas.getContext('2d');
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                datasets: [{
-                    data: chartData,
-                    backgroundColor: chartColors,
-                    borderWidth: 0,
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                cutout: '80%',
-                rotation: -90,
-                circumference: 180,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                }
-            }
-        });
-    }
-
-
-    // ===============================================
-    // SECTION 5 : CALCULATEUR DE DETTE (ONGLET 2)
-    // ===============================================
-    const detteInput = document.getElementById('dette-input');
-    const detteResult = document.getElementById('dette-result');
-
-    if(detteInput) {
-        detteInput.addEventListener('input', (e) => {
-            let solde = parseFloat(e.target.value);
+    tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Retirer la classe active de tous les boutons et panneaux
+            tabs.forEach(t => t.classList.remove('active'));
+            panes.forEach(p => p.classList.remove('active'));
             
-            if (solde > 0) {
-                // Formule estimative de choc (paiement minimum de ~3%)
-                let annees = Math.max(1, Math.round(solde * 0.005)); // Estimation simplifiée pour démonstration
-                let interets = Math.round(solde * 1.3); // Estimation des intérêts payés
-                
-                const formatCAD = new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
-
-                document.getElementById('dette-annees').innerText = annees;
-                document.getElementById('dette-interets').innerText = formatCAD.format(interets);
-                detteResult.classList.remove('hidden');
-            } else {
-                detteResult.classList.add('hidden');
-            }
+            // Ajouter la classe active au bouton cliqué et à son contenu correspondant
+            tab.classList.add('active');
+            const targetId = tab.getAttribute('data-tab');
+            document.getElementById(`tab-${targetId}`).classList.add('active');
         });
+    });
+});
+
+// Formateur de devise pour l'affichage ($ CAD)
+const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(amount);
+};
+
+// --- CALCULS DES OUTILS RAPIDES ---
+
+// 1. Outil : Auto vs Réparation
+function calculateAuto() {
+    const repairCost = parseFloat(document.getElementById('repair-cost').value);
+    const newCarPrice = parseFloat(document.getElementById('new-car-price').value);
+    const resultDiv = document.getElementById('auto-result');
+
+    if (isNaN(repairCost) || isNaN(newCarPrice) || repairCost <= 0 || newCarPrice <= 0) {
+        resultDiv.innerHTML = "Veuillez entrer des montants valides.";
+        resultDiv.classList.remove('hidden');
+        return;
     }
 
+    // Hypothèse choc : 8% d'intérêt sur 7 ans pour un prêt auto
+    const rate = 0.08;
+    const years = 7;
+    // Formule simplifiée d'intérêts pour l'impact choc
+    const totalInterest = (newCarPrice * rate * years) * 0.55; 
+    const monthlyPayment = (newCarPrice + totalInterest) / (years * 12);
+    
+    const monthsEquivalent = Math.round(repairCost / monthlyPayment);
 
-    // ===============================================
-    // SECTION 6 : CALCULATEUR INDÉPENDANCE (ONGLET 3)
-    // ===============================================
-    const depensesInput = document.getElementById('depenses-input');
-    const independanceResult = document.getElementById('independance-result');
+    resultDiv.innerHTML = `Cette réparation de <strong>${formatCurrency(repairCost)}</strong> représente seulement <strong>${monthsEquivalent} mois</strong> de paiement de votre nouvelle voiture. En achetant neuf, vous paierez environ <strong>${formatCurrency(totalInterest)} juste en intérêts</strong>. Considérez réparer votre auto !`;
+    resultDiv.classList.remove('hidden');
+}
 
-    if(depensesInput) {
-        depensesInput.addEventListener('input', (e) => {
-            let depenses = parseFloat(e.target.value);
-            
-            if (depenses > 0) {
-                // Règle des 4% (Dépenses annuelles multipliées par 25)
-                let cibleIndependance = depenses * 25;
-                const formatCAD = new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
-                
-                document.getElementById('independance-cible').innerText = formatCAD.format(cibleIndependance);
-                independanceResult.classList.remove('hidden');
-            } else {
-                independanceResult.classList.add('hidden');
-            }
-        });
+// 2. Outil : Choc du Locataire
+function calculateRent() {
+    const rent = parseFloat(document.getElementById('rent-cost').value);
+    const resultDiv = document.getElementById('rent-result');
+
+    if (isNaN(rent) || rent <= 0) {
+        resultDiv.innerHTML = "Veuillez entrer un loyer valide.";
+        resultDiv.classList.remove('hidden');
+        return;
     }
 
-
-    // ===============================================
-    // SECTION 7 : WIDGET COÛT D'OPPORTUNITÉ (ONGLET 4)
-    // ===============================================
-    const cafeInput = document.getElementById('cafe-input');
-    const opportuniteResult = document.getElementById('opportunite-result');
-    const presetBtns = document.querySelectorAll('.preset-btn');
-
-    function calculerOpportunite(montantHebdo) {
-        if (montantHebdo > 0) {
-            let contributionAnnuelle = montantHebdo * 52;
-            let taux = 0.06; // Rendement espéré de 6%
-            let annees = 10; // Période de 10 ans
-
-            // Formule de la valeur future d'une annuité
-            let valeurFuture = contributionAnnuelle * ((Math.pow(1 + taux, annees) - 1) / taux);
-
-            const formatCAD = new Intl.NumberFormat('fr-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 });
-            document.getElementById('opportunite-cible').innerText = formatCAD.format(valeurFuture);
-            opportuniteResult.classList.remove('hidden');
-        } else {
-            opportuniteResult.classList.add('hidden');
-        }
+    // Hypothèse : augmentation de loyer de 2.5% par an sur 25 ans
+    let totalPaid = 0;
+    let currentRent = rent;
+    for (let i = 0; i < 25; i++) {
+        totalPaid += currentRent * 12;
+        currentRent *= 1.025; // Augmentation annuelle
     }
 
-    // A. Écouteur pour la saisie manuelle
-    if(cafeInput) {
-        cafeInput.addEventListener('input', (e) => {
-            calculerOpportunite(parseFloat(e.target.value));
-        });
+    resultDiv.innerHTML = `En 25 ans, vous aurez payé <strong>${formatCurrency(totalPaid)}</strong> en loyer. <strong>Cependant</strong>, si vous investissez judicieusement l'argent que vous sauvez en taxes foncières, intérêts hypothécaires et entretien, la location pourrait tout de même vous rendre plus riche.`;
+    resultDiv.classList.remove('hidden');
+}
+
+// 3. Outil : Indépendance (Règle des 4%)
+function calculateIndependence(targetIncome) {
+    const resultDiv = document.getElementById('independence-result');
+    const capitalNeeded = targetIncome * 25; // Règle des 4%
+
+    resultDiv.innerHTML = `Pour générer <strong>${formatCurrency(targetIncome)}</strong> par an de façon perpétuelle (selon la règle de retrait sécuritaire de 4 %), votre portefeuille de placements devra atteindre <strong>${formatCurrency(capitalNeeded)}</strong>.`;
+    resultDiv.classList.remove('hidden');
+}
+
+// 4. Outil : Dépenses (Coût d'opportunité)
+function calculateExpense() {
+    const weekly = parseFloat(document.getElementById('weekly-expense').value);
+    const resultDiv = document.getElementById('expense-result');
+
+    if (isNaN(weekly) || weekly <= 0) {
+        resultDiv.innerHTML = "Veuillez entrer une dépense valide.";
+        resultDiv.classList.remove('hidden');
+        return;
     }
 
-    // B. Écouteurs pour les boutons de présélection
-    if(presetBtns.length > 0) {
-        presetBtns.forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                e.preventDefault();
-                let valeurPreset = parseFloat(btn.getAttribute('data-value'));
-                
-                // Met à jour le champ texte visuellement
-                if(cafeInput) { cafeInput.value = valeurPreset; }
-                
-                // Lance le calcul
-                calculerOpportunite(valeurPreset);
-            });
-        });
-    }
+    // Investissement de la dépense hebdomadaire à 7% de rendement réel sur 10 ans
+    const monthlyInvestment = (weekly * 52) / 12;
+    const rate = 0.07 / 12; // Taux mensuel
+    const months = 10 * 12; // 10 ans
+    const futureValue = monthlyInvestment * ((Math.pow(1 + rate, months) - 1) / rate);
 
-}); // Fin du 'DOMContentLoaded'
+    resultDiv.innerHTML = `Si vous aviez investi ces <strong>${formatCurrency(weekly)}</strong> par semaine dans le S&P 500 (~7% de rendement réel annuel) pendant 10 ans, vous auriez <strong>${formatCurrency(futureValue)}</strong> en banque aujourd'hui.`;
+    resultDiv.classList.remove('hidden');
+}
