@@ -322,7 +322,7 @@ footer, .site-footer {
 .article-content p { font-size: 0.95rem; color: var(--text-color); margin: 0; flex-grow: 1; }
 
 /* --- INFOLETTRE --- */
-.newsletter-container { max-width: 600px; margin: 0 auto; background: var(--card-bg-color); padding: 4rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); }
+.newsletter-container { max-width: 900px; margin: 0 auto; background: var(--card-bg-color); padding: 4rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); }
 .newsletter-form { display: flex; gap: 1rem; }
 .newsletter-form input { flex: 1; padding: 14px; border: 1px solid var(--border-color); border-radius: 50px; font-size: 1rem; background: var(--bg-color); color: var(--text-color); }
 .newsletter-form input:focus { outline: none; border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring); }
