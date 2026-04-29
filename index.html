@@ -155,10 +155,19 @@
 
                     <div class="tab-pane" id="tab-depenses">
                         <h3>Le coût d'opportunité</h3>
+                        <p>Découvrez la valeur réelle de vos petites habitudes sur 10 ans.</p>
+                        
+                        <div class="preset-buttons mb-3">
+                            <button onclick="setExpenseAndCalculate(25)">☕ Café (25$/sem)</button>
+                            <button onclick="setExpenseAndCalculate(15)">📺 Abonnements (15$/sem)</button>
+                            <button onclick="setExpenseAndCalculate(75)">🍽️ Restos (75$/sem)</button>
+                        </div>
+
                         <div class="input-group-row">
-                            <label for="weekly-expense">Dépense inutile par semaine ($)</label>
+                            <label for="weekly-expense">Ou entrez votre propre montant ($/semaine)</label>
                             <input type="number" id="weekly-expense" placeholder="Ex: 35" />
                         </div>
+                        
                         <button class="btn-primary-small mt-3" onclick="calculateExpense()">Calculer sur 10 ans</button>
                         <div id="expense-result" class="tool-result-box hidden mt-4"></div>
                     </div>
