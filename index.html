@@ -179,7 +179,7 @@
 
                     <div class="tab-pane" id="tab-argent-dort">
                         <h3>L'illusion du compte chèque</h3>
-                        <p>Penser que votre argent est en sécurité à 0 % d'intérêt est le plus grand risque financier. Glissez les curseurs pour voir l'inflation dévorer votre capital.</p>
+                        <p>Penser que votre argent est en sécurité à 0 % d'intérêt est le plus grand risque financier. Voyez comment l'inflation le dévore.</p>
                         
                         <div class="preset-chips mb-4">
                             <button class="chip inflation-chip" onclick="setInflationPreset(10000, this)">🐷 Coussin (10 000$)</button>
@@ -193,22 +193,27 @@
                                     <label for="cash-balance" style="color: var(--primary-color);">Montant dormant dans le compte ($)</label>
                                     <input type="number" id="cash-balance" value="15000" oninput="calculateInflation()" />
                                 </div>
-                            </div>
-                            <div>
-                                <div class="slider-container mb-3" style="padding: 1rem;">
-                                    <label for="inflation-years" class="d-flex justify-between align-center mb-2" style="margin: 0;">
-                                        <span>Durée de l'inaction :</span>
-                                        <strong id="years-val" style="color: var(--primary-color); font-size: 1.1rem;">10 ans</strong>
-                                    </label>
-                                    <input type="range" id="inflation-years" min="1" max="40" value="10" oninput="calculateInflation()">
-                                </div>
                                 
-                                <div class="slider-container" style="padding: 1rem;">
-                                    <label for="inflation-rate" class="d-flex justify-between align-center mb-2" style="margin: 0;">
+                                <label class="mb-2 d-block" style="font-weight:600; font-size:0.95rem;">Durée de l'inaction :</label>
+                                <div class="preset-chips mb-4">
+                                    <button class="chip year-chip" onclick="setYearPreset(5, this)">5 ans</button>
+                                    <button class="chip year-chip selected-primary" onclick="setYearPreset(10, this)">10 ans</button>
+                                    <button class="chip year-chip" onclick="setYearPreset(15, this)">15 ans</button>
+                                </div>
+                                <input type="hidden" id="inflation-years" value="10">
+                            </div>
+
+                            <div>
+                                <div class="slider-container" style="padding: 1.5rem; margin-top: 1.5rem;">
+                                    <label for="inflation-rate" class="d-flex justify-between align-center mb-3" style="margin: 0;">
                                         <span>Taux d'inflation annuel :</span>
-                                        <strong id="rate-val" style="color: #EF4444; font-size: 1.1rem;">3.0 %</strong>
+                                        <strong id="rate-val" style="color: #EF4444; font-size: 1.2rem;">3.0 %</strong>
                                     </label>
-                                    <input type="range" id="inflation-rate" min="0.5" max="10.0" step="0.1" value="3.0" oninput="calculateInflation()">
+                                    <input type="range" id="inflation-rate" min="1.0" max="5.0" step="0.1" value="3.0" oninput="calculateInflation()">
+                                    <div class="d-flex justify-between" style="font-size: 0.8rem; color: var(--subtle-text-color); margin-top: 8px;">
+                                        <span>1% (Cible)</span>
+                                        <span>5% (Élevé)</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
