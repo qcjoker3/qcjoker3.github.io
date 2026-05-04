@@ -179,7 +179,7 @@
                         <p>Penser que votre argent est en sécurité à 0 % d'intérêt est le plus grand risque financier. Voyez comment l'inflation le dévore.</p>
                         
                         <div class="preset-chips mb-4">
-                            <button class="chip inflation-chip" onclick="setInflationPreset(10000, this)">🐷 Coussin (10 000$)</button>
+                            <button class="chip inflation-chip" onclick="setInflationPreset(10000, this)">❗️Coussin (10 000$)</button>
                             <button class="chip inflation-chip" onclick="setInflationPreset(25000, this)">🚗 Auto (25 000$)</button>
                             <button class="chip inflation-chip" onclick="setInflationPreset(80000, this)">🏠 Mise de fonds (80 000$)</button>
                         </div>
@@ -191,7 +191,7 @@
                                     <input type="number" id="cash-balance" value="15000" oninput="calculateInflation()" />
                                 </div>
                                 
-                                <label class="mb-2 d-block" style="font-weight:600; font-size:0.95rem;">Durée de l'inaction :</label>
+                                <label class="mb-2 d-block" style="font-weight:600; font-size:0.95rem;">Période :</label>
                                 <div class="preset-chips mb-4">
                                     <button class="chip year-chip" onclick="setYearPreset(5, this)">5 ans</button>
                                     <button class="chip year-chip selected-primary" onclick="setYearPreset(10, this)">10 ans</button>
@@ -204,13 +204,13 @@
                                 <div class="slider-container" style="padding: 1.5rem; margin-top: 1.5rem;">
                                     <label for="inflation-rate" class="d-flex justify-between align-center mb-3" style="margin: 0;">
                                         <span>Taux d'inflation annuel :</span>
-                                        <strong id="rate-val" style="color: #EF4444; font-size: 1.2rem;">3.0 %</strong>
+                                        <strong id="rate-val" style="color: #EF4444; font-size: 1.2rem;">2.0 %</strong>
                                     </label>
-                                    <input type="range" id="inflation-rate" min="1.0" max="5.0" step="0.1" value="3.0" oninput="calculateInflation()">
+                                    <input type="range" id="inflation-rate" min="1.0" max="4.0" step="0.1" value="2.0" oninput="calculateInflation()">
                                     <div class="d-flex justify-between" style="font-size: 0.8rem; color: var(--subtle-text-color); margin-top: 8px;">
                                         <span>1% (Bas de la fourchette cible)</span>
                                         <span>3% (Haut de la fourchette cible)</span>
-                                        <span>5% (Élevé)</span>
+                                        <span>4% (Élevé)</span>
                                     </div>
                                 </div>
                             </div>
@@ -225,11 +225,11 @@
 
                         <div class="form-columns mb-3">
                             <div class="input-group-row">
-                                <label for="salary-before">Salaire brut AVANT ($/an)</label>
+                                <label for="salary-before">Salaire brut avant ($/an)</label>
                                 <input type="number" id="salary-before" value="60000" oninput="updateLifestyle()" />
                             </div>
                             <div class="input-group-row">
-                                <label for="salary-after">Salaire brut APRÈS ($/an)</label>
+                                <label for="salary-after">Salaire brut après ($/an)</label>
                                 <input type="number" id="salary-after" value="70000" oninput="updateLifestyle()" />
                             </div>
                         </div>
@@ -239,9 +239,9 @@
                         <p class="mb-2 mt-4" style="font-weight:600; font-size:0.95rem;">Sélectionnez les "récompenses" que vous ajoutez à votre style de vie :</p>
                         <div class="preset-chips mb-4" id="lifestyle-expenses">
                             <button class="chip lifestyle-chip" data-cost="450" onclick="toggleLifestyleExpense(this)">🚙 Changer d'auto (450$/m)</button>
-                            <button class="chip lifestyle-chip" data-cost="150" onclick="toggleLifestyleExpense(this)">🍽️ +1 Resto/sem (150$/m)</button>
+                            <button class="chip lifestyle-chip" data-cost="70" onclick="toggleLifestyleExpense(this)">🍽️ +1 Resto/sem (70$/m)</button>
                             <button class="chip lifestyle-chip" data-cost="200" onclick="toggleLifestyleExpense(this)">✈️ Voyage annuel (200$/m)</button>
-                            <button class="chip lifestyle-chip" data-cost="60" onclick="toggleLifestyleExpense(this)">📺 Abonnements (60$/m)</button>
+                            <button class="chip lifestyle-chip" data-cost="30" onclick="toggleLifestyleExpense(this)">📺 Abonnements (30$/m)</button>
                             <button class="chip lifestyle-chip" data-cost="300" onclick="toggleLifestyleExpense(this)">🏠 Plus grand loyer (300$/m)</button>
                         </div>
 
@@ -317,7 +317,7 @@
     <section class="newsletter-section section-padding text-center">
         <div class="container newsletter-container">
             <h2>L'infolettre Finoza</h2>
-            <p>Rejoignez des milliers de Québécois qui optimisent leurs finances chaque semaine.</p>
+            <p>Rejoignez beaucoup de Québécois qui optimisent leurs finances chaque semaine.</p>
             <form class="newsletter-form mt-4">
                 <input type="email" placeholder="Votre adresse courriel" required>
                 <button type="submit" class="btn-primary-large">S'abonner</button>
