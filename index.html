@@ -6,7 +6,7 @@
     <title>Finoza | Maîtrisez vos finances</title>
     
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
@@ -16,12 +16,10 @@
                 <strong><span style="color: var(--accent-color);">Finoza.</span></strong>
             </a>
             <nav>
-                <a href="depenses.html">Dépenses courantes</a>
-                <a href="credit.html">Crédit</a>
-                <a href="financement.html">Financement</a>
-                <a href="investissements.html">Investissements</a>
-                <a href="retraite.html">Retraite</a>
-                <a href="patrimoine.html">Patrimoine</a>
+                <a href="budget.html">Budget et Liquidités</a>
+                <a href="credit.html">Crédit et Immobilier</a>
+                <a href="investissements.html">Placements et Fiscalité</a>
+                <a href="retraite.html">Retraite et Patrimoine</a>
                 <a href="calculateurs.html">Calculateurs</a>
                 <a href="articles.html">Articles</a>
             </nav>
@@ -40,29 +38,29 @@
 
     <section class="ecosystem-section section-padding" id="ecosysteme">
         <div class="container">
-            <div class="section-header text-center mb-5">
+            <div class="section-header text-center mb-4">
                 <h2>Les piliers de la création de richesse</h2>
             </div>
             <div class="bento-grid-3">
                 <a href="investissements.html" class="bento-card bento-large">
                     <div class="bento-icon">📈</div>
-                    <h3>Investissements & Fiscalité</h3>
-                    <p>Optimisez vos rendements avec des stratégies adaptées au CELI, REER et comptes non enregistrés. Comprenez enfin l'impact de l'impôt sur vos gains.</p>
+                    <h3>Placements et Fiscalité</h3>
+                    <p>Optimisez vos rendements avec des stratégies adaptées au CELI, REER et non enregistré. Gérez l'impact de l'impôt.</p>
                 </a>
                 <a href="budget.html" class="bento-card bento-small">
                     <div class="bento-icon">📊</div>
-                    <h3>Budget & Cash-flow</h3>
+                    <h3>Budget et Liquidités</h3>
                     <p>Reprenez le contrôle de vos liquidités sans vous priver.</p>
                 </a>
                 <a href="credit.html" class="bento-card bento-small">
                     <div class="bento-icon">💳</div>
-                    <h3>Crédit & Propriété</h3>
-                    <p>Démystifiez les cotes de crédit et l'achat immobilier.</p>
+                    <h3>Crédit et Immobilier</h3>
+                    <p>Démystifiez les cotes de crédit, l'emprunt et l'achat immobilier.</p>
                 </a>
                 <a href="retraite.html" class="bento-card bento-large">
                     <div class="bento-icon">🌴</div>
-                    <h3>Retraite & Patrimoine</h3>
-                    <p>Planifiez votre indépendance financière. Calculez combien il vous faut et comment décaisser stratégiquement pour ne jamais manquer d'argent.</p>
+                    <h3>Retraite et Patrimoine</h3>
+                    <p>Planifiez votre indépendance. Calculez le capital nécessaire et décaissez stratégiquement.</p>
                 </a>
             </div>
         </div>
@@ -71,181 +69,171 @@
     <section class="quick-tools-section section-padding bg-light" id="pieges-financiers">
         <div class="container">
             <div class="section-header text-center mb-5">
-                <h2>Les pires pièges financiers à éviter</h2>
-                <p>Évitez à tout prix ces pièges qui grugent silencieusement votre patrimoine au quotidien.</p>
+                <h2>Les pièges financiers à éviter</h2>
+                <p>Mesurez instantanément l'impact de vos décisions quotidiennes.</p>
             </div>
             
             <div class="tools-container">
                 <div class="tools-tabs">
-                    <button class="tab-btn active" data-tab="auto">La voiture neuve</button>
-                    <button class="tab-btn" data-tab="depenses">Les dépenses quotidiennes</button>
-                    <button class="tab-btn" data-tab="credit">Le paiement minimum</button>
-                    <button class="tab-btn" data-tab="argent-dort">L'argent qui dort</button>
-                    <button class="tab-btn" data-tab="style-vie">L'inflation du style de vie</button>
+                    <button class="tab-btn active" data-tab="auto">La voiture</button>
+                    <button class="tab-btn" data-tab="depenses">Les dépenses</button>
+                    <button class="tab-btn" data-tab="credit">Le crédit</button>
+                    <button class="tab-btn" data-tab="argent-dort">L'inflation</button>
+                    <button class="tab-btn" data-tab="style-vie">Le style de vie</button>
                 </div>
 
                 <div class="tab-content-wrapper">
                     
                     <div class="tab-pane active" id="tab-auto">
-                        <h3>Le gouffre du prêt automobile</h3>
-                        <p>Une facture de garage fait peur. Mais comparez-la au coût réel d'un véhicule neuf avant de changer d'auto.</p>
-                        
-                        <div class="preset-chips mb-4">
-                            <button class="chip auto-chip" onclick="setAutoPreset(40000, 60, 4, this)">🚙 VUS (40 000$)</button>
-                            <button class="chip auto-chip" onclick="setAutoPreset(65000, 84, 8, this)">🛻 Pick-up (65 000$)</button>
-                            <button class="chip auto-chip" onclick="setAutoPreset(45000, 72, 6, this)">⚡ Électrique (45 000$)</button>
-                        </div>
+                        <div class="trap-layout">
+                            <div class="trap-controls">
+                                <label class="control-label">Coût de la réparation estimée : <strong id="repair-val" style="color: var(--primary-color);">2 000 $</strong></label>
+                                <input type="range" id="repair-slider" min="500" max="15000" step="500" value="2000" oninput="calculateAuto()">
 
-                        <div class="form-columns">
-                            <div>
-                                <div class="input-group-row mb-3">
-                                    <label for="repair-cost">Coût estimé des réparations ($)</label>
-                                    <input type="number" id="repair-cost" value="2000" oninput="calculateAuto()" />
+                                <label class="control-label mt-4">Véhicule neuf désiré :</label>
+                                <div class="preset-chips mb-3">
+                                    <button class="chip auto-price-chip selected-primary" data-val="40000" onclick="setAutoPrice(40000, this)">Compacte (40k$)</button>
+                                    <button class="chip auto-price-chip" data-val="65000" onclick="setAutoPrice(65000, this)">VUS/Pick-up (65k$)</button>
                                 </div>
-                                <div class="input-group-row">
-                                    <label for="new-car-price">Prix du véhicule neuf ($)</label>
-                                    <input type="number" id="new-car-price" value="40000" oninput="calculateAuto()" />
+
+                                <label class="control-label mt-3">Durée du financement :</label>
+                                <div class="preset-chips mb-3">
+                                    <button class="chip auto-term-chip" data-val="36" onclick="setAutoTerm(36, this)">36 mois</button>
+                                    <button class="chip auto-term-chip" data-val="48" onclick="setAutoTerm(48, this)">48 mois</button>
+                                    <button class="chip auto-term-chip selected-primary" data-val="60" onclick="setAutoTerm(60, this)">60 mois</button>
+                                    <button class="chip auto-term-chip" data-val="72" onclick="setAutoTerm(72, this)">72 mois</button>
+                                    <button class="chip auto-term-chip" data-val="84" onclick="setAutoTerm(84, this)">84 mois</button>
+                                    <button class="chip auto-term-chip" data-val="96" onclick="setAutoTerm(96, this)">96 mois</button>
                                 </div>
-                            </div>
-                            <div>
-                                <div class="input-group-row">
-                                    <label for="car-months">Durée du prêt (en mois)</label>
-                                    <input type="number" id="car-months" value="60" oninput="calculateAuto()" />
-                                </div>
-                                <div class="input-group-row">
-                                    <label for="car-rate">Taux d'intérêt annuel (%)</label>
+
+                                <div class="input-group-row mt-3" style="max-width: 150px;">
+                                    <label for="car-rate">Taux (%)</label>
                                     <input type="number" id="car-rate" value="4.0" step="0.1" oninput="calculateAuto()" />
                                 </div>
                             </div>
+                            
+                            <div class="trap-results">
+                                <div class="result-card">
+                                    <h4 class="result-title">Impact du changement</h4>
+                                    <div id="auto-result-content"></div>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div id="auto-result" class="tool-result-box hidden mt-4"></div>
                     </div>
 
                     <div class="tab-pane" id="tab-depenses">
-                        <h3>Le coût d'opportunité</h3>
-                        <p>Sélectionnez vos petites habitudes (ou entrez un montant) pour voir la fortune qu'elles vous coûtent réellement sur le long terme.</p>
-                        
-                        <div class="preset-chips mb-4" id="daily-habits">
-                            <button class="chip expense-habit" data-cost="25" onclick="toggleHabit(this)">☕ Café (25$/sem)</button>
-                            <button class="chip expense-habit" data-cost="15" onclick="toggleHabit(this)">📺 Abonnement (15$/sem)</button>
-                            <button class="chip expense-habit" data-cost="75" onclick="toggleHabit(this)">🍽️ Restaurant (75$/sem)</button>
-                            <button class="chip expense-habit" data-cost="40" onclick="toggleHabit(this)">🛵 Livraison de nourriture (40$/sem)</button>
-                            <button class="chip expense-habit" data-cost="40" onclick="toggleHabit(this)">🍷 Alcool (40$/sem)</button>
-                            <button class="chip expense-habit" data-cost="50" onclick="toggleHabit(this)">🚬 Tabagisme (50$/sem)</button>
-                            <button class="chip expense-habit" data-cost="10" onclick="toggleHabit(this)">🎟️ Loterie (10$/sem)</button>
-                            <button class="chip expense-habit" data-cost="30" onclick="toggleHabit(this)">📦 Achats impulsifs (30$/sem)</button>
-                            <button class="chip expense-habit" data-cost="15" onclick="toggleHabit(this)">🥤 Collations (15$/sem)</button>
-                        </div>
-
-                        <div class="input-group-row">
-                            <label for="weekly-expense">Total de vos dépenses ($/semaine)</label>
-                            <input type="number" id="weekly-expense" placeholder="Ex: 35" value="0" oninput="calculateExpense()" />
-                        </div>
-                        
-                        <div id="expense-result" class="tool-result-box hidden mt-4"></div>
-                    </div>
-
-                    <div class="tab-pane" id="tab-credit">
-                        <h3>Le fléau du paiement minimum</h3>
-                        <p>À 20,99% d'intérêt, le paiement minimum de la carte de crédit est conçu par les banques pour vous garder endetté le plus longtemps possible.</p>
-                        
-                        <div class="preset-chips mb-4">
-                            <button class="chip credit-chip" onclick="setCreditPreset(2500, 75, this)">💳 Petite dette (2 500$)</button>
-                            <button class="chip credit-chip" onclick="setCreditPreset(5000, 150, this)">🛒 Dette moyenne (5 000$)</button>
-                            <button class="chip credit-chip" onclick="setCreditPreset(10000, 220, this)">🛍️ Grosse dette (10 000$)</button>
-                        </div>
-
-                        <div class="form-columns">
-                            <div>
-                                <div class="input-group-row">
-                                    <label for="cc-balance">Solde de la carte de crédit ($)</label>
-                                    <input type="number" id="cc-balance" value="2500" oninput="calculateCreditCard()" />
+                        <div class="trap-layout">
+                            <div class="trap-controls">
+                                <label class="control-label">Sélectionnez vos habitudes hebdomadaires :</label>
+                                <div class="preset-chips mb-4" id="daily-habits">
+                                    <button class="chip expense-habit" data-cost="25" onclick="toggleHabit(this)">☕ Café (25$)</button>
+                                    <button class="chip expense-habit" data-cost="15" onclick="toggleHabit(this)">📺 Abonnements (15$)</button>
+                                    <button class="chip expense-habit" data-cost="75" onclick="toggleHabit(this)">🍽️ Restos (75$)</button>
+                                    <button class="chip expense-habit" data-cost="40" onclick="toggleHabit(this)">🛵 Livraison (40$)</button>
+                                    <button class="chip expense-habit" data-cost="40" onclick="toggleHabit(this)">🍷 Alcool (40$)</button>
+                                    <button class="chip expense-habit" data-cost="50" onclick="toggleHabit(this)">🚬 Tabagisme (50$)</button>
+                                    <button class="chip expense-habit" data-cost="10" onclick="toggleHabit(this)">🎟️ Loterie (10$)</button>
+                                    <button class="chip expense-habit" data-cost="30" onclick="toggleHabit(this)">📦 Achats impulsifs (30$)</button>
+                                    <button class="chip expense-habit" data-cost="15" onclick="toggleHabit(this)">🥤 Collations (15$)</button>
                                 </div>
                             </div>
-                            <div>
-                                <div class="input-group-row">
-                                    <label for="cc-payment">Paiement mensuel que vous faites ($)</label>
-                                    <input type="number" id="cc-payment" value="75" oninput="calculateCreditCard()" />
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div id="cc-result" class="tool-result-box hidden mt-4"></div>
-                    </div>
-
-                    <div class="tab-pane" id="tab-argent-dort">
-                        <h3>L'illusion du compte chèque</h3>
-                        <p>Penser que votre argent est en sécurité à 0 % d'intérêt est le plus grand risque financier. Voyez comment l'inflation le dévore.</p>
-                        
-                        <div class="preset-chips mb-4">
-                            <button class="chip inflation-chip" onclick="setInflationPreset(10000, this)">❗️Coussin (10 000$)</button>
-                            <button class="chip inflation-chip" onclick="setInflationPreset(25000, this)">🚗 Auto (25 000$)</button>
-                            <button class="chip inflation-chip" onclick="setInflationPreset(80000, this)">🏠 Mise de fonds (80 000$)</button>
-                        </div>
-
-                        <div class="form-columns">
-                            <div>
-                                <div class="input-group-row mb-3">
-                                    <label for="cash-balance">Montant dormant dans le compte ($)</label>
-                                    <input type="number" id="cash-balance" value="15000" oninput="calculateInflation()" />
-                                </div>
-                                
-                                <label class="mb-2 d-block" style="font-weight:600; font-size:0.95rem;">Période :</label>
-                                <div class="preset-chips mb-4">
-                                    <button class="chip year-chip" onclick="setYearPreset(5, this)">5 ans</button>
-                                    <button class="chip year-chip selected-primary" onclick="setYearPreset(10, this)">10 ans</button>
-                                    <button class="chip year-chip" onclick="setYearPreset(15, this)">15 ans</button>
-                                </div>
-                                <input type="hidden" id="inflation-years" value="10">
-                            </div>
-
-                            <div>
-                                <div class="slider-container" style="padding: 1.5rem; margin-top: 1.5rem;">
-                                    <label for="inflation-rate" class="d-flex justify-between align-center mb-3" style="margin: 0;">
-                                        <span>Taux d'inflation annuel :</span>
-                                        <strong id="rate-val" style="color: #EF4444; font-size: 1.2rem;">2.0 %</strong>
-                                    </label>
-                                    <input type="range" id="inflation-rate" min="1.0" max="4.0" step="0.1" value="2.0" oninput="calculateInflation()">
-                                    <div class="d-flex justify-between" style="font-size: 0.8rem; color: var(--subtle-text-color); margin-top: 8px;">
-                                        <span>1% (Bas de la cible)</span>
-                                        <span>3% (Haut de la cible)</span>
-                                        <span>4% (Élevé)</span>
+                            
+                            <div class="trap-results">
+                                <div class="result-card">
+                                    <h4 class="result-title">Coût d'opportunité réel</h4>
+                                    <div id="expense-result-content">
+                                        <p class="text-muted">Sélectionnez des dépenses pour voir l'impact.</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div id="inflation-result" class="tool-result-box hidden mt-4"></div>
+                    </div>
+
+                    <div class="tab-pane" id="tab-credit">
+                        <div class="trap-layout">
+                            <div class="trap-controls">
+                                <label class="control-label">Solde de la carte (à 20,99%) :</label>
+                                <div class="preset-chips mb-4">
+                                    <button class="chip credit-bal-chip selected-primary" data-val="1000" onclick="setCreditBalance(1000, this)">1 000$</button>
+                                    <button class="chip credit-bal-chip" data-val="2500" onclick="setCreditBalance(2500, this)">2 500$</button>
+                                    <button class="chip credit-bal-chip" data-val="5000" onclick="setCreditBalance(5000, this)">5 000$</button>
+                                    <button class="chip credit-bal-chip" data-val="10000" onclick="setCreditBalance(10000, this)">10 000$</button>
+                                    <button class="chip credit-bal-chip" data-val="25000" onclick="setCreditBalance(25000, this)">25 000$</button>
+                                </div>
+
+                                <label class="control-label">Mensualité (% du solde) :</label>
+                                <div class="preset-chips mb-4" id="credit-payment-chips">
+                                    </div>
+                            </div>
+                            
+                            <div class="trap-results">
+                                <div class="result-card">
+                                    <h4 class="result-title">Dégâts de l'intérêt</h4>
+                                    <div id="credit-result-content"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane" id="tab-argent-dort">
+                        <div class="trap-layout">
+                            <div class="trap-controls">
+                                <label class="control-label">Montant dormant dans le compte chèque :</label>
+                                <div class="preset-chips mb-4">
+                                    <button class="chip inflation-bal-chip selected-primary" data-val="10000" onclick="setInflationBalance(10000, this)">10 000$</button>
+                                    <button class="chip inflation-bal-chip" data-val="25000" onclick="setInflationBalance(25000, this)">25 000$</button>
+                                    <button class="chip inflation-bal-chip" data-val="80000" onclick="setInflationBalance(80000, this)">80 000$</button>
+                                </div>
+
+                                <label class="control-label">Taux d'inflation estimé :</label>
+                                <div class="preset-chips mb-4">
+                                    <button class="chip inflation-rate-chip" data-val="1" onclick="setInflationRate(1, this)">Faible (1%)</button>
+                                    <button class="chip inflation-rate-chip selected-primary" data-val="2" onclick="setInflationRate(2, this)">Moyenne (2%)</button>
+                                    <button class="chip inflation-rate-chip" data-val="3" onclick="setInflationRate(3, this)">Élevée (3%)</button>
+                                    <button class="chip inflation-rate-chip" data-val="5" onclick="setInflationRate(5, this)">Extrême (5%)</button>
+                                </div>
+                            </div>
+                            
+                            <div class="trap-results">
+                                <div class="result-card">
+                                    <h4 class="result-title">Perte de pouvoir d'achat</h4>
+                                    <div id="inflation-result-content"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="tab-pane" id="tab-style-vie">
-                        <h3>L'illusion de l'augmentation</h3>
-                        <p>Une hausse de salaire brut fond vite après l'impôt. Entrez vos salaires et voyez comment quelques "récompenses" font disparaître votre promotion.</p>
+                        <div class="trap-layout">
+                            <div class="trap-controls">
+                                <div class="form-columns-mobile mb-3">
+                                    <div class="input-group-row">
+                                        <label for="salary-before">Salaire brut avant ($/an)</label>
+                                        <input type="number" id="salary-before" value="60000" oninput="updateLifestyle()" />
+                                    </div>
+                                    <div class="input-group-row">
+                                        <label for="salary-after">Salaire brut après ($/an)</label>
+                                        <input type="number" id="salary-after" value="70000" oninput="updateLifestyle()" />
+                                    </div>
+                                </div>
 
-                        <div class="form-columns mb-3">
-                            <div class="input-group-row">
-                                <label for="salary-before">Salaire brut avant ($/an)</label>
-                                <input type="number" id="salary-before" value="60000" oninput="updateLifestyle()" />
+                                <label class="control-label">Ajoutez ces récompenses :</label>
+                                <div class="preset-chips mb-4" id="lifestyle-expenses">
+                                    <button class="chip lifestyle-chip" data-cost="450" onclick="toggleLifestyleExpense(this)">🚙 Auto (450$/m)</button>
+                                    <button class="chip lifestyle-chip" data-cost="150" onclick="toggleLifestyleExpense(this)">🍽️ Restos (150$/m)</button>
+                                    <button class="chip lifestyle-chip" data-cost="200" onclick="toggleLifestyleExpense(this)">✈️ Voyage (200$/m)</button>
+                                    <button class="chip lifestyle-chip" data-cost="60" onclick="toggleLifestyleExpense(this)">📺 Abos (60$/m)</button>
+                                    <button class="chip lifestyle-chip" data-cost="300" onclick="toggleLifestyleExpense(this)">🏠 Loyer (300$/m)</button>
+                                </div>
                             </div>
-                            <div class="input-group-row">
-                                <label for="salary-after">Salaire brut après ($/an)</label>
-                                <input type="number" id="salary-after" value="70000" oninput="updateLifestyle()" />
+                            
+                            <div class="trap-results">
+                                <div class="result-card">
+                                    <h4 class="result-title">Où va votre augmentation ?</h4>
+                                    <div id="lifestyle-result-content"></div>
+                                </div>
                             </div>
                         </div>
-
-                        <div id="raise-breakdown" class="breakdown-box hidden"></div>
-
-                        <p class="mb-2 mt-4" style="font-weight:600; font-size:0.95rem;">Sélectionnez les "récompenses" que vous ajoutez à votre style de vie :</p>
-                        <div class="preset-chips mb-4" id="lifestyle-expenses">
-                            <button class="chip lifestyle-chip" data-cost="450" onclick="toggleLifestyleExpense(this)">🚙 Changer d'auto (450$/m)</button>
-                            <button class="chip lifestyle-chip" data-cost="70" onclick="toggleLifestyleExpense(this)">🍽️ +1 Resto/sem (70$/m)</button>
-                            <button class="chip lifestyle-chip" data-cost="200" onclick="toggleLifestyleExpense(this)">✈️ Voyage annuel (200$/m)</button>
-                            <button class="chip lifestyle-chip" data-cost="30" onclick="toggleLifestyleExpense(this)">📺 Abonnements (30$/m)</button>
-                            <button class="chip lifestyle-chip" data-cost="300" onclick="toggleLifestyleExpense(this)">🏠 Plus grand loyer (300$/m)</button>
-                        </div>
-
-                        <div id="lifestyle-result" class="tool-result-box hidden mt-4"></div>
                     </div>
 
                 </div>
@@ -258,8 +246,8 @@
             <div class="star-content">
                 <span class="badge badge-accent">Outil Populaire</span>
                 <h2>Serez-vous prêt pour la retraite ?</h2>
-                <p>Ne laissez pas votre avenir au hasard. Notre simulateur complet prend en compte l'inflation, vos placements (REER/CELI), et les rentes gouvernementales (RRQ/PSV) pour créer votre plan de décaissement exact.</p>
-                <a href="simulateur-retraite.html" class="btn-primary-large mt-4">Lancer le simulateur de retraite</a>
+                <p>Ne laissez pas votre avenir au hasard. Notre simulateur complet prend en compte l'inflation, vos placements (REER/CELI), et les rentes (RRQ/PSV) pour créer votre plan exact.</p>
+                <a href="simulateur-retraite.html" class="btn-primary-large mt-4">Lancer le simulateur</a>
             </div>
             <div class="star-visual">
                 <div class="mockup-chart">
@@ -275,7 +263,7 @@
 
     <section class="articles-section section-padding">
         <div class="container">
-            <div class="section-header d-flex justify-between align-center mb-5">
+            <div class="section-header d-flex justify-between align-center mb-4">
                 <h2>À ne pas manquer</h2>
                 <a href="articles.html" class="btn-text-mauve d-none-mobile">Voir tous les articles →</a>
             </div>
@@ -289,7 +277,6 @@
                         <p>Découvrez comment les frais de gestion grugent votre portefeuille sur le long terme.</p>
                     </div>
                 </a>
-
                 <a href="article-decaissement.html" class="article-card">
                     <div class="article-img placeholder-img"></div>
                     <div class="article-content">
@@ -298,7 +285,6 @@
                         <p>Comment retirer votre argent sans payer le prix fort en impôts à la retraite.</p>
                     </div>
                 </a>
-
                 <a href="article-celi-reer.html" class="article-card">
                     <div class="article-img placeholder-img"></div>
                     <div class="article-content">
@@ -317,7 +303,7 @@
     <section class="newsletter-section section-padding text-center">
         <div class="container newsletter-container">
             <h2>L'infolettre Finoza</h2>
-            <p>Rejoignez beaucoup de Québécois qui optimisent leurs finances chaque semaine.</p>
+            <p>Rejoignez des milliers de Québécois qui optimisent leurs finances chaque semaine.</p>
             <form class="newsletter-form mt-4">
                 <input type="email" placeholder="Votre adresse courriel" required>
                 <button type="submit" class="btn-primary-large">S'abonner</button>
