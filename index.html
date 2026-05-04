@@ -75,7 +75,7 @@
         <div class="container">
             <div class="section-header text-center mb-5">
                 <h2>Les pires pièges financiers à éviter</h2>
-                <p>Évitez à tour prix ces pièges qui grugent silencieusement votre patrimoine au quotidien.</p>
+                <p>Évitez à tout prix ces pièges qui grugent silencieusement votre patrimoine au quotidien.</p>
             </div>
             
             <div class="tools-container">
@@ -94,15 +94,15 @@
                         <p>Une facture de garage fait peur. Mais comparez-la au coût réel d'un véhicule neuf avant de changer d'auto.</p>
                         
                         <div class="preset-chips mb-4">
-                            <button class="chip auto-chip" onclick="setAutoPreset(40000, 60, 4, this)">🚙 VUS</button>
-                            <button class="chip auto-chip" onclick="setAutoPreset(65000, 60, 4, this)">🛻 Pick-up</button>
-                            <button class="chip auto-chip" onclick="setAutoPreset(45000, 60, 4, this)">⚡ Électrique</button>
+                            <button class="chip auto-chip" onclick="setAutoPreset(40000, 60, 4, this)">🚙 VUS (40 000$)</button>
+                            <button class="chip auto-chip" onclick="setAutoPreset(65000, 84, 8, this)">🛻 Pick-up (65 000$)</button>
+                            <button class="chip auto-chip" onclick="setAutoPreset(45000, 72, 6, this)">⚡ Électrique (45 000$)</button>
                         </div>
 
                         <div class="form-columns">
                             <div>
                                 <div class="input-group-row mb-3">
-                                    <label for="repair-cost"">Coût estimé des réparations ($)</label>
+                                    <label for="repair-cost" style="color: var(--primary-color);">Coût estimé des réparations ($)</label>
                                     <input type="number" id="repair-cost" value="2000" oninput="calculateAuto()" />
                                 </div>
                                 <div class="input-group-row">
@@ -133,7 +133,7 @@
                             <button class="chip expense-habit" data-cost="25" onclick="toggleHabit(this)">☕ Café (25$/sem)</button>
                             <button class="chip expense-habit" data-cost="15" onclick="toggleHabit(this)">📺 Abonnement (15$/sem)</button>
                             <button class="chip expense-habit" data-cost="75" onclick="toggleHabit(this)">🍽️ Restaurant (75$/sem)</button>
-                            <button class="chip expense-habit" data-cost="40" onclick="toggleHabit(this)">🛵 Livraison de nourriture (40$/sem)</button>
+                            <button class="chip expense-habit" data-cost="40" onclick="toggleHabit(this)">🛵 Livraison (40$/sem)</button>
                             <button class="chip expense-habit" data-cost="40" onclick="toggleHabit(this)">🍷 Alcool (40$/sem)</button>
                             <button class="chip expense-habit" data-cost="50" onclick="toggleHabit(this)">🚬 Tabagisme (50$/sem)</button>
                             <button class="chip expense-habit" data-cost="10" onclick="toggleHabit(this)">🎟️ Loterie (10$/sem)</button>
@@ -142,7 +142,7 @@
                         </div>
 
                         <div class="input-group-row">
-                            <label for="weekly-expense">Total de vos dépenses ($/semaine)</label>
+                            <label for="weekly-expense" style="color: var(--primary-color);">Total de vos dépenses ($/semaine)</label>
                             <input type="number" id="weekly-expense" placeholder="Ex: 35" value="0" oninput="calculateExpense()" />
                         </div>
                         
@@ -207,12 +207,12 @@
                                 <div class="slider-container" style="padding: 1.5rem; margin-top: 1.5rem;">
                                     <label for="inflation-rate" class="d-flex justify-between align-center mb-3" style="margin: 0;">
                                         <span>Taux d'inflation annuel :</span>
-                                        <strong id="rate-val" style="color: #EF4444; font-size: 1.2rem;">2.0 %</strong>
+                                        <strong id="rate-val" style="color: #EF4444; font-size: 1.2rem;">3.0 %</strong>
                                     </label>
                                     <input type="range" id="inflation-rate" min="1.0" max="5.0" step="0.1" value="3.0" oninput="calculateInflation()">
                                     <div class="d-flex justify-between" style="font-size: 0.8rem; color: var(--subtle-text-color); margin-top: 8px;">
-                                        <span>1% (Bas de la fourchette cible)</span>
-                                        <span>3% (Haut de la fourchette cible)</span>
+                                        <span>1% (Bas de la cible)</span>
+                                        <span>3% (Haut de la cible)</span>
                                         <span>5% (Élevé)</span>
                                     </div>
                                 </div>
@@ -354,208 +354,10 @@
 
     <footer style="background: var(--primary-color); color: white; padding: 2rem 0; text-align: center;">
         <div class="container">
-            <p>&copy; 2024 Finoza. Tous droits réservés.</p>
+            <p>&copy; 2026 Finoza. Tous droits réservés.</p>
         </div>
     </footer>
 
-    <script src="index.js"></script>
-</body>
-</html>                    <p>Démystifiez les cotes de crédit et l'achat immobilier.</p>
-                </a>
-                <a href="retraite.html" class="bento-card bento-large">
-                    <div class="bento-icon">🌴</div>
-                    <h3>Retraite & Patrimoine</h3>
-                    <p>Planifiez votre indépendance financière. Calculez combien il vous faut et comment décaisser stratégiquement pour ne jamais manquer d'argent.</p>
-                </a>
-            </div>
-        </div>
-    </section>
-
-    <section class="quick-tools-section section-padding bg-light" id="outils-rapides">
-        <div class="container">
-            <div class="section-header text-center mb-5">
-                <h2>Outils Rapides</h2>
-                <p>Prenez des décisions éclairées en quelques secondes.</p>
-            </div>
-            
-            <div class="tools-container">
-                <div class="tools-tabs">
-                    <button class="tab-btn active" data-tab="marche">Investissements</button>
-                    <button class="tab-btn" data-tab="auto">Crédit</button>
-                    <button class="tab-btn" data-tab="locataire">Financement</button>
-                    <button class="tab-btn" data-tab="independance">Retraite</button>
-                    <button class="tab-btn" data-tab="depenses">Dépenses</button>
-                </div>
-
-                <div class="tab-content-wrapper">
-                    
-                    <div class="tab-pane active" id="tab-marche">
-                        <div class="prediction-layout-grid">
-                            
-                            <div class="prediction-widget">
-                                <p class="widget-label" style="font-weight: 600; font-size: 0.9rem; color: var(--subtle-text-color); margin-bottom: 1rem;">CONSENSUS MARCHÉ FIN 2025</p>
-                                <div class="gauge-container">
-                                    <canvas id="sp500Gauge" aria-label="Jauge de prédiction du S&P 500" role="img"></canvas>
-                                    <div id="gaugeTargetText" class="gauge-target-text" aria-live="polite"></div>
-                                </div>
-                                <div class="prediction-data">
-                                    <div class="current-level">
-                                        S&P 500 Actuel : <strong id="currentLevelText">...</strong>
-                                    </div>
-                                    <div class="prediction-gap">
-                                        <span id="gapLabel">Potentiel</span>
-                                        <strong id="percentageGap">...</strong> 
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="prediction-explanation">
-                                <h2>Analyses et Marchés Boursiers</h2>
-                                <p>Le volet <strong>Investissements</strong> de Finoza décortique les prédictions des experts et compare les rendements historiques pour vous aider à bâtir un portefeuille robuste.</p>
-                                <a href="investissements.html" class="btn-primary mt-3">Découvrir les stratégies</a>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="tab-pane" id="tab-auto">
-                        <h3>Le piège du prêt auto</h3>
-                        <div class="input-group-row">
-                            <label for="repair-cost">Coût réparation auto actuelle ($)</label>
-                            <input type="number" id="repair-cost" placeholder="Ex: 2000" />
-                        </div>
-                        <div class="input-group-row">
-                            <label for="new-car-price">Prix du véhicule neuf désiré ($)</label>
-                            <input type="number" id="new-car-price" placeholder="Ex: 40000" />
-                        </div>
-                        <button class="btn-primary-small mt-3" onclick="calculateAuto()">Calculer l'impact</button>
-                        <div id="auto-result" class="tool-result-box hidden mt-4"></div>
-                    </div>
-
-                    <div class="tab-pane" id="tab-locataire">
-                        <h3>Le Choc du Locataire</h3>
-                        <div class="input-group-row">
-                            <label for="rent-cost">Loyer mensuel actuel ($)</label>
-                            <input type="number" id="rent-cost" placeholder="Ex: 1500" />
-                        </div>
-                        <button class="btn-primary-small mt-3" onclick="calculateRent()">Voir sur 25 ans</button>
-                        <div id="rent-result" class="tool-result-box hidden mt-4"></div>
-                    </div>
-
-                    <div class="tab-pane" id="tab-independance">
-                        <h3>Capital cible pour l'indépendance</h3>
-                        <p>Combien de revenu annuel désirez-vous sans avoir à travailler ?</p>
-                        <div class="preset-buttons">
-                            <button onclick="calculateIndependence(40000)">40 000 $</button>
-                            <button onclick="calculateIndependence(70000)">70 000 $</button>
-                            <button onclick="calculateIndependence(100000)">100 000 $</button>
-                        </div>
-                        <div id="independence-result" class="tool-result-box hidden mt-4"></div>
-                    </div>
-
-                    <div class="tab-pane" id="tab-depenses">
-                        <h3>Le coût d'opportunité</h3>
-                        <p>Découvrez la valeur réelle de vos petites habitudes sur 10 ans.</p>
-                        
-                        <div class="preset-buttons mb-3">
-                            <button onclick="setExpenseAndCalculate(25)">☕ Café (25$/sem)</button>
-                            <button onclick="setExpenseAndCalculate(15)">📺 Abonnements (15$/sem)</button>
-                            <button onclick="setExpenseAndCalculate(75)">🍽️ Restos (75$/sem)</button>
-                        </div>
-
-                        <div class="input-group-row">
-                            <label for="weekly-expense">Ou entrez votre propre montant ($/semaine)</label>
-                            <input type="number" id="weekly-expense" placeholder="Ex: 35" />
-                        </div>
-                        
-                        <button class="btn-primary-small mt-3" onclick="calculateExpense()">Calculer sur 10 ans</button>
-                        <div id="expense-result" class="tool-result-box hidden mt-4"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="star-feature-section" id="simulateur-retraite">
-        <div class="container star-container">
-            <div class="star-content">
-                <span class="badge badge-accent">Outil Populaire</span>
-                <h2>Serez-vous prêt pour la retraite ?</h2>
-                <p>Ne laissez pas votre avenir au hasard. Notre simulateur complet prend en compte l'inflation, vos placements (REER/CELI), et les rentes gouvernementales (RRQ/PSV) pour créer votre plan de décaissement exact.</p>
-                <a href="simulateur-retraite.html" class="btn-primary-large mt-4">Lancer le simulateur de retraite</a>
-            </div>
-            <div class="star-visual">
-                <div class="mockup-chart">
-                    <div class="bar bar-1"></div>
-                    <div class="bar bar-2"></div>
-                    <div class="bar bar-3"></div>
-                    <div class="bar bar-4"></div>
-                    <div class="bar bar-5"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="articles-section section-padding">
-        <div class="container">
-            <div class="section-header d-flex justify-between align-center mb-5">
-                <h2>À ne pas manquer</h2>
-                <a href="articles.html" class="btn-text-mauve d-none-mobile">Voir tous les articles →</a>
-            </div>
-            
-            <div class="articles-grid">
-                <a href="article-fonds-mutuels.html" class="article-card">
-                    <div class="article-img placeholder-img"></div>
-                    <div class="article-content">
-                        <span class="article-time">⏱️ 4 min de lecture</span>
-                        <h3>Fonds Mutuels vs FNB : Le vrai coût caché</h3>
-                        <p>Découvrez comment les frais de gestion grugent votre portefeuille sur le long terme.</p>
-                    </div>
-                </a>
-
-                <a href="article-decaissement.html" class="article-card">
-                    <div class="article-img placeholder-img"></div>
-                    <div class="article-content">
-                        <span class="article-time">⏱️ 6 min de lecture</span>
-                        <h3>La stratégie de décaissement REER optimale</h3>
-                        <p>Comment retirer votre argent sans payer le prix fort en impôts à la retraite.</p>
-                    </div>
-                </a>
-
-                <a href="article-celi-reer.html" class="article-card">
-                    <div class="article-img placeholder-img"></div>
-                    <div class="article-content">
-                        <span class="article-time">⏱️ 5 min de lecture</span>
-                        <h3>CELI ou REER : Par quoi commencer ?</h3>
-                        <p>Le guide définitif pour choisir le bon compte selon votre salaire et vos objectifs.</p>
-                    </div>
-                </a>
-                
-                </div>
-            <div class="text-center mt-4 d-block-mobile hidden">
-                <a href="articles.html" class="btn-text-mauve">Voir tous les articles →</a>
-            </div>
-        </div>
-    </section>
-
-    <section class="newsletter-section section-padding text-center">
-        <div class="container newsletter-container">
-            <h2>L'infolettre Finoza</h2>
-            <p>Rejoignez des milliers de Québécois qui optimisent leurs finances chaque semaine.</p>
-            <form class="newsletter-form mt-4">
-                <input type="email" placeholder="Votre adresse courriel" required>
-                <button type="submit" class="btn-primary-large">S'abonner</button>
-            </form>
-        </div>
-    </section>
-
-    <footer style="background: var(--primary-color); color: white; padding: 2rem 0; text-align: center;">
-        <div class="container">
-            <p>&copy; 2025 Finoza. Tous droits réservés.</p>
-        </div>
-    </footer>
-     <script src="donnees.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3"></script>
     <script src="index.js"></script>
 </body>
 </html>
