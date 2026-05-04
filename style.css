@@ -1,5 +1,5 @@
 /* --- Importation des polices de caractères pour les deux thèmes --- */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500;600&family=Lora:wght@600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&family=Inter:wght@400;500&family=Lora:wght@600&display=swap');
 
 /* --- Animations --- */
 @keyframes fadeIn {
@@ -40,7 +40,7 @@
 
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-    --shadow-focus-ring: 0 0 0 4px rgba(13, 148, 136, 0.15);
+    --shadow-focus-ring: 0 0 0 3px rgba(13, 148, 136, 0.2);
     --border-radius: 12px;
 }
 
@@ -67,7 +67,7 @@
 
         --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
         --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
-        --shadow-focus-ring: 0 0 0 4px rgba(79, 70, 229, 0.25);
+        --shadow-focus-ring: 0 0 0 3px rgba(16, 185, 129, 0.3);
     }
 }
 
@@ -118,12 +118,13 @@ section {
     transition: background-color 0.3s ease;
 }
 
+/* Utilitaires */
 .text-center { text-align: center; }
 .justify-center { justify-content: center; }
 .align-center { align-items: center; }
 .d-flex { display: flex; }
-.d-block { display: block; }
 .justify-between { justify-content: space-between; }
+.d-block { display: block; }
 .mt-3 { margin-top: 1rem; } 
 .mt-4 { margin-top: 2rem; } 
 .mb-2 { margin-bottom: 0.5rem; }
@@ -163,7 +164,7 @@ section {
     color: var(--heading-color); transform: translateY(-2px);
 }
 
-/* --- Boutons --- */
+/* --- Boutons Finoza Originaux harmonisés --- */
 .btn-primary, .btn-primary-large, .btn-primary-small {
     display: inline-block; background: var(--primary-gradient); color: var(--light-text-color);
     border: none; padding: 1rem 2.5rem; border-radius: 50px; cursor: pointer;
@@ -175,6 +176,46 @@ section {
     background-position: right center; transform: scale(1.05); box-shadow: var(--shadow-lg); color: var(--light-text-color);
 }
 .btn-primary-small { padding: 0.6rem 1.5rem; font-size: 0.95rem; }
+
+.btn-secondary-large.outline {
+    background: transparent; color: var(--heading-color);
+    border: 2px solid var(--border-color); padding: 1rem 2.5rem; border-radius: 50px;
+    font-weight: 700; font-family: var(--font-heading); font-size: 1.1rem;
+    transition: all 0.3s ease; display: inline-block; text-align: center;
+}
+.btn-secondary-large.outline:hover { border-color: var(--primary-color); color: var(--primary-color); }
+
+.btn-text { color: var(--accent-color); font-weight: 600; text-decoration: none; }
+.btn-text:hover { color: var(--accent-hover); }
+
+/* --- Cartes (Cards) --- */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+.card {
+    background-color: var(--card-bg-color); border: 1px solid var(--border-color);
+    border-radius: var(--border-radius); padding: 2.5rem;
+    transition: transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+}
+.card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+.card h3 { font-size: 1.5rem; }
+.card p { margin-top: 1rem; }
+.card-link { display: block; color: inherit; text-decoration: none; }
+.card.selected { border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring); }
+
+/* --- Pied de Page (Footer) --- */
+footer, .site-footer {
+    background-color: var(--card-bg-color); 
+    color: var(--subtle-text-color);
+    text-align: center; 
+    padding: 3rem 0; 
+    margin-top: 5rem;
+    border-top: 1px solid var(--border-color);
+}
+
+
+/* =============================================================== */
+/* === SECTIONS PAGE D'ACCUEIL === */
+/* =============================================================== */
 
 /* --- HERO MODERN --- */
 .hero-modern { 
@@ -230,40 +271,60 @@ section {
 .tab-pane.active { display: block; }
 
 .tab-pane h3 { font-size: 1.5rem; margin-top: 0; margin-bottom: 1rem; color: var(--heading-color); }
-
-/* --- CHAMPS DE CALCUL (Nouveau style Fintech) --- */
-.form-columns { display: grid; grid-template-columns: 1fr; gap: 2rem; margin-top: 1rem; }
-@media (min-width: 768px) { .form-columns { grid-template-columns: 1fr 1fr; } }
-
-.input-group-row {
-    margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
-}
-.input-group-row label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: 600;
-    font-size: 0.95rem;
-}
-.input-group-row input {
-    width: 100%;
-    padding: 14px 16px;
-    font-size: 1.05rem;
-    border: 2px solid var(--border-color);
-    border-radius: 8px;
-    background-color: #ffffff;
-    transition: all 0.2s ease;
-    color: #111827; /* Force texte foncé dans input pour lisibilité */
-}
-.input-group-row input:focus {
-    border-color: var(--primary-color);
-    outline: none;
-    box-shadow: var(--shadow-focus-ring);
-}
-
+.input-group-row { display: flex; flex-direction: column; gap: 0.3rem; margin-bottom: 1rem; margin-top: 1.5rem; }
+.input-group-row label { font-size: 0.95rem; font-weight: 600; color: var(--heading-color); } /* Texte foncé standard pour les labels */
+.input-group-row input { padding: 14px 16px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1.05rem; background: var(--bg-color); color: var(--text-color); transition: all 0.2s ease; }
+.input-group-row input:focus { outline: none; border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring); }
 .tool-result-box { background: var(--section-bg-color); border-left: 4px solid var(--primary-color); padding: 1.5rem; border-radius: 0 8px 8px 0; font-size: 1.05rem; color: var(--heading-color); }
 
-/* --- STYLE DES PASTILLES (CHIPS) --- */
+.form-columns { display: grid; grid-template-columns: 1fr; gap: 2.5rem; margin-top: 2rem; }
+@media (min-width: 768px) { .form-columns { grid-template-columns: 1fr 1fr; } }
+
+@media (max-width: 768px) { .tab-content-wrapper { padding: 1.5rem; } }
+
+/* --- VEDETTE : SIMULATEUR RETRAITE (Original) --- */
+.star-feature-section { background: var(--primary-gradient); color: #FFFFFF; padding: 6rem 0; margin: 4rem 0; border-radius: var(--border-radius); }
+.star-container { display: flex; align-items: center; gap: 4rem; justify-content: space-between; }
+.star-content { flex: 1; max-width: 600px; }
+.star-content h2 { font-size: 2.5rem; margin-top: 1rem; margin-bottom: 1.5rem; line-height: 1.2; color: #FFFFFF; }
+.star-content p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; color: #E5E7EB; }
+.star-content .badge { border-color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.1); color: #FFFFFF; }
+
+/* Bouton spécial sur fond foncé */
+.star-content .btn-primary-large { background: #FFFFFF; color: #111827; }
+.star-content .btn-primary-large:hover { background: #F9FAFB; box-shadow: var(--shadow-lg); }
+
+.star-visual { flex: 1; background: rgba(0,0,0,0.15); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); width: 100%; }
+.mockup-chart { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; height: 200px; }
+.bar { background: #FFFFFF; width: 18%; border-radius: 4px 4px 0 0; opacity: 0.8; }
+.bar-1 { height: 40%; } .bar-2 { height: 60%; } .bar-3 { height: 80%; } .bar-4 { height: 100%; opacity: 1; } .bar-5 { height: 70%; background: #EF4444; opacity: 1; }
+
+@media (max-width: 992px) { .star-container { flex-direction: column; } .star-content { text-align: center; max-width: 100%; } .star-visual { margin-top: 2rem; } }
+
+/* --- ARTICLES INCONTOURNABLES --- */
+.articles-section { background-color: var(--section-bg-color); }
+.articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
+.article-card { background: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
+.article-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+.placeholder-img { height: 180px; background: var(--bg-color); border-bottom: 1px solid var(--border-color); }
+.article-content { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
+.article-time { font-size: 0.8rem; color: var(--subtle-text-color); font-weight: bold; }
+.article-content h3 { font-size: 1.2rem; margin: 0.5rem 0; color: var(--heading-color); }
+.article-content p { font-size: 0.95rem; color: var(--text-color); margin: 0; flex-grow: 1; }
+
+/* --- INFOLETTRE --- */
+.newsletter-container { max-width: 900px; margin: 0 auto; background: var(--card-bg-color); padding: 4rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); }
+.newsletter-form { display: flex; gap: 1rem; }
+.newsletter-form input { flex: 1; padding: 14px; border: 1px solid var(--border-color); border-radius: 50px; font-size: 1rem; background: var(--bg-color); color: var(--text-color); transition: all 0.2s ease;}
+.newsletter-form input:focus { outline: none; border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring); }
+@media (max-width: 600px) { .newsletter-form { flex-direction: column; } .newsletter-container { padding: 2rem; } }
+
+/* --- AJOUTS FINOZA PREMIUM --- */
+.badge.badge-gris { color: var(--subtle-text-color); border-color: var(--border-color); }
+.btn-text-mauve { color: #A855F7; font-weight: 600; text-decoration: none; transition: color 0.2s ease; }
+.btn-text-mauve:hover { color: var(--primary-color); }
+
+/* --- PASTILLES (CHIPS) AMÉLIORÉES --- */
 .preset-chips {
     display: flex;
     flex-wrap: wrap;
@@ -272,11 +333,11 @@ section {
     margin-bottom: 0.5rem;
 }
 .chip {
-    padding: 12px 22px;
+    padding: 12px 22px; 
     background: var(--bg-color);
     border: 1px solid var(--border-color);
     border-radius: 50px;
-    font-size: 1.05rem;
+    font-size: 1.05rem; 
     font-weight: 600;
     color: var(--text-color);
     cursor: pointer;
@@ -291,7 +352,6 @@ section {
     box-shadow: var(--shadow-md);
 }
 
-/* Pastille Choix Unique */
 .chip.selected-primary {
     background: var(--primary-color);
     color: white;
@@ -305,16 +365,15 @@ section {
     transform: scale(0.95);
 }
 
-/* Pastille Dépenses/Alerte (Cumulatif) */
 .chip.selected {
-    background: #EF4444;
+    background: #EF4444; 
     color: white;
     border-color: #EF4444;
-    transform: scale(0.95);
-    box-shadow: inset 0 3px 5px rgba(0,0,0,0.2);
+    transform: scale(0.95); 
+    box-shadow: inset 0 3px 5px rgba(0,0,0,0.2); 
 }
 .chip.selected:hover {
-    background: #DC2626;
+    background: #DC2626; 
     border-color: #DC2626;
     transform: scale(0.95);
 }
@@ -323,15 +382,15 @@ section {
     .chip {
         padding: 10px 16px;
         font-size: 0.95rem;
-        width: 100%;
+        width: 100%; 
         text-align: center;
         justify-content: center;
     }
 }
 
-/* --- BOÎTE DÉTAIL STYLE DE VIE --- */
+/* --- BOÎTE DE DÉTAIL --- */
 .breakdown-box {
-    background: white;
+    background: var(--card-bg-color); /* Utilise le fond blanc de la carte */
     border: 1px solid var(--border-color);
     border-radius: 8px;
     padding: 1rem;
@@ -348,57 +407,7 @@ section {
     color: var(--primary-color);
 }
 
-/* --- VEDETTE : SIMULATEUR RETRAITE --- */
-.star-feature-section { background: var(--primary-gradient); color: #FFFFFF; padding: 6rem 0; margin: 4rem 0; border-radius: var(--border-radius); }
-.star-container { display: flex; align-items: center; gap: 4rem; justify-content: space-between; }
-.star-content { flex: 1; max-width: 600px; }
-.star-content h2 { font-size: 2.5rem; margin-top: 1rem; margin-bottom: 1.5rem; line-height: 1.2; color: #FFFFFF; }
-.star-content p { font-size: 1.1rem; opacity: 0.9; margin-bottom: 2rem; color: #E5E7EB; }
-.star-content .badge { border-color: rgba(255,255,255,0.3); background: rgba(0,0,0,0.1); color: #FFFFFF; }
-.star-content .btn-primary-large { background: #FFFFFF; color: #111827; }
-.star-content .btn-primary-large:hover { background: #F9FAFB; box-shadow: var(--shadow-lg); }
-.star-visual { flex: 1; background: rgba(0,0,0,0.15); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); width: 100%; }
-.mockup-chart { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; height: 200px; }
-.bar { background: #FFFFFF; width: 18%; border-radius: 4px 4px 0 0; opacity: 0.8; }
-.bar-1 { height: 40%; } .bar-2 { height: 60%; } .bar-3 { height: 80%; } .bar-4 { height: 100%; opacity: 1; } .bar-5 { height: 70%; background: #EF4444; opacity: 1; }
-
-@media (max-width: 992px) { .star-container { flex-direction: column; } .star-content { text-align: center; max-width: 100%; } .star-visual { margin-top: 2rem; } }
-
-/* --- SLIDERS ET WIDGET --- */
+/* --- SLIDERS --- */
 input[type="range"] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: var(--border-color); border-radius: 5px; outline: none; }
 input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 20px; height: 20px; background: var(--primary-color); cursor: pointer; border-radius: 50%; }
 input[type="range"]::-moz-range-thumb { width: 20px; height: 20px; background: var(--primary-color); cursor: pointer; border-radius: 50%; }
-
-.prediction-layout-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; }
-.prediction-widget { background-color: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); padding: 1.5rem; box-shadow: var(--shadow-lg); text-align: center; }
-.gauge-container { position: relative; max-width: 280px; margin: 0 auto; }
-.gauge-target-text { position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); font-family: var(--font-heading); color: var(--heading-color); font-size: 1.1rem; }
-.gauge-target-text strong { display: block; font-size: 2.5rem; }
-.prediction-gap { background-color: var(--section-bg-color); padding: 0.75rem 1rem; border-radius: 8px; font-weight: 500; }
-.prediction-gap strong { display: block; font-size: 1.75rem; font-family: var(--font-heading); margin-top: 0.25rem; }
-.prediction-gap .success { color: #10B981; } .prediction-gap .failure { color: #EF4444; }
-@media (max-width: 900px) { .prediction-layout-grid { grid-template-columns: 1fr; } }
-
-/* --- ARTICLES INCONTOURNABLES --- */
-.articles-section { background-color: var(--section-bg-color); }
-.articles-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; }
-.article-card { background: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); overflow: hidden; transition: transform 0.3s, box-shadow 0.3s; cursor: pointer; display: flex; flex-direction: column; text-decoration: none; color: inherit; }
-.article-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
-.placeholder-img { height: 180px; background: var(--bg-color); border-bottom: 1px solid var(--border-color); }
-.article-content { padding: 1.5rem; flex-grow: 1; display: flex; flex-direction: column; }
-.article-time { font-size: 0.8rem; color: var(--subtle-text-color); font-weight: bold; }
-.article-content h3 { font-size: 1.2rem; margin: 0.5rem 0; color: var(--heading-color); }
-.article-content p { font-size: 0.95rem; color: var(--text-color); margin: 0; flex-grow: 1; }
-
-.badge-gris { color: var(--subtle-text-color); border-color: var(--border-color); }
-.btn-text-mauve { color: #A855F7; font-weight: 600; text-decoration: none; transition: color 0.2s ease; }
-.btn-text-mauve:hover { color: var(--primary-color); }
-
-/* --- INFOLETTRE ET PIED DE PAGE --- */
-.newsletter-container { max-width: 900px; margin: 0 auto; background: var(--card-bg-color); padding: 4rem; border-radius: var(--border-radius); border: 1px solid var(--border-color); box-shadow: var(--shadow-md); }
-.newsletter-form { display: flex; gap: 1rem; }
-.newsletter-form input { flex: 1; padding: 14px; border: 1px solid var(--border-color); border-radius: 50px; font-size: 1rem; background: var(--bg-color); color: var(--text-color); }
-.newsletter-form input:focus { outline: none; border-color: var(--primary-color); box-shadow: var(--shadow-focus-ring); }
-@media (max-width: 600px) { .newsletter-form { flex-direction: column; } .newsletter-container { padding: 2rem; } }
-
-footer { background-color: var(--card-bg-color); color: var(--subtle-text-color); text-align: center; padding: 3rem 0; margin-top: 5rem; border-top: 1px solid var(--border-color); }
