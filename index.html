@@ -7,9 +7,6 @@
     
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-    
-    <script src="donnees.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3"></script>
 </head>
 <body>
 
@@ -102,7 +99,7 @@
                         <div class="form-columns">
                             <div>
                                 <div class="input-group-row mb-3">
-                                    <label for="repair-cost" style="color: var(--primary-color);">Coût estimé des réparations ($)</label>
+                                    <label for="repair-cost">Coût estimé des réparations ($)</label>
                                     <input type="number" id="repair-cost" value="2000" oninput="calculateAuto()" />
                                 </div>
                                 <div class="input-group-row">
@@ -133,7 +130,7 @@
                             <button class="chip expense-habit" data-cost="25" onclick="toggleHabit(this)">☕ Café (25$/sem)</button>
                             <button class="chip expense-habit" data-cost="15" onclick="toggleHabit(this)">📺 Abonnement (15$/sem)</button>
                             <button class="chip expense-habit" data-cost="75" onclick="toggleHabit(this)">🍽️ Restaurant (75$/sem)</button>
-                            <button class="chip expense-habit" data-cost="40" onclick="toggleHabit(this)">🛵 Livraison (40$/sem)</button>
+                            <button class="chip expense-habit" data-cost="40" onclick="toggleHabit(this)">🛵 Livraison de nourriture (40$/sem)</button>
                             <button class="chip expense-habit" data-cost="40" onclick="toggleHabit(this)">🍷 Alcool (40$/sem)</button>
                             <button class="chip expense-habit" data-cost="50" onclick="toggleHabit(this)">🚬 Tabagisme (50$/sem)</button>
                             <button class="chip expense-habit" data-cost="10" onclick="toggleHabit(this)">🎟️ Loterie (10$/sem)</button>
@@ -142,7 +139,7 @@
                         </div>
 
                         <div class="input-group-row">
-                            <label for="weekly-expense" style="color: var(--primary-color);">Total de vos dépenses ($/semaine)</label>
+                            <label for="weekly-expense">Total de vos dépenses ($/semaine)</label>
                             <input type="number" id="weekly-expense" placeholder="Ex: 35" value="0" oninput="calculateExpense()" />
                         </div>
                         
@@ -162,7 +159,7 @@
                         <div class="form-columns">
                             <div>
                                 <div class="input-group-row">
-                                    <label for="cc-balance" style="color: var(--primary-color);">Solde de la carte de crédit ($)</label>
+                                    <label for="cc-balance">Solde de la carte de crédit ($)</label>
                                     <input type="number" id="cc-balance" value="2500" oninput="calculateCreditCard()" />
                                 </div>
                             </div>
@@ -190,7 +187,7 @@
                         <div class="form-columns">
                             <div>
                                 <div class="input-group-row mb-3">
-                                    <label for="cash-balance" style="color: var(--primary-color);">Montant dormant dans le compte ($)</label>
+                                    <label for="cash-balance">Montant dormant dans le compte ($)</label>
                                     <input type="number" id="cash-balance" value="15000" oninput="calculateInflation()" />
                                 </div>
                                 
@@ -211,8 +208,8 @@
                                     </label>
                                     <input type="range" id="inflation-rate" min="1.0" max="5.0" step="0.1" value="3.0" oninput="calculateInflation()">
                                     <div class="d-flex justify-between" style="font-size: 0.8rem; color: var(--subtle-text-color); margin-top: 8px;">
-                                        <span>1% (Bas de la cible)</span>
-                                        <span>3% (Haut de la cible)</span>
+                                        <span>1% (Bas de la fourchette cible)</span>
+                                        <span>3% (Haut de la fourchette cible)</span>
                                         <span>5% (Élevé)</span>
                                     </div>
                                 </div>
@@ -228,11 +225,11 @@
 
                         <div class="form-columns mb-3">
                             <div class="input-group-row">
-                                <label for="salary-before" style="color: var(--primary-color);">Salaire brut AVANT ($/an)</label>
+                                <label for="salary-before">Salaire brut AVANT ($/an)</label>
                                 <input type="number" id="salary-before" value="60000" oninput="updateLifestyle()" />
                             </div>
                             <div class="input-group-row">
-                                <label for="salary-after" style="color: var(--primary-color);">Salaire brut APRÈS ($/an)</label>
+                                <label for="salary-after">Salaire brut APRÈS ($/an)</label>
                                 <input type="number" id="salary-after" value="70000" oninput="updateLifestyle()" />
                             </div>
                         </div>
@@ -256,39 +253,13 @@
         </div>
     </section>
 
-    <section id="predictions" class="container section-padding">
-        <div class="prediction-layout-grid">
-            <div class="prediction-widget">
-                <p class="widget-label" style="font-weight: 600; font-size: 0.9rem; color: var(--subtle-text-color); margin-bottom: 1rem;">CONSENSUS MARCHÉ FIN D'ANNÉE</p>
-                <div class="gauge-container">
-                    <canvas id="sp500Gauge" aria-label="Jauge de prédiction du S&P 500" role="img"></canvas>
-                    <div id="gaugeTargetText" class="gauge-target-text" aria-live="polite"></div>
-                </div>
-                <div class="prediction-data">
-                    <div class="current-level">
-                        S&P 500 Actuel : <strong id="currentLevelText">...</strong>
-                    </div>
-                    <div class="prediction-gap">
-                        <span id="gapLabel">Potentiel</span>
-                        <strong id="percentageGap">...</strong> 
-                    </div>
-                </div>
-            </div>
-            <div class="prediction-explanation">
-                <h2>Le Consensus de Wall Street</h2>
-                <p>À chaque début d'année, les stratégistes des grandes banques dévoilent leurs prédictions. Nous compilons la moyenne exacte de ces institutions pour vous donner le pouls du marché.</p>
-                <a href="predictions.html" class="btn-primary mt-3">Voir l'analyse des experts</a>
-            </div>
-        </div>
-    </section>
-
     <section class="star-feature-section" id="simulateur-retraite">
         <div class="container star-container">
             <div class="star-content">
                 <span class="badge badge-accent">Outil Populaire</span>
                 <h2>Serez-vous prêt pour la retraite ?</h2>
                 <p>Ne laissez pas votre avenir au hasard. Notre simulateur complet prend en compte l'inflation, vos placements (REER/CELI), et les rentes gouvernementales (RRQ/PSV) pour créer votre plan de décaissement exact.</p>
-                <a href="simulateur-retraite.html" class="btn-primary-large mt-4">Lancer le simulateur</a>
+                <a href="simulateur-retraite.html" class="btn-primary-large mt-4">Lancer le simulateur de retraite</a>
             </div>
             <div class="star-visual">
                 <div class="mockup-chart">
@@ -318,6 +289,7 @@
                         <p>Découvrez comment les frais de gestion grugent votre portefeuille sur le long terme.</p>
                     </div>
                 </a>
+
                 <a href="article-decaissement.html" class="article-card">
                     <div class="article-img placeholder-img"></div>
                     <div class="article-content">
@@ -326,6 +298,7 @@
                         <p>Comment retirer votre argent sans payer le prix fort en impôts à la retraite.</p>
                     </div>
                 </a>
+
                 <a href="article-celi-reer.html" class="article-card">
                     <div class="article-img placeholder-img"></div>
                     <div class="article-content">
@@ -357,7 +330,6 @@
             <p>&copy; 2026 Finoza. Tous droits réservés.</p>
         </div>
     </footer>
-
     <script src="index.js"></script>
 </body>
 </html>
