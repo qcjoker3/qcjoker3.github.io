@@ -318,6 +318,13 @@ function updateLifestyle() {
     resultDiv.classList.remove('hidden');
 }
 
+// 5. Pour les boutons du style de vie
+document.querySelectorAll('#salary-before, #salary-after').forEach(input => {
+    input.addEventListener('input', () => {
+        document.querySelectorAll('.lifestyle-chip').forEach(btn => btn.classList.remove('selected'));
+    });
+});
+
 // ==========================================
 // 4. JAUGE S&P 500 (STATIQUE)
 // ==========================================
