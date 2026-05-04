@@ -207,11 +207,12 @@
                                 <div class="slider-container" style="padding: 1.5rem; margin-top: 1.5rem;">
                                     <label for="inflation-rate" class="d-flex justify-between align-center mb-3" style="margin: 0;">
                                         <span>Taux d'inflation annuel :</span>
-                                        <strong id="rate-val" style="color: #EF4444; font-size: 1.2rem;">3.0 %</strong>
+                                        <strong id="rate-val" style="color: #EF4444; font-size: 1.2rem;">2.0 %</strong>
                                     </label>
                                     <input type="range" id="inflation-rate" min="1.0" max="5.0" step="0.1" value="3.0" oninput="calculateInflation()">
                                     <div class="d-flex justify-between" style="font-size: 0.8rem; color: var(--subtle-text-color); margin-top: 8px;">
-                                        <span>1% (Cible)</span>
+                                        <span>1% (Bas de la fourchette cible)</span>
+                                        <span>3% (Haut de la fourchette cible)</span>
                                         <span>5% (Élevé)</span>
                                     </div>
                                 </div>
