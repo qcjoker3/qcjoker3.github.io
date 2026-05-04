@@ -21,13 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Erreur avec les onglets :", error);
     }
 
-    try {
-        initSP500Gauge();
-    } catch (error) {
-        console.error("Erreur avec la jauge S&P 500 :", error);
-    }
-
-    // Calculs initiaux pour remplir les boîtes si les données sont déjà là
+    // Initialiser le calculateur de style de vie et les autres outils
     setTimeout(() => {
         calculateAuto();
         calculateInflation();
@@ -47,8 +41,13 @@ function setAutoPreset(price, m, r, btnElement) {
     document.getElementById('car-months').value = m;
     document.getElementById('car-rate').value = r;
 
+    // Éteindre toutes les pastilles de l'auto
     document.querySelectorAll('.auto-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    if (btnElement) btnElement.classList.add('selected-primary');
+    
+    // Allumer la pastille cliquée
+    if (btnElement) {
+        btnElement.classList.add('selected-primary');
+    }
 
     calculateAuto();
 }
@@ -57,8 +56,13 @@ function setCreditPreset(bal, pmt, btnElement) {
     document.getElementById('cc-balance').value = bal;
     document.getElementById('cc-payment').value = pmt;
 
+    // Éteindre toutes les pastilles de crédit
     document.querySelectorAll('.credit-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    if (btnElement) btnElement.classList.add('selected-primary');
+    
+    // Allumer la pastille cliquée
+    if (btnElement) {
+        btnElement.classList.add('selected-primary');
+    }
 
     calculateCreditCard();
 }
@@ -72,6 +76,7 @@ function setInflationPreset(amount, btnElement) {
 
 function setYearPreset(years, btnElement) {
     document.getElementById('inflation-years').value = years;
+    // Visuel des pastilles d'années
     document.querySelectorAll('.year-chip').forEach(btn => btn.classList.remove('selected-primary'));
     if (btnElement) btnElement.classList.add('selected-primary');
     calculateInflation();
@@ -111,9 +116,16 @@ function calculateAuto() {
     resultDiv.classList.remove('hidden');
 }
 
+document.querySelectorAll('#new-car-price, #car-months, #car-rate').forEach(input => {
+    input.addEventListener('input', () => {
+        document.querySelectorAll('.auto-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    });
+});
+
 // Piège 2 : Micro-dépenses
 function toggleHabit(btn) {
-    btn.classList.toggle('selected');
+    btn.classList.toggle('selected'); // Utilise la pastille rouge
+    
     let total = 0;
     document.querySelectorAll('.expense-habit.selected').forEach(b => {
         total += parseFloat(b.getAttribute('data-cost'));
@@ -133,7 +145,7 @@ function calculateExpense() {
     }
 
     const monthlyInvestment = (weekly * 52) / 12;
-    const rate = 0.07 / 12; 
+    const rate = 0.07 / 12; // 7% rendement historique réel
     
     const months10 = 10 * 12; 
     const futureValue10 = monthlyInvestment * ((Math.pow(1 + rate, months10) - 1) / rate);
@@ -147,6 +159,13 @@ function calculateExpense() {
     resultDiv.classList.remove('hidden');
 }
 
+const weeklyExpenseInput = document.getElementById('weekly-expense');
+if (weeklyExpenseInput) {
+    weeklyExpenseInput.addEventListener('input', () => {
+        document.querySelectorAll('.expense-habit').forEach(btn => btn.classList.remove('selected'));
+    });
+}
+
 // Piège 3 : Carte de crédit
 function calculateCreditCard() {
     const balance = parseFloat(document.getElementById('cc-balance').value);
@@ -158,7 +177,7 @@ function calculateCreditCard() {
         return;
     }
 
-    const annualRate = 0.2099; 
+    const annualRate = 0.2099; // Taux de carte de crédit standard au Québec
     const monthlyRate = annualRate / 12;
 
     if (payment <= balance * monthlyRate) {
@@ -179,6 +198,12 @@ function calculateCreditCard() {
     resultDiv.style.borderLeftColor = "#EF4444"; 
 }
 
+document.querySelectorAll('#cc-balance, #cc-payment').forEach(input => {
+    input.addEventListener('input', () => {
+        document.querySelectorAll('.credit-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    });
+});
+
 // Piège 4 : Inflation
 function calculateInflation() {
     const balance = parseFloat(document.getElementById('cash-balance').value);
@@ -196,6 +221,7 @@ function calculateInflation() {
     }
 
     const inflationRate = rateInput / 100; 
+    
     const purchasingPower = balance / Math.pow(1 + inflationRate, years);
     const loss = balance - purchasingPower;
 
@@ -204,6 +230,13 @@ function calculateInflation() {
     resultDiv.className = "tool-result-box mt-4";
     resultDiv.style.borderLeftColor = "#EF4444"; 
     resultDiv.classList.remove('hidden');
+}
+
+const cashBalanceInput = document.getElementById('cash-balance');
+if (cashBalanceInput) {
+    cashBalanceInput.addEventListener('input', () => {
+        document.querySelectorAll('.inflation-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    });
 }
 
 // Piège 5 : Style de vie
@@ -272,94 +305,8 @@ function updateLifestyle() {
     resultDiv.classList.remove('hidden');
 }
 
-
-// --- DÉSACTIVER LES PASTILLES SI SAISIE MANUELLE ---
-document.querySelectorAll('#new-car-price, #car-months, #car-rate').forEach(input => {
-    input.addEventListener('input', () => {
-        document.querySelectorAll('.auto-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    });
-});
-
-const weeklyExpenseInput = document.getElementById('weekly-expense');
-if (weeklyExpenseInput) {
-    weeklyExpenseInput.addEventListener('input', () => {
-        document.querySelectorAll('.expense-habit').forEach(btn => btn.classList.remove('selected'));
-    });
-}
-
-document.querySelectorAll('#cc-balance, #cc-payment').forEach(input => {
-    input.addEventListener('input', () => {
-        document.querySelectorAll('.credit-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    });
-});
-
-const cashBalanceInput = document.getElementById('cash-balance');
-if (cashBalanceInput) {
-    cashBalanceInput.addEventListener('input', () => {
-        document.querySelectorAll('.inflation-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    });
-}
-
 document.querySelectorAll('#salary-before, #salary-after').forEach(input => {
     input.addEventListener('input', () => {
         document.querySelectorAll('.lifestyle-chip').forEach(btn => btn.classList.remove('selected'));
     });
 });
-
-
-// ==========================================
-// 4. JAUGE S&P 500 (STATIQUE)
-// ==========================================
-function initSP500Gauge() {
-    if (typeof chartDataByYear === 'undefined' || typeof niveauActuelSP500 === 'undefined') {
-        console.warn("Fichier donnees.js introuvable.");
-        return;
-    }
-
-    const annees = Object.keys(chartDataByYear).sort();
-    const anneeRecente = annees[annees.length - 1];
-    const previsionsBanques = chartDataByYear[anneeRecente].previsions;
-    
-    const niveauActuel = niveauActuelSP500; 
-
-    const sommePrevisions = previsionsBanques.reduce((a, b) => a + b, 0);
-    const cibleMoyenne = Math.round(sommePrevisions / previsionsBanques.length);
-    
-    const ecart = cibleMoyenne - niveauActuel;
-    const potentielPourcentage = ((ecart / niveauActuel) * 100).toFixed(1);
-    const signe = ecart >= 0 ? '+' : '';
-
-    const currentTextEl = document.getElementById('currentLevelText');
-    const targetTextEl = document.getElementById('gaugeTargetText');
-    const gapTextEl = document.getElementById('percentageGap');
-
-    if (currentTextEl) currentTextEl.innerText = niveauActuel.toLocaleString('fr-CA') + " pts";
-    if (targetTextEl) targetTextEl.innerHTML = `<strong>${cibleMoyenne.toLocaleString('fr-CA')}</strong><br>Points`;
-    if (gapTextEl) {
-        gapTextEl.innerText = `${signe}${potentielPourcentage}%`;
-        gapTextEl.className = ecart >= 0 ? 'success' : 'failure';
-    }
-
-    const ctx = document.getElementById('sp500Gauge');
-    if (ctx && typeof Chart !== 'undefined') {
-        new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Niveau Actuel', 'Potentiel'],
-                datasets: [{
-                    data: [niveauActuel, Math.abs(ecart)],
-                    backgroundColor: ['#E2E8F0', ecart >= 0 ? '#0D9488' : '#EF4444'],
-                    borderWidth: 0,
-                    circumference: 180,
-                    rotation: 270
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                cutout: '80%',
-                plugins: { legend: { display: false }, tooltip: { enabled: false } }
-            }
-        });
-    }
-}
