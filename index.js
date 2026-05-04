@@ -258,6 +258,7 @@ function updateLifestyle() {
     const breakdownDiv = document.getElementById('raise-breakdown');
     const resultDiv = document.getElementById('lifestyle-result');
 
+    // Si données invalides ou pas d'augmentation
     if (isNaN(before) || isNaN(after) || after <= before) {
         breakdownDiv.classList.add('hidden');
         resultDiv.classList.add('hidden');
@@ -265,14 +266,17 @@ function updateLifestyle() {
     }
 
     const grossRaise = after - before;
-    const netRaise = grossRaise * 0.65; // ~35% impôt
+    
+    // Approximation réaliste au Québec (~35% d'impôt marginal sur une hausse moyenne)
+    const netRaise = grossRaise * 0.65; 
     
     const monthlyRaise = netRaise / 12;
     const biweeklyRaise = netRaise / 26;
     const weeklyRaise = netRaise / 52;
 
+    // Affichage de la ventilation nette
     breakdownDiv.innerHTML = `
-        <div style="font-size:0.85rem; color:var(--subtle-text-color); text-align:center; text-transform:uppercase; font-weight:bold;">Ce qu'il vous reste vraiment (Après impôt)</div>
+        <div style="font-size:0.85rem; color:var(--subtle-text-color); text-align:center; text-transform:uppercase; font-weight:bold; margin-bottom: 8px;">Ce qu'il vous reste vraiment (Après ~35% d'impôt)</div>
         <div class="breakdown-grid">
             <div><strong>${formatCurrency(monthlyRaise)}</strong><br><small>Par mois</small></div>
             <div><strong>${formatCurrency(biweeklyRaise)}</strong><br><small>Aux 2 semaines</small></div>
@@ -281,20 +285,22 @@ function updateLifestyle() {
     `;
     breakdownDiv.classList.remove('hidden');
 
+    // Additionner les récompenses cliquées
     let totalExpenses = 0;
-    document.querySelectorAll('.expense-toggle.selected').forEach(btn => {
+    document.querySelectorAll('.lifestyle-chip.selected').forEach(btn => {
         totalExpenses += parseFloat(btn.getAttribute('data-cost'));
     });
 
     const remainingMonthly = monthlyRaise - totalExpenses;
 
+    // Scénarios de résultats
     if (remainingMonthly < 0) {
         resultDiv.innerHTML = `🚨 <strong>Alerte Rouge :</strong> Vous venez de dépenser <strong>${formatCurrency(Math.abs(remainingMonthly))} DE PLUS</strong> par mois que ce que votre augmentation nette vous rapporte.<br><br>C'est exactement comme ça qu'on s'endette alors qu'on vient de recevoir une promotion.`;
         resultDiv.className = "tool-result-box mt-4";
         resultDiv.style.borderLeftColor = "#EF4444";
     } else {
-        const rate = 0.07 / 12;
-        const months = 15 * 12;
+        const rate = 0.07 / 12; // 7% rendement historique
+        const months = 15 * 12; // Projection sur 15 ans
         let futureValue = 0;
         
         if (remainingMonthly > 0) {
@@ -302,13 +308,14 @@ function updateLifestyle() {
         }
 
         if (totalExpenses === 0) {
-            resultDiv.innerHTML = `Si vous gardez votre style de vie actuel (aucune récompense cliquée) et investissez la totalité de cette hausse (${formatCurrency(monthlyRaise)}/mois), cette promotion générera <strong>${formatCurrency(futureValue)}</strong> dans 15 ans.`;
+            resultDiv.innerHTML = `Si vous gardez votre style de vie actuel (aucune récompense sélectionnée) et investissez la totalité de cette hausse (${formatCurrency(monthlyRaise)}/mois), cette promotion générera <strong>${formatCurrency(futureValue)}</strong> dans 15 ans.<br><br><span style="font-size:0.95rem; color:var(--primary-color); font-weight:bold;">C'est ça, le secret pour bâtir de la richesse !</span>`;
         } else {
-            resultDiv.innerHTML = `Malgré vos ajouts, il vous reste encore <strong>${formatCurrency(remainingMonthly)}/mois</strong> de votre promotion.<br><br>Si vous l'investissez en bourse, vous générerez tout de même <strong>${formatCurrency(futureValue)}</strong> dans 15 ans. Le secret est l'équilibre !`;
+            resultDiv.innerHTML = `Malgré vos ajouts, il vous reste encore <strong>${formatCurrency(remainingMonthly)}/mois</strong> de votre promotion.<br><br>Si vous l'investissez en bourse, vous générerez tout de même <strong>${formatCurrency(futureValue)}</strong> dans 15 ans. Le secret est de trouver l'équilibre.`;
         }
         resultDiv.className = "tool-result-box mt-4";
         resultDiv.style.borderLeftColor = "var(--primary-color)";
     }
+    resultDiv.classList.remove('hidden');
 }
 
 // ==========================================
