@@ -224,31 +224,31 @@
 
                     <div class="tab-pane" id="tab-style-vie">
                         <h3>L'illusion de l'augmentation</h3>
-                        <p>Une hausse de salaire brut fond vite après l'impôt. Voyez comment quelques "récompenses" font disparaître votre promotion.</p>
+                        <p>Une hausse de salaire brut fond vite après l'impôt. Entrez vos salaires et voyez comment quelques "récompenses" font disparaître votre promotion.</p>
 
                         <div class="form-columns mb-3">
                             <div class="input-group-row">
-                                <label for="salary-before">Salaire brut AVANT ($/an)</label>
+                                <label for="salary-before" style="color: var(--primary-color);">Salaire brut AVANT ($/an)</label>
                                 <input type="number" id="salary-before" value="60000" oninput="updateLifestyle()" />
                             </div>
                             <div class="input-group-row">
-                                <label for="salary-after">Salaire brut APRÈS ($/an)</label>
+                                <label for="salary-after" style="color: var(--primary-color);">Salaire brut APRÈS ($/an)</label>
                                 <input type="number" id="salary-after" value="70000" oninput="updateLifestyle()" />
                             </div>
                         </div>
 
                         <div id="raise-breakdown" class="breakdown-box hidden"></div>
 
-                        <p class="mb-2" style="font-size: 0.95rem; font-weight:600;">Sélectionnez les "récompenses" que vous ajoutez à votre style de vie :</p>
+                        <p class="mb-2 mt-4" style="font-weight:600; font-size:0.95rem;">Sélectionnez les "récompenses" que vous ajoutez à votre style de vie :</p>
                         <div class="preset-chips mb-4" id="lifestyle-expenses">
-                            <button class="chip expense-toggle" data-cost="450" onclick="toggleExpense(this)">🚙 Changer d'auto (450$/m)</button>
-                            <button class="chip expense-toggle" data-cost="150" onclick="toggleExpense(this)">🍽️ +1 Resto/sem (150$/m)</button>
-                            <button class="chip expense-toggle" data-cost="200" onclick="toggleExpense(this)">✈️ Voyage annuel (200$/m)</button>
-                            <button class="chip expense-toggle" data-cost="60" onclick="toggleExpense(this)">📺 Abonnements (60$/m)</button>
-                            <button class="chip expense-toggle" data-cost="300" onclick="toggleExpense(this)">🏠 Rénovations (300$/m)</button>
+                            <button class="chip lifestyle-chip" data-cost="450" onclick="toggleLifestyleExpense(this)">🚙 Changer d'auto (450$/m)</button>
+                            <button class="chip lifestyle-chip" data-cost="150" onclick="toggleLifestyleExpense(this)">🍽️ +1 Resto/sem (150$/m)</button>
+                            <button class="chip lifestyle-chip" data-cost="200" onclick="toggleLifestyleExpense(this)">✈️ Voyage annuel (200$/m)</button>
+                            <button class="chip lifestyle-chip" data-cost="60" onclick="toggleLifestyleExpense(this)">📺 Abonnements (60$/m)</button>
+                            <button class="chip lifestyle-chip" data-cost="300" onclick="toggleLifestyleExpense(this)">🏠 Plus grand loyer (300$/m)</button>
                         </div>
 
-                        <div id="lifestyle-result" class="tool-result-box hidden"></div>
+                        <div id="lifestyle-result" class="tool-result-box hidden mt-4"></div>
                     </div>
 
                 </div>
