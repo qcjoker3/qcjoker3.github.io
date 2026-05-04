@@ -71,8 +71,18 @@ function setCreditPreset(bal, pmt, btnElement) {
 
     calculateCreditCard();
 }
-function setInflationPreset(amount) {
+function setInflationPreset(amount, btnElement) {
     document.getElementById('cash-balance').value = amount;
+    document.querySelectorAll('.inflation-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    if (btnElement) btnElement.classList.add('selected-primary');
+    calculateInflation();
+}
+
+function setYearPreset(years, btnElement) {
+    document.getElementById('inflation-years').value = years;
+    // Visuel des pastilles d'années
+    document.querySelectorAll('.year-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    if (btnElement) btnElement.classList.add('selected-primary');
     calculateInflation();
 }
 
@@ -215,11 +225,9 @@ function calculateInflation() {
     const rateInput = parseFloat(document.getElementById('inflation-rate').value);
     const resultDiv = document.getElementById('inflation-result');
     
-    // Mettre à jour l'affichage des valeurs des sliders en direct
-    document.getElementById('years-val').innerText = years + (years > 1 ? " ans" : " an");
+    // Mise à jour de l'affichage du slider inflation
     document.getElementById('rate-val').innerText = rateInput.toFixed(1) + " %";
 
-    // Vérification de sécurité
     if (isNaN(balance) || balance <= 0) {
         resultDiv.classList.add('hidden');
         return;
@@ -231,10 +239,11 @@ function calculateInflation() {
     const purchasingPower = balance / Math.pow(1 + inflationRate, years);
     const loss = balance - purchasingPower;
 
-    resultDiv.innerHTML = `Dans <strong>${years} ans</strong>, vos <strong>${formatCurrency(balance)}</strong> seront toujours physiquement dans votre compte... mais à cause de l'inflation de ${rateInput.toFixed(1)} %, leur pouvoir d'achat réel ne vaudra plus que <strong>${formatCurrency(purchasingPower)}</strong> en dollars d'aujourd'hui.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">L'illusion de la sécurité vient de vous coûter ${formatCurrency(loss)} en perte de valeur.</span> L'inaction est le plus grand des risques !`;
+    resultDiv.innerHTML = `Dans <strong>${years} ans</strong>, vos <strong>${formatCurrency(balance)}</strong> seront toujours là... mais à cause d'une inflation de ${rateInput.toFixed(1)} %, leur pouvoir d'achat réel ne vaudra plus que <strong>${formatCurrency(purchasingPower)}</strong> en dollars d'aujourd'hui.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">L'illusion de la sécurité vous coûte ${formatCurrency(loss)} en perte de valeur réelle.</span>`;
     
     resultDiv.className = "tool-result-box mt-4";
     resultDiv.style.borderLeftColor = "#EF4444"; 
+    resultDiv.classList.remove('hidden');
 }
 
 // Piège 5 : Style de vie (Interactif)
