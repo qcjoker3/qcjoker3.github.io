@@ -2,28 +2,25 @@
 // 1. GESTION DES ONGLETS & INITIALISATION
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => {
-    try {
-        const tabs = document.querySelectorAll('.tab-btn');
-        const panes = document.querySelectorAll('.tab-pane');
+    const tabs = document.querySelectorAll('.tab-btn');
+    const panes = document.querySelectorAll('.tab-pane');
 
-        tabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                tabs.forEach(t => t.classList.remove('active'));
-                panes.forEach(p => p.classList.remove('active'));
-                this.classList.add('active');
-                
-                const targetId = this.getAttribute('data-tab');
-                const targetPane = document.getElementById('tab-' + targetId);
-                if (targetPane) targetPane.classList.add('active');
-            });
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            tabs.forEach(t => t.classList.remove('active'));
+            panes.forEach(p => p.classList.remove('active'));
+            this.classList.add('active');
+            
+            const targetId = this.getAttribute('data-tab');
+            const targetPane = document.getElementById('tab-' + targetId);
+            if (targetPane) targetPane.classList.add('active');
         });
-    } catch (error) {
-        console.error("Erreur avec les onglets :", error);
-    }
+    });
 
-    // Initialiser le calculateur de style de vie et les autres outils
+    // Inits
     setTimeout(() => {
         calculateAuto();
+        generateCreditPaymentChips(1000); 
         calculateInflation();
         updateLifestyle();
     }, 200);
@@ -34,279 +31,283 @@ const formatCurrency = (amount) => {
 };
 
 // ==========================================
-// 2. FONCTIONS DE PRÉSÉLECTION (CHIPS)
+// TRAP 1 : AUTO
 // ==========================================
-function setAutoPreset(price, m, r, btnElement) {
-    document.getElementById('new-car-price').value = price;
-    document.getElementById('car-months').value = m;
-    document.getElementById('car-rate').value = r;
+let autoPrice = 40000;
+let autoTerm = 60;
 
-    // Éteindre toutes les pastilles de l'auto
-    document.querySelectorAll('.auto-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    
-    // Allumer la pastille cliquée
-    if (btnElement) {
-        btnElement.classList.add('selected-primary');
-    }
-
+function setAutoPrice(price, btn) {
+    autoPrice = price;
+    document.querySelectorAll('.auto-price-chip').forEach(b => b.classList.remove('selected-primary'));
+    btn.classList.add('selected-primary');
     calculateAuto();
 }
 
-function setCreditPreset(bal, pmt, btnElement) {
-    document.getElementById('cc-balance').value = bal;
-    document.getElementById('cc-payment').value = pmt;
-
-    // Éteindre toutes les pastilles de crédit
-    document.querySelectorAll('.credit-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    
-    // Allumer la pastille cliquée
-    if (btnElement) {
-        btnElement.classList.add('selected-primary');
-    }
-
-    calculateCreditCard();
+function setAutoTerm(months, btn) {
+    autoTerm = months;
+    document.querySelectorAll('.auto-term-chip').forEach(b => b.classList.remove('selected-primary'));
+    btn.classList.add('selected-primary');
+    calculateAuto();
 }
 
-function setInflationPreset(amount, btnElement) {
-    document.getElementById('cash-balance').value = amount;
-    document.querySelectorAll('.inflation-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    if (btnElement) btnElement.classList.add('selected-primary');
-    calculateInflation();
-}
-
-function setYearPreset(years, btnElement) {
-    document.getElementById('inflation-years').value = years;
-    // Visuel des pastilles d'années
-    document.querySelectorAll('.year-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    if (btnElement) btnElement.classList.add('selected-primary');
-    calculateInflation();
-}
-
-// ==========================================
-// 3. CALCULS DES PIÈGES FINANCIERS
-// ==========================================
-
-// Piège 1 : Auto Neuve
 function calculateAuto() {
-    const repairCost = parseFloat(document.getElementById('repair-cost').value);
-    const newCarPrice = parseFloat(document.getElementById('new-car-price').value);
-    const months = parseInt(document.getElementById('car-months').value);
-    const annualRate = parseFloat(document.getElementById('car-rate').value) / 100;
-    const resultDiv = document.getElementById('auto-result');
-    
-    if (isNaN(repairCost) || isNaN(newCarPrice) || isNaN(months) || isNaN(annualRate) || newCarPrice <= 0 || months <= 0 || repairCost < 0) {
-        resultDiv.classList.add('hidden');
-        return;
-    }
+    const repairSlider = document.getElementById('repair-slider');
+    const repairCost = parseFloat(repairSlider.value);
+    document.getElementById('repair-val').innerText = formatCurrency(repairCost);
 
+    const annualRate = parseFloat(document.getElementById('car-rate').value) / 100;
     const monthlyRate = annualRate / 12;
+    
     let monthlyPayment = 0;
     if (monthlyRate > 0) {
-        monthlyPayment = newCarPrice * (monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+        monthlyPayment = autoPrice * (monthlyRate * Math.pow(1 + monthlyRate, autoTerm)) / (Math.pow(1 + monthlyRate, autoTerm) - 1);
     } else {
-        monthlyPayment = newCarPrice / months;
+        monthlyPayment = autoPrice / autoTerm;
     }
     
-    const totalPaid = monthlyPayment * months;
-    const totalInterest = totalPaid - newCarPrice;
+    const totalPaid = monthlyPayment * autoTerm;
+    const totalInterest = totalPaid - autoPrice;
     const monthsEquivalent = (repairCost / monthlyPayment).toFixed(1);
-    const differenceInutile = totalPaid - repairCost;
 
-    resultDiv.innerHTML = `Une facture de garage de <strong>${formatCurrency(repairCost)}</strong> fait mal au cœur. Pourtant, ce montant représente à peine <strong>${monthsEquivalent} mois</strong> de paiements de votre nouvelle voiture (qui vous coûtera <strong>${formatCurrency(monthlyPayment)}/mois</strong>) !<br><br>En fuyant cette réparation, vous vous engagez à débourser <strong>${formatCurrency(totalPaid)}</strong> sur ${months / 12} ans. Vous paierez donc <strong>${formatCurrency(differenceInutile)} de plus</strong> que votre facture de garage, sans compter les ${formatCurrency(totalInterest)} jetés par les fenêtres en purs intérêts.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Changer d'auto pour éviter de réparer l'ancienne est un désastre mathématique. Gardez votre voiture !</span>`;
-    resultDiv.classList.remove('hidden');
+    const res = document.getElementById('auto-result-content');
+    res.innerHTML = `
+        <div class="result-metric">
+            <span class="label">La réparation de ${formatCurrency(repairCost)} équivaut à</span>
+            <span class="value text-red">${monthsEquivalent} mois</span>
+            <span class="subtext">de paiements du véhicule neuf</span>
+        </div>
+        <hr class="result-divider">
+        <div class="result-metric-grid">
+            <div>
+                <span class="label">Mensualité</span>
+                <span class="value">${formatCurrency(monthlyPayment)}</span>
+            </div>
+            <div>
+                <span class="label">Intérêts payés</span>
+                <span class="value text-red">${formatCurrency(totalInterest)}</span>
+            </div>
+            <div style="grid-column: span 2;">
+                <span class="label">Coût Total (Financé)</span>
+                <span class="value">${formatCurrency(totalPaid)}</span>
+            </div>
+        </div>
+    `;
 }
 
-document.querySelectorAll('#new-car-price, #car-months, #car-rate').forEach(input => {
-    input.addEventListener('input', () => {
-        document.querySelectorAll('.auto-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    });
-});
-
-// Piège 2 : Micro-dépenses
+// ==========================================
+// TRAP 2 : DÉPENSES
+// ==========================================
 function toggleHabit(btn) {
-    btn.classList.toggle('selected'); // Utilise la pastille rouge
-    
+    btn.classList.toggle('selected');
     let total = 0;
     document.querySelectorAll('.expense-habit.selected').forEach(b => {
         total += parseFloat(b.getAttribute('data-cost'));
     });
     
-    document.getElementById('weekly-expense').value = total > 0 ? total : '';
+    document.getElementById('weekly-expense').value = total;
     calculateExpense();
 }
 
 function calculateExpense() {
-    const weekly = parseFloat(document.getElementById('weekly-expense').value);
-    const resultDiv = document.getElementById('expense-result');
+    const weekly = parseFloat(document.getElementById('weekly-expense').value) || 0;
+    const res = document.getElementById('expense-result-content');
     
-    if (isNaN(weekly) || weekly <= 0) {
-        resultDiv.classList.add('hidden');
+    if (weekly <= 0) {
+        res.innerHTML = `<p class="text-muted">Sélectionnez des dépenses pour voir l'impact.</p>`;
         return;
     }
 
     const monthlyInvestment = (weekly * 52) / 12;
-    const rate = 0.07 / 12; // 7% rendement historique réel
+    const rate = 0.07 / 12; 
     
     const months10 = 10 * 12; 
     const futureValue10 = monthlyInvestment * ((Math.pow(1 + rate, months10) - 1) / rate);
-    const profit10 = futureValue10 - (weekly * 52 * 10);
 
     const months25 = 25 * 12;
     const futureValue25 = monthlyInvestment * ((Math.pow(1 + rate, months25) - 1) / rate);
 
-    resultDiv.innerHTML = `Si vous aviez investi ces <strong>${formatCurrency(weekly)}/semaine</strong> dans les marchés (7%) plutôt que de les dépenser :<br><br>Dans 10 ans, vous auriez <strong>${formatCurrency(futureValue10)}</strong> dans vos poches.<br><span style="font-size:0.85rem; color:var(--subtle-text-color);">Dont <strong>${formatCurrency(profit10)}</strong> générés purement par la magie des intérêts composés.</span><br><br><span style="font-size:1.05rem; color:var(--primary-color); font-weight:bold;">Sur 25 ans ? Vos habitudes valent une fortune : ${formatCurrency(futureValue25)} !</span>`;
-    
-    resultDiv.classList.remove('hidden');
+    res.innerHTML = `
+        <div class="result-metric">
+            <span class="label">Total dépensé</span>
+            <span class="value text-red">${formatCurrency(weekly)} / sem</span>
+        </div>
+        <hr class="result-divider">
+        <p class="mb-2" style="font-size:0.9rem;">Si investi à 7% :</p>
+        <div class="result-metric-grid">
+            <div>
+                <span class="label">Valeur dans 10 ans</span>
+                <span class="value">${formatCurrency(futureValue10)}</span>
+            </div>
+            <div>
+                <span class="label">Valeur dans 25 ans</span>
+                <span class="value text-primary">${formatCurrency(futureValue25)}</span>
+            </div>
+        </div>
+    `;
 }
 
-const weeklyExpenseInput = document.getElementById('weekly-expense');
-if (weeklyExpenseInput) {
-    weeklyExpenseInput.addEventListener('input', () => {
-        document.querySelectorAll('.expense-habit').forEach(btn => btn.classList.remove('selected'));
+// ==========================================
+// TRAP 3 : CRÉDIT
+// ==========================================
+let creditBal = 1000;
+let creditPaymentPct = 0.05;
+
+function setCreditBalance(val, btn) {
+    creditBal = val;
+    document.querySelectorAll('.credit-bal-chip').forEach(b => b.classList.remove('selected-primary'));
+    btn.classList.add('selected-primary');
+    generateCreditPaymentChips(val);
+}
+
+function generateCreditPaymentChips(balance) {
+    const container = document.getElementById('credit-payment-chips');
+    const percentages = [0.05, 0.10, 0.15, 0.20];
+    container.innerHTML = '';
+    
+    percentages.forEach(pct => {
+        const amt = balance * pct;
+        const btn = document.createElement('button');
+        btn.className = `chip credit-pmt-chip ${pct === creditPaymentPct ? 'selected-primary' : ''}`;
+        btn.innerText = `${pct * 100}% (${formatCurrency(amt)})`;
+        btn.onclick = function() {
+            creditPaymentPct = pct;
+            document.querySelectorAll('.credit-pmt-chip').forEach(b => b.classList.remove('selected-primary'));
+            this.classList.add('selected-primary');
+            calculateCreditCard();
+        };
+        container.appendChild(btn);
     });
+    calculateCreditCard();
 }
 
-// Piège 3 : Carte de crédit
 function calculateCreditCard() {
-    const balance = parseFloat(document.getElementById('cc-balance').value);
-    const payment = parseFloat(document.getElementById('cc-payment').value);
-    const resultDiv = document.getElementById('cc-result');
-    
-    if (isNaN(balance) || isNaN(payment) || balance <= 0 || payment <= 0) {
-        resultDiv.classList.add('hidden');
-        return;
-    }
-
-    const annualRate = 0.2099; // Taux de carte de crédit standard au Québec
+    const payment = creditBal * creditPaymentPct;
+    const annualRate = 0.2099; 
     const monthlyRate = annualRate / 12;
+    const res = document.getElementById('credit-result-content');
 
-    if (payment <= balance * monthlyRate) {
-        resultDiv.innerHTML = `🚨 <strong>Alerte Rouge :</strong> Votre paiement de ${formatCurrency(payment)} ne couvre même pas les intérêts mensuels de ${formatCurrency(balance * monthlyRate)} générés par votre dette. <br><br>Il est mathématiquement impossible de rembourser cette carte de cette façon. Votre solde augmentera à l'infini !`;
-        resultDiv.className = "tool-result-box mt-4";
-        resultDiv.style.borderLeftColor = "#EF4444";
+    if (payment <= creditBal * monthlyRate) {
+        res.innerHTML = `<span class="text-red font-bold">Le paiement ne couvre pas l'intérêt. La dette est infinie.</span>`;
         return;
     }
 
-    const monthsNeeded = -Math.log(1 - (monthlyRate * balance) / payment) / Math.log(1 + monthlyRate);
+    const monthsNeeded = -Math.log(1 - (monthlyRate * creditBal) / payment) / Math.log(1 + monthlyRate);
     const yearsNeeded = (monthsNeeded / 12).toFixed(1);
     const totalPaid = monthsNeeded * payment;
-    const totalInterest = totalPaid - balance;
+    const totalInterest = totalPaid - creditBal;
 
-    resultDiv.innerHTML = `À coup de ${formatCurrency(payment)}/mois, il vous faudra <strong>${yearsNeeded} années</strong> (soit ${Math.ceil(monthsNeeded)} mois) pour rembourser ce solde.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Le vrai crime : Vous paierez ${formatCurrency(totalInterest)} en intérêts.</span><br><br>C'est comme si chaque article que vous aviez acheté avec cette carte vous coûtait près du double de son prix en magasin. Augmentez votre paiement d'urgence !`;
-    
-    resultDiv.className = "tool-result-box mt-4";
-    resultDiv.style.borderLeftColor = "#EF4444"; 
+    res.innerHTML = `
+        <div class="result-metric-grid">
+            <div>
+                <span class="label">Temps pour payer</span>
+                <span class="value">${yearsNeeded} ans</span>
+            </div>
+            <div>
+                <span class="label">Intérêt payé</span>
+                <span class="value text-red">${formatCurrency(totalInterest)}</span>
+            </div>
+            <div style="grid-column: span 2;">
+                <span class="label">Coût total réel de la dette</span>
+                <span class="value">${formatCurrency(totalPaid)}</span>
+            </div>
+        </div>
+    `;
 }
 
-document.querySelectorAll('#cc-balance, #cc-payment').forEach(input => {
-    input.addEventListener('input', () => {
-        document.querySelectorAll('.credit-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    });
-});
+// ==========================================
+// TRAP 4 : INFLATION
+// ==========================================
+let inflBal = 10000;
+let inflRate = 0.02;
 
-// Piège 4 : Inflation
+function setInflationBalance(val, btn) {
+    inflBal = val;
+    document.querySelectorAll('.inflation-bal-chip').forEach(b => b.classList.remove('selected-primary'));
+    btn.classList.add('selected-primary');
+    calculateInflation();
+}
+function setInflationRate(val, btn) {
+    inflRate = val / 100;
+    document.querySelectorAll('.inflation-rate-chip').forEach(b => b.classList.remove('selected-primary'));
+    btn.classList.add('selected-primary');
+    calculateInflation();
+}
+
 function calculateInflation() {
-    const balance = parseFloat(document.getElementById('cash-balance').value);
-    const years = parseInt(document.getElementById('inflation-years').value);
-    const rateInput = parseFloat(document.getElementById('inflation-rate').value);
-    const resultDiv = document.getElementById('inflation-result');
+    const res = document.getElementById('inflation-result-content');
     
-    if(document.getElementById('rate-val')) {
-        document.getElementById('rate-val').innerText = rateInput.toFixed(1) + " %";
-    }
+    const power5 = inflBal / Math.pow(1 + inflRate, 5);
+    const power10 = inflBal / Math.pow(1 + inflRate, 10);
+    const power15 = inflBal / Math.pow(1 + inflRate, 15);
 
-    if (isNaN(balance) || balance <= 0 || isNaN(years)) {
-        resultDiv.classList.add('hidden');
-        return;
-    }
-
-    const inflationRate = rateInput / 100; 
-    
-    const purchasingPower = balance / Math.pow(1 + inflationRate, years);
-    const loss = balance - purchasingPower;
-
-    resultDiv.innerHTML = `Dans <strong>${years} ans</strong>, vos <strong>${formatCurrency(balance)}</strong> seront toujours là... mais à cause d'une inflation de ${rateInput.toFixed(1)} %, leur pouvoir d'achat réel ne vaudra plus que <strong>${formatCurrency(purchasingPower)}</strong> en dollars d'aujourd'hui.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">L'illusion de la sécurité vous coûte ${formatCurrency(loss)} en perte de valeur réelle.</span>`;
-    
-    resultDiv.className = "tool-result-box mt-4";
-    resultDiv.style.borderLeftColor = "#EF4444"; 
-    resultDiv.classList.remove('hidden');
+    res.innerHTML = `
+        <p class="mb-3" style="font-size:0.9rem;">Pouvoir d'achat réel restant :</p>
+        <div class="result-list">
+            <div class="result-list-item">
+                <span>Dans 5 ans</span>
+                <strong class="text-red">${formatCurrency(power5)}</strong>
+            </div>
+            <div class="result-list-item">
+                <span>Dans 10 ans</span>
+                <strong class="text-red">${formatCurrency(power10)}</strong>
+            </div>
+            <div class="result-list-item">
+                <span>Dans 15 ans</span>
+                <strong class="text-red">${formatCurrency(power15)}</strong>
+            </div>
+        </div>
+    `;
 }
 
-const cashBalanceInput = document.getElementById('cash-balance');
-if (cashBalanceInput) {
-    cashBalanceInput.addEventListener('input', () => {
-        document.querySelectorAll('.inflation-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    });
-}
-
-// Piège 5 : Style de vie
+// ==========================================
+// TRAP 5 : STYLE DE VIE
+// ==========================================
 function toggleLifestyleExpense(btn) {
     btn.classList.toggle('selected');
     updateLifestyle();
 }
 
 function updateLifestyle() {
-    const before = parseFloat(document.getElementById('salary-before').value);
-    const after = parseFloat(document.getElementById('salary-after').value);
-    const breakdownDiv = document.getElementById('raise-breakdown');
-    const resultDiv = document.getElementById('lifestyle-result');
+    const before = parseFloat(document.getElementById('salary-before').value) || 0;
+    const after = parseFloat(document.getElementById('salary-after').value) || 0;
+    const res = document.getElementById('lifestyle-result-content');
 
-    if (isNaN(before) || isNaN(after) || after <= before) {
-        breakdownDiv.classList.add('hidden');
-        resultDiv.classList.add('hidden');
+    if (after <= before) {
+        res.innerHTML = `<p class="text-muted">Entrez une augmentation valide.</p>`;
         return;
     }
 
-    const grossRaise = after - before;
-    const netRaise = grossRaise * 0.65; 
-    
-    const monthlyRaise = netRaise / 12;
-    const biweeklyRaise = netRaise / 26;
-    const weeklyRaise = netRaise / 52;
+    const netRaiseMonthly = ((after - before) * 0.65) / 12;
 
-    breakdownDiv.innerHTML = `
-        <div style="font-size:0.85rem; color:var(--subtle-text-color); text-align:center; text-transform:uppercase; font-weight:bold; margin-bottom: 8px;">Ce qu'il vous reste vraiment (Après ~35% d'impôt)</div>
-        <div class="breakdown-grid">
-            <div><strong>${formatCurrency(monthlyRaise)}</strong><br><small>Par mois</small></div>
-            <div><strong>${formatCurrency(biweeklyRaise)}</strong><br><small>Aux 2 semaines</small></div>
-            <div><strong>${formatCurrency(weeklyRaise)}</strong><br><small>Par semaine</small></div>
-        </div>
-    `;
-    breakdownDiv.classList.remove('hidden');
-
-    let totalExpenses = 0;
+    let totalRewards = 0;
     document.querySelectorAll('.lifestyle-chip.selected').forEach(btn => {
-        totalExpenses += parseFloat(btn.getAttribute('data-cost'));
+        totalRewards += parseFloat(btn.getAttribute('data-cost'));
     });
 
-    const remainingMonthly = monthlyRaise - totalExpenses;
+    const remaining = netRaiseMonthly - totalRewards;
+    const rate = 0.07 / 12; 
+    let futureValue = remaining > 0 ? remaining * ((Math.pow(1 + rate, 15 * 12) - 1) / rate) : 0;
 
-    if (remainingMonthly < 0) {
-        resultDiv.innerHTML = `🚨 <strong>Alerte Rouge :</strong> Vous venez de dépenser <strong>${formatCurrency(Math.abs(remainingMonthly))} DE PLUS</strong> par mois que ce que votre augmentation nette vous rapporte.<br><br>C'est exactement comme ça qu'on s'endette alors qu'on vient de recevoir une promotion.`;
-        resultDiv.className = "tool-result-box mt-4";
-        resultDiv.style.borderLeftColor = "#EF4444";
-    } else {
-        const rate = 0.07 / 12; 
-        const months = 15 * 12; 
-        let futureValue = 0;
-        
-        if (remainingMonthly > 0) {
-            futureValue = remainingMonthly * ((Math.pow(1 + rate, months) - 1) / rate);
-        }
-
-        if (totalExpenses === 0) {
-            resultDiv.innerHTML = `Si vous gardez votre style de vie actuel (aucune récompense sélectionnée) et investissez la totalité de cette hausse (${formatCurrency(monthlyRaise)}/mois), cette promotion générera <strong>${formatCurrency(futureValue)}</strong> dans 15 ans.<br><br><span style="font-size:0.95rem; color:var(--primary-color); font-weight:bold;">C'est ça, le secret pour bâtir de la richesse !</span>`;
-        } else {
-            resultDiv.innerHTML = `Malgré vos ajouts, il vous reste encore <strong>${formatCurrency(remainingMonthly)}/mois</strong> de votre promotion.<br><br>Si vous l'investissez en bourse, vous générerez tout de même <strong>${formatCurrency(futureValue)}</strong> dans 15 ans. Le secret est de trouver l'équilibre.`;
-        }
-        resultDiv.className = "tool-result-box mt-4";
-        resultDiv.style.borderLeftColor = "var(--primary-color)";
-    }
-    resultDiv.classList.remove('hidden');
+    res.innerHTML = `
+        <div class="result-table">
+            <div class="row">
+                <span>Hausse mensuelle nette</span>
+                <strong class="text-primary">+${formatCurrency(netRaiseMonthly)}</strong>
+            </div>
+            <div class="row">
+                <span>Récompenses</span>
+                <strong class="text-red">-${formatCurrency(totalRewards)}</strong>
+            </div>
+            <div class="row total ${remaining < 0 ? 'text-red' : ''}">
+                <span>Reste à investir</span>
+                <strong>${formatCurrency(remaining)}</strong>
+            </div>
+        </div>
+        ${remaining > 0 ? `
+            <div class="mt-3 text-center">
+                <span class="label">Investi sur 15 ans, cela donnera</span>
+                <span class="value text-primary" style="font-size: 1.5rem;">${formatCurrency(futureValue)}</span>
+            </div>
+        ` : `<p class="text-red text-center mt-3 font-bold">Vous vous endettez !</p>`}
+    `;
 }
-
-document.querySelectorAll('#salary-before, #salary-after').forEach(input => {
-    input.addEventListener('input', () => {
-        document.querySelectorAll('.lifestyle-chip').forEach(btn => btn.classList.remove('selected'));
-    });
-});
