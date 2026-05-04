@@ -27,8 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error("Erreur avec la jauge S&P 500 :", error);
     }
 
-    // Initialiser le calculateur de style de vie
-    setTimeout(updateLifestyle, 200);
+    // Calculs initiaux pour remplir les boîtes si les données sont déjà là
+    setTimeout(() => {
+        calculateAuto();
+        calculateInflation();
+        updateLifestyle();
+    }, 200);
 });
 
 const formatCurrency = (amount) => {
@@ -43,34 +47,22 @@ function setAutoPreset(price, m, r, btnElement) {
     document.getElementById('car-months').value = m;
     document.getElementById('car-rate').value = r;
 
-    // Éteindre toutes les pastilles de l'auto
     document.querySelectorAll('.auto-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    
-    // Allumer la pastille cliquée
-    if (btnElement) {
-        btnElement.classList.add('selected-primary');
-    }
+    if (btnElement) btnElement.classList.add('selected-primary');
 
     calculateAuto();
 }
-function setExpensePreset(amount) {
-    document.getElementById('weekly-expense').value = amount;
-    calculateExpense();
-}
+
 function setCreditPreset(bal, pmt, btnElement) {
     document.getElementById('cc-balance').value = bal;
     document.getElementById('cc-payment').value = pmt;
 
-    // Éteindre toutes les pastilles de crédit
     document.querySelectorAll('.credit-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    
-    // Allumer la pastille cliquée
-    if (btnElement) {
-        btnElement.classList.add('selected-primary');
-    }
+    if (btnElement) btnElement.classList.add('selected-primary');
 
     calculateCreditCard();
 }
+
 function setInflationPreset(amount, btnElement) {
     document.getElementById('cash-balance').value = amount;
     document.querySelectorAll('.inflation-chip').forEach(btn => btn.classList.remove('selected-primary'));
@@ -80,7 +72,6 @@ function setInflationPreset(amount, btnElement) {
 
 function setYearPreset(years, btnElement) {
     document.getElementById('inflation-years').value = years;
-    // Visuel des pastilles d'années
     document.querySelectorAll('.year-chip').forEach(btn => btn.classList.remove('selected-primary'));
     if (btnElement) btnElement.classList.add('selected-primary');
     calculateInflation();
@@ -120,61 +111,40 @@ function calculateAuto() {
     resultDiv.classList.remove('hidden');
 }
 
-// Optionnel : Éteindre les boutons auto si l'utilisateur modifie les chiffres manuellement
-document.querySelectorAll('#new-car-price, #car-months, #car-rate').forEach(input => {
-    input.addEventListener('input', () => {
-        document.querySelectorAll('.auto-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    });
-});
-
 // Piège 2 : Micro-dépenses
 function toggleHabit(btn) {
-    btn.classList.toggle('selected'); // Utilise la pastille rouge
-    
+    btn.classList.toggle('selected');
     let total = 0;
-    // Additionne toutes les pastilles qui sont sélectionnées
     document.querySelectorAll('.expense-habit.selected').forEach(b => {
         total += parseFloat(b.getAttribute('data-cost'));
     });
     
-    // Met à jour le champ texte et lance le calcul
     document.getElementById('weekly-expense').value = total > 0 ? total : '';
     calculateExpense();
 }
+
 function calculateExpense() {
     const weekly = parseFloat(document.getElementById('weekly-expense').value);
     const resultDiv = document.getElementById('expense-result');
     
-    // Si vide ou invalide, on cache
     if (isNaN(weekly) || weekly <= 0) {
         resultDiv.classList.add('hidden');
         return;
     }
 
     const monthlyInvestment = (weekly * 52) / 12;
-    const rate = 0.07 / 12; // 7% rendement historique réel
+    const rate = 0.07 / 12; 
     
-    // Calcul sur 10 ans
     const months10 = 10 * 12; 
     const futureValue10 = monthlyInvestment * ((Math.pow(1 + rate, months10) - 1) / rate);
     const profit10 = futureValue10 - (weekly * 52 * 10);
 
-    // Calcul sur 25 ans (L'effet "Wow")
     const months25 = 25 * 12;
     const futureValue25 = monthlyInvestment * ((Math.pow(1 + rate, months25) - 1) / rate);
 
     resultDiv.innerHTML = `Si vous aviez investi ces <strong>${formatCurrency(weekly)}/semaine</strong> dans les marchés (7%) plutôt que de les dépenser :<br><br>Dans 10 ans, vous auriez <strong>${formatCurrency(futureValue10)}</strong> dans vos poches.<br><span style="font-size:0.85rem; color:var(--subtle-text-color);">Dont <strong>${formatCurrency(profit10)}</strong> générés purement par la magie des intérêts composés.</span><br><br><span style="font-size:1.05rem; color:var(--primary-color); font-weight:bold;">Sur 25 ans ? Vos habitudes valent une fortune : ${formatCurrency(futureValue25)} !</span>`;
     
     resultDiv.classList.remove('hidden');
-}
-
-// 2. Pour les boutons des dépenses
-const weeklyExpenseInput = document.getElementById('weekly-expense');
-if (weeklyExpenseInput) {
-    weeklyExpenseInput.addEventListener('input', () => {
-        // Si l'utilisateur tape un chiffre, on éteint toutes les pastilles rouges
-        document.querySelectorAll('.expense-habit').forEach(btn => btn.classList.remove('selected'));
-    });
 }
 
 // Piège 3 : Carte de crédit
@@ -188,10 +158,9 @@ function calculateCreditCard() {
         return;
     }
 
-    const annualRate = 0.2099; // Taux de carte de crédit standard au Québec
+    const annualRate = 0.2099; 
     const monthlyRate = annualRate / 12;
 
-    // Avertissement critique si le paiement est trop bas
     if (payment <= balance * monthlyRate) {
         resultDiv.innerHTML = `🚨 <strong>Alerte Rouge :</strong> Votre paiement de ${formatCurrency(payment)} ne couvre même pas les intérêts mensuels de ${formatCurrency(balance * monthlyRate)} générés par votre dette. <br><br>Il est mathématiquement impossible de rembourser cette carte de cette façon. Votre solde augmentera à l'infini !`;
         resultDiv.className = "tool-result-box mt-4";
@@ -199,7 +168,6 @@ function calculateCreditCard() {
         return;
     }
 
-    // Calcul du temps de remboursement et des intérêts totaux
     const monthsNeeded = -Math.log(1 - (monthlyRate * balance) / payment) / Math.log(1 + monthlyRate);
     const yearsNeeded = (monthsNeeded / 12).toFixed(1);
     const totalPaid = monthsNeeded * payment;
@@ -207,16 +175,9 @@ function calculateCreditCard() {
 
     resultDiv.innerHTML = `À coup de ${formatCurrency(payment)}/mois, il vous faudra <strong>${yearsNeeded} années</strong> (soit ${Math.ceil(monthsNeeded)} mois) pour rembourser ce solde.<br><br><span style="font-size:0.95rem; color:#EF4444; font-weight:bold;">Le vrai crime : Vous paierez ${formatCurrency(totalInterest)} en intérêts.</span><br><br>C'est comme si chaque article que vous aviez acheté avec cette carte vous coûtait près du double de son prix en magasin. Augmentez votre paiement d'urgence !`;
     
-    // On force la bordure rouge pour ce résultat car une dette de carte de crédit est toujours une urgence
     resultDiv.className = "tool-result-box mt-4";
     resultDiv.style.borderLeftColor = "#EF4444"; 
 }
-// 3. Pour les boutons de la carte de crédit
-document.querySelectorAll('#cc-balance, #cc-payment').forEach(input => {
-    input.addEventListener('input', () => {
-        document.querySelectorAll('.credit-chip').forEach(btn => btn.classList.remove('selected-primary'));
-    });
-});
 
 // Piège 4 : Inflation
 function calculateInflation() {
@@ -225,17 +186,16 @@ function calculateInflation() {
     const rateInput = parseFloat(document.getElementById('inflation-rate').value);
     const resultDiv = document.getElementById('inflation-result');
     
-    // Mise à jour de l'affichage du slider inflation
-    document.getElementById('rate-val').innerText = rateInput.toFixed(1) + " %";
+    if(document.getElementById('rate-val')) {
+        document.getElementById('rate-val').innerText = rateInput.toFixed(1) + " %";
+    }
 
-    if (isNaN(balance) || balance <= 0) {
+    if (isNaN(balance) || balance <= 0 || isNaN(years)) {
         resultDiv.classList.add('hidden');
         return;
     }
 
     const inflationRate = rateInput / 100; 
-    
-    // Formule de la perte de pouvoir d'achat
     const purchasingPower = balance / Math.pow(1 + inflationRate, years);
     const loss = balance - purchasingPower;
 
@@ -246,8 +206,8 @@ function calculateInflation() {
     resultDiv.classList.remove('hidden');
 }
 
-// Piège 5 : Style de vie (Interactif)
-function toggleExpense(btn) {
+// Piège 5 : Style de vie
+function toggleLifestyleExpense(btn) {
     btn.classList.toggle('selected');
     updateLifestyle();
 }
@@ -258,7 +218,6 @@ function updateLifestyle() {
     const breakdownDiv = document.getElementById('raise-breakdown');
     const resultDiv = document.getElementById('lifestyle-result');
 
-    // Si données invalides ou pas d'augmentation
     if (isNaN(before) || isNaN(after) || after <= before) {
         breakdownDiv.classList.add('hidden');
         resultDiv.classList.add('hidden');
@@ -266,15 +225,12 @@ function updateLifestyle() {
     }
 
     const grossRaise = after - before;
-    
-    // Approximation réaliste au Québec (~35% d'impôt marginal sur une hausse moyenne)
     const netRaise = grossRaise * 0.65; 
     
     const monthlyRaise = netRaise / 12;
     const biweeklyRaise = netRaise / 26;
     const weeklyRaise = netRaise / 52;
 
-    // Affichage de la ventilation nette
     breakdownDiv.innerHTML = `
         <div style="font-size:0.85rem; color:var(--subtle-text-color); text-align:center; text-transform:uppercase; font-weight:bold; margin-bottom: 8px;">Ce qu'il vous reste vraiment (Après ~35% d'impôt)</div>
         <div class="breakdown-grid">
@@ -285,7 +241,6 @@ function updateLifestyle() {
     `;
     breakdownDiv.classList.remove('hidden');
 
-    // Additionner les récompenses cliquées
     let totalExpenses = 0;
     document.querySelectorAll('.lifestyle-chip.selected').forEach(btn => {
         totalExpenses += parseFloat(btn.getAttribute('data-cost'));
@@ -293,14 +248,13 @@ function updateLifestyle() {
 
     const remainingMonthly = monthlyRaise - totalExpenses;
 
-    // Scénarios de résultats
     if (remainingMonthly < 0) {
         resultDiv.innerHTML = `🚨 <strong>Alerte Rouge :</strong> Vous venez de dépenser <strong>${formatCurrency(Math.abs(remainingMonthly))} DE PLUS</strong> par mois que ce que votre augmentation nette vous rapporte.<br><br>C'est exactement comme ça qu'on s'endette alors qu'on vient de recevoir une promotion.`;
         resultDiv.className = "tool-result-box mt-4";
         resultDiv.style.borderLeftColor = "#EF4444";
     } else {
-        const rate = 0.07 / 12; // 7% rendement historique
-        const months = 15 * 12; // Projection sur 15 ans
+        const rate = 0.07 / 12; 
+        const months = 15 * 12; 
         let futureValue = 0;
         
         if (remainingMonthly > 0) {
@@ -318,12 +272,40 @@ function updateLifestyle() {
     resultDiv.classList.remove('hidden');
 }
 
-// 5. Pour les boutons du style de vie
+
+// --- DÉSACTIVER LES PASTILLES SI SAISIE MANUELLE ---
+document.querySelectorAll('#new-car-price, #car-months, #car-rate').forEach(input => {
+    input.addEventListener('input', () => {
+        document.querySelectorAll('.auto-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    });
+});
+
+const weeklyExpenseInput = document.getElementById('weekly-expense');
+if (weeklyExpenseInput) {
+    weeklyExpenseInput.addEventListener('input', () => {
+        document.querySelectorAll('.expense-habit').forEach(btn => btn.classList.remove('selected'));
+    });
+}
+
+document.querySelectorAll('#cc-balance, #cc-payment').forEach(input => {
+    input.addEventListener('input', () => {
+        document.querySelectorAll('.credit-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    });
+});
+
+const cashBalanceInput = document.getElementById('cash-balance');
+if (cashBalanceInput) {
+    cashBalanceInput.addEventListener('input', () => {
+        document.querySelectorAll('.inflation-chip').forEach(btn => btn.classList.remove('selected-primary'));
+    });
+}
+
 document.querySelectorAll('#salary-before, #salary-after').forEach(input => {
     input.addEventListener('input', () => {
         document.querySelectorAll('.lifestyle-chip').forEach(btn => btn.classList.remove('selected'));
     });
 });
+
 
 // ==========================================
 // 4. JAUGE S&P 500 (STATIQUE)
