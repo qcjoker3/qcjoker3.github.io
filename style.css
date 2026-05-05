@@ -256,3 +256,45 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22p
 @media (max-width: 600px) { .newsletter-form { flex-direction: column; } }
 
 footer { background-color: var(--primary-color); color: #FFF; text-align: center; padding: 2rem 0; margin-top: 3rem; }
+
+
+/* --- GRILLES D'ICÔNES COMPACTES --- */
+.chip.icon-chip {
+    padding: 10px 14px;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) { 
+    /* Transformation en belle grille de petites tuiles sur mobile */
+    .icon-chips-container {
+        display: grid !important; 
+        grid-template-columns: repeat(4, 1fr); /* 4 tuiles par ligne */
+        gap: 0.5rem;
+        max-height: 250px; 
+        overflow-y: auto;
+        padding-right: 5px;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: var(--bg-color);
+    }
+    
+    .chip.icon-chip {
+        width: 100% !important;
+        font-size: 0.85rem;
+        padding: 10px 0;
+        display: flex;
+        flex-direction: column; /* Mets l'émoji en haut, le prix en bas */
+        gap: 4px;
+        border-radius: 12px;
+    }
+    
+    .chip.icon-chip::first-letter {
+        font-size: 1.3rem; /* Grossit un peu l'émoji */
+    }
+
+    /* Scrollbar discrète sur mobile */
+    .icon-chips-container::-webkit-scrollbar { width: 4px; }
+    .icon-chips-container::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
+}
