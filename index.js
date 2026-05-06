@@ -20,37 +20,43 @@ function answerDiag(questionId, answer) {
     const item = document.getElementById(questionId);
     if (!item) return;
 
-    // Gestion de l'état des boutons (visuel)
     const btns = item.querySelectorAll('.diag-btn');
     btns.forEach(btn => btn.classList.remove('active'));
     item.querySelector(`.diag-${answer}`).classList.add('active');
 
-    // Préparation de la boîte de retour (feedback)
     const feedbackDiv = item.querySelector('.diag-feedback');
     let feedbackHTML = '';
 
-    // Logique des réponses
-    if (questionId === 'diag-q1') {
-        if (answer === 'oui') {
-            feedbackHTML = 'Parfait. La conscience de ses sorties d\'argent est le premier pilier de la richesse.';
-        } else {
-            feedbackHTML = 'Un simple café quotidien peut représenter plus de 30 000 $ perdus sur 25 ans. <a href="pieges.html" class="diag-link">Calculez vos fuites d\'argent →</a>';
-        }
-    } 
-    else if (questionId === 'diag-q2') {
-        if (answer === 'oui') {
-            feedbackHTML = 'Excellent. Un portefeuille bien structuré est votre meilleur bouclier contre la perte de pouvoir d\'achat.';
-        } else {
-            feedbackHTML = 'L\'argent qui dort dans un compte chèque perd silencieusement sa valeur. <a href="investissements.html" class="diag-link">Découvrez comment vous protéger →</a>';
-        }
+    // Logique basée sur les 4 piliers
+    switch (questionId) {
+        case 'diag-budget':
+            feedbackHTML = answer === 'oui' 
+                ? 'Excellent. La maîtrise du cash-flow est le socle de la liberté financière.' 
+                : 'Sans suivi, l\'épargne devient accidentelle plutôt que volontaire. <a href="budget.html" class="diag-link">Optimisez vos liquidités →</a>';
+            break;
+            
+        case 'diag-credit':
+            feedbackHTML = answer === 'oui' 
+                ? 'Bravo. Une cote solide est un levier puissant pour vos projets immobiliers.' 
+                : 'Une mauvaise structure de crédit peut vous coûter des dizaines de milliers en intérêts. <a href="credit.html" class="diag-link">Améliorez votre score →</a>';
+            break;
+
+        case 'diag-placements':
+            feedbackHTML = answer === 'oui' 
+                ? 'Parfait. Vous maximisez l\'abri fiscal pour accélérer votre croissance.' 
+                : 'Ne pas utiliser ses droits de cotisation, c\'est faire un cadeau involontaire à l\'impôt. <a href="investissements.html" class="diag-link">Révisez vos placements →</a>';
+            break;
+
+        case 'diag-retraite':
+            feedbackHTML = answer === 'oui' 
+                ? 'Félicitations. La clarté sur vos futurs revenus est la clé de la sérénité.' 
+                : 'La plupart des gens sous-estiment le capital nécessaire pour maintenir leur niveau de vie. <a href="retraite.html" class="diag-link">Simulez votre patrimoine →</a>';
+            break;
     }
-    else if (questionId === 'diag-q3') {
-        if (answer === 'oui') {
-            feedbackHTML = 'Félicitations. Avoir un objectif chiffré est la garantie d\'une retraite sereine.';
-        } else {
-            feedbackHTML = 'Sans objectif précis, il est impossible de savoir si vous épargnez suffisamment. <a href="simulateur-retraite.html" class="diag-link">Créez votre plan exact →</a>';
-        }
-    }
+
+    feedbackDiv.innerHTML = feedbackHTML;
+    feedbackDiv.classList.add('show');
+}
 
     // Affichage avec animation fluide
     feedbackDiv.innerHTML = feedbackHTML;
