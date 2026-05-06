@@ -311,3 +311,13 @@ function updateLifestyle() {
         ` : `<p class="text-red text-center mt-3 font-bold">Vous vous endettez !</p>`}
     `;
 }
+
+// À ajouter dans ton document.addEventListener('DOMContentLoaded', ...)
+const menuToggle = document.getElementById('menu-toggle');
+const navLinks = document.getElementById('nav-links');
+
+if(menuToggle) {
+    menuToggle.addEventListener('click', () => {
+        navLinks.classList.toggle('show');
+    });
+}
