@@ -95,31 +95,31 @@
                             <div class="trap-controls">
                                 <div class="control-group">
                                     <div class="d-flex justify-between align-center mb-2">
-                                        <label>Coût de la réparation :</label>
+                                        <label class="control-label">Coût de la réparation :</label>
                                         <strong id="repair-val" class="text-primary">2 000 $</strong>
                                     </div>
                                     <input type="range" class="fin-slider" id="repair-slider" min="500" max="15000" step="500" value="2000" oninput="calculateAuto()">
                                 </div>
 
-                                <div class="control-group">
+                                <div class="control-group mt-4">
                                     <div class="d-flex justify-between align-center mb-2">
-                                        <label>Véhicule neuf désiré :</label>
+                                        <label class="control-label">Véhicule neuf désiré :</label>
                                         <strong id="car-price-val" class="text-primary">40 000 $</strong>
                                     </div>
                                     <input type="range" class="fin-slider" id="car-price-slider" min="15000" max="100000" step="1000" value="40000" oninput="calculateAuto()">
                                 </div>
 
-                                <div class="control-group">
+                                <div class="control-group mt-4">
                                     <div class="d-flex justify-between align-center mb-2">
-                                        <label>Durée du financement :</label>
+                                        <label class="control-label">Durée du financement :</label>
                                         <strong id="car-term-val" class="text-primary">60 mois</strong>
                                     </div>
                                     <input type="range" class="fin-slider" id="car-term-slider" min="24" max="96" step="12" value="60" oninput="calculateAuto()">
                                 </div>
 
-                                <div class="control-group">
+                                <div class="control-group mt-4">
                                     <div class="d-flex justify-between align-center mb-2">
-                                        <label>Taux d'intérêt :</label>
+                                        <label class="control-label">Taux d'intérêt :</label>
                                         <strong id="car-rate-val" class="text-primary">4.0 %</strong>
                                     </div>
                                     <input type="range" class="fin-slider" id="car-rate-slider" min="0" max="15" step="0.1" value="4.0" oninput="calculateAuto()">
@@ -139,16 +139,16 @@
                         <div class="trap-layout">
                             <div class="trap-controls">
                                 <label class="control-label mb-3">Sélectionnez vos habitudes hebdomadaires :</label>
-                                <div class="soft-chips-container" id="daily-habits">
-                                    <button class="soft-chip" data-cost="25" onclick="toggleHabit(this)" title="Café">☕ 25$</button>
-                                    <button class="soft-chip" data-cost="15" onclick="toggleHabit(this)" title="Abonnements">📺 15$</button>
-                                    <button class="soft-chip" data-cost="75" onclick="toggleHabit(this)" title="Restos">🍽️ 75$</button>
-                                    <button class="soft-chip" data-cost="40" onclick="toggleHabit(this)" title="Livraison">🛵 40$</button>
-                                    <button class="soft-chip" data-cost="40" onclick="toggleHabit(this)" title="Alcool">🍷 40$</button>
-                                    <button class="soft-chip" data-cost="50" onclick="toggleHabit(this)" title="Tabagisme">🚬 50$</button>
-                                    <button class="soft-chip" data-cost="10" onclick="toggleHabit(this)" title="Loterie">🎟️ 10$</button>
-                                    <button class="soft-chip" data-cost="30" onclick="toggleHabit(this)" title="Achats impulsifs">📦 30$</button>
-                                    <button class="soft-chip" data-cost="15" onclick="toggleHabit(this)" title="Collations">🥤 15$</button>
+                                <div class="preset-chips icon-chips-container" id="daily-habits">
+                                    <button class="chip icon-chip" data-cost="25" onclick="toggleHabit(this)" title="Café">☕ 25$</button>
+                                    <button class="chip icon-chip" data-cost="15" onclick="toggleHabit(this)" title="Abonnements">📺 15$</button>
+                                    <button class="chip icon-chip" data-cost="75" onclick="toggleHabit(this)" title="Restos">🍽️ 75$</button>
+                                    <button class="chip icon-chip" data-cost="40" onclick="toggleHabit(this)" title="Livraison">🛵 40$</button>
+                                    <button class="chip icon-chip" data-cost="40" onclick="toggleHabit(this)" title="Alcool">🍷 40$</button>
+                                    <button class="chip icon-chip" data-cost="50" onclick="toggleHabit(this)" title="Tabagisme">🚬 50$</button>
+                                    <button class="chip icon-chip" data-cost="10" onclick="toggleHabit(this)" title="Loterie">🎟️ 10$</button>
+                                    <button class="chip icon-chip" data-cost="30" onclick="toggleHabit(this)" title="Achats impulsifs">📦 30$</button>
+                                    <button class="chip icon-chip" data-cost="15" onclick="toggleHabit(this)" title="Collations">🥤 15$</button>
                                 </div>
                                 <input type="hidden" id="weekly-expense" value="0">
                             </div>
@@ -169,19 +169,19 @@
                             <div class="trap-controls">
                                 <div class="control-group">
                                     <div class="d-flex justify-between align-center mb-2">
-                                        <label>Solde de la carte (20,99%) :</label>
+                                        <label class="control-label">Solde de la carte (20,99%) :</label>
                                         <strong id="credit-bal-val" class="text-primary">5 000 $</strong>
                                     </div>
                                     <input type="range" class="fin-slider" id="credit-bal-slider" min="500" max="30000" step="500" value="5000" oninput="calculateCreditCard()">
                                 </div>
 
-                                <div class="control-group mt-4">
+                                <div class="control-group mt-5">
                                     <div class="d-flex justify-between align-center mb-2">
-                                        <label>Paiement mensuel :</label>
+                                        <label class="control-label">Paiement mensuel :</label>
                                         <strong id="credit-pmt-val" class="text-primary">5 %</strong>
                                     </div>
                                     <input type="range" class="fin-slider" id="credit-pmt-slider" min="2" max="25" step="1" value="5" oninput="calculateCreditCard()">
-                                    <span class="subtext d-block mt-2">Soit environ <strong id="credit-pmt-dollar">250 $</strong> /mois</span>
+                                    <span class="subtext d-block mt-2">Soit environ <strong id="credit-pmt-dollar" style="color: var(--heading-color);">250 $</strong> /mois</span>
                                 </div>
                             </div>
                             
@@ -199,15 +199,15 @@
                             <div class="trap-controls">
                                 <div class="control-group">
                                     <div class="d-flex justify-between align-center mb-2">
-                                        <label>Montant dormant :</label>
+                                        <label class="control-label">Montant dormant :</label>
                                         <strong id="infl-bal-val" class="text-primary">15 000 $</strong>
                                     </div>
                                     <input type="range" class="fin-slider" id="infl-bal-slider" min="1000" max="100000" step="1000" value="15000" oninput="calculateInflation()">
                                 </div>
 
-                                <div class="control-group mt-4">
+                                <div class="control-group mt-5">
                                     <div class="d-flex justify-between align-center mb-2">
-                                        <label>Taux d'inflation estimé :</label>
+                                        <label class="control-label">Taux d'inflation estimé :</label>
                                         <strong id="infl-rate-val" class="text-primary">3.0 %</strong>
                                     </div>
                                     <input type="range" class="fin-slider" id="infl-rate-slider" min="1" max="8" step="0.5" value="3.0" oninput="calculateInflation()">
@@ -227,36 +227,36 @@
                         <div class="trap-layout">
                             <div class="trap-controls">
                                 <div class="form-columns-mobile mb-4">
-                                    <div class="clean-input-group">
+                                    <div class="input-group-row">
                                         <label for="salary-before">Salaire brut AVANT ($/an)</label>
-                                        <input type="number" class="clean-input" id="salary-before" value="60000" oninput="updateLifestyle()" />
+                                        <input type="number" id="salary-before" value="60000" oninput="updateLifestyle()" />
                                     </div>
-                                    <div class="clean-input-group">
+                                    <div class="input-group-row">
                                         <label for="salary-after">Salaire brut APRÈS ($/an)</label>
-                                        <input type="number" class="clean-input" id="salary-after" value="70000" oninput="updateLifestyle()" />
+                                        <input type="number" id="salary-after" value="70000" oninput="updateLifestyle()" />
                                     </div>
                                 </div>
 
                                 <label class="control-label mb-3">Ajoutez ces récompenses mensuelles :</label>
-                                <div class="soft-chips-container" id="lifestyle-expenses">
-                                    <button class="soft-chip lifestyle-chip" data-cost="450" onclick="toggleLifestyleExpense(this)" title="Auto">🚙 450$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="300" onclick="toggleLifestyleExpense(this)" title="Logement">🏠 300$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="200" onclick="toggleLifestyleExpense(this)" title="Voyage">✈️ 200$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="150" onclick="toggleLifestyleExpense(this)" title="Restos">🍽️ 150$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="150" onclick="toggleLifestyleExpense(this)" title="Entretien">🧹 150$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="120" onclick="toggleLifestyleExpense(this)" title="Magasinage">🛍️ 120$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Soins">💆‍♀️ 100$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Alcools">🍷 100$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Divertissement">🎟️ 100$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Gym">🏋️ 100$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="80" onclick="toggleLifestyleExpense(this)" title="Livraison">🛵 80$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="80" onclick="toggleLifestyleExpense(this)" title="Cellulaire">📱 80$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="80" onclick="toggleLifestyleExpense(this)" title="Coiffeur">💇 80$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="60" onclick="toggleLifestyleExpense(this)" title="Cafés">☕ 60$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="60" onclick="toggleLifestyleExpense(this)" title="Abonnements">📺 60$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="50" onclick="toggleLifestyleExpense(this)" title="Achats impulsifs">📦 50$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="50" onclick="toggleLifestyleExpense(this)" title="Animaux">🐶 50$</button>
-                                    <button class="soft-chip lifestyle-chip" data-cost="30" onclick="toggleLifestyleExpense(this)" title="Applications">📱 30$</button>
+                                <div class="preset-chips icon-chips-container" id="lifestyle-expenses">
+                                    <button class="chip icon-chip" data-cost="450" onclick="toggleLifestyleExpense(this)" title="Auto">🚙 450$</button>
+                                    <button class="chip icon-chip" data-cost="300" onclick="toggleLifestyleExpense(this)" title="Logement">🏠 300$</button>
+                                    <button class="chip icon-chip" data-cost="200" onclick="toggleLifestyleExpense(this)" title="Voyage">✈️ 200$</button>
+                                    <button class="chip icon-chip" data-cost="150" onclick="toggleLifestyleExpense(this)" title="Restos">🍽️ 150$</button>
+                                    <button class="chip icon-chip" data-cost="150" onclick="toggleLifestyleExpense(this)" title="Entretien">🧹 150$</button>
+                                    <button class="chip icon-chip" data-cost="120" onclick="toggleLifestyleExpense(this)" title="Magasinage">🛍️ 120$</button>
+                                    <button class="chip icon-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Soins">💆‍♀️ 100$</button>
+                                    <button class="chip icon-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Alcools">🍷 100$</button>
+                                    <button class="chip icon-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Divertissement">🎟️ 100$</button>
+                                    <button class="chip icon-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Gym">🏋️ 100$</button>
+                                    <button class="chip icon-chip" data-cost="80" onclick="toggleLifestyleExpense(this)" title="Livraison">🛵 80$</button>
+                                    <button class="chip icon-chip" data-cost="80" onclick="toggleLifestyleExpense(this)" title="Cellulaire">📱 80$</button>
+                                    <button class="chip icon-chip" data-cost="80" onclick="toggleLifestyleExpense(this)" title="Coiffeur">💇 80$</button>
+                                    <button class="chip icon-chip" data-cost="60" onclick="toggleLifestyleExpense(this)" title="Cafés">☕ 60$</button>
+                                    <button class="chip icon-chip" data-cost="60" onclick="toggleLifestyleExpense(this)" title="Abonnements">📺 60$</button>
+                                    <button class="chip icon-chip" data-cost="50" onclick="toggleLifestyleExpense(this)" title="Achats impulsifs">📦 50$</button>
+                                    <button class="chip icon-chip" data-cost="50" onclick="toggleLifestyleExpense(this)" title="Animaux">🐶 50$</button>
+                                    <button class="chip icon-chip" data-cost="30" onclick="toggleLifestyleExpense(this)" title="Applications">📱 30$</button>
                                 </div>
                             </div>
                             
@@ -344,7 +344,7 @@
         </div>
     </section>
 
-    <footer style="background: var(--primary-color); color: white; padding: 2rem 0; text-align: center;">
+    <footer style="background: var(--card-bg-color); border-top: 1px solid var(--border-color); color: var(--subtle-text-color); padding: 2rem 0; text-align: center;">
         <div class="container">
             <p>&copy; 2026 Finoza. Tous droits réservés.</p>
         </div>
