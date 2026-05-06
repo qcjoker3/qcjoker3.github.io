@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('menu-toggle');
     const navLinks = document.getElementById('nav-links');
     
-    // CORRECTION : S'assurer que le menu existe avant d'ajouter l'événement
     if(menuToggle && navLinks) {
         menuToggle.addEventListener('click', () => {
             navLinks.classList.toggle('show');
@@ -26,10 +25,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Inits
     setTimeout(() => {
         calculateAuto();
-        generateCreditPaymentChips(1000); 
+        calculateExpense();
+        calculateCreditCard(); 
         calculateInflation();
         updateLifestyle();
     }, 200);
@@ -42,31 +41,19 @@ const formatCurrency = (amount) => {
 // ==========================================
 // TRAP 1 : AUTO
 // ==========================================
-let autoPrice = 40000;
-let autoTerm = 60;
-
-function setAutoPrice(price, btn) {
-    autoPrice = price;
-    document.querySelectorAll('.auto-price-chip').forEach(b => b.classList.remove('selected-primary'));
-    btn.classList.add('selected-primary');
-    calculateAuto();
-}
-
-function setAutoTerm(months, btn) {
-    autoTerm = months;
-    document.querySelectorAll('.auto-term-chip').forEach(b => b.classList.remove('selected-primary'));
-    btn.classList.add('selected-primary');
-    calculateAuto();
-}
-
 function calculateAuto() {
-    const repairSlider = document.getElementById('repair-slider');
-    const repairCost = parseFloat(repairSlider.value);
-    document.getElementById('repair-val').innerText = formatCurrency(repairCost);
+    const repairCost = parseFloat(document.getElementById('repair-slider').value);
+    const autoPrice = parseFloat(document.getElementById('car-price-slider').value);
+    const autoTerm = parseFloat(document.getElementById('car-term-slider').value);
+    const autoRate = parseFloat(document.getElementById('car-rate-slider').value);
 
-    const annualRate = parseFloat(document.getElementById('car-rate').value) / 100;
-    const monthlyRate = annualRate / 12;
-    
+    // Maj UI Sliders
+    document.getElementById('repair-val').innerText = formatCurrency(repairCost);
+    document.getElementById('car-price-val').innerText = formatCurrency(autoPrice);
+    document.getElementById('car-term-val').innerText = autoTerm + " mois";
+    document.getElementById('car-rate-val').innerText = autoRate.toFixed(1) + " %";
+
+    const monthlyRate = (autoRate / 100) / 12;
     let monthlyPayment = 0;
     if (monthlyRate > 0) {
         monthlyPayment = autoPrice * (monthlyRate * Math.pow(1 + monthlyRate, autoTerm)) / (Math.pow(1 + monthlyRate, autoTerm) - 1);
@@ -92,11 +79,11 @@ function calculateAuto() {
                 <span class="value">${formatCurrency(monthlyPayment)}</span>
             </div>
             <div>
-                <span class="label">Intérêts payés</span>
+                <span class="label">Intérêts perdus</span>
                 <span class="value text-red">${formatCurrency(totalInterest)}</span>
             </div>
             <div style="grid-column: span 2;">
-                <span class="label">Coût Total (Financé)</span>
+                <span class="label">Coût Total (Véhicule + Intérêts)</span>
                 <span class="value">${formatCurrency(totalPaid)}</span>
             </div>
         </div>
@@ -112,7 +99,6 @@ function toggleHabit(btn) {
     document.querySelectorAll('.expense-habit.selected').forEach(b => {
         total += parseFloat(b.getAttribute('data-cost'));
     });
-    
     document.getElementById('weekly-expense').value = total;
     calculateExpense();
 }
@@ -128,12 +114,8 @@ function calculateExpense() {
 
     const monthlyInvestment = (weekly * 52) / 12;
     const rate = 0.07 / 12; 
-    
-    const months10 = 10 * 12; 
-    const futureValue10 = monthlyInvestment * ((Math.pow(1 + rate, months10) - 1) / rate);
-
-    const months25 = 25 * 12;
-    const futureValue25 = monthlyInvestment * ((Math.pow(1 + rate, months25) - 1) / rate);
+    const futureValue10 = monthlyInvestment * ((Math.pow(1 + rate, 120) - 1) / rate);
+    const futureValue25 = monthlyInvestment * ((Math.pow(1 + rate, 300) - 1) / rate);
 
     res.innerHTML = `
         <div class="result-metric">
@@ -158,45 +140,23 @@ function calculateExpense() {
 // ==========================================
 // TRAP 3 : CRÉDIT
 // ==========================================
-let creditBal = 1000;
-let creditPaymentPct = 0.05;
-
-function setCreditBalance(val, btn) {
-    creditBal = val;
-    document.querySelectorAll('.credit-bal-chip').forEach(b => b.classList.remove('selected-primary'));
-    btn.classList.add('selected-primary');
-    generateCreditPaymentChips(val);
-}
-
-function generateCreditPaymentChips(balance) {
-    const container = document.getElementById('credit-payment-chips');
-    const percentages = [0.05, 0.10, 0.15, 0.20];
-    container.innerHTML = '';
-    
-    percentages.forEach(pct => {
-        const amt = balance * pct;
-        const btn = document.createElement('button');
-        btn.className = `chip credit-pmt-chip ${pct === creditPaymentPct ? 'selected-primary' : ''}`;
-        btn.innerText = `${pct * 100}% (${formatCurrency(amt)})`;
-        btn.onclick = function() {
-            creditPaymentPct = pct;
-            document.querySelectorAll('.credit-pmt-chip').forEach(b => b.classList.remove('selected-primary'));
-            this.classList.add('selected-primary');
-            calculateCreditCard();
-        };
-        container.appendChild(btn);
-    });
-    calculateCreditCard();
-}
-
 function calculateCreditCard() {
-    const payment = creditBal * creditPaymentPct;
+    const creditBal = parseFloat(document.getElementById('credit-bal-slider').value);
+    const creditPaymentPct = parseFloat(document.getElementById('credit-pmt-slider').value);
+    
+    // Maj UI Sliders
+    document.getElementById('credit-bal-val').innerText = formatCurrency(creditBal);
+    document.getElementById('credit-pmt-val').innerText = creditPaymentPct + " %";
+    
+    const payment = creditBal * (creditPaymentPct / 100);
+    document.getElementById('credit-pmt-dollar').innerText = formatCurrency(payment);
+
     const annualRate = 0.2099; 
     const monthlyRate = annualRate / 12;
     const res = document.getElementById('credit-result-content');
 
     if (payment <= creditBal * monthlyRate) {
-        res.innerHTML = `<span class="text-red font-bold">Le paiement ne couvre pas l'intérêt. La dette est infinie.</span>`;
+        res.innerHTML = `<span class="text-red font-bold">Le paiement ne couvre pas l'intérêt mensuel. La dette est infinie.</span>`;
         return;
     }
 
@@ -226,26 +186,15 @@ function calculateCreditCard() {
 // ==========================================
 // TRAP 4 : INFLATION
 // ==========================================
-let inflBal = 10000;
-let inflRate = 0.02;
-
-function setInflationBalance(val, btn) {
-    inflBal = val;
-    document.querySelectorAll('.inflation-bal-chip').forEach(b => b.classList.remove('selected-primary'));
-    btn.classList.add('selected-primary');
-    calculateInflation();
-}
-function setInflationRate(val, btn) {
-    inflRate = val / 100;
-    document.querySelectorAll('.inflation-rate-chip').forEach(b => b.classList.remove('selected-primary'));
-    btn.classList.add('selected-primary');
-    calculateInflation();
-}
-
 function calculateInflation() {
-    // CORRECTION : Ajout de const devant res
-    const res = document.getElementById('inflation-result-content');
+    const inflBal = parseFloat(document.getElementById('infl-bal-slider').value);
+    const inflRate = parseFloat(document.getElementById('infl-rate-slider').value) / 100;
     
+    // Maj UI Sliders
+    document.getElementById('infl-bal-val').innerText = formatCurrency(inflBal);
+    document.getElementById('infl-rate-val').innerText = (inflRate * 100).toFixed(1) + " %";
+
+    const res = document.getElementById('inflation-result-content');
     const power5 = inflBal / Math.pow(1 + inflRate, 5);
     const power10 = inflBal / Math.pow(1 + inflRate, 10);
     const power15 = inflBal / Math.pow(1 + inflRate, 15);
@@ -296,7 +245,7 @@ function updateLifestyle() {
 
     const remaining = netRaiseMonthly - totalRewards;
     const rate = 0.07 / 12; 
-    let futureValue = remaining > 0 ? remaining * ((Math.pow(1 + rate, 15 * 12) - 1) / rate) : 0;
+    let futureValue = remaining > 0 ? remaining * ((Math.pow(1 + rate, 180) - 1) / rate) : 0;
 
     res.innerHTML = `
         <div class="result-table">
