@@ -8,34 +8,29 @@
 }
 
 /* =============================================================== */
-/* === DÉFINITION DU THÈME SOMBRE UNIQUE (DARK ONLY) === */
+/* === THÈME SOMBRE UNIQUE (Tel que demandé) === */
 /* =============================================================== */
-
 :root {
-    /* --- COULEURS PRINCIPALES (Foncé & Mauve) --- */
-    --bg-color: #111827;            /* Fond très foncé */
-    --section-bg-color: #111827;    /* Fond de section identique */
-    --card-bg-color: #1F2937;       /* Fond des cartes (légèrement plus clair) */
-
-    --primary-color: #4F46E5;       /* Indigo (base du dégradé) */
+    --primary-color: #4F46E5;
     --primary-hover: #4338CA;
-    --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7); /* Indigo à Mauve */
-
-    --accent-color: #A855F7;        /* MAUVE / VIOLET IMPÉRIAL */
-    --accent-hover: #8B5CF6;        /* Mauve plus foncé pour survol */
-
-    /* --- TEXTES & BORDURES --- */
-    --heading-color: #F9FAFB;       /* Texte titres (presque blanc) */
-    --text-color: #9CA3AF;          /* Texte principal (gris clair) */
-    --subtle-text-color: #6B7280;   /* Texte subtil (gris moyen) */
+    --primary-gradient: linear-gradient(90deg, #4F46E5, #A855F7);
+    --accent-color: #A855F7; /* Le Mauve ! */
+    --accent-hover: #8B5CF6;
+    
+    --bg-color: #111827;
+    --section-bg-color: #111827;
+    --card-bg-color: #1F2937;
+    
+    --heading-color: #F9FAFB;
+    --text-color: #9CA3AF;
+    --subtle-text-color: #6B7280;
     --light-text-color: #FFFFFF;
-
-    --border-color: #374151;        /* Bordures sombres */
-
-    /* --- POLICES & STRUCTURE --- */
+    
+    --border-color: #374151;
+    
     --font-body: 'Inter', system-ui, sans-serif;
-    --font-heading: 'Poppins', sans-serif; /* Poppins pour titres sombres */
-
+    --font-heading: 'Poppins', sans-serif;
+    
     --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
     --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
     --border-radius: 12px;
@@ -44,7 +39,6 @@
 /* =============================================================== */
 /* === STYLES GÉNÉRIQUES === */
 /* =============================================================== */
-
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body { 
@@ -63,12 +57,10 @@ h2 { font-size: 2.5rem; margin-top: 1rem; }
 a { text-decoration: none; color: var(--accent-color); transition: color 0.2s; }
 a:hover { color: var(--accent-hover); }
 
-/* ESPACEMENT DES SECTIONS */
 section { padding: 3.5rem 0; animation: fadeIn 0.8s ease-out; }
 .section-padding { padding: 3.5rem 0; }
-.bg-light { background-color: var(--section-bg-color); }
+.bg-light { background-color: var(--section-bg-color); } /* En dark mode, c'est identique pour garder ça propre */
 
-/* UTILITAIRES */
 .text-center { text-align: center; }
 .d-flex { display: flex; }
 .justify-between { justify-content: space-between; }
@@ -79,12 +71,12 @@ section { padding: 3.5rem 0; animation: fadeIn 0.8s ease-out; }
 .mb-2 { margin-bottom: 0.5rem; }
 .mb-3 { margin-bottom: 1rem; }
 .mb-4 { margin-bottom: 1.5rem; }
-.mb-5 { margin-bottom: 2rem; } 
+.mb-5 { margin-bottom: 2rem; }
 .hidden { display: none !important; }
 .text-red { color: #EF4444 !important; }
-.text-primary { color: var(--primary-color) !important; }
+.text-primary { color: var(--accent-color) !important; } /* Texte mauve */
 .text-muted { color: var(--subtle-text-color); }
-.font-bold { font-weight: bold; }
+.font-bold { font-weight: 700; }
 .subtext { font-size: 0.85rem; color: var(--subtle-text-color); }
 
 .d-none-mobile { display: inline-block; }
@@ -103,35 +95,11 @@ section { padding: 3.5rem 0; animation: fadeIn 0.8s ease-out; }
 .main-nav nav a { font-weight: 500; color: var(--text-color); }
 .main-nav nav a:hover { color: var(--heading-color); }
 
-/* Bouton hamburger (Mobile) */
-.hamburger-btn {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 1.8rem;
-    color: var(--heading-color);
-    cursor: pointer;
-}
-
+.hamburger-btn { display: none; background: none; border: none; font-size: 1.8rem; color: var(--heading-color); cursor: pointer; }
 @media (max-width: 768px) {
     .hamburger-btn { display: block; }
-    
-    #nav-links {
-        display: none; /* Caché par défaut */
-        flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--bg-color);
-        padding: 1rem 20px;
-        box-shadow: var(--shadow-md);
-        border-bottom: 1px solid var(--border-color);
-    }
-    
-    #nav-links.show {
-        display: flex; /* Affiché quand on clique */
-    }
+    #nav-links { display: none; flex-direction: column; position: absolute; top: 100%; left: 0; right: 0; background: var(--bg-color); padding: 1rem 20px; box-shadow: var(--shadow-md); border-bottom: 1px solid var(--border-color); }
+    #nav-links.show { display: flex; }
 }
 
 /* =============================================================== */
@@ -144,7 +112,7 @@ section { padding: 3.5rem 0; animation: fadeIn 0.8s ease-out; }
 .btn-text-mauve:hover { color: var(--accent-hover); }
 
 .badge { display: inline-block; border: 1px solid var(--border-color); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; margin-bottom: 1rem; color: var(--subtle-text-color); }
-.badge-gris { color: var(--subtle-text-color); border-color: var(--border-color); background: var(--card-bg-color); }
+.badge-gris { background: var(--card-bg-color); }
 .badge-accent { color: var(--accent-color); border-color: var(--accent-color); background: transparent; }
 
 /* =============================================================== */
@@ -163,12 +131,12 @@ section { padding: 3.5rem 0; animation: fadeIn 0.8s ease-out; }
 .bento-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); border-color: var(--primary-color); }
 .bento-icon { font-size: 2.5rem; margin-bottom: 1rem; }
 .bento-card h3 { font-size: 1.2rem; margin-bottom: 0.5rem; }
-.bento-card p { font-size: 0.9rem; color: var(--subtle-text-color); margin: 0; }
+.bento-card p { font-size: 0.9rem; color: var(--text-color); margin: 0; }
 .bento-large { grid-column: span 2; }
 @media (max-width: 900px) { .bento-grid-3 { grid-template-columns: 1fr; } .bento-large, .bento-small { grid-column: span 1; } }
 
 /* =============================================================== */
-/* === INTERFACE FINTECH (CURSEURS ET SOFT-TOGGLES) === */
+/* === OUTILS / TRAPS (Vos Cartes et Layout) === */
 /* =============================================================== */
 .tools-container { background: var(--card-bg-color); border: 1px solid var(--border-color); border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow-md); }
 .tools-tabs { display: flex; background: var(--section-bg-color); border-bottom: 1px solid var(--border-color); overflow-x: auto; }
@@ -180,101 +148,18 @@ section { padding: 3.5rem 0; animation: fadeIn 0.8s ease-out; }
 .tab-content-wrapper { padding: 2.5rem; }
 .tab-pane { display: none; }
 .tab-pane.active { display: block; animation: fadeIn 0.4s ease; }
-.tab-pane h3 { margin-top: 0; margin-bottom: 1.5rem; }
 
-/* La séparation Mobile : Contrôles en haut, Résultats en bas */
 .trap-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 3rem; }
 @media (max-width: 768px) { 
     .trap-layout { grid-template-columns: 1fr; gap: 2rem; } 
     .tab-content-wrapper { padding: 1.5rem; } 
 }
 
-.trap-controls { display: flex; flex-direction: column; gap: 1.5rem; }
-.control-label { font-weight: 600; color: var(--heading-color); font-size: 0.95rem; }
+.trap-controls { display: flex; flex-direction: column; }
+.control-label { font-weight: 600; color: var(--heading-color); font-size: 0.95rem; display: block; margin-bottom: 0.5rem; }
 
-/* --- NOUVEAUX CURSEURS FINTECH --- */
-.control-group { background: transparent; }
-input[type="range"].fin-slider {
-    -webkit-appearance: none;
-    width: 100%;
-    height: 6px;
-    background: #374151; /* Gris plus sombre pour la piste */
-    border-radius: 5px;
-    outline: none;
-    margin: 10px 0;
-}
-input[type="range"].fin-slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 24px;
-    height: 24px;
-    background: var(--accent-color); /* MAUVE */
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
-    border: 3px solid #FFF;
-    transition: transform 0.1s;
-}
-input[type="range"].fin-slider::-webkit-slider-thumb:active { transform: scale(1.15); }
-
-/* --- NOUVEAUX CHAMPS TEXTE (Style de vie) --- */
-.form-columns-mobile { display: flex; gap: 1rem; }
-.clean-input-group { flex: 1; }
-.clean-input-group label { display: block; font-size: 0.85rem; font-weight: 600; color: var(--subtle-text-color); margin-bottom: 5px; }
-.clean-input {
-    width: 100%;
-    padding: 10px 0;
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: var(--heading-color);
-    border: none;
-    border-bottom: 2px solid var(--border-color);
-    background: transparent;
-    outline: none;
-    transition: border-color 0.2s;
-}
-.clean-input:focus { border-bottom-color: var(--accent-color); }
-@media (max-width: 600px) { .form-columns-mobile { flex-direction: column; gap: 1.5rem; } }
-
-
-/* --- SOFT TOGGLES (Pastilles sans bordures dures) --- */
-.soft-chips-container { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.6rem; }
-.soft-chip {
-    padding: 10px;
-    background: var(--card-bg-color); /* Gris doux */
-    border: 2px solid transparent;
-    border-radius: 12px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 4px;
-}
-.soft-chip::first-letter { font-size: 1.3rem; }
-.soft-chip:hover { background: #374151; transform: translateY(-2px); }
-.soft-chip.selected {
-    background: rgba(168, 85, 247, 0.1); /* Fond mauve ultra léger */
-    color: var(--accent-color); /* Texte MAUVE */
-    border-color: rgba(168, 85, 247, 0.3); /* Bordure mauve douce */
-    font-weight: 600;
-}
-
-@media (max-width: 600px) { 
-    .soft-chips-container {
-        grid-template-columns: repeat(4, 1fr);
-        max-height: 250px; 
-        overflow-y: auto;
-        padding-right: 5px;
-    }
-    .soft-chip { padding: 8px 4px; font-size: 0.8rem; }
-}
-
-/* --- RÉSULTATS COMPACTS --- */
-.result-card { background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; height: 100%; display: flex; flex-direction: column; justify-content: center; border: 1px solid var(--border-color); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
+/* Résultats Compacts à droite */
+.result-card { background: var(--bg-color); padding: 1.5rem; border-radius: 12px; height: 100%; display: flex; flex-direction: column; justify-content: center; border: 1px solid var(--border-color); box-shadow: inset 0 2px 4px rgba(0,0,0,0.2); }
 .result-title { font-size: 1rem; text-transform: uppercase; color: var(--subtle-text-color); font-family: var(--font-body); letter-spacing: 1px; margin-bottom: 1.5rem; margin-top: 0; }
 .result-metric { margin-bottom: 1rem; display: flex; flex-direction: column; }
 .result-metric .label { font-size: 0.9rem; color: var(--text-color); }
@@ -286,7 +171,6 @@ input[type="range"].fin-slider::-webkit-slider-thumb:active { transform: scale(1
 .result-metric-grid .value { font-size: 1.3rem; font-weight: bold; color: var(--heading-color); }
 
 .result-divider { border: 0; border-top: 1px solid var(--border-color); margin: 1.5rem 0; }
-
 .result-list-item { display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid var(--border-color); }
 .result-list-item:last-child { border: none; }
 .result-list-item span { color: var(--text-color); font-size: 0.95rem; }
@@ -295,6 +179,94 @@ input[type="range"].fin-slider::-webkit-slider-thumb:active { transform: scale(1
 .result-table { background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden; }
 .result-table .row { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid var(--border-color); }
 .result-table .row.total { background: rgba(255,255,255,0.05); font-weight: bold; border: none; }
+
+/* =============================================================== */
+/* === VOS BOUTONS ORIGINAUX ET VOS CHAMPS TEXTES === */
+/* =============================================================== */
+.preset-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+
+.chip { 
+    padding: 8px 16px; 
+    background: var(--bg-color); 
+    border: 1px solid var(--border-color); 
+    border-radius: 50px; 
+    font-size: 0.95rem; 
+    font-weight: 500; 
+    color: var(--text-color); 
+    cursor: pointer; 
+    transition: all 0.2s ease; 
+}
+.chip:hover { 
+    border-color: var(--primary-color); 
+    color: var(--primary-color);
+    background-color: rgba(13, 148, 136, 0.05);
+    transform: translateY(-2px); 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); 
+}
+.chip.selected-primary { 
+    background: var(--primary-color); 
+    color: #FFF; 
+    border-color: var(--primary-color); 
+    transform: scale(0.97);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+.chip.selected { 
+    background: #EF4444; 
+    color: #FFF; 
+    border-color: #EF4444; 
+    transform: scale(0.97);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Grille d'icônes Mobile (Style de Vie & Dépenses) */
+.chip.icon-chip { padding: 10px 14px; font-size: 1.05rem; font-weight: 600; }
+@media (max-width: 600px) { 
+    .icon-chips-container {
+        display: grid !important; 
+        grid-template-columns: repeat(4, 1fr); 
+        gap: 0.5rem;
+        max-height: 250px; 
+        overflow-y: auto;
+        padding-right: 5px;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: var(--bg-color);
+    }
+    .chip.icon-chip {
+        width: 100% !important;
+        font-size: 0.85rem;
+        padding: 10px 0;
+        display: flex;
+        flex-direction: column; 
+        gap: 4px;
+        border-radius: 12px;
+    }
+    .chip.icon-chip::first-letter { font-size: 1.3rem; }
+    .icon-chips-container::-webkit-scrollbar { width: 4px; }
+    .icon-chips-container::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
+}
+
+/* VOS INPUTS (Anciens) */
+.input-group-row label { font-size: 0.9rem; font-weight: 600; display: block; margin-bottom: 0.3rem; color: var(--heading-color); }
+.input-group-row input[type="number"] { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; background: var(--bg-color); color: var(--heading-color); outline: none;}
+.input-group-row input[type="number"]:focus { border-color: var(--primary-color); }
+.form-columns-mobile { display: flex; gap: 1rem; }
+@media (max-width: 600px) { .form-columns-mobile { flex-direction: column; gap: 0.5rem; } }
+
+/* SLIDERS (Nouveaux et Dark) */
+.control-group { background: transparent; }
+input[type="range"].fin-slider {
+    -webkit-appearance: none; width: 100%; height: 6px;
+    background: #374151; border-radius: 5px; outline: none; margin: 10px 0;
+}
+input[type="range"].fin-slider::-webkit-slider-thumb {
+    -webkit-appearance: none; width: 24px; height: 24px;
+    background: var(--accent-color); border-radius: 50%; cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4); border: 3px solid var(--bg-color);
+    transition: transform 0.1s;
+}
+input[type="range"].fin-slider::-webkit-slider-thumb:active { transform: scale(1.15); }
 
 /* =============================================================== */
 /* === SIMULATEUR RETRAITE === */
@@ -330,4 +302,4 @@ input[type="range"].fin-slider::-webkit-slider-thumb:active { transform: scale(1
 .newsletter-form input:focus { border-color: var(--accent-color); }
 @media (max-width: 600px) { .newsletter-form { flex-direction: column; } }
 
-footer { background-color: rgba(0,0,0,0.3); color: var(--text-color); text-align: center; padding: 2rem 0; margin-top: 3rem; border-top: 1px solid var(--border-color);}
+footer { background-color: var(--section-bg-color); color: var(--text-color); text-align: center; padding: 2rem 0; margin-top: 3rem; border-top: 1px solid var(--border-color);}
