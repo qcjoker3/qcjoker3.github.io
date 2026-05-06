@@ -7,11 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const menuToggle = document.getElementById('menu-toggle');
     const navLinks = document.getElementById('nav-links');
     
-    if(menuToggle) {
+    // CORRECTION : S'assurer que le menu existe avant d'ajouter l'événement
+    if(menuToggle && navLinks) {
         menuToggle.addEventListener('click', () => {
             navLinks.classList.toggle('show');
         });
     }
+
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
             tabs.forEach(t => t.classList.remove('active'));
@@ -241,6 +243,7 @@ function setInflationRate(val, btn) {
 }
 
 function calculateInflation() {
+    // CORRECTION : Ajout de const devant res
     const res = document.getElementById('inflation-result-content');
     
     const power5 = inflBal / Math.pow(1 + inflRate, 5);
