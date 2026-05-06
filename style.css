@@ -125,6 +125,37 @@ section { padding: 3.5rem 0; animation: fadeIn 0.8s ease-out; }
 .main-nav nav a { font-weight: 500; color: var(--text-color); }
 .main-nav nav a:hover { color: var(--heading-color); }
 
+/* Bouton hamburger (caché sur Desktop) */
+.hamburger-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--heading-color);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .hamburger-btn { display: block; }
+    
+    #nav-links {
+        display: none; /* Caché par défaut */
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-color);
+        padding: 1rem 20px;
+        box-shadow: var(--shadow-md);
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    #nav-links.show {
+        display: flex; /* Affiché quand on clique */
+    }
+}
+
 /* =============================================================== */
 /* === BOUTONS & BADGES === */
 /* =============================================================== */
@@ -205,10 +236,96 @@ section { padding: 3.5rem 0; animation: fadeIn 0.8s ease-out; }
 /* === CHAMPS DE FORMULAIRES & PASTILLES === */
 /* =============================================================== */
 .preset-chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-.chip { padding: 8px 16px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 50px; font-size: 0.95rem; font-weight: 500; color: var(--text-color); cursor: pointer; transition: 0.2s; }
-.chip:hover { border-color: var(--primary-color); }
-.chip.selected-primary { background: var(--primary-color); color: #FFF; border-color: var(--primary-color); }
-.chip.selected { background: #EF4444; color: #FFF; border-color: #EF4444; }
+
+.chip { 
+    padding: 8px 16px; 
+    background: var(--bg-color); 
+    border: 1px solid var(--border-color); 
+    border-radius: 50px; 
+    font-size: 0.95rem; 
+    font-weight: 500; 
+    color: var(--text-color); 
+    cursor: pointer; 
+    transition: all 0.2s ease; 
+}
+
+/* CORRECTION : L'EFFET DE SURVOL (HOVER) AMÉLIORÉ */
+.chip:hover { 
+    border-color: var(--primary-color); 
+    color: var(--primary-color);
+    background-color: rgba(13, 148, 136, 0.05); /* Fond bleuté Finoza très léger */
+    transform: translateY(-2px); /* Le bouton se soulève */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Ombre douce */
+}
+
+/* État sélectionné (Option unique) */
+.chip.selected-primary { 
+    background: var(--primary-color); 
+    color: #FFF; 
+    border-color: var(--primary-color); 
+    transform: scale(0.97);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+.chip.selected-primary:hover {
+    background: var(--primary-hover);
+    color: #FFF;
+    transform: scale(0.97);
+}
+
+/* État sélectionné (Dépenses/Style de vie qui s'additionnent) */
+.chip.selected { 
+    background: #EF4444; 
+    color: #FFF; 
+    border-color: #EF4444; 
+    transform: scale(0.97);
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+}
+.chip.selected:hover {
+    background: #DC2626;
+    color: #FFF;
+    transform: scale(0.97);
+}
+
+/* --- GRILLES D'ICÔNES COMPACTES --- */
+.chip.icon-chip {
+    padding: 10px 14px;
+    font-size: 1.05rem;
+    font-weight: 600;
+}
+
+@media (max-width: 600px) { 
+    /* Transformation en belle grille de petites tuiles sur mobile */
+    .icon-chips-container {
+        display: grid !important; 
+        grid-template-columns: repeat(4, 1fr); /* 4 tuiles par ligne */
+        gap: 0.5rem;
+        max-height: 250px; 
+        overflow-y: auto;
+        padding-right: 5px;
+        padding: 10px;
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        background: var(--bg-color);
+    }
+    
+    .chip.icon-chip {
+        width: 100% !important;
+        font-size: 0.85rem;
+        padding: 10px 0;
+        display: flex;
+        flex-direction: column; /* Mets l'émoji en haut, le prix en bas */
+        gap: 4px;
+        border-radius: 12px;
+    }
+    
+    .chip.icon-chip::first-letter {
+        font-size: 1.3rem; /* Grossit un peu l'émoji */
+    }
+
+    /* Scrollbar discrète sur mobile */
+    .icon-chips-container::-webkit-scrollbar { width: 4px; }
+    .icon-chips-container::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
+}
 
 .input-group-row label { font-size: 0.9rem; font-weight: 600; display: block; margin-bottom: 0.3rem; color: var(--heading-color); }
 .input-group-row input[type="number"] { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 1rem; background: var(--bg-color); color: var(--heading-color); outline: none;}
@@ -256,76 +373,3 @@ input[type="range"]::-webkit-slider-thumb { -webkit-appearance: none; width: 22p
 @media (max-width: 600px) { .newsletter-form { flex-direction: column; } }
 
 footer { background-color: var(--primary-color); color: #FFF; text-align: center; padding: 2rem 0; margin-top: 3rem; }
-
-
-/* --- GRILLES D'ICÔNES COMPACTES --- */
-.chip.icon-chip {
-    padding: 10px 14px;
-    font-size: 1.05rem;
-    font-weight: 600;
-}
-
-@media (max-width: 600px) { 
-    /* Transformation en belle grille de petites tuiles sur mobile */
-    .icon-chips-container {
-        display: grid !important; 
-        grid-template-columns: repeat(4, 1fr); /* 4 tuiles par ligne */
-        gap: 0.5rem;
-        max-height: 250px; 
-        overflow-y: auto;
-        padding-right: 5px;
-        padding: 10px;
-        border: 1px solid var(--border-color);
-        border-radius: 8px;
-        background: var(--bg-color);
-    }
-    
-    .chip.icon-chip {
-        width: 100% !important;
-        font-size: 0.85rem;
-        padding: 10px 0;
-        display: flex;
-        flex-direction: column; /* Mets l'émoji en haut, le prix en bas */
-        gap: 4px;
-        border-radius: 12px;
-    }
-    
-    .chip.icon-chip::first-letter {
-        font-size: 1.3rem; /* Grossit un peu l'émoji */
-    }
-
-    /* Scrollbar discrète sur mobile */
-    .icon-chips-container::-webkit-scrollbar { width: 4px; }
-    .icon-chips-container::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
-}
-
-/* Bouton hamburger (caché sur Desktop) */
-.hamburger-btn {
-    display: none;
-    background: none;
-    border: none;
-    font-size: 1.8rem;
-    color: var(--heading-color);
-    cursor: pointer;
-}
-
-@media (max-width: 768px) {
-    .hamburger-btn { display: block; }
-    
-    #nav-links {
-        display: none; /* Caché par défaut */
-        flex-direction: column;
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        background: var(--bg-color);
-        padding: 1rem 20px;
-        box-shadow: var(--shadow-md);
-        border-bottom: 1px solid var(--border-color);
-    }
-    
-    #nav-links.show {
-        display: flex; /* Affiché quand on clique */
-    }
-}
