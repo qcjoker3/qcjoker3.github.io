@@ -298,3 +298,34 @@ footer { background-color: var(--primary-color); color: #FFF; text-align: center
     .icon-chips-container::-webkit-scrollbar { width: 4px; }
     .icon-chips-container::-webkit-scrollbar-thumb { background-color: var(--border-color); border-radius: 10px; }
 }
+
+/* Bouton hamburger (caché sur Desktop) */
+.hamburger-btn {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.8rem;
+    color: var(--heading-color);
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .hamburger-btn { display: block; }
+    
+    #nav-links {
+        display: none; /* Caché par défaut */
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-color);
+        padding: 1rem 20px;
+        box-shadow: var(--shadow-md);
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    #nav-links.show {
+        display: flex; /* Affiché quand on clique */
+    }
+}
