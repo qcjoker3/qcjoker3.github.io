@@ -4,7 +4,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     const tabs = document.querySelectorAll('.tab-btn');
     const panes = document.querySelectorAll('.tab-pane');
-
+    const menuToggle = document.getElementById('menu-toggle');
+    const navLinks = document.getElementById('nav-links');
+    
+    if(menuToggle) {
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('show');
+        });
+    }
     tabs.forEach(tab => {
         tab.addEventListener('click', function() {
             tabs.forEach(t => t.classList.remove('active'));
@@ -310,14 +317,4 @@ function updateLifestyle() {
             </div>
         ` : `<p class="text-red text-center mt-3 font-bold">Vous vous endettez !</p>`}
     `;
-}
-
-// À ajouter dans ton document.addEventListener('DOMContentLoaded', ...)
-const menuToggle = document.getElementById('menu-toggle');
-const navLinks = document.getElementById('nav-links');
-
-if(menuToggle) {
-    menuToggle.addEventListener('click', () => {
-        navLinks.classList.toggle('show');
-    });
 }
