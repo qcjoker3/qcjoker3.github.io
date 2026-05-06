@@ -72,51 +72,67 @@
         </div>
     </section>
 
-    <section class="diagnostic-section section-padding bg-light" id="micro-diagnostic">
-        <div class="container diagnostic-container">
-            <div class="section-header text-center mb-5">
-                <h2>Votre santé financière en 3 questions</h2>
-                <p class="text-muted">Un diagnostic rapide pour identifier vos opportunités d'optimisation.</p>
+    <section class="diagnostic-section section-padding" id="micro-diagnostic">
+        <div class="container diagnostic-container-wide"> <div class="section-header text-center mb-5">
+                <h2>Diagnostic de vos 4 piliers financiers</h2>
+                <p class="text-muted">Évaluez rapidement votre position sur les bases de la création de richesse.</p>
             </div>
             
             <div class="diagnostic-list">
-                <div class="diagnostic-item" id="diag-q1">
+                <div class="diagnostic-item" id="diag-budget">
                     <div class="diagnostic-content">
-                        <div class="question-text">Connaissez-vous l'impact exact de vos petites dépenses sur 25 ans ?</div>
+                        <div class="question-text">Suivez-vous vos liquidités mensuelles pour maximiser votre capacité d'épargne ?</div>
                         <div class="question-actions">
-                            <button class="diag-btn diag-oui" onclick="answerDiag('diag-q1', 'oui')">Oui</button>
-                            <button class="diag-btn diag-non" onclick="answerDiag('diag-q1', 'non')">Non</button>
+                            <button class="diag-btn diag-oui" onclick="answerDiag('diag-budget', 'oui')">Oui</button>
+                            <button class="diag-btn diag-non" onclick="answerDiag('diag-budget', 'non')">Non</button>
                         </div>
                     </div>
                     <div class="diag-feedback"></div>
                 </div>
 
-                <div class="diagnostic-item" id="diag-q2">
+                <div class="diagnostic-item" id="diag-credit">
                     <div class="diagnostic-content">
-                        <div class="question-text">Avez-vous une stratégie pour éviter que l'inflation ne détruise vos liquidités ?</div>
+                        <div class="question-text">Votre cote de crédit est-elle optimisée pour obtenir les meilleurs taux de financement ?</div>
                         <div class="question-actions">
-                            <button class="diag-btn diag-oui" onclick="answerDiag('diag-q2', 'oui')">Oui</button>
-                            <button class="diag-btn diag-non" onclick="answerDiag('diag-q2', 'non')">Non</button>
+                            <button class="diag-btn diag-oui" onclick="answerDiag('diag-credit', 'oui')">Oui</button>
+                            <button class="diag-btn diag-non" onclick="answerDiag('diag-credit', 'non')">Non</button>
                         </div>
                     </div>
                     <div class="diag-feedback"></div>
                 </div>
 
-                <div class="diagnostic-item" id="diag-q3">
+                <div class="diagnostic-item" id="diag-placements">
                     <div class="diagnostic-content">
-                        <div class="question-text">Avez-vous calculé le montant précis dont vous aurez besoin pour la retraite ?</div>
+                        <div class="question-text">Utilisez-vous l'entièreté de vos droits de cotisation CELI et REER chaque année ?</div>
                         <div class="question-actions">
-                            <button class="diag-btn diag-oui" onclick="answerDiag('diag-q3', 'oui')">Oui</button>
-                            <button class="diag-btn diag-non" onclick="answerDiag('diag-q3', 'non')">Non</button>
+                            <button class="diag-btn diag-oui" onclick="answerDiag('diag-placements', 'oui')">Oui</button>
+                            <button class="diag-btn diag-non" onclick="answerDiag('diag-placements', 'non')">Non</button>
+                        </div>
+                    </div>
+                    <div class="diag-feedback"></div>
+                </div>
+
+                <div class="diagnostic-item" id="diag-retraite">
+                    <div class="diagnostic-content">
+                        <div class="question-text">Connaissez-vous le montant net d'impôt dont vous disposerez réellement à la retraite ?</div>
+                        <div class="question-actions">
+                            <button class="diag-btn diag-oui" onclick="answerDiag('diag-retraite', 'oui')">Oui</button>
+                            <button class="diag-btn diag-non" onclick="answerDiag('diag-retraite', 'non')">Non</button>
                         </div>
                     </div>
                     <div class="diag-feedback"></div>
                 </div>
             </div>
-            
-            <div class="text-center mt-5">
-                <a href="pieges.html" class="btn-text-mauve">Explorer tous nos calculateurs détaillés →</a>
-            </div>
+        </div>
+    </section>
+
+    <section class="newsletter-section section-padding text-center">
+        <div class="container newsletter-container-wide"> <h2>L'infolettre Finoza</h2>
+            <p>Rejoignez des milliers de Québécois qui optimisent leurs finances chaque semaine.</p>
+            <form class="newsletter-form mt-4">
+                <input type="email" placeholder="Votre adresse courriel" required>
+                <button type="submit" class="btn-primary-large">S'abonner</button>
+            </form>
         </div>
     </section>
 
