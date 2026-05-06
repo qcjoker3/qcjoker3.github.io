@@ -272,3 +272,27 @@ section { animation: fadeIn 0.8s ease-out; }
 @media (max-width: 600px) { .newsletter-form { flex-direction: column; } }
 
 footer { background-color: #0B0F19; color: var(--subtle-text-color); text-align: center; padding: 3rem 0; border-top: 1px solid rgba(255,255,255,0.05);}
+
+/* --- Ajustement des largeurs pour un look plus spacieux --- */
+.diagnostic-container-wide, 
+.newsletter-container-wide {
+    max-width: 1000px; /* Augmenté pour plus d'ampleur */
+    margin: 0 auto;
+}
+
+/* On s'assure que le diagnostic-list prend toute la largeur du nouveau conteneur */
+.diagnostic-list {
+    background: var(--card-bg-color);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-md);
+    width: 100%; 
+}
+
+/* Élargissement de la barre de saisie de l'infolettre pour suivre la largeur */
+.newsletter-form {
+    display: flex;
+    gap: 1rem;
+    max-width: 650px; /* Augmenté de 500px à 650px */
+    margin: 0 auto;
+}
