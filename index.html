@@ -6,14 +6,14 @@
     <title>Finoza | Maîtrisez vos finances</title>
     
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <header class="main-nav">
         <div class="container d-flex justify-between align-center">
             <a href="index.html" class="logo">
-                <strong><span style="color: var(--accent-color);">Finoza.</span></strong>
+                <strong><span style="color: #2DD4BF;">Finoza.</span></strong>
             </a>
             <button class="hamburger-btn d-block-mobile" id="menu-toggle" aria-label="Menu">
             ☰
@@ -23,7 +23,7 @@
                 <a href="credit.html">Crédit et financement</a>
                 <a href="investissements.html">Placements et fiscalité</a>
                 <a href="retraite.html">Retraite et patrimoine</a>
-                <a href="calculateurs.html">Outils</a>
+                <a href="pieges.html">Pièges financiers</a>
                 <a href="articles.html">Articles</a>
             </nav>
         </div>
@@ -34,9 +34,9 @@
             <div class="hero-text text-center">
                 <span class="badge badge-gris">Outils 100 % gratuits</span>
                 <h1 class="gradient-text">Maîtrisez vos finances.</h1>
-                <p>Des calculateurs et des stratégies pour faire fructifier votre argent, payer moins d'impôt et planifier votre indépendance financière.</p>
+                <p>Des stratégies et des calculateurs pour faire fructifier votre argent, payer moins d'impôt et planifier votre indépendance financière.</p>
                 <div class="mt-4">
-                    <a href="#simulateur-retraite" class="btn-primary-large">Essayer nos outils</a>
+                    <a href="#micro-diagnostic" class="btn-primary-large">Évaluer ma situation</a>
                 </div>
             </div>
         </div>
@@ -44,7 +44,7 @@
 
     <section class="ecosystem-section section-padding" id="ecosysteme">
         <div class="container">
-            <div class="section-header text-center mb-4">
+            <div class="section-header text-center mb-5">
                 <h2>Les piliers de la création de richesse</h2>
             </div>
             <div class="bento-grid-3">
@@ -72,212 +72,58 @@
         </div>
     </section>
 
-    <section class="quick-tools-section section-padding bg-light" id="pieges-financiers">
-        <div class="container">
+    <section class="diagnostic-section section-padding bg-light" id="micro-diagnostic">
+        <div class="container diagnostic-container">
             <div class="section-header text-center mb-5">
-                <h2>Les pièges financiers à éviter</h2>
-                <p>Mesurez instantanément l'impact de vos décisions quotidiennes.</p>
+                <h2>Votre santé financière en 3 questions</h2>
+                <p class="text-muted">Un diagnostic rapide pour identifier vos opportunités d'optimisation.</p>
             </div>
             
-            <div class="tools-container">
-                <div class="tools-tabs">
-                    <button class="tab-btn active" data-tab="auto">La voiture</button>
-                    <button class="tab-btn" data-tab="depenses">Les dépenses</button>
-                    <button class="tab-btn" data-tab="credit">Le crédit</button>
-                    <button class="tab-btn" data-tab="argent-dort">L'inflation</button>
-                    <button class="tab-btn" data-tab="style-vie">Le style de vie</button>
+            <div class="diagnostic-list">
+                <div class="diagnostic-item" id="diag-q1">
+                    <div class="diagnostic-content">
+                        <div class="question-text">Connaissez-vous l'impact exact de vos petites dépenses sur 25 ans ?</div>
+                        <div class="question-actions">
+                            <button class="diag-btn diag-oui" onclick="answerDiag('diag-q1', 'oui')">Oui</button>
+                            <button class="diag-btn diag-non" onclick="answerDiag('diag-q1', 'non')">Non</button>
+                        </div>
+                    </div>
+                    <div class="diag-feedback"></div>
                 </div>
 
-                <div class="tab-content-wrapper">
-                    
-                    <div class="tab-pane active" id="tab-auto">
-                        <div class="trap-layout">
-                            <div class="trap-controls">
-                                <div class="control-group">
-                                    <div class="d-flex justify-between align-center mb-2">
-                                        <label class="control-label">Coût de la réparation :</label>
-                                        <strong id="repair-val" class="text-primary">2 000 $</strong>
-                                    </div>
-                                    <input type="range" class="fin-slider" id="repair-slider" min="500" max="15000" step="500" value="2000" oninput="calculateAuto()">
-                                </div>
-
-                                <div class="control-group mt-4">
-                                    <div class="d-flex justify-between align-center mb-2">
-                                        <label class="control-label">Véhicule neuf désiré :</label>
-                                        <strong id="car-price-val" class="text-primary">40 000 $</strong>
-                                    </div>
-                                    <input type="range" class="fin-slider" id="car-price-slider" min="15000" max="100000" step="1000" value="40000" oninput="calculateAuto()">
-                                </div>
-
-                                <div class="control-group mt-4">
-                                    <div class="d-flex justify-between align-center mb-2">
-                                        <label class="control-label">Durée du financement :</label>
-                                        <strong id="car-term-val" class="text-primary">60 mois</strong>
-                                    </div>
-                                    <input type="range" class="fin-slider" id="car-term-slider" min="24" max="96" step="12" value="60" oninput="calculateAuto()">
-                                </div>
-
-                                <div class="control-group mt-4">
-                                    <div class="d-flex justify-between align-center mb-2">
-                                        <label class="control-label">Taux d'intérêt :</label>
-                                        <strong id="car-rate-val" class="text-primary">4.0 %</strong>
-                                    </div>
-                                    <input type="range" class="fin-slider" id="car-rate-slider" min="0" max="15" step="0.1" value="4.0" oninput="calculateAuto()">
-                                </div>
-                            </div>
-                            
-                            <div class="trap-results">
-                                <div class="result-card">
-                                    <h4 class="result-title">Impact financier</h4>
-                                    <div id="auto-result-content"></div>
-                                </div>
-                            </div>
+                <div class="diagnostic-item" id="diag-q2">
+                    <div class="diagnostic-content">
+                        <div class="question-text">Avez-vous une stratégie pour éviter que l'inflation ne détruise vos liquidités ?</div>
+                        <div class="question-actions">
+                            <button class="diag-btn diag-oui" onclick="answerDiag('diag-q2', 'oui')">Oui</button>
+                            <button class="diag-btn diag-non" onclick="answerDiag('diag-q2', 'non')">Non</button>
                         </div>
                     </div>
-
-                    <div class="tab-pane" id="tab-depenses">
-                        <div class="trap-layout">
-                            <div class="trap-controls">
-                                <label class="control-label mb-3">Sélectionnez vos habitudes hebdomadaires :</label>
-                                <div class="preset-chips icon-chips-container" id="daily-habits">
-                                    <button class="chip icon-chip" data-cost="25" onclick="toggleHabit(this)" title="Café">☕ 25$</button>
-                                    <button class="chip icon-chip" data-cost="15" onclick="toggleHabit(this)" title="Abonnements">📺 15$</button>
-                                    <button class="chip icon-chip" data-cost="75" onclick="toggleHabit(this)" title="Restos">🍽️ 75$</button>
-                                    <button class="chip icon-chip" data-cost="40" onclick="toggleHabit(this)" title="Livraison">🛵 40$</button>
-                                    <button class="chip icon-chip" data-cost="40" onclick="toggleHabit(this)" title="Alcool">🍷 40$</button>
-                                    <button class="chip icon-chip" data-cost="50" onclick="toggleHabit(this)" title="Tabagisme">🚬 50$</button>
-                                    <button class="chip icon-chip" data-cost="10" onclick="toggleHabit(this)" title="Loterie">🎟️ 10$</button>
-                                    <button class="chip icon-chip" data-cost="30" onclick="toggleHabit(this)" title="Achats impulsifs">📦 30$</button>
-                                    <button class="chip icon-chip" data-cost="15" onclick="toggleHabit(this)" title="Collations">🥤 15$</button>
-                                </div>
-                                <input type="hidden" id="weekly-expense" value="0">
-                            </div>
-                            
-                            <div class="trap-results">
-                                <div class="result-card">
-                                    <h4 class="result-title">Coût d'opportunité réel</h4>
-                                    <div id="expense-result-content">
-                                        <p class="text-muted">Sélectionnez des dépenses pour voir l'impact.</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane" id="tab-credit">
-                        <div class="trap-layout">
-                            <div class="trap-controls">
-                                <div class="control-group">
-                                    <div class="d-flex justify-between align-center mb-2">
-                                        <label class="control-label">Solde de la carte (20,99%) :</label>
-                                        <strong id="credit-bal-val" class="text-primary">5 000 $</strong>
-                                    </div>
-                                    <input type="range" class="fin-slider" id="credit-bal-slider" min="500" max="30000" step="500" value="5000" oninput="calculateCreditCard()">
-                                </div>
-
-                                <div class="control-group mt-5">
-                                    <div class="d-flex justify-between align-center mb-2">
-                                        <label class="control-label">Paiement mensuel :</label>
-                                        <strong id="credit-pmt-val" class="text-primary">5 %</strong>
-                                    </div>
-                                    <input type="range" class="fin-slider" id="credit-pmt-slider" min="2" max="25" step="1" value="5" oninput="calculateCreditCard()">
-                                    <span class="subtext d-block mt-2">Soit environ <strong id="credit-pmt-dollar" style="color: var(--heading-color);">250 $</strong> /mois</span>
-                                </div>
-                            </div>
-                            
-                            <div class="trap-results">
-                                <div class="result-card">
-                                    <h4 class="result-title">Dégâts de l'intérêt</h4>
-                                    <div id="credit-result-content"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane" id="tab-argent-dort">
-                        <div class="trap-layout">
-                            <div class="trap-controls">
-                                <div class="control-group">
-                                    <div class="d-flex justify-between align-center mb-2">
-                                        <label class="control-label">Montant dormant :</label>
-                                        <strong id="infl-bal-val" class="text-primary">15 000 $</strong>
-                                    </div>
-                                    <input type="range" class="fin-slider" id="infl-bal-slider" min="1000" max="100000" step="1000" value="15000" oninput="calculateInflation()">
-                                </div>
-
-                                <div class="control-group mt-5">
-                                    <div class="d-flex justify-between align-center mb-2">
-                                        <label class="control-label">Taux d'inflation estimé :</label>
-                                        <strong id="infl-rate-val" class="text-primary">3.0 %</strong>
-                                    </div>
-                                    <input type="range" class="fin-slider" id="infl-rate-slider" min="1" max="8" step="0.5" value="3.0" oninput="calculateInflation()">
-                                </div>
-                            </div>
-                            
-                            <div class="trap-results">
-                                <div class="result-card">
-                                    <h4 class="result-title">Perte de pouvoir d'achat</h4>
-                                    <div id="inflation-result-content"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="tab-pane" id="tab-style-vie">
-                        <div class="trap-layout">
-                            <div class="trap-controls">
-                                <div class="form-columns-mobile mb-4">
-                                    <div class="input-group-row">
-                                        <label for="salary-before">Salaire brut AVANT ($/an)</label>
-                                        <input type="number" id="salary-before" value="60000" oninput="updateLifestyle()" />
-                                    </div>
-                                    <div class="input-group-row">
-                                        <label for="salary-after">Salaire brut APRÈS ($/an)</label>
-                                        <input type="number" id="salary-after" value="70000" oninput="updateLifestyle()" />
-                                    </div>
-                                </div>
-
-                                <label class="control-label mb-3">Ajoutez ces récompenses mensuelles :</label>
-                                <div class="preset-chips icon-chips-container" id="lifestyle-expenses">
-                                    <button class="chip icon-chip" data-cost="450" onclick="toggleLifestyleExpense(this)" title="Auto">🚙 450$</button>
-                                    <button class="chip icon-chip" data-cost="300" onclick="toggleLifestyleExpense(this)" title="Logement">🏠 300$</button>
-                                    <button class="chip icon-chip" data-cost="200" onclick="toggleLifestyleExpense(this)" title="Voyage">✈️ 200$</button>
-                                    <button class="chip icon-chip" data-cost="150" onclick="toggleLifestyleExpense(this)" title="Restos">🍽️ 150$</button>
-                                    <button class="chip icon-chip" data-cost="150" onclick="toggleLifestyleExpense(this)" title="Entretien">🧹 150$</button>
-                                    <button class="chip icon-chip" data-cost="120" onclick="toggleLifestyleExpense(this)" title="Magasinage">🛍️ 120$</button>
-                                    <button class="chip icon-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Soins">💆‍♀️ 100$</button>
-                                    <button class="chip icon-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Alcools">🍷 100$</button>
-                                    <button class="chip icon-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Divertissement">🎟️ 100$</button>
-                                    <button class="chip icon-chip" data-cost="100" onclick="toggleLifestyleExpense(this)" title="Gym">🏋️ 100$</button>
-                                    <button class="chip icon-chip" data-cost="80" onclick="toggleLifestyleExpense(this)" title="Livraison">🛵 80$</button>
-                                    <button class="chip icon-chip" data-cost="80" onclick="toggleLifestyleExpense(this)" title="Cellulaire">📱 80$</button>
-                                    <button class="chip icon-chip" data-cost="80" onclick="toggleLifestyleExpense(this)" title="Coiffeur">💇 80$</button>
-                                    <button class="chip icon-chip" data-cost="60" onclick="toggleLifestyleExpense(this)" title="Cafés">☕ 60$</button>
-                                    <button class="chip icon-chip" data-cost="60" onclick="toggleLifestyleExpense(this)" title="Abonnements">📺 60$</button>
-                                    <button class="chip icon-chip" data-cost="50" onclick="toggleLifestyleExpense(this)" title="Achats impulsifs">📦 50$</button>
-                                    <button class="chip icon-chip" data-cost="50" onclick="toggleLifestyleExpense(this)" title="Animaux">🐶 50$</button>
-                                    <button class="chip icon-chip" data-cost="30" onclick="toggleLifestyleExpense(this)" title="Applications">📱 30$</button>
-                                </div>
-                            </div>
-                            
-                            <div class="trap-results">
-                                <div class="result-card">
-                                    <h4 class="result-title">Bilan mensuel</h4>
-                                    <div id="lifestyle-result-content"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
+                    <div class="diag-feedback"></div>
                 </div>
+
+                <div class="diagnostic-item" id="diag-q3">
+                    <div class="diagnostic-content">
+                        <div class="question-text">Avez-vous calculé le montant précis dont vous aurez besoin pour la retraite ?</div>
+                        <div class="question-actions">
+                            <button class="diag-btn diag-oui" onclick="answerDiag('diag-q3', 'oui')">Oui</button>
+                            <button class="diag-btn diag-non" onclick="answerDiag('diag-q3', 'non')">Non</button>
+                        </div>
+                    </div>
+                    <div class="diag-feedback"></div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-5">
+                <a href="pieges.html" class="btn-text-mauve">Explorer tous nos calculateurs détaillés →</a>
             </div>
         </div>
     </section>
 
-    <section class="star-feature-section" id="simulateur-retraite">
+    <section class="star-feature-section section-padding" id="simulateur-retraite">
         <div class="container star-container">
             <div class="star-content">
-                <span class="badge badge-accent">Outil Populaire</span>
+                <span class="badge badge-accent mb-3">Outil Populaire</span>
                 <h2>Serez-vous prêt pour la retraite ?</h2>
                 <p>Ne laissez pas votre avenir au hasard. Notre simulateur complet prend en compte l'inflation, vos placements (REER/CELI), et les rentes (RRQ/PSV) pour créer votre plan exact.</p>
                 <a href="simulateur-retraite.html" class="btn-primary-large mt-4">Lancer le simulateur</a>
@@ -294,9 +140,9 @@
         </div>
     </section>
 
-    <section class="articles-section section-padding">
+    <section class="articles-section section-padding bg-light">
         <div class="container">
-            <div class="section-header d-flex justify-between align-center mb-4">
+            <div class="section-header d-flex justify-between align-center mb-5">
                 <h2>À ne pas manquer</h2>
                 <a href="articles.html" class="btn-text-mauve d-none-mobile">Voir tous les articles →</a>
             </div>
@@ -344,11 +190,12 @@
         </div>
     </section>
 
-    <footer style="background: var(--card-bg-color); border-top: 1px solid var(--border-color); color: var(--subtle-text-color); padding: 2rem 0; text-align: center;">
+    <footer>
         <div class="container">
             <p>&copy; 2026 Finoza. Tous droits réservés.</p>
         </div>
     </footer>
+
     <script src="index.js"></script>
 </body>
 </html>
