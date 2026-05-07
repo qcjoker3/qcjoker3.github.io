@@ -31,10 +31,32 @@ function answerDiag(questionId, answer) {
     switch (questionId) {
         case 'diag-budget':
             feedbackHTML = answer === 'non' 
-                ? 'Bravo! Vous faites partis des exceptions de ce monde.  <a href="budget.html" class="diag-link">En savoir plus →</a>' 
-                : 'Les frais bancaires sont abérants et détruisent votre patrimoine. <a href="budget.html" class="diag-link">En savoir plus →</a>';
+                ? 'Bravo ! Vous faites partie des exceptions de ce monde. <a href="budget.html" class="diag-link">En savoir plus →</a>' 
+                : 'Les frais bancaires sont aberrants et détruisent votre patrimoine. <a href="budget.html" class="diag-link">En savoir plus →</a>';
             break;
             
+        case 'diag-credit':
+            feedbackHTML = answer === 'non' 
+                ? 'Bravo ! Vous planifiez très bien vos besoins futurs en liquidités. <a href="credit.html" class="diag-link">En savoir plus →</a>' 
+                : 'Les frais d\'intérêt sont vicieux et détruisent votre patrimoine. <a href="credit.html" class="diag-link">En savoir plus →</a>';
+            break;
+
+        case 'diag-placements':
+            feedbackHTML = answer === 'oui' 
+                ? 'Parfait. Vous avez des placements et connaissez le niveau de risque adapté à votre situation. <a href="investissements.html" class="diag-link">En savoir plus →</a>' 
+                : 'Ne pas connaître son profil d\'investisseur, c\'est comme naviguer en haute mer sans boussole. <a href="investissements.html" class="diag-link">En savoir plus →</a>';
+            break;
+
+        case 'diag-retraite':
+            feedbackHTML = answer === 'oui' 
+                ? 'Félicitations. Avoir un plan financier est la première étape de la création d\'un patrimoine. <a href="retraite.html" class="diag-link">En savoir plus →</a>' 
+                : 'La plupart des gens sous-estiment le capital nécessaire pour maintenir leur niveau de vie. <a href="retraite.html" class="diag-link">En savoir plus →</a>';
+            break;
+    }
+
+    feedbackDiv.innerHTML = feedbackHTML;
+    feedbackDiv.classList.add('show');
+}            
         case 'diag-credit':
             feedbackHTML = answer === 'non' 
                 ? 'Bravo! Vous planifiez très bien vos besoins futurs en liquidités. <a href="credit.html" class="diag-link">En savoir plus →</a>' 
