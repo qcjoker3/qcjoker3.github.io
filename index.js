@@ -44,7 +44,7 @@ function answerDiag(questionId, answer) {
         case 'diag-placements':
             feedbackHTML = answer === 'oui' 
                 ? 'Parfait. Vous avez des placements et connaissez le risque adapté à votre situation. <a href="investissements.html" class="diag-link">En savoir plus →</a>' 
-                : 'Ne pas utiliser ses droits de cotisation, c\'est faire un cadeau involontaire à l\'impôt. <a href="investissements.html" class="diag-link">En savoir plus →</a>';
+                : 'Ne pas connaître son profil d\'investisseur c\'est comme naviguer en haute mer sans boussole. c\'est faire un cadeau involontaire à l\'impôt. <a href="investissements.html" class="diag-link">En savoir plus →</a>';
             break;
 
         case 'diag-retraite':
