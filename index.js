@@ -57,8 +57,3 @@ function answerDiag(questionId, answer) {
     feedbackDiv.innerHTML = feedbackHTML;
     feedbackDiv.classList.add('show');
 }
-
-    // Affichage avec animation fluide
-    feedbackDiv.innerHTML = feedbackHTML;
-    feedbackDiv.classList.add('show');
-}
