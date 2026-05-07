@@ -30,27 +30,27 @@ function answerDiag(questionId, answer) {
     // Logique basée sur les 4 piliers
     switch (questionId) {
         case 'diag-budget':
-            feedbackHTML = answer === 'oui' 
-                ? 'Excellent. La maîtrise du cash-flow est le socle de la liberté financière.' 
-                : 'Sans suivi, l\'épargne devient accidentelle plutôt que volontaire. <a href="budget.html" class="diag-link">Optimisez vos liquidités →</a>';
+            feedbackHTML = answer === 'non' 
+                ? 'Bravo! Vous faites partis des exceptions de ce monde.  <a href="budget.html" class="diag-link">En savoir plus →</a>' 
+                : 'Les frais bancaires sont abérants et détruisent votre patrimoine. <a href="budget.html" class="diag-link">En savoir plus →</a>';
             break;
             
         case 'diag-credit':
-            feedbackHTML = answer === 'oui' 
-                ? 'Bravo. Une cote solide est un levier puissant pour vos projets immobiliers.' 
-                : 'Une mauvaise structure de crédit peut vous coûter des dizaines de milliers en intérêts. <a href="credit.html" class="diag-link">Améliorez votre score →</a>';
+            feedbackHTML = answer === 'non' 
+                ? 'Bravo! Vous planifiez très bien vos besoins futurs en liquidités. <a href="credit.html" class="diag-link">En savoir plus →</a>' 
+                : 'Les frais d\'intérêts sont vicieux et détruisent votre patrimoine. <a href="credit.html" class="diag-link">En savoir plus →</a>';
             break;
 
         case 'diag-placements':
             feedbackHTML = answer === 'oui' 
-                ? 'Parfait. Vous maximisez l\'abri fiscal pour accélérer votre croissance.' 
-                : 'Ne pas utiliser ses droits de cotisation, c\'est faire un cadeau involontaire à l\'impôt. <a href="investissements.html" class="diag-link">Révisez vos placements →</a>';
+                ? 'Parfait. Vous avez des placements et connaissez le risque adapté à votre situation. <a href="investissements.html" class="diag-link">En savoir plus →</a>' 
+                : 'Ne pas utiliser ses droits de cotisation, c\'est faire un cadeau involontaire à l\'impôt. <a href="investissements.html" class="diag-link">En savoir plus →</a>';
             break;
 
         case 'diag-retraite':
             feedbackHTML = answer === 'oui' 
-                ? 'Félicitations. La clarté sur vos futurs revenus est la clé de la sérénité.' 
-                : 'La plupart des gens sous-estiment le capital nécessaire pour maintenir leur niveau de vie. <a href="retraite.html" class="diag-link">Simulez votre patrimoine →</a>';
+                ? 'Félicitations. Avoir un plan financier est la première étape de la création d\'un patrimoine.  <a href="retraite.html" class="diag-link">En savoir plus →</a>' 
+                : 'La plupart des gens sous-estiment le capital nécessaire pour maintenir leur niveau de vie. <a href="retraite.html" class="diag-link">En savoir plus →</a>';
             break;
     }
 
