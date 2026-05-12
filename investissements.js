@@ -214,7 +214,7 @@ function drawInstLine(inst) {
 // 2. MODULE : T-REX (IMPACT DES FRAIS DE GESTION)
 // ==========================================================
 function calculateUnifiedStrategy() {
-    // 1. Récupération des entrées
+    // 1. Récupération des entrées (On garde les mêmes IDs)
     const P = parseFloat(document.getElementById('strat-initial').value) || 0;
     const M = parseFloat(document.getElementById('strat-monthly').value) || 0;
     const y = parseFloat(document.getElementById('strat-years').value) || 0;
@@ -233,17 +233,30 @@ function calculateUnifiedStrategy() {
 
     const finalL = calcFV(rNetL);
     const finalH = calcFV(rNetH);
-    const totalInvested = P + (M * nMonths);
 
-    // 2. Mise à jour des éléments du DOM (Uniquement les valeurs)
-    document.getElementById('res-gap').innerText = formatCurrency(finalL - finalH);
-    document.getElementById('res-pct-lost').innerText = finalL > 0 ? ((finalL - finalH) / finalL * 100).toFixed(1) : 0;
+    // 2. MISE À JOUR DU DOM (UNIQUEMENT LES ÉLÉMENTS QUI EXISTENT DANS TON HTML)
     
-    // Détails FNB Passif
-    document.getElementById('res-final-low').innerText = formatCurrency(finalL);
+    // Le Gap de richesse
+    const resGap = document.getElementById('res-gap');
+    if (resGap) resGap.innerText = formatCurrency(finalL - finalH);
 
-    // Détails Fonds Actif
-    document.getElementById('res-final-high').innerText = formatCurrency(finalH);
+    // Le % de perte
+    const resPctLost = document.getElementById('res-pct-lost');
+    if (resPctLost) {
+        const pct = finalL > 0 ? ((finalL - finalH) / finalL * 100).toFixed(1) : 0;
+        resPctLost.innerText = pct;
+    }
+
+    // Valeur Finale Passive (FNB)
+    const resFinalLow = document.getElementById('res-final-low');
+    if (resFinalLow) resFinalLow.innerText = formatCurrency(finalL);
+
+    // Valeur Finale Active (Fonds)
+    const resFinalHigh = document.getElementById('res-final-high');
+    if (resFinalHigh) resFinalHigh.innerText = formatCurrency(finalH);
+    
+    // NOTE : On ne touche plus aux res-invested ou res-growth, 
+    // donc le script ne plantera plus même s'ils sont absents du HTML.
 }
 
 // ==========================================================
