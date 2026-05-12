@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     calculateDebtCost();
     calculateRealEstate();
+    calculateLeverage();
 
     const menuToggle = document.getElementById('menu-toggle');
     const navLinks = document.getElementById('nav-links');
@@ -199,6 +200,86 @@ function calculateRealEstate() {
             <p style="font-size: 0.85rem; color: var(--subtle-text-color); margin: 0;">
                 *La stratégie du locataire implique une discipline d'acier : placer la mise de fonds initiale de ${formatCurrency(downPayment)} <strong>ET</strong> épargner rigoureusement la différence mensuelle de ${formatCurrency(monthlySavings)}.
             </p>
+        </div>
+    `;
+}
+
+// N'oubliez pas d'ajouter calculateLeverage() dans le bloc DOMContentLoaded en haut du fichier :
+// document.addEventListener('DOMContentLoaded', () => {
+//     calculateDebtCost();
+//     calculateLeverage(); // <-- AJOUTER CECI
+//     calculateRealEstate();
+//     ...
+
+// ==========================================
+// WIDGET 1.5 : LE MULTIPLICATEUR DE LEVIER
+// ==========================================
+function calculateLeverage() {
+    const equity = parseFloat(document.getElementById('lev-equity').value) || 0;
+    const borrowed = parseFloat(document.getElementById('lev-borrowed').value) || 0;
+    const borrowRate = parseFloat(document.getElementById('lev-borrow-rate').value) / 100 || 0;
+    const assetReturn = parseFloat(document.getElementById('lev-asset-slider').value) / 100 || 0;
+
+    // Mise à jour visuelle du curseur
+    const valDisplay = document.getElementById('lev-asset-val');
+    valDisplay.innerText = (assetReturn > 0 ? "+ " : "") + (assetReturn * 100).toFixed(1) + " %";
+    valDisplay.style.color = assetReturn >= 0 ? '#2DD4BF' : '#EF4444';
+
+    if (equity <= 0) return;
+
+    const totalInvestment = equity + borrowed;
+
+    // SCÉNARIO SANS LEVIER (On n'investit que nos propres 50k$)
+    const noLevProfit = equity * assetReturn;
+    const noLevROE = assetReturn; // Return on Equity = Rendement de l'actif directement
+
+    // SCÉNARIO AVEC LEVIER (On investit 250k$)
+    const grossProfit = totalInvestment * assetReturn;
+    const interestCost = borrowed * borrowRate;
+    const netProfit = grossProfit - interestCost;
+    const levROE = netProfit / equity;
+
+    const isProfitable = netProfit >= 0;
+    const colorClass = isProfitable ? '#2DD4BF' : '#EF4444';
+    const bgClass = isProfitable ? 'rgba(45, 212, 191, 0.05)' : 'rgba(239, 68, 68, 0.05)';
+    const borderColor = isProfitable ? 'rgba(45, 212, 191, 0.2)' : 'rgba(239, 68, 68, 0.2)';
+
+    let warningHTML = '';
+    if (assetReturn > 0 && netProfit < 0) {
+        warningHTML = `<p class="text-red" style="font-size: 0.85rem; margin-top: 1rem;"><strong>Attention :</strong> L'actif génère un profit, mais le taux de l'emprunt (${(borrowRate*100).toFixed(1)}%) est trop élevé. Vous perdez de l'argent (Spread négatif).</p>`;
+    } else if (netProfit < 0) {
+        warningHTML = `<p class="text-red" style="font-size: 0.85rem; margin-top: 1rem;"><strong>Risque de faillite :</strong> L'effet de levier amplifie vos pertes. Une baisse de ${(assetReturn*100).toFixed(1)}% de l'actif détruit <strong>${Math.abs(levROE*100).toFixed(1)}%</strong> de votre capital initial.</p>`;
+    } else {
+        warningHTML = `<p class="text-muted" style="font-size: 0.85rem; margin-top: 1rem;"><strong>La magie du levier :</strong> Le rendement de l'actif surpasse le coût d'emprunt (Spread positif). Votre rendement sur capitaux propres explose.</p>`;
+    }
+
+    document.getElementById('lev-dashboard-results').innerHTML = `
+        <div class="result-metric-grid" style="gap: 1rem; margin-bottom: 1.5rem; margin-top: 1.5rem;">
+            
+            <div style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <span class="label" style="text-transform: uppercase;">100% Capital Propre</span>
+                <span class="value" style="color: var(--heading-color); font-size: 1.8rem; display: block; margin: 10px 0;">${(noLevROE * 100).toFixed(1)} %</span>
+                <span class="subtext">Profit : ${formatCurrency(noLevProfit)}</span>
+            </div>
+
+            <div style="background: ${bgClass}; padding: 1.5rem; border-radius: 12px; border: 1px solid ${borderColor}; position: relative; overflow: hidden;">
+                <span class="label" style="color: ${colorClass}; text-transform: uppercase;">Avec Levier</span>
+                <span class="value" style="color: ${colorClass}; font-size: 1.8rem; display: block; margin: 10px 0;">${(levROE * 100).toFixed(1)} %</span>
+                <span class="subtext" style="color: var(--heading-color);">Profit Net : ${formatCurrency(netProfit)}</span>
+            </div>
+
+        </div>
+
+        <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 15px; border-left: 3px solid ${colorClass};">
+            <div class="d-flex justify-between" style="font-size: 0.85rem; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 5px; margin-bottom: 5px;">
+                <span class="text-muted">Gain de l'actif (${formatCurrency(totalInvestment)}) :</span>
+                <span style="color: var(--heading-color);">${formatCurrency(grossProfit)}</span>
+            </div>
+            <div class="d-flex justify-between" style="font-size: 0.85rem;">
+                <span class="text-muted">Frais d'intérêts payés :</span>
+                <span style="color: #EF4444;">- ${formatCurrency(interestCost)}</span>
+            </div>
+            ${warningHTML}
         </div>
     `;
 }
