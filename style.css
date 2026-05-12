@@ -262,3 +262,146 @@ section { animation: fadeIn 0.8s ease-out; }
 @media (max-width: 600px) { .newsletter-form { flex-direction: column; } }
 
 footer { background-color: #0B0F19; color: var(--subtle-text-color); text-align: center; padding: 3rem 0; border-top: 1px solid rgba(255,255,255,0.05);}
+
+
+/* =============================================================== */
+/* === DASHBOARD DE TRÉSORERIE (PAGE BUDGET) === */
+/* =============================================================== */
+
+/* --- 1. Colonne de gauche (Cartes de saisie) --- */
+.premium-input-card {
+    background: var(--card-bg-color);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.card-subtitle {
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--subtle-text-color);
+    margin-top: 0;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.premium-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--subtle-text-color);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+/* --- 2. Input Géant (Revenu) --- */
+.input-with-prefix {
+    display: flex;
+    align-items: center;
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 10px 15px;
+    transition: border-color 0.3s;
+}
+.input-with-prefix:focus-within {
+    border-color: #2DD4BF;
+}
+.input-with-prefix span {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #2DD4BF;
+    margin-right: 10px;
+}
+.input-with-prefix input {
+    background: transparent;
+    border: none;
+    color: var(--heading-color);
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: var(--font-heading);
+    width: 100%;
+    outline: none;
+}
+
+/* --- 3. Lignes de dépenses (Besoins/Désirs) --- */
+.premium-input-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px dashed rgba(255,255,255,0.05);
+}
+.premium-input-row:last-child {
+    border-bottom: none;
+}
+.premium-input-row label {
+    font-size: 0.95rem;
+    color: var(--text-color);
+}
+.premium-input-row input {
+    background: rgba(0,0,0,0.3);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-radius: 8px;
+    color: var(--heading-color);
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 6px 10px;
+    width: 120px;
+    text-align: right;
+    outline: none;
+    transition: border-color 0.2s;
+}
+.premium-input-row input:focus {
+    border-color: var(--accent-color);
+}
+
+/* Retirer les flèches des champs numériques pour un look épuré */
+.input-with-prefix input::-webkit-outer-spin-button,
+.input-with-prefix input::-webkit-inner-spin-button,
+.premium-input-row input::-webkit-outer-spin-button,
+.premium-input-row input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* --- 4. Colonne de droite (Bilan & Jauge) --- */
+.dashboard-card {
+    background: var(--card-bg-color);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,0.05);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    position: sticky;
+    top: 100px;
+}
+
+/* --- 5. Jauge Visuelle 50/30/20 --- */
+.alloc-bar-container { width: 100%; }
+.alloc-bar {
+    display: flex;
+    height: 12px;
+    border-radius: 50px;
+    background: rgba(255,255,255,0.05);
+    overflow: hidden;
+}
+.alloc-segment { height: 100%; transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+.alloc-segment.needs { background: #3B82F6; } /* Bleu pour Besoins */
+.alloc-segment.wants { background: #F59E0B; } /* Orange pour Désirs */
+.alloc-segment.savings { background: #2DD4BF; } /* Teal pour Épargne */
+
+.alloc-labels {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--subtle-text-color);
+}
+.alloc-label { display: flex; align-items: center; gap: 5px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.needs-dot { background: #3B82F6; }
+.wants-dot { background: #F59E0B; }
+.savings-dot { background: #2DD4BF; }
