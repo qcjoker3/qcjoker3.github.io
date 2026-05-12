@@ -266,15 +266,15 @@ let fnbAllocChart = null;
 let fnbGrowthChart = null;
 
 const fnbData = {
-    VBAL: { nom: "Équilibré (VBAL)", frais: 0.24, r: 6.0, eq: 60, fi: 40 },
-    VGRO: { nom: "Croissance (VGRO)", frais: 0.24, r: 7.0, eq: 80, fi: 20 },
-    VEQT: { nom: "100% Actions (VEQT)", frais: 0.24, r: 8.0, eq: 100, fi: 0 }
+    Balanced: { nom: "Équilibré", frais: 0.24, r: 5.0, eq: 60, fi: 40 },
+    Growth: { nom: "Croissance", frais: 0.24, r: 7.0, eq: 80, fi: 20 },
+    Equity: { nom: "100% Actions", frais: 0.24, r: 9.0, eq: 100, fi: 0 }
 };
 
 function calculateFNB() {
     // UI Update Radio buttons
     const radios = document.getElementsByName('fnb-profil');
-    let selProfile = 'VGRO';
+    let selProfile = 'Growth';
     radios.forEach(r => { 
         const btn = document.getElementById('btn-' + r.value.toLowerCase());
         if (r.checked) { 
