@@ -1,1 +1,306 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Placements & Fiscalité | Finoza</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+</head>
+<body>
 
+    <header class="main-nav">
+        <div class="container d-flex justify-between align-center">
+            <a href="index.html" class="logo">
+                <strong><span style="color: #2DD4BF;">Finoza.</span></strong>
+            </a>
+            <button class="hamburger-btn d-block-mobile" id="menu-toggle">☰</button>
+            <nav id="nav-links">
+                <a href="budget.html">Budget et liquidités</a>
+                <a href="credit.html">Crédit et financement</a>
+                <a href="investissements.html" class="active" style="color: var(--heading-color);">Placements et fiscalité</a>
+                <a href="retraite.html">Retraite et patrimoine</a>
+                <a href="pieges.html">Pièges financiers</a>
+                <a href="articles.html">Articles</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero-modern" style="padding-bottom: 3rem;">
+        <div class="container hero-centered">
+            <div class="hero-text text-center">
+                <span class="badge badge-gris mb-3">Pilier 3 : Croissance</span>
+                <h1 class="gradient-text" style="font-size: clamp(2.5rem, 5vw, 4rem);">La mécanique de l'enrichissement.</h1>
+                <p>Arrêtez de spéculer. L'investissement véritable repose sur des règles mathématiques immuables : minimiser les frais, capturer le rendement du marché, automatiser l'effort et maîtriser les boucliers fiscaux.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2>Investir vs Spéculer</h2>
+                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">L'investisseur achète des flux de trésorerie futurs (la récolte de la ferme). Le spéculateur achète un prix en espérant qu'un plus fou que lui l'achètera plus cher demain (le casino).</p>
+            </div>
+
+            <div class="bento-grid-3">
+                <div class="bento-card" style="border-top: 4px solid #2DD4BF;">
+                    <h3 style="font-size: 1.3rem;">📈 Actions (Équité)</h3>
+                    <p class="text-muted">Vous devenez propriétaire partiel d'entreprises. Votre capital croît avec leurs profits. C'est le principal moteur d'enrichissement à long terme, mais il exige de tolérer la volatilité à court terme.</p>
+                </div>
+                <div class="bento-card" style="border-top: 4px solid #A855F7;">
+                    <h3 style="font-size: 1.3rem;">🛡️ Obligations (Dette)</h3>
+                    <p class="text-muted">Vous prêtez votre argent à un gouvernement ou une entreprise en échange d'intérêts fixes. Le rendement est plus faible, mais elles agissent comme l'amortisseur de votre portefeuille lors des krachs.</p>
+                </div>
+                <div class="bento-card" style="border-top: 4px solid #F59E0B;">
+                    <h3 style="font-size: 1.3rem;">🔒 Placements Privés</h3>
+                    <p class="text-muted">Immobilier, dette privée, entreprises non cotées. Ces actifs offrent une prime de rendement en échange de leur illiquidité (vous ne pouvez pas retirer votre argent quand vous voulez).</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding bg-light">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2>Le cimetière des prédictions (S&P 500)</h2>
+                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">Les stratèges de Wall Street sont payés des millions pour prédire le marché avec des modèles économétriques avancés. Pourtant, année après année, ils échouent. Analysez leur taux d'erreur ci-dessous. Si eux ne peuvent pas prévoir le marché, ne perdez pas votre temps à essayer.</p>
+            </div>
+
+            <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="dashboard-card" style="padding: 2rem; position: relative;">
+                    <h3 style="margin-top: 0; font-size: 1.2rem; color: var(--heading-color);">Palmarès des erreurs</h3>
+                    
+                    <div class="d-flex align-center mt-3 mb-3" style="gap: 10px;">
+                        <span class="text-muted" style="font-size: 0.9rem;">Horizon d'évaluation :</span>
+                        <div class="horizon-tabs">
+                            <button class="diag-btn active" data-h="1" style="padding: 4px 12px; font-size: 0.85rem;">1 an</button>
+                            <button class="diag-btn" data-h="3" style="padding: 4px 12px; font-size: 0.85rem;">3 ans</button>
+                            <button class="diag-btn" data-h="5" style="padding: 4px 12px; font-size: 0.85rem;">5 ans</button>
+                        </div>
+                    </div>
+                    
+                    <div style="overflow-x: auto; max-height: 350px; border: 1px solid rgba(255,255,255,0.05); border-radius: 8px;">
+                        <table class="premium-table" id="rankingTable" style="width: 100%; text-align: left; border-collapse: collapse;">
+                            <thead style="background: rgba(0,0,0,0.3); position: sticky; top: 0;">
+                                <tr>
+                                    <th style="padding: 10px;">#</th>
+                                    <th style="padding: 10px;">Institution</th>
+                                    <th style="padding: 10px;">Écart moyen</th>
+                                </tr>
+                            </thead>
+                            <tbody style="font-size: 0.95rem;"></tbody>
+                        </table>
+                    </div>
+                    <p class="text-muted mt-2" style="font-size: 0.8rem;">* Cliquez sur une institution pour voir sa trajectoire.</p>
+                </div>
+
+                <div class="dashboard-card" style="padding: 2rem; display: flex; flex-direction: column; gap: 2rem;">
+                    <div>
+                        <div class="d-flex justify-between align-center mb-2">
+                            <h3 style="margin: 0; font-size: 1.2rem; color: var(--heading-color);">L'erreur de l'année</h3>
+                            <select id="yearSelect" class="clean-input" style="width: auto; padding: 5px; font-size: 1rem; border-bottom-color: #2DD4BF;"></select>
+                        </div>
+                        <div style="height: 200px; width: 100%;">
+                            <canvas id="chartCanvas"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem;">
+                        <h3 style="margin: 0 0 10px 0; font-size: 1.2rem; color: var(--heading-color);">Prévision vs Réalité</h3>
+                        <div style="height: 180px; width: 100%;">
+                            <canvas id="predRealCanvas"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container diagnostic-container-wide">
+            <div class="section-header text-center mb-5">
+                <h2>L'illusion de la gestion active</h2>
+                <p class="text-muted">Si personne ne peut prédire le marché, pourquoi payer un "expert" 2.5 % par an pour essayer de le battre ? Découvrez l'effet T-Rex : comment les frais de gestion dévorent votre richesse à long terme.</p>
+            </div>
+
+            <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="inputs-column">
+                    <div class="premium-input-card">
+                        <div class="premium-input-row">
+                            <label>Investissement initial ($)</label>
+                            <input type="number" id="trex-initial" value="50000" oninput="calculateTrex()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Cotisation annuelle ($)</label>
+                            <input type="number" id="trex-annual" value="10000" oninput="calculateTrex()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Horizon (Années)</label>
+                            <input type="number" id="trex-years" value="25" oninput="calculateTrex()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Rendement du marché (%)</label>
+                            <input type="number" id="trex-return" value="7.5" step="0.1" oninput="calculateTrex()">
+                        </div>
+                        <div class="premium-input-row" style="border-bottom: none;">
+                            <label style="color: #EF4444;">Frais de gestion du fonds (%)</label>
+                            <input type="number" id="trex-fee" value="2.2" step="0.1" oninput="calculateTrex()" style="color: #EF4444; border-color: rgba(239,68,68,0.3);">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-column">
+                    <div class="dashboard-card" style="padding: 2.5rem; height: 100%;">
+                        <h3 style="margin-top: 0; color: var(--heading-color);">L'impact des frais (Fonds Mutuels vs FNB)</h3>
+                        <div id="trex-results"></div>
+                        <div style="height: 200px; margin-top: 1rem;">
+                            <canvas id="chart-trex"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding bg-light">
+        <div class="container diagnostic-container-wide">
+            <div class="section-header text-center mb-5">
+                <h2>L'antidote boursier : Le DCA et les FNB</h2>
+                <p class="text-muted">Achetez le marché entier avec un Fonds Négocié en Bourse (FNB) "Tout-en-un" (Frais de ~0.24%). Investissez automatiquement chaque mois (Dollar-Cost Averaging). La volatilité n'est plus une ennemie, c'est l'opportunité d'acheter plus de parts quand c'est bas.</p>
+            </div>
+
+            <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="inputs-column">
+                    <div class="premium-input-card">
+                        <div class="mb-4">
+                            <label class="premium-label" style="margin-bottom: 10px;">Choisissez votre profil (Vanguard)</label>
+                            <div class="d-flex" style="gap: 10px;">
+                                <label style="flex:1; cursor:pointer;">
+                                    <input type="radio" name="fnb-profil" value="VBAL" onchange="calculateFNB()" style="display:none;" id="rad-vbal">
+                                    <div class="diag-btn text-center" style="width:100%;" id="btn-vbal">Prudent (60/40)</div>
+                                </label>
+                                <label style="flex:1; cursor:pointer;">
+                                    <input type="radio" name="fnb-profil" value="VGRO" onchange="calculateFNB()" checked style="display:none;" id="rad-vgro">
+                                    <div class="diag-btn text-center active" style="width:100%; border-color: #2DD4BF; color: #2DD4BF;" id="btn-vgro">Croissance (80/20)</div>
+                                </label>
+                                <label style="flex:1; cursor:pointer;">
+                                    <input type="radio" name="fnb-profil" value="VEQT" onchange="calculateFNB()" style="display:none;" id="rad-veqt">
+                                    <div class="diag-btn text-center" style="width:100%;" id="btn-veqt">Agressif (100/0)</div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="premium-input-row">
+                            <label>Dépôt initial ($)</label>
+                            <input type="number" id="fnb-initial" value="10000" oninput="calculateFNB()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Cotisation DCA (Mensuelle)</label>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <span style="color: #10B981; font-weight: bold;">+ $</span>
+                                <input type="number" id="fnb-monthly" value="500" oninput="calculateFNB()" style="width: 90px;">
+                            </div>
+                        </div>
+                        <div class="premium-input-row" style="border-bottom: none;">
+                            <label>Horizon (Années)</label>
+                            <input type="number" id="fnb-years" value="25" oninput="calculateFNB()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-column">
+                    <div class="dashboard-card" style="padding: 2rem;">
+                        <div id="fnb-results"></div>
+                        <div class="d-flex align-center mt-4" style="gap: 1rem;">
+                            <div style="height: 120px; width: 120px; flex-shrink: 0;">
+                                <canvas id="chart-fnb-alloc"></canvas>
+                            </div>
+                            <div style="flex-grow: 1; height: 150px;">
+                                <canvas id="chart-fnb-growth"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container diagnostic-container-wide">
+            <div class="section-header text-center mb-5">
+                <h2>Les Boucliers Fiscaux</h2>
+                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">L'impôt est le plus grand prédateur de la richesse. Utilisez les comptes enregistrés pour le neutraliser.</p>
+            </div>
+
+            <div class="bento-grid-3 mb-5" style="grid-template-columns: 1fr 1fr;">
+                <div style="background: rgba(13, 148, 136, 0.05); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(13, 148, 136, 0.2);">
+                    <h3 style="color: #2DD4BF; margin-top:0;">Le CELI (Le Paradis Fiscal)</h3>
+                    <p class="text-muted">Vous cotisez avec de l'argent déjà imposé. Tous les gains, dividendes et retraits sont <strong>100% exempts d'impôts</strong>, à vie. Idéal si votre salaire actuel est bas ou moyen.</p>
+                </div>
+                <div style="background: rgba(79, 70, 229, 0.05); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(79, 70, 229, 0.2);">
+                    <h3 style="color: #4F46E5; margin-top:0;">Le REER (Le Report Stratégique)</h3>
+                    <p class="text-muted">La cotisation réduit votre impôt aujourd'hui. L'argent croît à l'abri de l'impôt, mais sera imposé au moment du retrait. <strong>Le pari :</strong> Vous croyez que votre impôt sera plus bas à la retraite qu'aujourd'hui.</p>
+                </div>
+            </div>
+
+            <div class="trap-layout" style="grid-template-columns: 1fr; margin-bottom: 4rem;">
+                <div style="background: rgba(239, 68, 68, 0.05); border-left: 4px solid #EF4444; padding: 2rem; border-radius: 12px;">
+                    <h3 style="color: #EF4444; margin-top: 0; font-size: 1.2rem;">⚠️ La bombe à retardement (Le Piège de l'Abondance)</h3>
+                    <p class="text-muted mb-0">Un plan financier mal conçu peut vous ruiner à la retraite. Si vous possédez un gros Fonds de pension (employeur) <strong>ET</strong> un énorme REER (ou CRI), vous serez forcé de retirer des sommes importantes dès 71 ans. Cela gonflera votre revenu artificiellement, vous propulsera dans une tranche d'imposition brutale, et l'ARC récupérera (coupera) votre chèque de Pension de la Sécurité de Vie (PSV). L'équilibre CELI/REER est vital.</p>
+                </div>
+            </div>
+
+            <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="inputs-column">
+                    <div class="premium-input-card">
+                        <h4 class="card-subtitle">Testez la mathématique : REER vs CELI</h4>
+                        <div class="premium-input-row">
+                            <label>Cotisation annuelle Nette ($)</label>
+                            <input type="number" id="rc-amount" value="5000" oninput="calculateReerCeli()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Rendement marché (%)</label>
+                            <input type="number" id="rc-return" value="7.0" step="0.1" oninput="calculateReerCeli()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Horizon (Années)</label>
+                            <input type="number" id="rc-years" value="25" oninput="calculateReerCeli()">
+                        </div>
+                        <div class="premium-input-row" style="margin-top: 15px;">
+                            <label>Taux d'impôt Actuel (%)</label>
+                            <input type="number" id="rc-tax-now" value="37" oninput="calculateReerCeli()">
+                        </div>
+                        <div class="premium-input-row" style="border-bottom: none;">
+                            <label>Taux d'impôt à la Retraite (%)</label>
+                            <input type="number" id="rc-tax-ret" value="25" oninput="calculateReerCeli()">
+                        </div>
+                        <p class="text-muted" style="font-size: 0.75rem; margin-top: 10px;">*Dans le scénario REER, le remboursement d'impôt généré par la cotisation est mathématiquement réinvesti pour que la comparaison soit juste.</p>
+                    </div>
+                </div>
+                
+                <div class="dashboard-column">
+                    <div class="dashboard-card" style="padding: 2rem;">
+                        <div id="rc-results"></div>
+                        <div style="height: 220px; margin-top: 1rem;">
+                            <canvas id="chart-reer-celi"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <footer style="background: #0B0F19; padding: 4rem 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="container">
+            <p style="color: var(--subtle-text-color);">&copy; 2026 Finoza. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="investissements.js"></script>
+</body>
+</html>
