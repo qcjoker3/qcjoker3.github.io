@@ -206,70 +206,53 @@
     </section>
 
     <section class="section-padding">
-        <div class="container diagnostic-container-wide">
-            <div class="section-header text-center mb-5">
-                <h2>Les Boucliers Fiscaux</h2>
-                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">L'impôt est le plus grand prédateur de la richesse. Utilisez les comptes enregistrés pour le neutraliser.</p>
-            </div>
-
-            <div class="bento-grid-3 mb-5" style="grid-template-columns: 1fr 1fr;">
-                <div style="background: rgba(13, 148, 136, 0.05); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(13, 148, 136, 0.2);">
-                    <h3 style="color: #2DD4BF; margin-top:0;">Le CELI (Le Paradis Fiscal)</h3>
-                    <p class="text-muted">Vous cotisez avec de l'argent déjà imposé. Tous les gains, dividendes et retraits sont <strong>100% exempts d'impôts</strong>, à vie. Idéal si votre salaire actuel est bas ou moyen.</p>
-                </div>
-                <div style="background: rgba(79, 70, 229, 0.05); padding: 2.5rem; border-radius: 16px; border: 1px solid rgba(79, 70, 229, 0.2);">
-                    <h3 style="color: #4F46E5; margin-top:0;">Le REER (Le Report Stratégique)</h3>
-                    <p class="text-muted">La cotisation réduit votre impôt aujourd'hui. L'argent croît à l'abri de l'impôt, mais sera imposé au moment du retrait. <strong>Le pari :</strong> Vous croyez que votre impôt sera plus bas à la retraite qu'aujourd'hui.</p>
-                </div>
-            </div>
-
-            <div class="trap-layout" style="grid-template-columns: 1fr; margin-bottom: 4rem;">
-                <div style="background: rgba(239, 68, 68, 0.05); border-left: 4px solid #EF4444; padding: 2rem; border-radius: 12px;">
-                    <h3 style="color: #EF4444; margin-top: 0; font-size: 1.2rem;">⚠️ La bombe à retardement (Le Piège de l'Abondance)</h3>
-                    <p class="text-muted mb-0">Un plan financier mal conçu peut vous ruiner à la retraite. Si vous possédez un gros Fonds de pension (employeur) <strong>ET</strong> un énorme REER (ou CRI), vous serez forcé de retirer des sommes importantes dès 71 ans. Cela gonflera votre revenu artificiellement, vous propulsera dans une tranche d'imposition brutale, et l'ARC récupérera (coupera) votre chèque de Pension de la Sécurité de Vie (PSV). L'équilibre CELI/REER est vital.</p>
-                </div>
-            </div>
-
-            <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
-                <div class="inputs-column">
-                    <div class="premium-input-card">
-                        <h4 class="card-subtitle">Testez la mathématique : REER vs CELI</h4>
-                        <div class="premium-input-row">
-                            <label>Cotisation annuelle Nette ($)</label>
-                            <input type="number" id="rc-amount" value="5000" oninput="calculateReerCeli()">
-                        </div>
-                        <div class="premium-input-row">
-                            <label>Rendement marché (%)</label>
-                            <input type="number" id="rc-return" value="7.0" step="0.1" oninput="calculateReerCeli()">
-                        </div>
-                        <div class="premium-input-row">
-                            <label>Horizon (Années)</label>
-                            <input type="number" id="rc-years" value="25" oninput="calculateReerCeli()">
-                        </div>
-                        <div class="premium-input-row" style="margin-top: 15px;">
-                            <label>Taux d'impôt Actuel (%)</label>
-                            <input type="number" id="rc-tax-now" value="37" oninput="calculateReerCeli()">
-                        </div>
-                        <div class="premium-input-row" style="border-bottom: none;">
-                            <label>Taux d'impôt à la Retraite (%)</label>
-                            <input type="number" id="rc-tax-ret" value="25" oninput="calculateReerCeli()">
-                        </div>
-                        <p class="text-muted" style="font-size: 0.75rem; margin-top: 10px;">*Dans le scénario REER, le remboursement d'impôt généré par la cotisation est mathématiquement réinvesti pour que la comparaison soit juste.</p>
-                    </div>
-                </div>
-                
-                <div class="dashboard-column">
-                    <div class="dashboard-card" style="padding: 2rem;">
-                        <div id="rc-results"></div>
-                        <div style="height: 220px; margin-top: 1rem;">
-                            <canvas id="chart-reer-celi"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+    <div class="container diagnostic-container-wide">
+        <div class="section-header text-center mb-5">
+            <h2>L'Arsenal Fiscal Canadien</h2>
+            <p class="text-muted" style="max-width: 800px; margin: 0 auto;">L'impôt est le plus grand prédateur de votre richesse. Maîtriser ces comptes, c'est utiliser les règles du jeu à votre avantage.</p>
         </div>
-    </section>
+
+        <div class="bento-grid-3">
+            <div class="bento-card" style="border-top: 4px solid #F59E0B; background: rgba(245, 158, 11, 0.03);">
+                <div class="d-flex justify-between">
+                    <h3 style="color: #F59E0B;">🏠 CELIAPP</h3>
+                    <span class="badge badge-gris" style="font-size: 0.6rem;">Le "Cheat Code"</span>
+                </div>
+                <p class="text-muted">Le meilleur des deux mondes : vos cotisations réduisent votre impôt (comme le REER) et vos retraits pour l'achat d'une maison sont <strong>non imposables</strong> (comme le CELI).</p>
+            </div>
+
+            <div class="bento-card" style="border-top: 4px solid #EC4899; background: rgba(236, 72, 153, 0.03);">
+                <h3 style="color: #EC4899;">🎓 REEE</h3>
+                <p class="text-muted">Un rendement garanti par l'État. Pour chaque dollar investi pour vos enfants, les gouvernements ajoutent <strong>30% de subvention</strong>. L'argent croît à l'abri de l'impôt.</p>
+            </div>
+
+            <div class="bento-card" style="border-top: 4px solid #2DD4BF; background: rgba(45, 212, 191, 0.03);">
+                <h3 style="color: #2DD4BF;">💎 CELI</h3>
+                <p class="text-muted">Le paradis fiscal pur. Tous les gains sont <strong>100% libres d'impôt</strong> pour toujours. Contrairement au REER, vous pouvez retirer et récupérer vos droits de cotisation.</p>
+            </div>
+
+            <div class="bento-card" style="border-top: 4px solid #4F46E5; background: rgba(79, 70, 229, 0.03);">
+                <h3 style="color: #4F46E5;">📈 REER</h3>
+                <p class="text-muted">Le report d'impôt. Idéal pour les hauts salariés. Vous économisez l'impôt au taux marginal actuel pour le payer plus tard (souvent moins cher) à la retraite.</p>
+            </div>
+
+            <div class="bento-card" style="border-top: 4px solid #6366F1; border-style: dashed;">
+                <h3 style="color: #6366F1;">🔒 CRI / REER Immobilisé</h3>
+                <p class="text-muted">C'est là où finit l'argent de vos anciens fonds de pension employeurs. Vous ne pouvez pas cotiser dedans, et vous ne pouvez pas retirer l'argent avant la retraite (sauf exceptions).</p>
+            </div>
+
+            <div class="bento-card" style="border-top: 4px solid #10B981; border-style: dashed;">
+                <h3 style="color: #10B981;">♿ REEI</h3>
+                <p class="text-muted">Pour les personnes vivant avec un handicap. Les subventions gouvernementales ici sont massives (jusqu'à 300% de votre cotisation). Un outil d'équité crucial.</p>
+            </div>
+        </div>
+
+        <div class="hero-alert mt-5" style="border-left: 4px solid #EF4444; background: rgba(239, 68, 68, 0.02); text-align: left;">
+            <h3 style="color: #EF4444; font-size: 1.2rem;">⚠️ La collision fiscale (Le piège du CRI et du REER)</h3>
+            <p class="text-muted" style="font-size: 0.95rem;">Si vous avez un gros <strong>fonds de pension déterminé</strong> à votre travail actuel ET un gros <strong>CRI</strong> d'un ancien emploi, vous risquez une retraite "trop imposée". À 71 ans, les retraits obligatoires peuvent vous faire perdre votre <strong>Pension de la Sécurité de la Vieillesse (PSV)</strong>. La stratégie ? Prioriser le CELI si votre projection de retraite est déjà saturée.</p>
+        </div>
+    </div>
+</section>
 
     <footer style="background: #0B0F19; padding: 4rem 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
         <div class="container">
