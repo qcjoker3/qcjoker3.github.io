@@ -72,10 +72,8 @@ function calculateDebtCost() {
 }
 
 // ==========================================
-// WIDGET 2 : LE DASHBOARD IMMOBILIER
+// WIDGET 2 : LE DASHBOARD IMMOBILIER (PRO + FISCALITÉ)
 // ==========================================
-let reChart = null;
-
 function calculateRealEstate() {
     const price = parseFloat(document.getElementById('re-price').value) || 0;
     const downPayment = parseFloat(document.getElementById('re-downpayment').value) || 0;
@@ -83,13 +81,17 @@ function calculateRealEstate() {
     const years = parseFloat(document.getElementById('re-years').value) || 25;
     const rent = parseFloat(document.getElementById('re-rent').value) || 0;
     
-    // NOUVEAUX INPUTS : Les hypothèses de croissance
+    // INPUTS : Croissance et Locatif
     const homeAppreciation = parseFloat(document.getElementById('re-appreciation').value) / 100 || 0;
     const marketReturn = parseFloat(document.getElementById('re-market').value) / 100 || 0;
+    
+    const grossRentalIncome = parseFloat(document.getElementById('re-rental-income').value) || 0;
+    const rentalTaxRate = parseFloat(document.getElementById('re-rental-tax').value) / 100 || 0;
+    const maintenanceRate = parseFloat(document.getElementById('re-maintenance-rate').value) / 100 || 0.01;
 
     if (price <= 0 || years <= 0) return;
 
-    // --- 1. CALCUL DU VRAI COÛT PROPRIÉTAIRE ---
+    // --- 1. CALCUL DU COÛT PROPRIÉTAIRE ---
     // A. Prime SCHL
     const ratioDown = downPayment / price;
     let cmhc = 0;
@@ -107,16 +109,21 @@ function calculateRealEstate() {
     const monthlyMortgage = (totalLoan > 0 && effRate > 0) ? (totalLoan * effRate * Math.pow(1 + effRate, n)) / (Math.pow(1 + effRate, n) - 1) : 0;
 
     // C. Frais Fantômes
-    const taxes = (price * 0.012) / 12; // ~1.2% annuel
-    const maintenance = (price * 0.01) / 12; // 1% annuel
-    const insurance = 150; 
+    const taxes = (price * 0.012) / 12; 
+    const maintenance = (price * maintenanceRate) / 12; 
+    const insurance = grossRentalIncome > 0 ? 200 : 150; 
     
-    const trueMonthlyCost = monthlyMortgage + taxes + maintenance + insurance;
+    // D. Fiscalité Locative
+    const rentalTaxAmount = grossRentalIncome * rentalTaxRate;
+    const netRentalIncome = grossRentalIncome - rentalTaxAmount;
 
-    // UI : Barre et détails
-    const pctMortgage = (monthlyMortgage / trueMonthlyCost) * 100;
-    const pctTaxes = (taxes / trueMonthlyCost) * 100;
-    const pctMaint = ((maintenance + insurance) / trueMonthlyCost) * 100;
+    const grossMonthlyCost = monthlyMortgage + taxes + maintenance + insurance;
+    const netOwnerOutflow = grossMonthlyCost - netRentalIncome;
+
+    // UI : Barre de répartition (Basée sur le coût brut)
+    const pctMortgage = (monthlyMortgage / grossMonthlyCost) * 100;
+    const pctTaxes = (taxes / grossMonthlyCost) * 100;
+    const pctMaint = ((maintenance + insurance) / grossMonthlyCost) * 100;
 
     document.getElementById('re-cost-bar').innerHTML = `
         <div class="alloc-segment" style="width: ${pctMortgage}%; background: #4F46E5;" title="Hypothèque"></div>
@@ -124,6 +131,7 @@ function calculateRealEstate() {
         <div class="alloc-segment" style="width: ${pctMaint}%; background: #EF4444;" title="Entretien & Ass."></div>
     `;
 
+    // UI : Détails des coûts avec la cascade fiscale
     document.getElementById('re-cost-details').innerHTML = `
         <div>
             <span class="label"><span class="dot" style="background:#4F46E5;"></span> Hypothèque (inc. SCHL)</span>
@@ -137,29 +145,62 @@ function calculateRealEstate() {
             <span class="label"><span class="dot" style="background:#EF4444;"></span> Entretien & Assurances</span>
             <span class="value" style="color: var(--heading-color);">${formatCurrency(maintenance + insurance)}</span>
         </div>
+        
+        <div style="grid-column: span 2; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; margin-top: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+            <span class="label" style="color: var(--heading-color); text-transform: uppercase;">Coût Brut Mensuel</span>
+            <span class="value" style="color: var(--subtle-text-color); font-size: 1.4rem;">${formatCurrency(grossMonthlyCost)}</span>
+        </div>
+
+        ${grossRentalIncome > 0 ? `
+        <div style="grid-column: span 2; background: rgba(16, 185, 129, 0.05); padding: 15px; border-radius: 8px; border: 1px dashed rgba(16, 185, 129, 0.2);">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
+                <span class="label" style="color: #10B981;">Revenus Locatifs Bruts</span>
+                <span class="value" style="color: #10B981;">+ ${formatCurrency(grossRentalIncome)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 0.85rem;">
+                <span class="text-muted">Impôt estimé (${(rentalTaxRate*100).toFixed(0)}%)</span>
+                <span class="text-red">- ${formatCurrency(rentalTaxAmount)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px; margin-top: 5px;">
+                <span class="label" style="color: #10B981; text-transform: uppercase; font-size: 0.8rem;">Revenus Locatifs Nets (Après impôt)</span>
+                <span class="value" style="color: #10B981; font-size: 1.2rem;">+ ${formatCurrency(netRentalIncome)}</span>
+            </div>
+        </div>
+        ` : ''}
+
         <div style="grid-column: span 2; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; margin-top: 0.5rem;">
-            <span class="label" style="color: var(--heading-color); text-transform: uppercase;">Coût Total Mensuel du Propriétaire</span>
-            <span class="value" style="color: #2DD4BF; font-size: 2.2rem; display: block; margin-top: 5px;">${formatCurrency(trueMonthlyCost)}</span>
+            <span class="label" style="color: var(--heading-color); text-transform: uppercase;">Décaissement Final du Propriétaire</span>
+            <span class="value" style="color: ${netOwnerOutflow < 0 ? '#10B981' : '#2DD4BF'}; font-size: 2.2rem; display: block; margin-top: 5px;">
+                ${netOwnerOutflow < 0 ? '+' : ''}${formatCurrency(Math.abs(netOwnerOutflow))}
+            </span>
+            ${netOwnerOutflow < 0 ? '<span style="color: #10B981; font-size: 0.85rem; font-weight: bold;">(Cash-Flow Positif)</span>' : ''}
         </div>
     `;
 
-    // --- 2. PROJECTION LOUER VS ACHETER ---
+    // --- 2. PROJECTION LOUER VS ACHETER (SYMÉTRIQUE) ---
     const rentInsurance = 30;
-    const trueRentCost = rent + rentInsurance;
-    const monthlySavings = Math.max(0, trueMonthlyCost - trueRentCost);
+    const renterOutflow = rent + rentInsurance;
+
+    let ownerMonthlyInvest = 0;
+    let renterMonthlyInvest = 0;
+
+    if (netOwnerOutflow > renterOutflow) {
+        renterMonthlyInvest = netOwnerOutflow - renterOutflow; // Locataire investit la différence
+    } else {
+        ownerMonthlyInvest = renterOutflow - netOwnerOutflow; // Propriétaire investit la différence ou le cash-flow positif
+    }
 
     let homeValue = price;
-    let renterPortfolio = downPayment; // Mise de fonds investie dès le jour 1
+    let renterPortfolio = downPayment; 
+    let ownerPortfolio = 0; 
     let currentLoan = totalLoan;
 
-    // Simulation année par année
     for (let year = 1; year <= 25; year++) {
         homeValue *= (1 + homeAppreciation);
         
-        // Rendement boursier et ajout de l'épargne mensuelle
-        renterPortfolio = (renterPortfolio * (1 + marketReturn)) + (monthlySavings * 12);
+        renterPortfolio = (renterPortfolio * (1 + marketReturn)) + (renterMonthlyInvest * 12);
+        ownerPortfolio = (ownerPortfolio * (1 + marketReturn)) + (ownerMonthlyInvest * 12);
         
-        // Réduction de l'hypothèque
         for(let m = 0; m < 12; m++) {
             if (currentLoan > 0) {
                 let interest = currentLoan * effRate;
@@ -169,26 +210,28 @@ function calculateRealEstate() {
         }
     }
 
-    // Le Bilan An 25
-    const finalOwner = Math.max(0, homeValue - currentLoan);
-    const finalRenter = renterPortfolio;
-    const diff = Math.abs(finalOwner - finalRenter);
-    const isOwnerWinner = finalOwner > finalRenter;
+    // Bilan Final
+    const finalOwnerNetWorth = Math.max(0, homeValue - currentLoan) + ownerPortfolio;
+    const finalRenterNetWorth = renterPortfolio;
+    const diff = Math.abs(finalOwnerNetWorth - finalRenterNetWorth);
+    const isOwnerWinner = finalOwnerNetWorth > finalRenterNetWorth;
 
-    // NOUVEAU DASHBOARD RÉSULTATS 
+    // DASHBOARD RÉSULTATS
+    let ownerBonusText = ownerPortfolio > 0 ? `<br><em>Inclut ${formatCurrency(ownerPortfolio)} en portefeuille boursier (grâce aux surplus dégagés face au loyer).</em>` : '';
+
     document.getElementById('re-verdict-dashboard').innerHTML = `
         <div class="result-metric-grid" style="gap: 1.5rem; margin-bottom: 2rem;">
             
             <div style="background: rgba(45, 212, 191, 0.05); border: 1px solid ${isOwnerWinner ? '#2DD4BF' : 'rgba(45, 212, 191, 0.2)'}; padding: 1.5rem; border-radius: 16px; text-align: center; box-shadow: ${isOwnerWinner ? '0 0 15px rgba(45,212,191,0.1)' : 'none'};">
                 <span class="label" style="color: #2DD4BF; text-transform: uppercase;">Valeur Nette Achat</span>
-                <span class="value" style="color: #2DD4BF; font-size: 2.2rem; margin: 10px 0; display: block;">${formatCurrency(finalOwner)}</span>
-                <span class="subtext">Maison (${homeAppreciation*100}%) moins hypothèque</span>
+                <span class="value" style="color: #2DD4BF; font-size: 2.2rem; margin: 10px 0; display: block;">${formatCurrency(finalOwnerNetWorth)}</span>
+                <span class="subtext">Maison (${(homeAppreciation*100).toFixed(1)}%) moins hypothèque. ${ownerBonusText}</span>
             </div>
 
             <div style="background: rgba(168, 85, 247, 0.05); border: 1px solid ${!isOwnerWinner ? '#A855F7' : 'rgba(168, 85, 247, 0.2)'}; padding: 1.5rem; border-radius: 16px; text-align: center; box-shadow: ${!isOwnerWinner ? '0 0 15px rgba(168,85,247,0.1)' : 'none'};">
                 <span class="label" style="color: #A855F7; text-transform: uppercase;">Valeur Nette Location</span>
-                <span class="value" style="color: #A855F7; font-size: 2.2rem; margin: 10px 0; display: block;">${formatCurrency(finalRenter)}</span>
-                <span class="subtext">Portefeuille boursier (${marketReturn*100}%)</span>
+                <span class="value" style="color: #A855F7; font-size: 2.2rem; margin: 10px 0; display: block;">${formatCurrency(finalRenterNetWorth)}</span>
+                <span class="subtext">Portefeuille boursier (${(marketReturn*100).toFixed(1)}%)</span>
             </div>
 
         </div>
@@ -198,88 +241,8 @@ function calculateRealEstate() {
                 Dans 25 ans, le <strong>${isOwnerWinner ? 'Propriétaire' : 'Locataire'}</strong> est plus riche de <span style="color: ${isOwnerWinner ? '#2DD4BF' : '#A855F7'}; font-weight: bold;">${formatCurrency(diff)}</span>.
             </p>
             <p style="font-size: 0.85rem; color: var(--subtle-text-color); margin: 0;">
-                *La stratégie du locataire implique une discipline d'acier : placer la mise de fonds initiale de ${formatCurrency(downPayment)} <strong>ET</strong> épargner rigoureusement la différence mensuelle de ${formatCurrency(monthlySavings)}.
+                * La stratégie du locataire implique une discipline absolue : placer la mise de fonds initiale de ${formatCurrency(downPayment)} <strong>ET</strong> épargner rigoureusement la différence mensuelle de coût de vie (quand applicable).
             </p>
-        </div>
-    `;
-}
-
-// N'oubliez pas d'ajouter calculateLeverage() dans le bloc DOMContentLoaded en haut du fichier :
-// document.addEventListener('DOMContentLoaded', () => {
-//     calculateDebtCost();
-//     calculateLeverage(); // <-- AJOUTER CECI
-//     calculateRealEstate();
-//     ...
-
-// ==========================================
-// WIDGET 1.5 : LE MULTIPLICATEUR DE LEVIER
-// ==========================================
-function calculateLeverage() {
-    const equity = parseFloat(document.getElementById('lev-equity').value) || 0;
-    const borrowed = parseFloat(document.getElementById('lev-borrowed').value) || 0;
-    const borrowRate = parseFloat(document.getElementById('lev-borrow-rate').value) / 100 || 0;
-    const assetReturn = parseFloat(document.getElementById('lev-asset-slider').value) / 100 || 0;
-
-    // Mise à jour visuelle du curseur
-    const valDisplay = document.getElementById('lev-asset-val');
-    valDisplay.innerText = (assetReturn > 0 ? "+ " : "") + (assetReturn * 100).toFixed(1) + " %";
-    valDisplay.style.color = assetReturn >= 0 ? '#2DD4BF' : '#EF4444';
-
-    if (equity <= 0) return;
-
-    const totalInvestment = equity + borrowed;
-
-    // SCÉNARIO SANS LEVIER (On n'investit que nos propres 50k$)
-    const noLevProfit = equity * assetReturn;
-    const noLevROE = assetReturn; // Return on Equity = Rendement de l'actif directement
-
-    // SCÉNARIO AVEC LEVIER (On investit 250k$)
-    const grossProfit = totalInvestment * assetReturn;
-    const interestCost = borrowed * borrowRate;
-    const netProfit = grossProfit - interestCost;
-    const levROE = netProfit / equity;
-
-    const isProfitable = netProfit >= 0;
-    const colorClass = isProfitable ? '#2DD4BF' : '#EF4444';
-    const bgClass = isProfitable ? 'rgba(45, 212, 191, 0.05)' : 'rgba(239, 68, 68, 0.05)';
-    const borderColor = isProfitable ? 'rgba(45, 212, 191, 0.2)' : 'rgba(239, 68, 68, 0.2)';
-
-    let warningHTML = '';
-    if (assetReturn > 0 && netProfit < 0) {
-        warningHTML = `<p class="text-red" style="font-size: 0.85rem; margin-top: 1rem;"><strong>Attention :</strong> L'actif génère un profit, mais le taux de l'emprunt (${(borrowRate*100).toFixed(1)}%) est trop élevé. Vous perdez de l'argent (Spread négatif).</p>`;
-    } else if (netProfit < 0) {
-        warningHTML = `<p class="text-red" style="font-size: 0.85rem; margin-top: 1rem;"><strong>Risque de faillite :</strong> L'effet de levier amplifie vos pertes. Une baisse de ${(assetReturn*100).toFixed(1)}% de l'actif détruit <strong>${Math.abs(levROE*100).toFixed(1)}%</strong> de votre capital initial.</p>`;
-    } else {
-        warningHTML = `<p class="text-muted" style="font-size: 0.85rem; margin-top: 1rem;"><strong>La magie du levier :</strong> Le rendement de l'actif surpasse le coût d'emprunt (Spread positif). Votre rendement sur capitaux propres explose.</p>`;
-    }
-
-    document.getElementById('lev-dashboard-results').innerHTML = `
-        <div class="result-metric-grid" style="gap: 1rem; margin-bottom: 1.5rem; margin-top: 1.5rem;">
-            
-            <div style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
-                <span class="label" style="text-transform: uppercase;">100% Capital Propre</span>
-                <span class="value" style="color: var(--heading-color); font-size: 1.8rem; display: block; margin: 10px 0;">${(noLevROE * 100).toFixed(1)} %</span>
-                <span class="subtext">Profit : ${formatCurrency(noLevProfit)}</span>
-            </div>
-
-            <div style="background: ${bgClass}; padding: 1.5rem; border-radius: 12px; border: 1px solid ${borderColor}; position: relative; overflow: hidden;">
-                <span class="label" style="color: ${colorClass}; text-transform: uppercase;">Avec Levier</span>
-                <span class="value" style="color: ${colorClass}; font-size: 1.8rem; display: block; margin: 10px 0;">${(levROE * 100).toFixed(1)} %</span>
-                <span class="subtext" style="color: var(--heading-color);">Profit Net : ${formatCurrency(netProfit)}</span>
-            </div>
-
-        </div>
-
-        <div style="background: rgba(0,0,0,0.2); border-radius: 8px; padding: 15px; border-left: 3px solid ${colorClass};">
-            <div class="d-flex justify-between" style="font-size: 0.85rem; border-bottom: 1px dashed rgba(255,255,255,0.05); padding-bottom: 5px; margin-bottom: 5px;">
-                <span class="text-muted">Gain de l'actif (${formatCurrency(totalInvestment)}) :</span>
-                <span style="color: var(--heading-color);">${formatCurrency(grossProfit)}</span>
-            </div>
-            <div class="d-flex justify-between" style="font-size: 0.85rem;">
-                <span class="text-muted">Frais d'intérêts payés :</span>
-                <span style="color: #EF4444;">- ${formatCurrency(interestCost)}</span>
-            </div>
-            ${warningHTML}
         </div>
     `;
 }
