@@ -423,6 +423,7 @@ footer { background-color: #0B0F19; color: var(--subtle-text-color); text-align:
     gap: 1.5rem;
 }
 
+
 /* =============================================================== */
 /* === PAGE INVESTISSEMENTS (PRÉDICTIONS & DASHBOARDS) === */
 /* =============================================================== */
@@ -523,23 +524,6 @@ select.clean-input option {
     color: var(--heading-color);
 }
 
-/* --- Réactivité Mobile (Très important pour les Dashboards) --- */
-@media (max-width: 768px) {
-    /* Le Dashboard T-Rex / Actif vs Passif */
-    #strat-dashboard-content > div:nth-child(3) {
-        grid-template-columns: 1fr !important; /* Force les deux boîtes à s'empiler sur mobile */
-    }
-    
-    /* Le message choc du T-Rex */
-    #strat-dashboard-content > div:first-child span:nth-child(2) {
-        font-size: 2.2rem !important; /* Réduit la taille de la grosse somme sur mobile */
-    }
-
-    /* Ajustement des grilles 50/50 générales */
-    .bento-grid-3 {
-        grid-template-columns: 1fr !important;
-    }
-}
 
 /* =============================================================== */
 /* === DASHBOARD STRATÉGIE (SANS INLINE STYLES) === */
@@ -621,7 +605,7 @@ select.clean-input option {
     margin-top: 15px;
 }
 
-/* Modifie la média query existante pour cibler strat-grid au lieu du nth-child complexe */
+/* --- Réactivité Mobile Globale pour les Dashboards --- */
 @media (max-width: 768px) {
     .strat-grid {
         grid-template-columns: 1fr !important;
