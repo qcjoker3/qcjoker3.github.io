@@ -424,36 +424,82 @@ footer { background-color: #0B0F19; color: var(--subtle-text-color); text-align:
 }
 
 /* =============================================================== */
-/* === AJOUTS POUR LA PAGE INVESTISSEMENTS (TABLEAU PRÉDICTIONS) === */
+/* === TABLEAU ULTRA PREMIUM (PRÉDICTIONS) === */
 /* =============================================================== */
+.table-container {
+    overflow-y: auto;
+    max-height: 350px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+/* --- Barre de défilement (Scrollbar) invisible/élégante --- */
+.table-container::-webkit-scrollbar { width: 6px; }
+.table-container::-webkit-scrollbar-track { background: transparent; }
+.table-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+.table-container::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+.premium-table { 
+    width: 100%; 
+    text-align: left; 
+    border-collapse: collapse; 
+}
+
+/* En-tête figé (Sticky) avec flou */
 .premium-table th {
+    background: rgba(11, 15, 25, 0.95);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    padding: 1rem 1.5rem;
     color: var(--subtle-text-color);
     font-weight: 600;
     text-transform: uppercase;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
     letter-spacing: 1px;
-    border-bottom: 2px solid rgba(255,255,255,0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .premium-table td {
+    padding: 1rem 1.5rem;
     color: var(--text-color);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.95rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    transition: background 0.2s, color 0.2s;
 }
 
-.horizon-tabs {
-    background: rgba(0,0,0,0.3);
-    border-radius: 50px;
-    display: inline-flex;
-    padding: 2px;
-}
-.horizon-tabs button {
-    background: transparent;
-    border: 1px solid transparent;
-    border-radius: 50px;
-    color: var(--text-color);
-    cursor: pointer;
-    transition: all 0.2s;
-}
-.horizon-tabs button:hover {
+/* Interaction au survol */
+.premium-table tr { cursor: pointer; }
+.premium-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+/* Ligne Active (Sélectionnée) */
+.premium-table tr.focused td {
+    background: rgba(45, 212, 191, 0.08); /* Fond émeraude très léger */
     color: var(--heading-color);
+}
+
+.premium-table tr.focused td:first-child {
+    box-shadow: inset 4px 0 0 #2DD4BF; /* Ligne lumineuse sur la gauche */
+}
+
+/* Le Badge pour les numéros (#1, #2...) */
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--subtle-text-color);
+    transition: all 0.3s;
+}
+
+.premium-table tr.focused .rank-badge {
+    background: #2DD4BF;
+    color: #0B0F19; /* Chiffre noir sur fond vert pour contraster */
 }
