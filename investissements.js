@@ -265,29 +265,31 @@ function calculateTrex() {
 let fnbAllocChart = null;
 let fnbGrowthChart = null;
 
+// Les données génériques sans ticker spécifique
 const fnbData = {
-    Balanced: { nom: "Équilibré", frais: 0.24, r: 5.0, eq: 60, fi: 40 },
-    Growth: { nom: "Croissance", frais: 0.24, r: 7.0, eq: 80, fi: 20 },
-    Equity: { nom: "100% Actions", frais: 0.24, r: 9.0, eq: 100, fi: 0 }
+    BALANCED: { nom: "Portefeuille Équilibré", frais: 0.20, r: 6.0, eq: 60, fi: 40 },
+    GROWTH: { nom: "Portefeuille de Croissance", frais: 0.20, r: 7.0, eq: 80, fi: 20 },
+    EQUITY: { nom: "Portefeuille 100% Actions", frais: 0.20, r: 8.0, eq: 100, fi: 0 }
 };
 
 function calculateFNB() {
-    // UI Update Radio buttons
     const radios = document.getElementsByName('fnb-profil');
-    let selProfile = 'Growth';
+    let selProfile = 'GROWTH'; // Valeur par défaut
+    
+    // Met à jour les couleurs des boutons
     radios.forEach(r => { 
         const btn = document.getElementById('btn-' + r.value.toLowerCase());
         if (r.checked) { 
             selProfile = r.value; 
-            btn.style.borderColor = '#2DD4BF'; btn.style.color = '#2DD4BF';
+            if (btn) { btn.style.borderColor = '#2DD4BF'; btn.style.color = '#2DD4BF'; }
         } else {
-            btn.style.borderColor = 'var(--border-color)'; btn.style.color = 'var(--text-color)';
+            if (btn) { btn.style.borderColor = 'var(--border-color)'; btn.style.color = 'var(--text-color)'; }
         }
     });
 
     const fnb = fnbData[selProfile];
-    if (!fnb) return;
-    
+    if (!fnb) return; // Sécurité anti-crash
+
     const P = parseFloat(document.getElementById('fnb-initial').value) || 0;
     const C = parseFloat(document.getElementById('fnb-monthly').value) || 0;
     const y = parseFloat(document.getElementById('fnb-years').value) || 25;
@@ -307,14 +309,19 @@ function calculateFNB() {
         <span class="value" style="display:block; font-size: 2.2rem; color: #2DD4BF;">${formatCurrency(fv)}</span>
     `;
 
-    // Charts
+    // Graphique Répartition (Doughnut)
     const ctxA = document.getElementById('chart-fnb-alloc').getContext('2d');
     if (fnbAllocChart) fnbAllocChart.destroy();
     fnbAllocChart = new Chart(ctxA, {
-        type: 'doughnut', data: { labels: ['Actions', 'Obligations'], datasets: [{ data: [fnb.eq, fnb.fi], backgroundColor: ['#2DD4BF', '#4F46E5'], borderWidth: 0 }] },
+        type: 'doughnut', 
+        data: { 
+            labels: ['Actions', 'Obligations'], 
+            datasets: [{ data: [fnb.eq, fnb.fi], backgroundColor: ['#2DD4BF', '#4F46E5'], borderWidth: 0 }] 
+        },
         options: { cutout: '75%', plugins: { legend: {display:false}, datalabels: {display:false} } }
     });
 
+    // Graphique Croissance (Line)
     const ctxG = document.getElementById('chart-fnb-growth').getContext('2d');
     if (fnbGrowthChart) fnbGrowthChart.destroy();
     
@@ -325,8 +332,16 @@ function calculateFNB() {
     }
     
     fnbGrowthChart = new Chart(ctxG, {
-        type: 'line', data: { labels: Array.from({length: y+1}, (_, i)=>i), datasets: [{ data: traj, borderColor: '#2DD4BF', backgroundColor: 'rgba(45,212,191,0.1)', fill:true, tension: 0.3, pointRadius: 0 }] },
-        options: { maintainAspectRatio: false, plugins: { legend: {display:false}, datalabels: {display:false} }, scales: { x:{display:false}, y:{display:false} } }
+        type: 'line', 
+        data: { 
+            labels: Array.from({length: y+1}, (_, i)=>i), 
+            datasets: [{ data: traj, borderColor: '#2DD4BF', backgroundColor: 'rgba(45,212,191,0.1)', fill:true, tension: 0.3, pointRadius: 0 }] 
+        },
+        options: { 
+            maintainAspectRatio: false, 
+            plugins: { legend: {display:false}, datalabels: {display:false} }, 
+            scales: { x:{display:false}, y:{display:false} } 
+        }
     });
 }
 
