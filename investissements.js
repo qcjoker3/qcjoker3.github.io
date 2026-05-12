@@ -214,93 +214,42 @@ function drawInstLine(inst) {
 // 2. MODULE : T-REX (IMPACT DES FRAIS DE GESTION)
 // ==========================================================
 function calculateUnifiedStrategy() {
-    // Entrées
+    // 1. Récupération des entrées
     const P = parseFloat(document.getElementById('strat-initial').value) || 0;
     const M = parseFloat(document.getElementById('strat-monthly').value) || 0;
     const y = parseFloat(document.getElementById('strat-years').value) || 0;
     const rMarket = parseFloat(document.getElementById('strat-return').value) / 100 || 0;
-    const feeLow = parseFloat(document.getElementById('strat-fee-low').value) / 100 || 0;
-    const feeHigh = parseFloat(document.getElementById('strat-fee-high').value) / 100 || 0;
+    const feeL = parseFloat(document.getElementById('strat-fee-low').value) / 100 || 0;
+    const feeH = parseFloat(document.getElementById('strat-fee-high').value) / 100 || 0;
 
     const nMonths = y * 12;
-    // Taux mensuels effectifs
-    const rNetLow = Math.pow(1 + (rMarket - feeLow), 1/12) - 1;
-    const rNetHigh = Math.pow(1 + (rMarket - feeHigh), 1/12) - 1;
+    const rNetL = Math.pow(1 + (rMarket - feeL), 1/12) - 1;
+    const rNetH = Math.pow(1 + (rMarket - feeH), 1/12) - 1;
 
-    // Formule de valeur future avec versements mensuels (Début de période)
     const calcFV = (rate) => {
         if (rate === 0) return P + (M * nMonths);
         return P * Math.pow(1 + rate, nMonths) + M * ((Math.pow(1 + rate, nMonths) - 1) / rate);
     };
 
-    const finalPassive = calcFV(rNetLow);
-    const finalActive = calcFV(rNetHigh);
-    const wealthGap = finalPassive - finalActive;
-    
-    // Décomposition des montants
+    const finalL = calcFV(rNetL);
+    const finalH = calcFV(rNetH);
     const totalInvested = P + (M * nMonths);
-    const growthPassive = finalPassive - totalInvested;
-    const growthActive = finalActive - totalInvested;
-    const pctLost = finalPassive > 0 ? (wealthGap / finalPassive) * 100 : 0;
 
-    // Génération du Dashboard "Choc"
-    document.getElementById('strat-dashboard-content').innerHTML = `
-        
-        <div style="background: rgba(45, 212, 191, 0.05); border: 1px solid rgba(45, 212, 191, 0.3); border-radius: 16px; padding: 2rem; text-align: center; margin-bottom: 2.5rem; box-shadow: 0 10px 25px rgba(45,212,191,0.05);">
-            <span style="font-size: 0.95rem; color: var(--subtle-text-color); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Richesse confisquée par les frais</span>
-            <span style="display: block; font-size: 3rem; color: #2DD4BF; font-weight: 800; margin: 10px 0; font-family: var(--font-heading);">${formatCurrency(wealthGap)}</span>
-            <span style="font-size: 0.95rem; color: #EF4444; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; background: rgba(239, 68, 68, 0.1); padding: 5px 12px; border-radius: 50px;">
-                🚨 Une perte de ${pctLost.toFixed(1)}% de votre patrimoine potentiel
-            </span>
-        </div>
+    // 2. Mise à jour des éléments du DOM (Uniquement les valeurs)
+    document.getElementById('res-gap').innerText = formatCurrency(finalL - finalH);
+    document.getElementById('res-pct-lost').innerText = finalL > 0 ? ((finalL - finalH) / finalL * 100).toFixed(1) : 0;
+    
+    // Détails FNB Passif
+    document.getElementById('res-fee-low-val').innerText = (feeL * 100).toFixed(2);
+    document.getElementById('res-invested-low').innerText = formatCurrency(totalInvested);
+    document.getElementById('res-growth-low').innerText = formatCurrency(finalL - totalInvested);
+    document.getElementById('res-final-low').innerText = formatCurrency(finalL);
 
-        <h3 style="margin: 0 0 1.5rem 0; font-size: 1.1rem; color: var(--heading-color); text-align: center;">Bilan détaillé après ${y} ans</h3>
-
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-            
-            <div style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
-                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 15px;">
-                    <span style="color: #2DD4BF; font-weight: 700; font-size: 1.1rem;">FNB Passif</span>
-                    <span style="font-size: 0.8rem; color: var(--subtle-text-color);">Frais: ${(feeLow*100).toFixed(2)}%</span>
-                </div>
-                
-                <div style="margin-bottom: 10px; display: flex; justify-content: space-between; font-size: 0.9rem;">
-                    <span style="color: var(--subtle-text-color);">Capital investi :</span>
-                    <span style="color: var(--text-color);">${formatCurrency(totalInvested)}</span>
-                </div>
-                <div style="margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 0.9rem;">
-                    <span style="color: var(--subtle-text-color);">Intérêts générés :</span>
-                    <span style="color: #2DD4BF;">+ ${formatCurrency(growthPassive)}</span>
-                </div>
-                
-                <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; display: flex; justify-content: space-between; font-weight: bold;">
-                    <span style="color: var(--heading-color);">Valeur Finale :</span>
-                    <span style="color: var(--heading-color); font-size: 1.1rem;">${formatCurrency(finalPassive)}</span>
-                </div>
-            </div>
-
-            <div style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
-                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 15px;">
-                    <span style="color: #EF4444; font-weight: 700; font-size: 1.1rem;">Fonds Actif</span>
-                    <span style="font-size: 0.8rem; color: var(--subtle-text-color);">Frais: ${(feeHigh*100).toFixed(2)}%</span>
-                </div>
-                
-                <div style="margin-bottom: 10px; display: flex; justify-content: space-between; font-size: 0.9rem;">
-                    <span style="color: var(--subtle-text-color);">Capital investi :</span>
-                    <span style="color: var(--text-color);">${formatCurrency(totalInvested)}</span>
-                </div>
-                <div style="margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 0.9rem;">
-                    <span style="color: var(--subtle-text-color);">Intérêts générés :</span>
-                    <span style="color: #EF4444;">+ ${formatCurrency(growthActive)}</span>
-                </div>
-                
-                <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; display: flex; justify-content: space-between; font-weight: bold;">
-                    <span style="color: var(--heading-color);">Valeur Finale :</span>
-                    <span style="color: var(--heading-color); font-size: 1.1rem;">${formatCurrency(finalActive)}</span>
-                </div>
-            </div>
-        </div>
-    `;
+    // Détails Fonds Actif
+    document.getElementById('res-fee-high-val').innerText = (feeH * 100).toFixed(2);
+    document.getElementById('res-invested-high').innerText = formatCurrency(totalInvested);
+    document.getElementById('res-growth-high').innerText = formatCurrency(finalH - totalInvested);
+    document.getElementById('res-final-high').innerText = formatCurrency(finalH);
 }
 
 // ==========================================================
