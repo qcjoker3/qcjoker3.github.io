@@ -172,14 +172,14 @@
         <div class="container diagnostic-container-wide">
             <div class="section-header text-center mb-5">
                 <h2>L'antidote boursier : Le DCA et les FNB</h2>
-                <p class="text-muted">Achetez le marché entier avec un Fonds Négocié en Bourse (FNB) "Tout-en-un" (Frais de ~0.24%). Investissez automatiquement chaque mois (Dollar-Cost Averaging). La volatilité n'est plus une ennemie, c'est l'opportunité d'acheter plus de parts quand c'est bas.</p>
+                <p class="text-muted">Achetez le marché entier avec un Fonds Négocié en Bourse (FNB) à très peu de frais. Investissez automatiquement chaque mois (Dollar-Cost Averaging). La volatilité n'est plus une ennemie, c'est l'opportunité d'acheter plus de parts quand c'est bas.</p>
             </div>
 
             <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
                 <div class="inputs-column">
                     <div class="premium-input-card">
                         <div class="mb-4">
-                            <label class="premium-label" style="margin-bottom: 10px;">Choisissez votre profil (Vanguard)</label>
+                            <label class="premium-label" style="margin-bottom: 10px;">Choisissez votre profil de risque</label>
                             <div class="d-flex" style="gap: 10px;">
                                 <label style="flex:1; cursor:pointer;">
                                     <input type="radio" name="fnb-profil" value="Balanced" onchange="calculateFNB()" style="display:none;" id="rad-vbal">
@@ -203,7 +203,6 @@
                         <div class="premium-input-row">
                             <label>Cotisation DCA (Mensuelle)</label>
                             <div style="display: flex; align-items: center; gap: 5px;">
-                                <span style="color: #10B981; font-weight: bold;">+ $</span>
                                 <input type="number" id="fnb-monthly" value="500" oninput="calculateFNB()" style="width: 90px;">
                             </div>
                         </div>
