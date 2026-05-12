@@ -71,11 +71,11 @@
             </div>
 
             <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
-                <div class="dashboard-card" style="padding: 2rem; position: relative;">
-                    <h3 style="margin-top: 0; font-size: 1.2rem; color: var(--heading-color);">Palmarès des erreurs</h3>
+                
+                <div class="dashboard-card" style="padding: 2rem; display: flex; flex-direction: column;">
                     
-                    <div class="d-flex align-center mt-3 mb-3" style="gap: 10px;">
-                        <span class="text-muted" style="font-size: 0.9rem;">Horizon d'évaluation :</span>
+                    <div class="d-flex justify-between align-center mb-4">
+                        <h3 style="margin: 0; font-size: 1.2rem; color: var(--heading-color);">Palmarès des erreurs</h3>
                         <div class="horizon-tabs">
                             <button class="diag-btn active" data-h="1" style="padding: 4px 12px; font-size: 0.85rem;">1 an</button>
                             <button class="diag-btn" data-h="3" style="padding: 4px 12px; font-size: 0.85rem;">3 ans</button>
@@ -83,7 +83,7 @@
                         </div>
                     </div>
                     
-                    <div class="table-container">
+                    <div class="table-container" style="flex-grow: 1; max-height: 410px;">
                         <table class="premium-table" id="rankingTable">
                             <thead>
                                 <tr>
@@ -95,26 +95,28 @@
                             <tbody></tbody>
                         </table>
                     </div>
-                    <p class="text-muted mt-2" style="font-size: 0.8rem;">* Cliquez sur une institution pour voir sa trajectoire.</p>
+                    <p class="text-muted mt-3 mb-0" style="font-size: 0.8rem;">* Cliquez sur une institution pour isoler sa trajectoire.</p>
                 </div>
 
-                <div class="dashboard-card" style="padding: 2rem; display: flex; flex-direction: column; gap: 2rem;">
-                    <div>
-                        <div class="d-flex justify-between align-center mb-2">
+                <div class="dashboard-card" style="padding: 2rem; display: flex; flex-direction: column;">
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <div class="d-flex justify-between align-center mb-4">
                             <h3 style="margin: 0; font-size: 1.2rem; color: var(--heading-color);">L'erreur de l'année</h3>
-                            <select id="yearSelect" class="clean-input" style="width: auto; padding: 5px; font-size: 1rem; border-bottom-color: #2DD4BF;"></select>
+                            <select id="yearSelect" class="clean-input" style="width: auto; padding: 4px 10px; font-size: 0.95rem; background: rgba(255,255,255,0.05); border: 1px solid transparent; border-radius: 50px; outline: none; cursor: pointer;"></select>
                         </div>
                         <div style="height: 200px; width: 100%;">
                             <canvas id="chartCanvas"></canvas>
                         </div>
                     </div>
                     
-                    <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1rem;">
-                        <h3 style="margin: 0 0 10px 0; font-size: 1.2rem; color: var(--heading-color);">Prévision vs Réalité</h3>
+                    <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; flex-grow: 1;">
+                        <h3 style="margin: 0 0 15px 0; font-size: 1.2rem; color: var(--heading-color);">Prévision vs Réalité</h3>
                         <div style="height: 180px; width: 100%;">
                             <canvas id="predRealCanvas"></canvas>
                         </div>
                     </div>
+                    
                 </div>
             </div>
         </div>
