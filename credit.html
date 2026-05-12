@@ -90,6 +90,58 @@
     </section>
 
     <section class="section-padding">
+        <div class="container diagnostic-container-wide">
+            <div class="section-header text-center mb-5">
+                <h2>L'épée à double tranchant du levier</h2>
+                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">Le levier financier consiste à utiliser l'argent des autres (un emprunt) pour amplifier le rendement de votre propre capital. C'est ainsi que les investisseurs s'enrichissent en immobilier, mais c'est aussi ainsi que l'on fait faillite.</p>
+            </div>
+
+            <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                
+                <div class="inputs-column">
+                    <div class="premium-input-card mb-4" style="border-color: var(--border-color);">
+                        <div class="premium-input-row">
+                            <label>Votre capital ($)</label>
+                            <input type="number" id="lev-equity" value="50000" oninput="calculateLeverage()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Montant emprunté ($)</label>
+                            <input type="number" id="lev-borrowed" value="200000" oninput="calculateLeverage()">
+                        </div>
+                        <div class="premium-input-row" style="border-bottom: none;">
+                            <label>Coût de l'emprunt (%)</label>
+                            <input type="number" id="lev-borrow-rate" value="5.0" step="0.1" oninput="calculateLeverage()">
+                        </div>
+                    </div>
+
+                    <div class="premium-input-card" style="background: rgba(0,0,0,0.2);">
+                        <div class="d-flex justify-between align-center mb-3">
+                            <label class="premium-label" style="margin: 0; color: var(--heading-color);">Rendement de l'actif visé</label>
+                            <strong id="lev-asset-val" style="color: #2DD4BF; font-size: 1.2rem;">+ 8.0 %</strong>
+                        </div>
+                        <input type="range" class="fin-slider" id="lev-asset-slider" min="-20" max="20" step="1" value="8" oninput="calculateLeverage()">
+                        <div class="d-flex justify-between text-muted mt-2" style="font-size: 0.8rem;">
+                            <span>Krach (-20%)</span>
+                            <span>Neutre (0%)</span>
+                            <span>Boom (+20%)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-column">
+                    <div class="dashboard-card" style="padding: 2.5rem; height: 100%;">
+                        <h3 style="margin-top: 0; color: var(--heading-color);">Rendement sur VOTRE capital</h3>
+                        
+                        <div id="lev-dashboard-results">
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
         <div class="container">
             <div class="section-header text-center mb-5">
                 <h2>Financement Immobilier</h2>
