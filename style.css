@@ -424,17 +424,17 @@ footer { background-color: #0B0F19; color: var(--subtle-text-color); text-align:
 }
 
 /* =============================================================== */
-/* === TABLEAU ULTRA PREMIUM (PRÉDICTIONS) === */
+/* === PAGE INVESTISSEMENTS (PRÉDICTIONS & DASHBOARDS) === */
 /* =============================================================== */
+
+/* --- Tableau du Cimetière des Prédictions --- */
 .table-container {
     overflow-y: auto;
-    max-height: 350px;
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 12px;
     background: rgba(0, 0, 0, 0.2);
 }
 
-/* --- Barre de défilement (Scrollbar) invisible/élégante --- */
 .table-container::-webkit-scrollbar { width: 6px; }
 .table-container::-webkit-scrollbar-track { background: transparent; }
 .table-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
@@ -446,7 +446,6 @@ footer { background-color: #0B0F19; color: var(--subtle-text-color); text-align:
     border-collapse: collapse; 
 }
 
-/* En-tête figé (Sticky) avec flou */
 .premium-table th {
     background: rgba(11, 15, 25, 0.95);
     backdrop-filter: blur(10px);
@@ -470,21 +469,17 @@ footer { background-color: #0B0F19; color: var(--subtle-text-color); text-align:
     transition: background 0.2s, color 0.2s;
 }
 
-/* Interaction au survol */
 .premium-table tr { cursor: pointer; }
 .premium-table tr:hover td { background: rgba(255, 255, 255, 0.02); }
 
-/* Ligne Active (Sélectionnée) */
 .premium-table tr.focused td {
-    background: rgba(45, 212, 191, 0.08); /* Fond émeraude très léger */
+    background: rgba(45, 212, 191, 0.08); 
     color: var(--heading-color);
 }
-
 .premium-table tr.focused td:first-child {
-    box-shadow: inset 4px 0 0 #2DD4BF; /* Ligne lumineuse sur la gauche */
+    box-shadow: inset 4px 0 0 #2DD4BF; 
 }
 
-/* Le Badge pour les numéros (#1, #2...) */
 .rank-badge {
     display: inline-flex;
     align-items: center;
@@ -498,8 +493,50 @@ footer { background-color: #0B0F19; color: var(--subtle-text-color); text-align:
     color: var(--subtle-text-color);
     transition: all 0.3s;
 }
-
 .premium-table tr.focused .rank-badge {
     background: #2DD4BF;
-    color: #0B0F19; /* Chiffre noir sur fond vert pour contraster */
+    color: #0B0F19; 
+}
+
+/* --- Boutons d'horizon temporels (Onglets) --- */
+.horizon-tabs {
+    background: rgba(0,0,0,0.3);
+    border-radius: 50px;
+    display: inline-flex;
+    padding: 2px;
+}
+.horizon-tabs button {
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 50px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+.horizon-tabs button:hover {
+    color: var(--heading-color);
+}
+
+/* --- Menu déroulant (Années) --- */
+select.clean-input option {
+    background: var(--bg-color);
+    color: var(--heading-color);
+}
+
+/* --- Réactivité Mobile (Très important pour les Dashboards) --- */
+@media (max-width: 768px) {
+    /* Le Dashboard T-Rex / Actif vs Passif */
+    #strat-dashboard-content > div:nth-child(3) {
+        grid-template-columns: 1fr !important; /* Force les deux boîtes à s'empiler sur mobile */
+    }
+    
+    /* Le message choc du T-Rex */
+    #strat-dashboard-content > div:first-child span:nth-child(2) {
+        font-size: 2.2rem !important; /* Réduit la taille de la grosse somme sur mobile */
+    }
+
+    /* Ajustement des grilles 50/50 générales */
+    .bento-grid-3 {
+        grid-template-columns: 1fr !important;
+    }
 }
