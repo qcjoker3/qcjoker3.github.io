@@ -21,23 +21,6 @@ let predLineInstance = null;
 let focusedInst = null;
 let curHorizon = 1;
 
-// Plugin Ligne de Réalité
-const realityLinePlugin = {
-    id: 'realityLine',
-    afterDatasetsDraw(chart) {
-        if (!chart.options.plugins?.realityLine?.y) return;
-        const { ctx, chartArea, scales } = chart;
-        const yValue = chart.options.plugins.realityLine.y;
-        const yPixel = scales.y.getPixelForValue(yValue);
-        ctx.save(); ctx.strokeStyle = '#A855F7'; ctx.lineWidth = 2; ctx.setLineDash([5, 5]);
-        ctx.beginPath(); ctx.moveTo(chartArea.left, yPixel); ctx.lineTo(chartArea.right, yPixel); ctx.stroke();
-        ctx.font = 'bold 12px "Inter"'; ctx.fillStyle = '#A855F7'; ctx.textAlign = 'right';
-        ctx.fillText(`Réalité: ${yValue}`, chartArea.right, yPixel - 8);
-        ctx.restore();
-    }
-};
-Chart.register(realityLinePlugin, ChartDataLabels);
-
 function initPredictions() {
     const yearSelect = document.getElementById('yearSelect');
     const years = Object.keys(chartDataByYear).sort();
@@ -63,34 +46,63 @@ function initPredictions() {
     updatePredRanking(yearSelect.value);
 }
 
+// Graphique 1 : Barre des erreurs en % pour une année spécifique
 function updatePredCharts(year) {
     const data = chartDataByYear[year];
     if (!data) return;
     const { institutions, previsions, real } = data;
-    const base = previsions.map(p => Math.min(p, real)); 
-    const ecarts = previsions.map(p => Math.abs(real - p)); 
-    const signes = previsions.map(p => p >= real);
+
+    // Calcul de l'erreur en % (Prévision vs Réalité)
+    const errorsPct = previsions.map(p => ((p - real) / real) * 100);
 
     const ctx = document.getElementById('chartCanvas').getContext('2d');
     if (predChartInstance) predChartInstance.destroy();
 
     predChartInstance = new Chart(ctx, {
         type: 'bar',
-        data: { labels: institutions, datasets: [
-            { label: 'Prévision', data: base, backgroundColor: 'rgba(45, 212, 191, 0.8)', stack: 'G' },
-            { label: 'Erreur', data: ecarts, backgroundColor: 'rgba(239, 68, 68, 0.6)', stack: 'G' }
-        ]},
+        data: { 
+            labels: institutions, 
+            datasets: [{ 
+                label: 'Erreur (%)', 
+                data: errorsPct, 
+                // Teal pour optimiste (au-dessus de 0), Rouge pour pessimiste (en-dessous de 0)
+                backgroundColor: errorsPct.map(e => e > 0 ? 'rgba(45, 212, 191, 0.8)' : 'rgba(239, 68, 68, 0.8)'),
+                borderRadius: 4
+            }]
+        },
         options: {
             maintainAspectRatio: false,
             plugins: {
                 legend: { display: false },
-                realityLine: { y: real },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => `Erreur : ${ctx.raw > 0 ? '+' : ''}${ctx.raw.toFixed(1)}%`
+                    }
+                },
                 datalabels: {
-                    display: c => c.datasetIndex === 1, anchor: 'center', align: 'center', color: '#FFF', font: {size: 10, weight: 'bold'},
-                    formatter: (v, c) => (signes[c.dataIndex] ? '🔺' : '🔻') + ` ${(v/real*100).toFixed(0)}%`
+                    display: true, 
+                    anchor: c => errorsPct[c.dataIndex] > 0 ? 'end' : 'start', 
+                    align: c => errorsPct[c.dataIndex] > 0 ? 'top' : 'bottom', 
+                    color: '#FFF', 
+                    font: {size: 10, weight: 'bold'},
+                    formatter: v => (v > 0 ? '+' : '') + v.toFixed(1) + '%'
                 }
             },
-            scales: { x: { stacked: true, ticks: {color: '#9CA3AF', font: {size: 9}} }, y: { stacked: true, ticks: {color: '#9CA3AF'} } }
+            scales: { 
+                x: { 
+                    ticks: {color: '#9CA3AF', font: {size: 9}}, 
+                    grid: { color: 'rgba(255,255,255,0.05)' } 
+                }, 
+                y: { 
+                    ticks: {color: '#9CA3AF', callback: v => v + '%'}, 
+                    // Rend la ligne de 0% (La Réalité parfaite) plus épaisse et blanche
+                    grid: { 
+                        color: c => c.tick.value === 0 ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.05)', 
+                        lineWidth: c => c.tick.value === 0 ? 2 : 1 
+                    },
+                    title: { display: true, text: 'Écart vs Réalité (%)', color: '#9CA3AF' }
+                } 
+            }
         }
     });
 }
@@ -105,6 +117,7 @@ function updatePredRanking(endYear) {
     windowYears.forEach(y => { 
         chartDataByYear[y].institutions.forEach((inst, i) => { 
             if (!stats[inst]) stats[inst] = { sumErr: 0, count: 0 }; 
+            // On conserve la moyenne de l'erreur absolue pour le classement
             stats[inst].sumErr += Math.abs(chartDataByYear[y].previsions[i] - chartDataByYear[y].real) / chartDataByYear[y].real * 100; 
             stats[inst].count++; 
         }); 
@@ -115,11 +128,9 @@ function updatePredRanking(endYear) {
 
     const tbody = document.querySelector('#rankingTable tbody');
     tbody.innerHTML = '';
-    
     ranking.forEach((r, i) => {
         const tr = document.createElement('tr');
         
-        // Si c'est l'institution sélectionnée, on ajoute la classe "focused"
         if (r.inst === focusedInst) {
             tr.classList.add('focused');
         }
@@ -137,26 +148,63 @@ function updatePredRanking(endYear) {
     drawInstLine(focusedInst);
 }
 
+// Graphique 2 : Trajectoire de l'erreur en % d'une institution précise
 function drawInstLine(inst) {
     if (!inst) return;
     const ctx = document.getElementById('predRealCanvas').getContext('2d');
     if (predLineInstance) predLineInstance.destroy();
     
-    const labels = [], preds = [], reals = [];
+    const labels = [], errors = [];
     Object.keys(chartDataByYear).sort().forEach(y => { 
         const i = chartDataByYear[y].institutions.indexOf(inst); 
-        if (i > -1) { labels.push(y); preds.push(chartDataByYear[y].previsions[i]); reals.push(chartDataByYear[y].real); } 
+        if (i > -1) { 
+            labels.push(y); 
+            const real = chartDataByYear[y].real;
+            const pred = chartDataByYear[y].previsions[i];
+            errors.push(((pred - real) / real) * 100); 
+        } 
     });
 
     predLineInstance = new Chart(ctx, {
         type: 'line',
         data: { labels, datasets: [
-            { label: `${inst}`, data: preds, borderColor: '#2DD4BF', tension: 0.2, borderWidth: 2 },
-            { label: 'Réalité', data: reals, borderColor: '#A855F7', borderDash: [5,5], tension: 0.2, borderWidth: 2 }
+            { 
+                label: `Erreur (%) - ${inst}`, 
+                data: errors, 
+                borderColor: '#A855F7', 
+                backgroundColor: 'rgba(168, 85, 247, 0.1)', 
+                tension: 0.3, 
+                borderWidth: 3, 
+                fill: true, 
+                pointBackgroundColor: '#A855F7', 
+                pointRadius: 4 
+            }
         ]},
         options: {
-            maintainAspectRatio: false, plugins: { datalabels: {display:false}, legend: { labels: {color: '#9CA3AF'} } },
-            scales: { x: { ticks:{color:'#9CA3AF'} }, y: { ticks:{color:'#9CA3AF'} } }
+            maintainAspectRatio: false, 
+            plugins: { 
+                datalabels: {display:false}, 
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: (ctx) => `Erreur : ${ctx.raw > 0 ? '+' : ''}${ctx.raw.toFixed(1)}%`
+                    }
+                }
+            },
+            scales: { 
+                x: { 
+                    ticks:{color:'#9CA3AF'}, 
+                    grid: {color: 'rgba(255,255,255,0.05)'} 
+                }, 
+                y: { 
+                    ticks:{color:'#9CA3AF', callback: v => v + '%'}, 
+                    grid: { 
+                        color: c => c.tick.value === 0 ? 'rgba(255,255,255,0.4)' : 'rgba(255,255,255,0.05)', 
+                        lineWidth: c => c.tick.value === 0 ? 2 : 1 
+                    },
+                    title: { display: true, text: 'Trajectoire de l\'erreur (%)', color: '#9CA3AF' }
+                } 
+            }
         }
     });
 }
