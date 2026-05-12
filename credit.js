@@ -72,14 +72,17 @@ function calculateDebtCost() {
 }
 
 // ==========================================
-// WIDGET 2 : LE DASHBOARD IMMOBILIER (PRO + FISCALITÉ)
+// WIDGET 2 : LE DASHBOARD IMMOBILIER (PRO + INFLATION LOCATIVE)
 // ==========================================
 function calculateRealEstate() {
     const price = parseFloat(document.getElementById('re-price').value) || 0;
     const downPayment = parseFloat(document.getElementById('re-downpayment').value) || 0;
     const rate = parseFloat(document.getElementById('re-rate').value) / 100 || 0;
     const years = parseFloat(document.getElementById('re-years').value) || 25;
+    
+    // INPUTS : Location
     const rent = parseFloat(document.getElementById('re-rent').value) || 0;
+    const rentIncrease = parseFloat(document.getElementById('re-rent-increase').value) / 100 || 0;
     
     // INPUTS : Croissance et Locatif
     const homeAppreciation = parseFloat(document.getElementById('re-appreciation').value) / 100 || 0;
@@ -91,7 +94,7 @@ function calculateRealEstate() {
 
     if (price <= 0 || years <= 0) return;
 
-    // --- 1. CALCUL DU COÛT PROPRIÉTAIRE ---
+    // --- 1. CALCUL DU COÛT PROPRIÉTAIRE (AN 1) ---
     // A. Prime SCHL
     const ratioDown = downPayment / price;
     let cmhc = 0;
@@ -103,17 +106,16 @@ function calculateRealEstate() {
     }
     const totalLoan = baseLoan + cmhc;
 
-    // B. Mensualité hypothécaire
+    // B. Mensualité hypothécaire (Fixe)
     const effRate = Math.pow(Math.pow(1 + (rate / 2), 2), 1/12) - 1;
     const n = years * 12;
     const monthlyMortgage = (totalLoan > 0 && effRate > 0) ? (totalLoan * effRate * Math.pow(1 + effRate, n)) / (Math.pow(1 + effRate, n) - 1) : 0;
 
-    // C. Frais Fantômes
-    const taxes = (price * 0.012) / 12; 
-    const maintenance = (price * maintenanceRate) / 12; 
-    const insurance = grossRentalIncome > 0 ? 200 : 150; 
+    // C. Frais Fantômes & Fiscalité Locative (AN 1)
+    let taxes = (price * 0.012) / 12; 
+    let maintenance = (price * maintenanceRate) / 12; 
+    let insurance = grossRentalIncome > 0 ? 200 : 150; 
     
-    // D. Fiscalité Locative
     const rentalTaxAmount = grossRentalIncome * rentalTaxRate;
     const netRentalIncome = grossRentalIncome - rentalTaxAmount;
 
@@ -131,7 +133,7 @@ function calculateRealEstate() {
         <div class="alloc-segment" style="width: ${pctMaint}%; background: #EF4444;" title="Entretien & Ass."></div>
     `;
 
-    // UI : Détails des coûts avec la cascade fiscale
+    // UI : Détails des coûts
     document.getElementById('re-cost-details').innerHTML = `
         <div>
             <span class="label"><span class="dot" style="background:#4F46E5;"></span> Hypothèque (inc. SCHL)</span>
@@ -169,7 +171,7 @@ function calculateRealEstate() {
         ` : ''}
 
         <div style="grid-column: span 2; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; margin-top: 0.5rem;">
-            <span class="label" style="color: var(--heading-color); text-transform: uppercase;">Décaissement Final du Propriétaire</span>
+            <span class="label" style="color: var(--heading-color); text-transform: uppercase;">Décaissement Net du Propriétaire (An 1)</span>
             <span class="value" style="color: ${netOwnerOutflow < 0 ? '#10B981' : '#2DD4BF'}; font-size: 2.2rem; display: block; margin-top: 5px;">
                 ${netOwnerOutflow < 0 ? '+' : ''}${formatCurrency(Math.abs(netOwnerOutflow))}
             </span>
@@ -177,18 +179,14 @@ function calculateRealEstate() {
         </div>
     `;
 
-    // --- 2. PROJECTION LOUER VS ACHETER (SYMÉTRIQUE) ---
-    const rentInsurance = 30;
-    const renterOutflow = rent + rentInsurance;
+    // --- 2. PROJECTION LOUER VS ACHETER DYNAMIQUE SUR 25 ANS ---
+    let currentRent = rent;
+    let currentTaxes = taxes;
+    let currentMaint = maintenance;
+    let currentIns = insurance;
+    let currentGrossRentInc = grossRentalIncome;
 
-    let ownerMonthlyInvest = 0;
-    let renterMonthlyInvest = 0;
-
-    if (netOwnerOutflow > renterOutflow) {
-        renterMonthlyInvest = netOwnerOutflow - renterOutflow; // Locataire investit la différence
-    } else {
-        ownerMonthlyInvest = renterOutflow - netOwnerOutflow; // Propriétaire investit la différence ou le cash-flow positif
-    }
+    const generalInflation = 0.02; // Inflation cible de 2% pour les dépenses du proprio
 
     let homeValue = price;
     let renterPortfolio = downPayment; 
@@ -196,11 +194,28 @@ function calculateRealEstate() {
     let currentLoan = totalLoan;
 
     for (let year = 1; year <= 25; year++) {
+        // A. Appréciation de l'actif
         homeValue *= (1 + homeAppreciation);
         
+        // B. Calcul du Cash-flow de cette année précise
+        let currentNetRentInc = currentGrossRentInc * (1 - rentalTaxRate);
+        let currentOwnerOutflow = (monthlyMortgage + currentTaxes + currentMaint + currentIns) - currentNetRentInc;
+        let currentRenterOutflow = currentRent + 30; // 30$ assurance locataire
+
+        let ownerMonthlyInvest = 0;
+        let renterMonthlyInvest = 0;
+
+        if (currentOwnerOutflow > currentRenterOutflow) {
+            renterMonthlyInvest = currentOwnerOutflow - currentRenterOutflow;
+        } else {
+            ownerMonthlyInvest = currentRenterOutflow - currentOwnerOutflow;
+        }
+
+        // C. Croissance des portefeuilles et ajout de l'épargne mensuelle
         renterPortfolio = (renterPortfolio * (1 + marketReturn)) + (renterMonthlyInvest * 12);
         ownerPortfolio = (ownerPortfolio * (1 + marketReturn)) + (ownerMonthlyInvest * 12);
         
+        // D. Remboursement Hypothécaire
         for(let m = 0; m < 12; m++) {
             if (currentLoan > 0) {
                 let interest = currentLoan * effRate;
@@ -208,6 +223,13 @@ function calculateRealEstate() {
                 currentLoan = Math.max(0, currentLoan - principal);
             }
         }
+
+        // E. INFLATION pour l'année suivante (La magie opère ici)
+        currentRent *= (1 + rentIncrease);
+        currentGrossRentInc *= (1 + rentIncrease); // Le proprio augmente aussi ses loyers
+        currentTaxes *= (1 + generalInflation);
+        currentMaint *= (1 + generalInflation);
+        currentIns *= (1 + generalInflation);
     }
 
     // Bilan Final
@@ -217,7 +239,7 @@ function calculateRealEstate() {
     const isOwnerWinner = finalOwnerNetWorth > finalRenterNetWorth;
 
     // DASHBOARD RÉSULTATS
-    let ownerBonusText = ownerPortfolio > 0 ? `<br><em>Inclut ${formatCurrency(ownerPortfolio)} en portefeuille boursier (grâce aux surplus dégagés face au loyer).</em>` : '';
+    let ownerBonusText = ownerPortfolio > 0 ? `<br><em>Inclut ${formatCurrency(ownerPortfolio)} en bourse générés par les excédents.</em>` : '';
 
     document.getElementById('re-verdict-dashboard').innerHTML = `
         <div class="result-metric-grid" style="gap: 1.5rem; margin-bottom: 2rem;">
@@ -241,7 +263,7 @@ function calculateRealEstate() {
                 Dans 25 ans, le <strong>${isOwnerWinner ? 'Propriétaire' : 'Locataire'}</strong> est plus riche de <span style="color: ${isOwnerWinner ? '#2DD4BF' : '#A855F7'}; font-weight: bold;">${formatCurrency(diff)}</span>.
             </p>
             <p style="font-size: 0.85rem; color: var(--subtle-text-color); margin: 0;">
-                * La stratégie du locataire implique une discipline absolue : placer la mise de fonds initiale de ${formatCurrency(downPayment)} <strong>ET</strong> épargner rigoureusement la différence mensuelle de coût de vie (quand applicable).
+                * Modèle calculé avec une inflation des loyers de ${(rentIncrease*100).toFixed(1)}% par an. Le locataire doit rigoureusement investir la différence initiale et l'écart mensuel pour concurrencer l'effet de levier immobilier.
             </p>
         </div>
     `;
