@@ -115,16 +115,25 @@ function updatePredRanking(endYear) {
 
     const tbody = document.querySelector('#rankingTable tbody');
     tbody.innerHTML = '';
+    
     ranking.forEach((r, i) => {
         const tr = document.createElement('tr');
-        tr.style.cursor = 'pointer';
-        tr.style.borderBottom = '1px solid rgba(255,255,255,0.05)';
-        if (r.inst === focusedInst) tr.style.background = 'rgba(45,212,191,0.1)';
         
-        tr.innerHTML = `<td style="padding:8px;">${i+1}</td><td style="padding:8px; font-weight:600; color:var(--heading-color);">${r.inst}</td><td style="padding:8px; color:#EF4444;">${r.err.toFixed(1)}%</td>`;
+        // Si c'est l'institution sélectionnée, on ajoute la classe "focused"
+        if (r.inst === focusedInst) {
+            tr.classList.add('focused');
+        }
+        
+        tr.innerHTML = `
+            <td><span class="rank-badge">${i+1}</span></td>
+            <td style="font-weight:600;">${r.inst}</td>
+            <td style="color:#EF4444; font-weight:600;">${r.err.toFixed(1)}%</td>
+        `;
+        
         tr.onclick = () => { focusedInst = r.inst; updatePredRanking(endYear); };
         tbody.appendChild(tr);
     });
+    
     drawInstLine(focusedInst);
 }
 
