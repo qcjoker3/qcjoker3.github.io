@@ -204,6 +204,28 @@
                         </div>
                     </div>
 
+                    <div class="premium-input-card mb-4">
+                        <h4 class="card-subtitle">Immobilier Locatif (Multi-logements)</h4>
+                        <div class="premium-input-row">
+                            <label>Revenus locatifs bruts (mensuels)</label>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <span style="color: #10B981; font-weight: bold;">+ $</span>
+                                <input type="number" id="re-rental-income" value="0" oninput="calculateRealEstate()" style="width: 100px;">
+                            </div>
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Impôt estimé sur loyers (%)</label>
+                            <input type="number" id="re-rental-tax" value="35" step="1" oninput="calculateRealEstate()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Frais d'entretien annuel (%)</label>
+                            <input type="number" id="re-maintenance-rate" value="1.5" step="0.1" oninput="calculateRealEstate()">
+                        </div>
+                        <p class="text-muted" style="font-size: 0.75rem; margin-top: 15px; line-height: 1.5;">
+                            * L'impôt est ici calculé de façon conservatrice sur le revenu brut. Un taux d'entretien de 1.5% à 2% est recommandé en locatif pour l'usure normale. <strong>Attention :</strong> Ce calcul n'inclut pas les rénovations majeures (ex: refaire les cuisines à neuf).
+                        </p>
+                    </div>
+                    
                     <div class="premium-input-card">
                         <h4 class="card-subtitle">Alternative : Location</h4>
                         <div class="premium-input-row">
