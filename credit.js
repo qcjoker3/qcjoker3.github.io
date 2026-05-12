@@ -28,7 +28,7 @@ function calculateDebtCost() {
     const scenarios = [
         { name: "Carte de Crédit", rate: 21.9, color: "#EF4444", bg: "rgba(239, 68, 68, 0.05)", border: "rgba(239, 68, 68, 0.3)" },
         { name: "Marge Personnelle", rate: 10.9, color: "#F59E0B", bg: "rgba(245, 158, 11, 0.05)", border: "rgba(245, 158, 11, 0.3)" },
-        { name: "Marge Hypothécaire (HELOC)", rate: 4.9, color: "#2DD4BF", bg: "rgba(45, 212, 191, 0.05)", border: "rgba(45, 212, 191, 0.3)" }
+        { name: "Marge Hypothécaire", rate: 4.9, color: "#2DD4BF", bg: "rgba(45, 212, 191, 0.05)", border: "rgba(45, 212, 191, 0.3)" }
     ];
 
     let html = '';
