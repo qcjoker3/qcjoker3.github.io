@@ -240,15 +240,9 @@ function calculateUnifiedStrategy() {
     document.getElementById('res-pct-lost').innerText = finalL > 0 ? ((finalL - finalH) / finalL * 100).toFixed(1) : 0;
     
     // Détails FNB Passif
-    document.getElementById('res-fee-low-val').innerText = (feeL * 100).toFixed(2);
-    document.getElementById('res-invested-low').innerText = formatCurrency(totalInvested);
-    document.getElementById('res-growth-low').innerText = formatCurrency(finalL - totalInvested);
     document.getElementById('res-final-low').innerText = formatCurrency(finalL);
 
     // Détails Fonds Actif
-    document.getElementById('res-fee-high-val').innerText = (feeH * 100).toFixed(2);
-    document.getElementById('res-invested-high').innerText = formatCurrency(totalInvested);
-    document.getElementById('res-growth-high').innerText = formatCurrency(finalH - totalInvested);
     document.getElementById('res-final-high').innerText = formatCurrency(finalH);
 }
 
