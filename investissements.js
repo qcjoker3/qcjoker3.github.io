@@ -268,7 +268,7 @@ let fnbGrowthChart = null;
 // Les données génériques sans ticker spécifique
 const fnbData = {
     BALANCED: { nom: "Portefeuille Équilibré", frais: 0.20, r: 5.0, eq: 60, fi: 40 },
-    GROWTH: { nom: "Portefeuille de Croissance", frais: 0.20, r: 7.0, eq: 80, fi: 20 },
+    GROWTH: { nom: "Portefeuille Croissance", frais: 0.20, r: 7.0, eq: 80, fi: 20 },
     EQUITY: { nom: "Portefeuille 100% Actions", frais: 0.20, r: 9.0, eq: 100, fi: 0 }
 };
 
