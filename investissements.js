@@ -220,41 +220,106 @@ function calculateTrex() {
     const C = parseFloat(document.getElementById('trex-annual').value) || 0;
     const n = parseFloat(document.getElementById('trex-years').value) || 25;
     const rGross = parseFloat(document.getElementById('trex-return').value) / 100 || 0;
-    const fee = parseFloat(document.getElementById('trex-fee').value) / 100 || 0;
+    
+    const feeLow = parseFloat(document.getElementById('trex-fee-low').value) / 100 || 0;
+    const feeHigh = parseFloat(document.getElementById('trex-fee-high').value) / 100 || 0;
 
-    const rNet = rGross - fee;
-    const fv = (P, r, n, C) => P * Math.pow(1 + r, n) + (r > 0 ? (C * ((Math.pow(1 + r, n) - 1) / r)) : C * n);
+    const rNetLow = rGross - feeLow;
+    const rNetHigh = rGross - feeHigh;
 
-    const valGross = fv(P, rGross, n, C);
-    const valNet = fv(P, rNet, n, C);
-    const cost = valGross - valNet;
-    const pctLost = (cost / valGross) * 100;
+    const fv = (P, r, years, C) => {
+        if (r === 0) return P + (C * years);
+        return P * Math.pow(1 + r, years) + (C * ((Math.pow(1 + r, years) - 1) / r));
+    };
 
-    document.getElementById('trex-results').innerHTML = `
-        <div class="result-metric-grid" style="gap: 1rem;">
-            <div style="background: rgba(45, 212, 191, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(45, 212, 191, 0.2);">
-                <span class="label" style="color: #2DD4BF;">Potentiel sans frais</span>
-                <span class="value" style="color: #2DD4BF;">${formatCurrency(valGross)}</span>
-            </div>
-            <div style="background: rgba(239, 68, 68, 0.05); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2);">
-                <span class="label" style="color: #EF4444;">Frais totaux confisqués</span>
-                <span class="value text-red">${formatCurrency(cost)}</span>
-                <span class="subtext" style="color: #EF4444; font-weight: bold;">(-${pctLost.toFixed(1)}% de votre richesse)</span>
-            </div>
+    // Calcul des trajectoires pour le graphique
+    const labels = [];
+    const dataLow = [];
+    const dataHigh = [];
+
+    for (let i = 0; i <= n; i++) {
+        labels.push(`An ${i}`);
+        dataLow.push(fv(P, rNetLow, i, C));
+        dataHigh.push(fv(P, rNetHigh, i, C));
+    }
+
+    const finalLow = dataLow[n];
+    const finalHigh = dataHigh[n];
+    const loss = finalLow - finalHigh;
+    const pctLost = (loss / finalLow) * 100;
+
+    // Mise à jour des 3 cases de résultats
+    document.getElementById('trex-results-grid').innerHTML = `
+        <div style="background: rgba(45, 212, 191, 0.05); padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(45, 212, 191, 0.2); text-align: center;">
+            <span class="label" style="color: #2DD4BF; font-size: 0.75rem;">AVEC FRAIS MINIMES</span>
+            <span class="value" style="color: #2DD4BF; font-size: 1.4rem; display: block; margin-top: 5px;">${formatCurrency(finalLow)}</span>
+        </div>
+        <div style="background: rgba(255, 255, 255, 0.03); padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
+            <span class="label" style="font-size: 0.75rem;">AVEC GESTION ACTIVE</span>
+            <span class="value" style="font-size: 1.4rem; display: block; margin-top: 5px; color: var(--heading-color);">${formatCurrency(finalHigh)}</span>
+        </div>
+        <div style="background: rgba(239, 68, 68, 0.05); padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2); text-align: center;">
+            <span class="label" style="color: #EF4444; font-size: 0.75rem;">PERTE LIÉE AUX FRAIS</span>
+            <span class="value" style="color: #EF4444; font-size: 1.4rem; display: block; margin-top: 5px;">${formatCurrency(loss)}</span>
+            <span style="color: #EF4444; font-size: 0.8rem; font-weight: bold;">(-${pctLost.toFixed(0)}%)</span>
         </div>
     `;
 
+    // Mise à jour du graphique linéaire
     const ctx = document.getElementById('chart-trex').getContext('2d');
     if (trexChart) trexChart.destroy();
     
-    // Pour que ChartDataLabels ne ruine pas ce chart
-    const noLabelsPlugin = { id: 'noLabels', beforeDraw(chart) { chart.options.plugins.datalabels.display = false; } };
-
     trexChart = new Chart(ctx, {
-        type: 'bar',
-        data: { labels: ['Valeur Réelle (Après Frais)', 'Potentiel (Marché)'], datasets: [{ data: [valNet, valGross], backgroundColor: ['#0D9488', 'rgba(13, 148, 136, 0.2)'] }] },
-        options: { maintainAspectRatio: false, plugins: { legend: {display:false}, datalabels: {display: false} }, scales: { y: { ticks: {color: '#9CA3AF'} }, x: { ticks: {color: '#9CA3AF'} } } },
-        plugins: [noLabelsPlugin]
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Frais minimes (FNB)',
+                    data: dataLow,
+                    borderColor: '#2DD4BF',
+                    backgroundColor: 'rgba(45, 212, 191, 0.1)',
+                    borderWidth: 3,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 0
+                },
+                {
+                    label: 'Frais élevés (Gestion active)',
+                    data: dataHigh,
+                    borderColor: '#EF4444',
+                    borderDash: [5, 5],
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.3,
+                    pointRadius: 0
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: { color: '#9CA3AF', font: { family: 'Inter' } }
+                },
+                datalabels: { display: false }
+            },
+            scales: {
+                x: { 
+                    ticks: { color: '#6B7280', maxRotation: 0 },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                },
+                y: {
+                    ticks: { 
+                        color: '#6B7280',
+                        callback: v => formatCurrency(v)
+                    },
+                    grid: { color: 'rgba(255,255,255,0.05)' }
+                }
+            }
+        }
     });
 }
 
