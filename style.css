@@ -405,3 +405,20 @@ footer { background-color: #0B0F19; color: var(--subtle-text-color); text-align:
 .needs-dot { background: #3B82F6; }
 .wants-dot { background: #F59E0B; }
 .savings-dot { background: #2DD4BF; }
+
+
+/* =============================================================== */
+/* === AJOUTS POUR LA PAGE CRÉDIT === */
+/* =============================================================== */
+
+#chart-acheter-louer {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Flexbox pour s'assurer que les cartes de crédit s'alignent bien sur mobile */
+#debt-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
