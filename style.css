@@ -68,10 +68,13 @@ section { animation: fadeIn 0.8s ease-out; }
 .mt-3 { margin-top: 1rem; } 
 .mt-4 { margin-top: 2rem; } 
 .mt-5 { margin-top: 3rem; }
+.mb-2 { margin-bottom: 0.5rem; }
 .mb-3 { margin-bottom: 1rem; }
 .mb-4 { margin-bottom: 1.5rem; }
 .mb-5 { margin-bottom: 2.5rem; }
 .text-muted { color: var(--subtle-text-color); }
+.text-red { color: #EF4444 !important; }
+.font-bold { font-weight: 700; }
 
 .d-none-mobile { display: inline-block; }
 .d-block-mobile { display: none; }
@@ -89,6 +92,7 @@ section { animation: fadeIn 0.8s ease-out; }
 .main-nav nav { display: flex; gap: 1.5rem; flex-wrap: wrap; }
 .main-nav nav a { font-weight: 500; font-size: 0.95rem; color: var(--text-color); transition: color 0.2s; }
 .main-nav nav a:hover { color: var(--heading-color); }
+.main-nav nav a.active { color: var(--heading-color); }
 
 .hamburger-btn { display: none; background: none; border: none; font-size: 1.8rem; color: var(--heading-color); cursor: pointer; }
 @media (max-width: 768px) {
@@ -129,7 +133,6 @@ section { animation: fadeIn 0.8s ease-out; }
 /* === HERO === */
 /* =============================================================== */
 .hero-modern { padding: 8rem 0 5rem 0; background-color: var(--bg-color); position: relative; overflow: hidden; }
-/* Effet de lueur en arrière-plan */
 .hero-modern::before {
     content: ''; position: absolute; top: -20%; left: 50%; transform: translateX(-50%);
     width: 600px; height: 600px; background: radial-gradient(circle, rgba(168,85,247,0.15) 0%, rgba(11,15,25,0) 70%); z-index: 0; pointer-events: none;
@@ -164,71 +167,58 @@ section { animation: fadeIn 0.8s ease-out; }
 @media (max-width: 900px) { .bento-grid-3 { grid-template-columns: 1fr; } .bento-large, .bento-small { grid-column: span 1; } }
 
 /* =============================================================== */
-/* === MICRO-DIAGNOSTIC (Nouveau) === */
+/* === OUTILS & WIDGETS (Budget, Pièges) === */
 /* =============================================================== */
-.diagnostic-container { max-width: 800px; margin: 0 auto; }
-.diagnostic-list {
-    background: var(--card-bg-color);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-md);
-    overflow: hidden;
-}
+.trap-layout { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 4rem; }
+@media (max-width: 768px) { .trap-layout { grid-template-columns: 1fr; gap: 2rem; } }
 
-.diagnostic-item {
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-    padding: 2rem;
-    transition: background-color 0.3s ease;
-}
+.result-card { background: var(--card-bg-color); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(255,255,255,0.05); box-shadow: var(--shadow-md); }
+.result-metric-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.result-metric-grid > div { display: flex; flex-direction: column; }
+.result-metric-grid .label { font-size: 0.85rem; color: var(--subtle-text-color); text-transform: uppercase; letter-spacing: 1px;}
+.result-metric-grid .value { font-size: 1.5rem; font-weight: 700; color: var(--heading-color); }
+.result-list-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.result-list-item:last-child { border-bottom: none; }
+
+.control-group { margin-bottom: 1.5rem; }
+.control-label { font-size: 0.95rem; font-weight: 600; color: var(--heading-color); }
+
+/* Sliders de type Fintech */
+.fin-slider { -webkit-appearance: none; width: 100%; height: 6px; background: #1F2937; border-radius: 5px; outline: none; margin: 10px 0; }
+.fin-slider::-webkit-slider-thumb { -webkit-appearance: none; width: 24px; height: 24px; background: var(--accent-color); border-radius: 50%; cursor: pointer; border: 3px solid var(--bg-color); transition: transform 0.1s; }
+.fin-slider::-webkit-slider-thumb:active { transform: scale(1.15); }
+
+/* Champs de saisie propres (Widget Budget) */
+.clean-input-group { display: flex; flex-direction: column; }
+.clean-input-group label { font-size: 0.8rem; font-weight: 600; color: var(--subtle-text-color); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.clean-input { background: transparent; border: none; border-bottom: 2px solid var(--border-color); padding: 10px 0; font-size: 1.6rem; font-weight: 700; color: var(--heading-color); outline: none; transition: all 0.3s ease; width: 100%; font-family: var(--font-heading); }
+.clean-input:focus { border-bottom-color: var(--accent-color); }
+.clean-input::-webkit-outer-spin-button, .clean-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+.form-columns-mobile { display: flex; gap: 1rem; }
+@media (max-width: 600px) { .form-columns-mobile { flex-direction: column; gap: 0.5rem; } }
+
+/* =============================================================== */
+/* === MICRO-DIAGNOSTIC (Accueil) === */
+/* =============================================================== */
+.diagnostic-container-wide { max-width: 1000px; margin: 0 auto; }
+.diagnostic-list { background: var(--card-bg-color); border: 1px solid rgba(255,255,255,0.05); border-radius: var(--border-radius); box-shadow: var(--shadow-md); width: 100%; overflow: hidden; }
+
+.diagnostic-item { border-bottom: 1px solid rgba(255,255,255,0.05); padding: 2rem; transition: background-color 0.3s ease; }
 .diagnostic-item:last-child { border-bottom: none; }
 
 .diagnostic-content { display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
 .question-text { font-size: 1.1rem; font-weight: 500; color: var(--heading-color); line-height: 1.5; flex: 1; }
 .question-actions { display: flex; gap: 0.8rem; }
 
-.diag-btn {
-    background: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-color);
-    padding: 8px 24px;
-    border-radius: 50px;
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
+.diag-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-color); padding: 8px 24px; border-radius: 50px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; }
 .diag-btn:hover { background: rgba(255, 255, 255, 0.05); color: var(--heading-color); }
-.diag-btn.active {
-    border-color: var(--accent-color);
-    color: var(--accent-color);
-    background: rgba(168, 85, 247, 0.05);
-}
+.diag-btn.active { border-color: var(--accent-color); color: var(--accent-color); background: rgba(168, 85, 247, 0.05); }
 
-.diag-feedback {
-    max-height: 0;
-    overflow: hidden;
-    opacity: 0;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    color: var(--text-color);
-    font-size: 1rem;
-}
-.diag-feedback.show {
-    max-height: 150px;
-    opacity: 1;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px dashed rgba(255,255,255,0.1);
-}
+.diag-feedback { max-height: 0; overflow: hidden; opacity: 0; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); color: var(--text-color); font-size: 1rem; }
+.diag-feedback.show { max-height: 150px; opacity: 1; margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px dashed rgba(255,255,255,0.1); }
 
-.diag-link {
-    color: var(--heading-color);
-    text-decoration: none;
-    font-weight: 600;
-    border-bottom: 2px solid var(--accent-color);
-    padding-bottom: 2px;
-    transition: opacity 0.2s;
-    margin-left: 5px;
-}
+.diag-link { color: var(--heading-color); text-decoration: none; font-weight: 600; border-bottom: 2px solid var(--accent-color); padding-bottom: 2px; transition: opacity 0.2s; margin-left: 5px; }
 .diag-link:hover { opacity: 0.8; }
 
 @media (max-width: 600px) {
@@ -265,34 +255,10 @@ section { animation: fadeIn 0.8s ease-out; }
 /* =============================================================== */
 /* === INFOLETTRE & FOOTER === */
 /* =============================================================== */
-.newsletter-container { width: 100%; max-width: 800px; margin: 0 auto; background: var(--card-bg-color); padding: 4rem 2rem; border-radius: var(--border-radius); border: 1px solid rgba(255,255,255,0.05); box-shadow: var(--shadow-md); }
-.newsletter-form { display: flex; gap: 1rem; max-width: 500px; margin: 0 auto; }
+.newsletter-container-wide { max-width: 1000px; margin: 0 auto; background: var(--card-bg-color); padding: 4rem 2rem; border-radius: var(--border-radius); border: 1px solid rgba(255,255,255,0.05); box-shadow: var(--shadow-md); }
+.newsletter-form { display: flex; gap: 1rem; max-width: 650px; margin: 0 auto; }
 .newsletter-form input { flex: 1; padding: 14px 24px; border: 1px solid var(--border-color); border-radius: 50px; font-size: 1rem; outline: none; background: rgba(0,0,0,0.2); color: var(--heading-color);}
 .newsletter-form input:focus { border-color: var(--accent-color); }
 @media (max-width: 600px) { .newsletter-form { flex-direction: column; } }
 
 footer { background-color: #0B0F19; color: var(--subtle-text-color); text-align: center; padding: 3rem 0; border-top: 1px solid rgba(255,255,255,0.05);}
-
-/* --- Ajustement des largeurs pour un look plus spacieux --- */
-.diagnostic-container-wide, 
-.newsletter-container-wide {
-    max-width: 1000px; /* Augmenté pour plus d'ampleur */
-    margin: 0 auto;
-}
-
-/* On s'assure que le diagnostic-list prend toute la largeur du nouveau conteneur */
-.diagnostic-list {
-    background: var(--card-bg-color);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-md);
-    width: 100%; 
-}
-
-/* Élargissement de la barre de saisie de l'infolettre pour suivre la largeur */
-.newsletter-form {
-    display: flex;
-    gap: 1rem;
-    max-width: 650px; /* Augmenté de 500px à 650px */
-    margin: 0 auto;
-}
