@@ -81,11 +81,15 @@ function calculateRealEstate() {
     const rate = parseFloat(document.getElementById('re-rate').value) / 100 || 0;
     const years = parseFloat(document.getElementById('re-years').value) || 25;
     const rent = parseFloat(document.getElementById('re-rent').value) || 0;
+    
+    // NOUVEAUX INPUTS : Les hypothèses de croissance
+    const homeAppreciation = parseFloat(document.getElementById('re-appreciation').value) / 100 || 0;
+    const marketReturn = parseFloat(document.getElementById('re-market').value) / 100 || 0;
 
     if (price <= 0 || years <= 0) return;
 
     // --- 1. CALCUL DU VRAI COÛT PROPRIÉTAIRE ---
-    // A. Prime SCHL (simplifiée)
+    // A. Prime SCHL
     const ratioDown = downPayment / price;
     let cmhc = 0;
     let baseLoan = price - downPayment;
@@ -96,19 +100,19 @@ function calculateRealEstate() {
     }
     const totalLoan = baseLoan + cmhc;
 
-    // B. Hypothèque (Formule canadienne : composition semi-annuelle)
+    // B. Mensualité hypothécaire
     const effRate = Math.pow(Math.pow(1 + (rate / 2), 2), 1/12) - 1;
     const n = years * 12;
-    const monthlyMortgage = (totalLoan * effRate * Math.pow(1 + effRate, n)) / (Math.pow(1 + effRate, n) - 1);
+    const monthlyMortgage = (totalLoan > 0 && effRate > 0) ? (totalLoan * effRate * Math.pow(1 + effRate, n)) / (Math.pow(1 + effRate, n) - 1) : 0;
 
-    // C. Frais Fantômes (Mensuels)
-    const taxes = (price * 0.012) / 12; // Taxes scolaires et municipales ~1.2%
-    const maintenance = (price * 0.01) / 12; // Règle du 1%
-    const insurance = 150; // Assurance proprio
+    // C. Frais Fantômes
+    const taxes = (price * 0.012) / 12; // ~1.2% annuel
+    const maintenance = (price * 0.01) / 12; // 1% annuel
+    const insurance = 150; 
     
     const trueMonthlyCost = monthlyMortgage + taxes + maintenance + insurance;
 
-    // Mise à jour de la barre et des détails
+    // UI : Barre et détails
     const pctMortgage = (monthlyMortgage / trueMonthlyCost) * 100;
     const pctTaxes = (taxes / trueMonthlyCost) * 100;
     const pctMaint = ((maintenance + insurance) / trueMonthlyCost) * 100;
@@ -122,61 +126,41 @@ function calculateRealEstate() {
     document.getElementById('re-cost-details').innerHTML = `
         <div>
             <span class="label"><span class="dot" style="background:#4F46E5;"></span> Hypothèque (inc. SCHL)</span>
-            <span class="value">${formatCurrency(monthlyMortgage)}</span>
+            <span class="value" style="color: var(--heading-color);">${formatCurrency(monthlyMortgage)}</span>
         </div>
         <div>
             <span class="label"><span class="dot" style="background:#F59E0B;"></span> Taxes estimées</span>
-            <span class="value">${formatCurrency(taxes)}</span>
+            <span class="value" style="color: var(--heading-color);">${formatCurrency(taxes)}</span>
         </div>
         <div>
             <span class="label"><span class="dot" style="background:#EF4444;"></span> Entretien & Assurances</span>
-            <span class="value">${formatCurrency(maintenance + insurance)}</span>
+            <span class="value" style="color: var(--heading-color);">${formatCurrency(maintenance + insurance)}</span>
         </div>
-        <div style="grid-column: span 2; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 1rem; margin-top: 0.5rem;">
-            <span class="label" style="color: var(--heading-color);">Décaissement Total Mensuel</span>
-            <span class="value" style="color: #2DD4BF; font-size: 2rem;">${formatCurrency(trueMonthlyCost)}</span>
+        <div style="grid-column: span 2; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; margin-top: 0.5rem;">
+            <span class="label" style="color: var(--heading-color); text-transform: uppercase;">Coût Total Mensuel du Propriétaire</span>
+            <span class="value" style="color: #2DD4BF; font-size: 2.2rem; display: block; margin-top: 5px;">${formatCurrency(trueMonthlyCost)}</span>
         </div>
     `;
 
-    // --- 2. PROJECTION LOUER VS ACHETER (SUR 25 ANS) ---
-    const rentInsurance = 30; // Assurance locataire
+    // --- 2. PROJECTION LOUER VS ACHETER ---
+    const rentInsurance = 30;
     const trueRentCost = rent + rentInsurance;
-    
-    // Le cash-flow disponible pour le locataire
     const monthlySavings = Math.max(0, trueMonthlyCost - trueRentCost);
 
-    // Hypothèses de marché
-    const marketReturn = 0.07; // Rendement bourse 7%
-    const homeAppreciation = 0.03; // Appréciation immo 3%
-
     let homeValue = price;
-    let renterPortfolio = downPayment; // Le locataire investit la mise de fonds initiale!
-    
-    const labels = [];
-    const dataOwner = [];
-    const dataRenter = [];
-
-    // Boucle annuelle
+    let renterPortfolio = downPayment; // Mise de fonds investie dès le jour 1
     let currentLoan = totalLoan;
-    for (let year = 0; year <= 25; year++) {
-        labels.push(`An ${year}`);
+
+    // Simulation année par année
+    for (let year = 1; year <= 25; year++) {
+        homeValue *= (1 + homeAppreciation);
         
-        // Propriétaire : Valeur de la maison moins l'hypothèque restante
-        let ownerEquity = Math.max(0, homeValue - currentLoan);
-        dataOwner.push(ownerEquity);
-
-        // Locataire : Croissance du portefeuille + ajout de l'épargne mensuelle
-        dataRenter.push(renterPortfolio);
-
-        // Fin de l'année : Calculs pour l'année suivante
-        if (year < 25) {
-            homeValue *= (1 + homeAppreciation); // La maison prend 3%
-            
-            // Le locataire fait 7% sur son portefeuille + investit la différence mensuelle
-            renterPortfolio = (renterPortfolio * (1 + marketReturn)) + (monthlySavings * 12);
-            
-            // L'hypothèque descend
-            for(let m = 0; m < 12; m++) {
+        // Rendement boursier et ajout de l'épargne mensuelle
+        renterPortfolio = (renterPortfolio * (1 + marketReturn)) + (monthlySavings * 12);
+        
+        // Réduction de l'hypothèque
+        for(let m = 0; m < 12; m++) {
+            if (currentLoan > 0) {
                 let interest = currentLoan * effRate;
                 let principal = monthlyMortgage - interest;
                 currentLoan = Math.max(0, currentLoan - principal);
@@ -184,54 +168,37 @@ function calculateRealEstate() {
         }
     }
 
-    // Graphique
-    const ctx = document.getElementById('chart-acheter-louer').getContext('2d');
-    if (reChart) reChart.destroy();
-    
-    reChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Valeur Nette Propriétaire',
-                    data: dataOwner,
-                    borderColor: '#2DD4BF',
-                    backgroundColor: 'rgba(45, 212, 191, 0.1)',
-                    fill: true,
-                    tension: 0.3
-                },
-                {
-                    label: 'Portefeuille du Locataire',
-                    data: dataRenter,
-                    borderColor: '#A855F7',
-                    borderDash: [5, 5],
-                    fill: false,
-                    tension: 0.3
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { labels: { color: '#9CA3AF' } }
-            },
-            scales: {
-                x: { ticks: { color: '#9CA3AF' }, grid: { color: 'rgba(255,255,255,0.05)' } },
-                y: { ticks: { color: '#9CA3AF', callback: v => formatCurrency(v) }, grid: { color: 'rgba(255,255,255,0.05)' } }
-            }
-        }
-    });
-
-    // Verdict final
-    const finalOwner = dataOwner[25];
-    const finalRenter = dataRenter[25];
+    // Le Bilan An 25
+    const finalOwner = Math.max(0, homeValue - currentLoan);
+    const finalRenter = renterPortfolio;
     const diff = Math.abs(finalOwner - finalRenter);
-    const winner = finalOwner > finalRenter ? 'Propriétaire' : 'Locataire';
+    const isOwnerWinner = finalOwner > finalRenter;
 
-    document.getElementById('re-verdict').innerHTML = `
-        <span style="font-size: 1.1rem; color: var(--heading-color); display: block; margin-bottom: 5px;">Dans 25 ans, le <strong>${winner}</strong> est plus riche de ${formatCurrency(diff)}.</span>
-        <span style="font-size: 0.85rem; color: var(--subtle-text-color);">*Basé sur une appréciation immobilière de 3% et un rendement boursier de 7%. La discipline du locataire d'investir la différence mensuelle (${formatCurrency(monthlySavings)}) est cruciale dans ce modèle.</span>
+    // NOUVEAU DASHBOARD RÉSULTATS 
+    document.getElementById('re-verdict-dashboard').innerHTML = `
+        <div class="result-metric-grid" style="gap: 1.5rem; margin-bottom: 2rem;">
+            
+            <div style="background: rgba(45, 212, 191, 0.05); border: 1px solid ${isOwnerWinner ? '#2DD4BF' : 'rgba(45, 212, 191, 0.2)'}; padding: 1.5rem; border-radius: 16px; text-align: center; box-shadow: ${isOwnerWinner ? '0 0 15px rgba(45,212,191,0.1)' : 'none'};">
+                <span class="label" style="color: #2DD4BF; text-transform: uppercase;">Valeur Nette Achat</span>
+                <span class="value" style="color: #2DD4BF; font-size: 2.2rem; margin: 10px 0; display: block;">${formatCurrency(finalOwner)}</span>
+                <span class="subtext">Maison (${homeAppreciation*100}%) moins hypothèque</span>
+            </div>
+
+            <div style="background: rgba(168, 85, 247, 0.05); border: 1px solid ${!isOwnerWinner ? '#A855F7' : 'rgba(168, 85, 247, 0.2)'}; padding: 1.5rem; border-radius: 16px; text-align: center; box-shadow: ${!isOwnerWinner ? '0 0 15px rgba(168,85,247,0.1)' : 'none'};">
+                <span class="label" style="color: #A855F7; text-transform: uppercase;">Valeur Nette Location</span>
+                <span class="value" style="color: #A855F7; font-size: 2.2rem; margin: 10px 0; display: block;">${formatCurrency(finalRenter)}</span>
+                <span class="subtext">Portefeuille boursier (${marketReturn*100}%)</span>
+            </div>
+
+        </div>
+        
+        <div style="text-align: center; padding: 1.5rem; border-radius: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05);">
+            <p style="font-size: 1.2rem; color: var(--heading-color); margin: 0 0 10px 0;">
+                Dans 25 ans, le <strong>${isOwnerWinner ? 'Propriétaire' : 'Locataire'}</strong> est plus riche de <span style="color: ${isOwnerWinner ? '#2DD4BF' : '#A855F7'}; font-weight: bold;">${formatCurrency(diff)}</span>.
+            </p>
+            <p style="font-size: 0.85rem; color: var(--subtle-text-color); margin: 0;">
+                *La stratégie du locataire implique une discipline d'acier : placer la mise de fonds initiale de ${formatCurrency(downPayment)} <strong>ET</strong> épargner rigoureusement la différence mensuelle de ${formatCurrency(monthlySavings)}.
+            </p>
+        </div>
     `;
 }
