@@ -540,3 +540,93 @@ select.clean-input option {
         grid-template-columns: 1fr !important;
     }
 }
+
+/* =============================================================== */
+/* === DASHBOARD STRATÉGIE (SANS INLINE STYLES) === */
+/* =============================================================== */
+.hero-alert {
+    background: rgba(45, 212, 191, 0.05);
+    border: 1px solid rgba(45, 212, 191, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    text-align: center;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 10px 25px rgba(45,212,191,0.05);
+}
+
+.hero-alert-title {
+    font-size: 0.95rem; 
+    color: var(--subtle-text-color); 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    font-weight: 600;
+}
+
+.hero-alert-value {
+    display: block; 
+    font-size: 3rem; 
+    color: #2DD4BF; 
+    font-weight: 800; 
+    margin: 10px 0; 
+    font-family: var(--font-heading);
+}
+
+.hero-alert-badge {
+    font-size: 0.95rem; 
+    color: #EF4444; 
+    font-weight: 600; 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 5px; 
+    background: rgba(239, 68, 68, 0.1); 
+    padding: 5px 12px; 
+    border-radius: 50px;
+}
+
+.strat-grid {
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 1.5rem;
+}
+
+.strat-card {
+    background: rgba(255,255,255,0.02); 
+    padding: 1.5rem; 
+    border-radius: 12px; 
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+.strat-card-header {
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+    padding-bottom: 10px; 
+    margin-bottom: 15px;
+}
+
+.strat-card-row {
+    margin-bottom: 10px; 
+    display: flex; 
+    justify-content: space-between; 
+    font-size: 0.9rem;
+}
+
+.strat-card-footer {
+    border-top: 1px dashed rgba(255,255,255,0.1); 
+    padding-top: 10px; 
+    display: flex; 
+    justify-content: space-between; 
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+/* Modifie la média query existante pour cibler strat-grid au lieu du nth-child complexe */
+@media (max-width: 768px) {
+    .strat-grid {
+        grid-template-columns: 1fr !important;
+    }
+    .hero-alert-value {
+        font-size: 2.2rem !important;
+    }
+}
