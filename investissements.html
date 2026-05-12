@@ -129,7 +129,7 @@
                 <p class="text-muted">Si personne ne peut prédire le marché, pourquoi payer un "expert" 2.5 % par an pour essayer de le battre ? Découvrez l'effet T-Rex : comment les frais de gestion dévorent votre richesse à long terme.</p>
             </div>
 
-            <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div class="trap-layout" style="grid-template-columns: 350px 1fr; gap: 2rem;">
                 <div class="inputs-column">
                     <div class="premium-input-card">
                         <div class="premium-input-row">
@@ -148,18 +148,23 @@
                             <label>Rendement du marché (%)</label>
                             <input type="number" id="trex-return" value="7.5" step="0.1" oninput="calculateTrex()">
                         </div>
+                        <div class="premium-input-row">
+                            <label style="color: #2DD4BF;">Frais FNB minimes (%)</label>
+                            <input type="number" id="trex-fee-low" value="0.2" step="0.01" oninput="calculateTrex()" style="color: #2DD4BF;">
+                        </div>
                         <div class="premium-input-row" style="border-bottom: none;">
-                            <label style="color: #EF4444;">Frais de gestion du fonds (%)</label>
-                            <input type="number" id="trex-fee" value="2.2" step="0.1" oninput="calculateTrex()" style="color: #EF4444; border-color: rgba(239,68,68,0.3);">
+                            <label style="color: #EF4444;">Frais Gestion Active (%)</label>
+                            <input type="number" id="trex-fee-high" value="2.2" step="0.1" oninput="calculateTrex()" style="color: #EF4444;">
                         </div>
                     </div>
                 </div>
 
                 <div class="dashboard-column">
-                    <div class="dashboard-card" style="padding: 2.5rem; height: 100%;">
-                        <h3 style="margin-top: 0; color: var(--heading-color);">L'impact des frais (Fonds Mutuels vs FNB)</h3>
-                        <div id="trex-results"></div>
-                        <div style="height: 200px; margin-top: 1rem;">
+                    <div class="dashboard-card" style="padding: 2rem;">
+                        <div id="trex-results-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                            </div>
+
+                        <div style="height: 300px; width: 100%;">
                             <canvas id="chart-trex"></canvas>
                         </div>
                     </div>
