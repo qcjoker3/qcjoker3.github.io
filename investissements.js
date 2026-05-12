@@ -286,6 +286,8 @@ function calculateFNB() {
     });
 
     const fnb = fnbData[selProfile];
+    if (!fnb) return;
+    
     const P = parseFloat(document.getElementById('fnb-initial').value) || 0;
     const C = parseFloat(document.getElementById('fnb-monthly').value) || 0;
     const y = parseFloat(document.getElementById('fnb-years').value) || 25;
