@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crédit & Financement | Finoza</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <header class="main-nav">
+        <div class="container d-flex justify-between align-center">
+            <a href="index.html" class="logo">
+                <strong><span style="color: #2DD4BF;">Finoza.</span></strong>
+            </a>
+            <button class="hamburger-btn d-block-mobile" id="menu-toggle" aria-label="Menu">☰</button>
+            <nav id="nav-links">
+                <a href="budget.html">Budget et liquidités</a>
+                <a href="credit.html" class="active" style="color: var(--heading-color);">Crédit et financement</a>
+                <a href="investissements.html">Placements et fiscalité</a>
+                <a href="retraite.html">Retraite et patrimoine</a>
+                <a href="pieges.html">Pièges financiers</a>
+                <a href="articles.html">Articles</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero-modern" style="padding-bottom: 3rem;">
+        <div class="container hero-centered">
+            <div class="hero-text text-center">
+                <span class="badge badge-gris mb-3">Pilier 2 : Financement</span>
+                <h1 class="gradient-text" style="font-size: clamp(2.5rem, 5vw, 4rem);">L'art du levier financier.</h1>
+                <p>Le crédit est une arme à double tranchant. Utilisé pour la consommation, il détruit votre richesse. Utilisé stratégiquement pour acquérir des actifs, il devient le plus puissant accélérateur de votre patrimoine.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container">
+            <div class="bento-grid-3" style="grid-template-columns: 1fr 1fr;">
+                <div style="background: rgba(239, 68, 68, 0.05); padding: 3rem; border-radius: 20px; border: 1px solid rgba(239, 68, 68, 0.2);">
+                    <div class="bento-icon mb-3">📉</div>
+                    <h2 style="font-size: 1.8rem; margin-top: 0; color: #FCA5A5;">Le passif (Destruction)</h2>
+                    <p class="text-muted" style="font-size: 1.05rem;">
+                        Utiliser le crédit pour financer des voyages, des vêtements ou un style de vie que vous ne pouvez pas vous permettre. Les intérêts composés travaillent alors <strong>contre vous</strong>. La carte de crédit non remboursée est l'urgence financière numéro un.
+                    </p>
+                </div>
+                <div style="background: rgba(45, 212, 191, 0.05); padding: 3rem; border-radius: 20px; border: 1px solid rgba(45, 212, 191, 0.2);">
+                    <div class="bento-icon mb-3">📈</div>
+                    <h2 style="font-size: 1.8rem; margin-top: 0; color: #2DD4BF;">L'actif (Levier)</h2>
+                    <p class="text-muted" style="font-size: 1.05rem;">
+                        Utiliser l'argent de la banque à un taux faible (ex: hypothèque ou marge hypothécaire) pour acquérir un actif qui s'apprécie ou qui génère des revenus (immobilier, bourse). Les rendements de l'actif doivent surpasser le coût de l'emprunt.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding bg-light">
+        <div class="container diagnostic-container-wide">
+            <div class="section-header text-center mb-5">
+                <h2>Le poids de la dette de consommation</h2>
+                <p class="text-muted">Découvrez comment la structure de votre emprunt dicte votre avenir financier.</p>
+            </div>
+
+            <div class="diagnostic-list" style="padding: 3rem; background: var(--card-bg-color);">
+                
+                <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 3rem;">
+                    <div class="premium-input-card" style="border-color: var(--accent-color);">
+                        <label class="premium-label">Montant de la dépense (ex: Voyage)</label>
+                        <div class="input-with-prefix">
+                            <span>$</span>
+                            <input type="number" id="debt-amount" value="5000" oninput="calculateDebtCost()">
+                        </div>
+                    </div>
+                    <div class="premium-input-card">
+                        <label class="premium-label">Mensualité allouée au remboursement</label>
+                        <div class="input-with-prefix">
+                            <span>$</span>
+                            <input type="number" id="debt-payment" value="150" oninput="calculateDebtCost()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bento-grid-3" style="gap: 1.5rem;" id="debt-results">
+                    </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2>Financement Immobilier</h2>
+            </div>
+            <div class="bento-card" style="padding: 0; overflow: hidden; display: flex; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 300px; padding: 3rem; border-right: 1px solid rgba(255,255,255,0.05);">
+                    <h3 style="color: #2DD4BF; font-size: 1.5rem; margin-top: 0;">Le Taux Fixe (La Paix d'Esprit)</h3>
+                    <p class="text-muted">Vous payez une "prime d'assurance" à la banque pour bloquer votre taux. Vous savez exactement combien vous paierez pendant 5 ans. Idéal si votre budget est serré et qu'une hausse des taux mettrait votre famille en péril.</p>
+                </div>
+                <div style="flex: 1; min-width: 300px; padding: 3rem; background: rgba(0,0,0,0.2);">
+                    <h3 style="color: var(--accent-color); font-size: 1.5rem; margin-top: 0;">Le Taux Variable (Le Calcul Historique)</h3>
+                    <p class="text-muted">Votre taux fluctue avec le marché. Historiquement, le taux variable s'est avéré plus payant 8 fois sur 10. Cependant, il exige une tolérance au risque et une marge de manœuvre dans votre budget mensuel.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding bg-light">
+        <div class="container" style="max-width: 1200px;">
+            <div class="section-header text-center mb-5">
+                <h2>Le vrai coût de l'immobilier</h2>
+                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">L'hypothèque n'est que la pointe de l'iceberg. Entrez les données de la maison visée et comparez son coût réel avec la stratégie du locataire investisseur.</p>
+            </div>
+
+            <div class="trap-layout" style="grid-template-columns: 350px 1fr; gap: 2rem;">
+                
+                <div class="inputs-column">
+                    <div class="premium-input-card mb-4" style="border-color: #2DD4BF;">
+                        <label class="premium-label">Prix de la propriété</label>
+                        <div class="input-with-prefix">
+                            <span>$</span>
+                            <input type="number" id="re-price" value="500000" oninput="calculateRealEstate()">
+                        </div>
+                    </div>
+
+                    <div class="premium-input-card mb-4">
+                        <div class="premium-input-row">
+                            <label>Mise de fonds ($)</label>
+                            <input type="number" id="re-downpayment" value="25000" oninput="calculateRealEstate()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Taux hypothécaire (%)</label>
+                            <input type="number" id="re-rate" value="5.0" step="0.1" oninput="calculateRealEstate()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Amortissement (ans)</label>
+                            <input type="number" id="re-years" value="25" oninput="calculateRealEstate()">
+                        </div>
+                    </div>
+
+                    <div class="premium-input-card">
+                        <h4 class="card-subtitle">Alternative : Location</h4>
+                        <div class="premium-input-row">
+                            <label>Loyer mensuel équivalent</label>
+                            <input type="number" id="re-rent" value="2000" oninput="calculateRealEstate()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-column">
+                    <div class="dashboard-card" style="padding: 2rem;">
+                        
+                        <h3 style="margin-top: 0; color: var(--heading-color);">Le vrai décaissement du propriétaire</h3>
+                        <div class="alloc-bar-container mb-4 mt-3">
+                            <div class="alloc-bar" id="re-cost-bar">
+                                </div>
+                        </div>
+                        
+                        <div class="result-metric-grid mb-5" id="re-cost-details">
+                            </div>
+
+                        <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.05); margin: 2rem 0;">
+                        <h3 style="color: var(--heading-color); margin-bottom: 1rem;">Louer vs Acheter (Projection sur 25 ans)</h3>
+                        <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 2rem;">
+                            Que se passe-t-il si le locataire place la mise de fonds initiale ET la différence de coût mensuelle en bourse à un rendement moyen de 7 % ?
+                        </p>
+
+                        <div style="height: 300px; width: 100%;">
+                            <canvas id="chart-acheter-louer"></canvas>
+                        </div>
+                        
+                        <div id="re-verdict" class="mt-4" style="text-align: center; padding: 1.5rem; border-radius: 12px; background: rgba(255,255,255,0.02);">
+                            </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="background: #0B0F19; padding: 4rem 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="container">
+            <p style="color: var(--subtle-text-color);">&copy; 2026 Finoza. Tous droits réservés.</p>
+        </div>
+    </footer>
+
+    <script src="credit.js"></script>
+</body>
+</html>
