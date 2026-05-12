@@ -213,85 +213,94 @@ function drawInstLine(inst) {
 // ==========================================================
 // 2. MODULE : T-REX (IMPACT DES FRAIS DE GESTION)
 // ==========================================================
-let trexChart = null;
+let unifiedChart = null;
 
-function calculateTrex() {
-    const P = parseFloat(document.getElementById('trex-initial').value) || 0;
-    const C = parseFloat(document.getElementById('trex-annual').value) || 0;
-    const n = parseFloat(document.getElementById('trex-years').value) || 25;
-    const rGross = parseFloat(document.getElementById('trex-return').value) / 100 || 0;
-    
-    const feeLow = parseFloat(document.getElementById('trex-fee-low').value) / 100 || 0;
-    const feeHigh = parseFloat(document.getElementById('trex-fee-high').value) / 100 || 0;
+function calculateUnifiedStrategy() {
+    // Entrées
+    const P = parseFloat(document.getElementById('strat-initial').value) || 0;
+    const M = parseFloat(document.getElementById('strat-monthly').value) || 0;
+    const y = parseFloat(document.getElementById('strat-years').value) || 0;
+    const rMarket = parseFloat(document.getElementById('strat-return').value) / 100 || 0;
+    const feeLow = parseFloat(document.getElementById('strat-fee-low').value) / 100 || 0;
+    const feeHigh = parseFloat(document.getElementById('strat-fee-high').value) / 100 || 0;
 
-    const rNetLow = rGross - feeLow;
-    const rNetHigh = rGross - feeHigh;
+    const nMonths = y * 12;
+    const rNetLow = Math.pow(1 + (rMarket - feeLow), 1/12) - 1;
+    const rNetHigh = Math.pow(1 + (rMarket - feeHigh), 1/12) - 1;
 
-    const fv = (P, r, years, C) => {
-        if (r === 0) return P + (C * years);
-        return P * Math.pow(1 + r, years) + (C * ((Math.pow(1 + r, years) - 1) / r));
-    };
-
-    // Calcul des trajectoires pour le graphique
     const labels = [];
-    const dataLow = [];
-    const dataHigh = [];
+    const dataPassive = [];
+    const dataActive = [];
 
-    for (let i = 0; i <= n; i++) {
-        labels.push(`An ${i}`);
-        dataLow.push(fv(P, rNetLow, i, C));
-        dataHigh.push(fv(P, rNetHigh, i, C));
+    let currentPassive = P;
+    let currentActive = P;
+
+    // Calcul de la trajectoire mois par mois pour précision maximale
+    for (let i = 0; i <= nMonths; i++) {
+        if (i % 12 === 0) {
+            labels.push(`An ${i/12}`);
+            dataPassive.push(currentPassive);
+            dataActive.push(currentActive);
+        }
+        currentPassive = (currentPassive * (1 + rNetLow)) + M;
+        currentActive = (currentActive * (1 + rNetHigh)) + M;
     }
 
-    const finalLow = dataLow[n];
-    const finalHigh = dataHigh[n];
-    const loss = finalLow - finalHigh;
-    const pctLost = (loss / finalLow) * 100;
+    const finalPassive = dataPassive[dataPassive.length - 1];
+    const finalActive = dataActive[dataActive.length - 1];
+    const wealthGap = finalPassive - finalActive;
 
-    // Mise à jour des 3 cases de résultats
-    document.getElementById('trex-results-grid').innerHTML = `
-        <div style="background: rgba(45, 212, 191, 0.05); padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(45, 212, 191, 0.2); text-align: center;">
-            <span class="label" style="color: #2DD4BF; font-size: 0.75rem;">AVEC FRAIS MINIMES</span>
-            <span class="value" style="color: #2DD4BF; font-size: 1.4rem; display: block; margin-top: 5px;">${formatCurrency(finalLow)}</span>
+    // 1. Mise à jour des chiffres du Dashboard
+    document.getElementById('strat-summary-grid').innerHTML = `
+        <div style="background: rgba(45, 212, 191, 0.05); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(45, 212, 191, 0.2);">
+            <span class="label" style="color: #2DD4BF;">APPROCHE FINOZA (Passif)</span>
+            <span class="value" style="color: #2DD4BF; font-size: 2rem; display: block; margin-top: 5px;">${formatCurrency(finalPassive)}</span>
+            <span class="subtext">Frais de ${(feeLow*100).toFixed(2)}%</span>
         </div>
-        <div style="background: rgba(255, 255, 255, 0.03); padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(255, 255, 255, 0.1); text-align: center;">
-            <span class="label" style="font-size: 0.75rem;">AVEC GESTION ACTIVE</span>
-            <span class="value" style="font-size: 1.4rem; display: block; margin-top: 5px; color: var(--heading-color);">${formatCurrency(finalHigh)}</span>
-        </div>
-        <div style="background: rgba(239, 68, 68, 0.05); padding: 1.2rem; border-radius: 12px; border: 1px solid rgba(239, 68, 68, 0.2); text-align: center;">
-            <span class="label" style="color: #EF4444; font-size: 0.75rem;">PERTE LIÉE AUX FRAIS</span>
-            <span class="value" style="color: #EF4444; font-size: 1.4rem; display: block; margin-top: 5px;">${formatCurrency(loss)}</span>
-            <span style="color: #EF4444; font-size: 0.8rem; font-weight: bold;">(-${pctLost.toFixed(0)}%)</span>
+        <div style="background: rgba(239, 68, 68, 0.05); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(239, 68, 68, 0.2);">
+            <span class="label" style="color: #EF4444;">APPROCHE CLASSIQUE (Actif)</span>
+            <span class="value" style="color: #EF4444; font-size: 2rem; display: block; margin-top: 5px;">${formatCurrency(finalActive)}</span>
+            <span class="subtext">Frais de ${(feeHigh*100).toFixed(1)}%</span>
         </div>
     `;
 
-    // Mise à jour du graphique linéaire
-    const ctx = document.getElementById('chart-trex').getContext('2d');
-    if (trexChart) trexChart.destroy();
-    
-    trexChart = new Chart(ctx, {
+    // 2. Mise à jour du verdict
+    document.getElementById('strat-verdict').innerHTML = `
+        <p style="margin:0; font-size: 1.1rem; color: var(--heading-color);">
+            L'optimisation des frais vous permet de capturer <span style="color: #2DD4BF; font-weight: 800;">${formatCurrency(wealthGap)}</span> de plus pour votre retraite.
+        </p>
+        <p class="text-muted" style="font-size: 0.85rem; margin-top: 10px;">
+            En investissant ${formatCurrency(M)} chaque mois (DCA) dans un portefeuille indiciel, vous neutralisez l'erreur humaine et la gourmandise des institutions.
+        </p>
+    `;
+
+    // 3. Graphique de Divergence
+    const ctx = document.getElementById('chart-unified-strat').getContext('2d');
+    if (unifiedChart) unifiedChart.destroy();
+
+    unifiedChart = new Chart(ctx, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [
                 {
-                    label: 'Frais minimes (FNB)',
-                    data: dataLow,
+                    label: 'Portefeuille Finoza (DCA + Bas frais)',
+                    data: dataPassive,
                     borderColor: '#2DD4BF',
                     backgroundColor: 'rgba(45, 212, 191, 0.1)',
-                    borderWidth: 3,
                     fill: true,
                     tension: 0.3,
+                    borderWidth: 3,
                     pointRadius: 0
                 },
                 {
-                    label: 'Frais élevés (Gestion active)',
-                    data: dataHigh,
+                    label: 'Gestion Active (Frais élevés)',
+                    data: dataActive,
                     borderColor: '#EF4444',
                     borderDash: [5, 5],
-                    borderWidth: 2,
                     fill: false,
                     tension: 0.3,
+                    borderWidth: 2,
                     pointRadius: 0
                 }
             ]
@@ -300,118 +309,19 @@ function calculateTrex() {
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
-                legend: {
-                    position: 'top',
-                    labels: { color: '#9CA3AF', font: { family: 'Inter' } }
-                },
+                legend: { position: 'top', labels: { color: '#9CA3AF' } },
                 datalabels: { display: false }
             },
             scales: {
-                x: { 
-                    ticks: { color: '#6B7280', maxRotation: 0 },
-                    grid: { color: 'rgba(255,255,255,0.05)' }
-                },
-                y: {
-                    ticks: { 
-                        color: '#6B7280',
-                        callback: v => formatCurrency(v)
-                    },
-                    grid: { color: 'rgba(255,255,255,0.05)' }
-                }
+                x: { ticks: { color: '#6B7280' }, grid: { color: 'rgba(255,255,255,0.03)' } },
+                y: { ticks: { color: '#6B7280', callback: v => formatCurrency(v) }, grid: { color: 'rgba(255,255,255,0.03)' } }
             }
         }
     });
 }
 
-
 // ==========================================================
-// 3. MODULE : SIMULATEUR FNB & DCA
-// ==========================================================
-let fnbAllocChart = null;
-let fnbGrowthChart = null;
-
-// Les données génériques sans ticker spécifique
-const fnbData = {
-    BALANCED: { nom: "Portefeuille Équilibré", frais: 0.20, r: 5.0, eq: 60, fi: 40 },
-    GROWTH: { nom: "Portefeuille Croissance", frais: 0.20, r: 7.0, eq: 80, fi: 20 },
-    EQUITY: { nom: "Portefeuille 100% Actions", frais: 0.20, r: 9.0, eq: 100, fi: 0 }
-};
-
-function calculateFNB() {
-    const radios = document.getElementsByName('fnb-profil');
-    let selProfile = 'GROWTH'; // Valeur par défaut
-    
-    // Met à jour les couleurs des boutons
-    radios.forEach(r => { 
-        const btn = document.getElementById('btn-' + r.value.toLowerCase());
-        if (r.checked) { 
-            selProfile = r.value; 
-            if (btn) { btn.style.borderColor = '#2DD4BF'; btn.style.color = '#2DD4BF'; }
-        } else {
-            if (btn) { btn.style.borderColor = 'var(--border-color)'; btn.style.color = 'var(--text-color)'; }
-        }
-    });
-
-    const fnb = fnbData[selProfile];
-    if (!fnb) return; // Sécurité anti-crash
-
-    const P = parseFloat(document.getElementById('fnb-initial').value) || 0;
-    const C = parseFloat(document.getElementById('fnb-monthly').value) || 0;
-    const y = parseFloat(document.getElementById('fnb-years').value) || 25;
-
-    const rNet = (fnb.r - fnb.frais) / 100;
-    const n = y * 12;
-    const rateM = Math.pow(1 + rNet, 1/12) - 1;
-    
-    let fv = P * Math.pow(1 + rateM, n);
-    if (rateM > 0) fv += C * ((Math.pow(1 + rateM, n) - 1) / rateM);
-    else fv += C * n;
-
-    document.getElementById('fnb-results').innerHTML = `
-        <h3 style="margin:0 0 5px 0; color: var(--heading-color);">${fnb.nom}</h3>
-        <p class="text-muted" style="margin:0 0 1rem 0; font-size: 0.85rem;">Frais: ${fnb.frais}% | Rendement espéré: ${fnb.r}%</p>
-        <span class="label">Capital projeté (An ${y})</span>
-        <span class="value" style="display:block; font-size: 2.2rem; color: #2DD4BF;">${formatCurrency(fv)}</span>
-    `;
-
-    // Graphique Répartition (Doughnut)
-    const ctxA = document.getElementById('chart-fnb-alloc').getContext('2d');
-    if (fnbAllocChart) fnbAllocChart.destroy();
-    fnbAllocChart = new Chart(ctxA, {
-        type: 'doughnut', 
-        data: { 
-            labels: ['Actions', 'Obligations'], 
-            datasets: [{ data: [fnb.eq, fnb.fi], backgroundColor: ['#2DD4BF', '#4F46E5'], borderWidth: 0 }] 
-        },
-        options: { cutout: '75%', plugins: { legend: {display:false}, datalabels: {display:false} } }
-    });
-
-    // Graphique Croissance (Line)
-    const ctxG = document.getElementById('chart-fnb-growth').getContext('2d');
-    if (fnbGrowthChart) fnbGrowthChart.destroy();
-    
-    const traj = []; let cur = P;
-    for(let i=0; i<=y; i++) {
-        traj.push(cur);
-        cur = (cur * Math.pow(1 + rateM, 12)) + (C * ((Math.pow(1 + rateM, 12) - 1) / rateM));
-    }
-    
-    fnbGrowthChart = new Chart(ctxG, {
-        type: 'line', 
-        data: { 
-            labels: Array.from({length: y+1}, (_, i)=>i), 
-            datasets: [{ data: traj, borderColor: '#2DD4BF', backgroundColor: 'rgba(45,212,191,0.1)', fill:true, tension: 0.3, pointRadius: 0 }] 
-        },
-        options: { 
-            maintainAspectRatio: false, 
-            plugins: { legend: {display:false}, datalabels: {display:false} }, 
-            scales: { x:{display:false}, y:{display:false} } 
-        }
-    });
-}
-
-// ==========================================================
-// 4. MODULE : REER VS CELI (LE DUEL)
+// 3. MODULE : REER VS CELI (LE DUEL)
 // ==========================================================
 let rcChart = null;
 
@@ -473,7 +383,6 @@ function calculateReerCeli() {
 // Initialisation globale
 document.addEventListener('DOMContentLoaded', () => {
     initPredictions();
-    calculateTrex();
-    calculateFNB();
+    calculateUnifiedStrategy()
     calculateReerCeli();
 });
