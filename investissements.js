@@ -213,8 +213,6 @@ function drawInstLine(inst) {
 // ==========================================================
 // 2. MODULE : T-REX (IMPACT DES FRAIS DE GESTION)
 // ==========================================================
-let unifiedChart = null;
-
 function calculateUnifiedStrategy() {
     // Entrées
     const P = parseFloat(document.getElementById('strat-initial').value) || 0;
@@ -225,99 +223,84 @@ function calculateUnifiedStrategy() {
     const feeHigh = parseFloat(document.getElementById('strat-fee-high').value) / 100 || 0;
 
     const nMonths = y * 12;
+    // Taux mensuels effectifs
     const rNetLow = Math.pow(1 + (rMarket - feeLow), 1/12) - 1;
     const rNetHigh = Math.pow(1 + (rMarket - feeHigh), 1/12) - 1;
 
-    const labels = [];
-    const dataPassive = [];
-    const dataActive = [];
+    // Formule de valeur future avec versements mensuels (Début de période)
+    const calcFV = (rate) => {
+        if (rate === 0) return P + (M * nMonths);
+        return P * Math.pow(1 + rate, nMonths) + M * ((Math.pow(1 + rate, nMonths) - 1) / rate);
+    };
 
-    let currentPassive = P;
-    let currentActive = P;
-
-    // Calcul de la trajectoire mois par mois pour précision maximale
-    for (let i = 0; i <= nMonths; i++) {
-        if (i % 12 === 0) {
-            labels.push(`An ${i/12}`);
-            dataPassive.push(currentPassive);
-            dataActive.push(currentActive);
-        }
-        currentPassive = (currentPassive * (1 + rNetLow)) + M;
-        currentActive = (currentActive * (1 + rNetHigh)) + M;
-    }
-
-    const finalPassive = dataPassive[dataPassive.length - 1];
-    const finalActive = dataActive[dataActive.length - 1];
+    const finalPassive = calcFV(rNetLow);
+    const finalActive = calcFV(rNetHigh);
     const wealthGap = finalPassive - finalActive;
+    
+    // Décomposition des montants
+    const totalInvested = P + (M * nMonths);
+    const growthPassive = finalPassive - totalInvested;
+    const growthActive = finalActive - totalInvested;
+    const pctLost = finalPassive > 0 ? (wealthGap / finalPassive) * 100 : 0;
 
-    // 1. Mise à jour des chiffres du Dashboard
-    document.getElementById('strat-summary-grid').innerHTML = `
-        <div style="background: rgba(45, 212, 191, 0.05); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(45, 212, 191, 0.2);">
-            <span class="label" style="color: #2DD4BF;">APPROCHE FINOZA (Passif)</span>
-            <span class="value" style="color: #2DD4BF; font-size: 2rem; display: block; margin-top: 5px;">${formatCurrency(finalPassive)}</span>
-            <span class="subtext">Frais de ${(feeLow*100).toFixed(2)}%</span>
+    // Génération du Dashboard "Choc"
+    document.getElementById('strat-dashboard-content').innerHTML = `
+        
+        <div style="background: rgba(45, 212, 191, 0.05); border: 1px solid rgba(45, 212, 191, 0.3); border-radius: 16px; padding: 2rem; text-align: center; margin-bottom: 2.5rem; box-shadow: 0 10px 25px rgba(45,212,191,0.05);">
+            <span style="font-size: 0.95rem; color: var(--subtle-text-color); text-transform: uppercase; letter-spacing: 1px; font-weight: 600;">Richesse confisquée par les frais</span>
+            <span style="display: block; font-size: 3rem; color: #2DD4BF; font-weight: 800; margin: 10px 0; font-family: var(--font-heading);">${formatCurrency(wealthGap)}</span>
+            <span style="font-size: 0.95rem; color: #EF4444; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; background: rgba(239, 68, 68, 0.1); padding: 5px 12px; border-radius: 50px;">
+                🚨 Une perte de ${pctLost.toFixed(1)}% de votre patrimoine potentiel
+            </span>
         </div>
-        <div style="background: rgba(239, 68, 68, 0.05); padding: 1.5rem; border-radius: 16px; border: 1px solid rgba(239, 68, 68, 0.2);">
-            <span class="label" style="color: #EF4444;">APPROCHE CLASSIQUE (Actif)</span>
-            <span class="value" style="color: #EF4444; font-size: 2rem; display: block; margin-top: 5px;">${formatCurrency(finalActive)}</span>
-            <span class="subtext">Frais de ${(feeHigh*100).toFixed(1)}%</span>
+
+        <h3 style="margin: 0 0 1.5rem 0; font-size: 1.1rem; color: var(--heading-color); text-align: center;">Bilan détaillé après ${y} ans</h3>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+            
+            <div style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 15px;">
+                    <span style="color: #2DD4BF; font-weight: 700; font-size: 1.1rem;">FNB Passif</span>
+                    <span style="font-size: 0.8rem; color: var(--subtle-text-color);">Frais: ${(feeLow*100).toFixed(2)}%</span>
+                </div>
+                
+                <div style="margin-bottom: 10px; display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--subtle-text-color);">Capital investi :</span>
+                    <span style="color: var(--text-color);">${formatCurrency(totalInvested)}</span>
+                </div>
+                <div style="margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--subtle-text-color);">Intérêts générés :</span>
+                    <span style="color: #2DD4BF;">+ ${formatCurrency(growthPassive)}</span>
+                </div>
+                
+                <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; display: flex; justify-content: space-between; font-weight: bold;">
+                    <span style="color: var(--heading-color);">Valeur Finale :</span>
+                    <span style="color: var(--heading-color); font-size: 1.1rem;">${formatCurrency(finalPassive)}</span>
+                </div>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.02); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+                <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px; margin-bottom: 15px;">
+                    <span style="color: #EF4444; font-weight: 700; font-size: 1.1rem;">Fonds Actif</span>
+                    <span style="font-size: 0.8rem; color: var(--subtle-text-color);">Frais: ${(feeHigh*100).toFixed(2)}%</span>
+                </div>
+                
+                <div style="margin-bottom: 10px; display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--subtle-text-color);">Capital investi :</span>
+                    <span style="color: var(--text-color);">${formatCurrency(totalInvested)}</span>
+                </div>
+                <div style="margin-bottom: 15px; display: flex; justify-content: space-between; font-size: 0.9rem;">
+                    <span style="color: var(--subtle-text-color);">Intérêts générés :</span>
+                    <span style="color: #EF4444;">+ ${formatCurrency(growthActive)}</span>
+                </div>
+                
+                <div style="border-top: 1px dashed rgba(255,255,255,0.1); padding-top: 10px; display: flex; justify-content: space-between; font-weight: bold;">
+                    <span style="color: var(--heading-color);">Valeur Finale :</span>
+                    <span style="color: var(--heading-color); font-size: 1.1rem;">${formatCurrency(finalActive)}</span>
+                </div>
+            </div>
         </div>
     `;
-
-    // 2. Mise à jour du verdict
-    document.getElementById('strat-verdict').innerHTML = `
-        <p style="margin:0; font-size: 1.1rem; color: var(--heading-color);">
-            L'optimisation des frais vous permet de capturer <span style="color: #2DD4BF; font-weight: 800;">${formatCurrency(wealthGap)}</span> de plus pour votre retraite.
-        </p>
-        <p class="text-muted" style="font-size: 0.85rem; margin-top: 10px;">
-            En investissant ${formatCurrency(M)} chaque mois (DCA) dans un portefeuille indiciel, vous neutralisez l'erreur humaine et la gourmandise des institutions.
-        </p>
-    `;
-
-    // 3. Graphique de Divergence
-    const ctx = document.getElementById('chart-unified-strat').getContext('2d');
-    if (unifiedChart) unifiedChart.destroy();
-
-    unifiedChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: labels,
-            datasets: [
-                {
-                    label: 'Portefeuille Finoza (DCA + Bas frais)',
-                    data: dataPassive,
-                    borderColor: '#2DD4BF',
-                    backgroundColor: 'rgba(45, 212, 191, 0.1)',
-                    fill: true,
-                    tension: 0.3,
-                    borderWidth: 3,
-                    pointRadius: 0
-                },
-                {
-                    label: 'Gestion Active (Frais élevés)',
-                    data: dataActive,
-                    borderColor: '#EF4444',
-                    borderDash: [5, 5],
-                    fill: false,
-                    tension: 0.3,
-                    borderWidth: 2,
-                    pointRadius: 0
-                }
-            ]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'top', labels: { color: '#9CA3AF' } },
-                datalabels: { display: false }
-            },
-            scales: {
-                x: { ticks: { color: '#6B7280' }, grid: { color: 'rgba(255,255,255,0.03)' } },
-                y: { ticks: { color: '#6B7280', callback: v => formatCurrency(v) }, grid: { color: 'rgba(255,255,255,0.03)' } }
-            }
-        }
-    });
 }
 
 // ==========================================================
