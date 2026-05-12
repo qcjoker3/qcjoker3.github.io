@@ -122,115 +122,67 @@
         </div>
     </section>
 
-    <section class="section-padding">
-        <div class="container diagnostic-container-wide">
-            <div class="section-header text-center mb-5">
-                <h2>L'illusion de la gestion active</h2>
-                <p class="text-muted">Si personne ne peut prédire le marché, pourquoi payer un "expert" 2.5 % par an pour essayer de le battre ? Découvrez l'effet T-Rex : comment les frais de gestion dévorent votre richesse à long terme.</p>
-            </div>
-
-            <div class="trap-layout" style="grid-template-columns: 350px 1fr; gap: 2rem;">
-                <div class="inputs-column">
-                    <div class="premium-input-card">
-                        <div class="premium-input-row">
-                            <label>Investissement initial ($)</label>
-                            <input type="number" id="trex-initial" value="50000" oninput="calculateTrex()">
-                        </div>
-                        <div class="premium-input-row">
-                            <label>Cotisation annuelle ($)</label>
-                            <input type="number" id="trex-annual" value="10000" oninput="calculateTrex()">
-                        </div>
-                        <div class="premium-input-row">
-                            <label>Horizon (Années)</label>
-                            <input type="number" id="trex-years" value="25" oninput="calculateTrex()">
-                        </div>
-                        <div class="premium-input-row">
-                            <label>Rendement du marché (%)</label>
-                            <input type="number" id="trex-return" value="7.5" step="0.1" oninput="calculateTrex()">
-                        </div>
-                        <div class="premium-input-row">
-                            <label style="color: #2DD4BF;">Frais FNB minimes (%)</label>
-                            <input type="number" id="trex-fee-low" value="0.2" step="0.01" oninput="calculateTrex()" style="color: #2DD4BF;">
-                        </div>
-                        <div class="premium-input-row" style="border-bottom: none;">
-                            <label style="color: #EF4444;">Frais Gestion Active (%)</label>
-                            <input type="number" id="trex-fee-high" value="2.2" step="0.1" oninput="calculateTrex()" style="color: #EF4444;">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="dashboard-column">
-                    <div class="dashboard-card" style="padding: 2rem;">
-                        <div id="trex-results-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
-                            </div>
-
-                        <div style="height: 300px; width: 100%;">
-                            <canvas id="chart-trex"></canvas>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <section class="section-padding bg-light">
         <div class="container diagnostic-container-wide">
             <div class="section-header text-center mb-5">
-                <h2>L'antidote boursier : Le DCA et les FNB</h2>
-                <p class="text-muted">Achetez le marché entier avec un Fonds Négocié en Bourse (FNB) à très peu de frais. Investissez automatiquement chaque mois (Dollar-Cost Averaging). La volatilité n'est plus une ennemie, c'est l'opportunité d'acheter plus de parts quand c'est bas.</p>
+                <h2>Type d'investissement</h2>
+                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">Ne séparez pas le rendement de la méthode. Comparez l'impact cumulé des frais de gestion et de la discipline d'un investisseur assidu.</p>
             </div>
 
-            <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+            <div class="trap-layout" style="grid-template-columns: 380px 1fr; gap: 2.5rem;">
+                
                 <div class="inputs-column">
                     <div class="premium-input-card">
-                        <div class="mb-4">
-                            <label class="premium-label" style="margin-bottom: 10px;">Choisissez votre profil</label>
-                            <div class="d-flex" style="gap: 10px;">
-                                <label style="flex:1; cursor:pointer;">
-                                    <input type="radio" name="fnb-profil" value="BALANCED" onchange="calculateFNB()" style="display:none;" id="rad-balanced">
-                                    <div class="diag-btn text-center" style="width:100%;" id="btn-balanced">Équilibré (60/40)</div>
-                                </label>
-                                <label style="flex:1; cursor:pointer;">
-                                    <input type="radio" name="fnb-profil" value="GROWTH" onchange="calculateFNB()" checked style="display:none;" id="rad-growth">
-                                    <div class="diag-btn text-center active" style="width:100%; border-color: #2DD4BF; color: #2DD4BF;" id="btn-growth">Croissance (80/20)</div>
-                                </label>
-                                <label style="flex:1; cursor:pointer;">
-                                    <input type="radio" name="fnb-profil" value="EQUITY" onchange="calculateFNB()" style="display:none;" id="rad-equity">
-                                    <div class="diag-btn text-center" style="width:100%;" id="btn-equity">100% Actions</div>
-                                </label>
-                            </div>
-                        </div>
-
+                        <h4 class="card-subtitle">Paramètres de l'investisseur</h4>
                         <div class="premium-input-row">
-                            <label>Dépôt initial ($)</label>
-                            <input type="number" id="fnb-initial" value="10000" oninput="calculateFNB()">
+                            <label>Investissement initial ($)</label>
+                            <input type="number" id="strat-initial" value="25000" oninput="calculateUnifiedStrategy()">
                         </div>
                         <div class="premium-input-row">
-                            <label>Cotisation DCA (Mensuelle)</label>
+                            <label>Cotisation (mensuelle)</label>
                             <div style="display: flex; align-items: center; gap: 5px;">
-                                <input type="number" id="fnb-monthly" value="500" oninput="calculateFNB()" style="width: 90px;">
+                                <span style="color: #10B981; font-weight: bold;">$</span>
+                                <input type="number" id="strat-monthly" value="500" oninput="calculateUnifiedStrategy()" style="width: 100px;">
                             </div>
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Horizon (Années)</label>
+                            <input type="number" id="strat-years" value="25" oninput="calculateUnifiedStrategy()">
                         </div>
                         <div class="premium-input-row" style="border-bottom: none;">
-                            <label>Horizon (Années)</label>
-                            <input type="number" id="fnb-years" value="25" oninput="calculateFNB()">
+                            <label>Rendement espéré (%)</label>
+                            <input type="number" id="strat-return" value="7.0" step="0.1" oninput="calculateUnifiedStrategy()">
+                        </div>
+                    </div>
+
+                    <div class="premium-input-card mt-4" style="background: rgba(0,0,0,0.2);">
+                        <h4 class="card-subtitle">Le Duel des Frais</h4>
+                        <div class="premium-input-row">
+                            <label style="color: #2DD4BF;">Frais FNB (Passif)</label>
+                            <input type="number" id="strat-fee-low" value="0.15" step="0.01" oninput="calculateUnifiedStrategy()" style="color: #2DD4BF;">
+                        </div>
+                        <div class="premium-input-row" style="border-bottom: none;">
+                            <label style="color: #EF4444;">Frais Fonds (Actif)</label>
+                            <input type="number" id="strat-fee-high" value="2.10" step="0.1" oninput="calculateUnifiedStrategy()" style="color: #EF4444;">
                         </div>
                     </div>
                 </div>
 
                 <div class="dashboard-column">
-                    <div class="dashboard-card" style="padding: 2rem;">
-                        <div id="fnb-results"></div>
-                        <div class="d-flex align-center mt-4" style="gap: 1rem;">
-                            <div style="height: 120px; width: 120px; flex-shrink: 0;">
-                                <canvas id="chart-fnb-alloc"></canvas>
+                    <div class="dashboard-card" style="padding: 2.5rem;">
+                        
+                        <div id="strat-summary-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
                             </div>
-                            <div style="flex-grow: 1; height: 150px;">
-                                <canvas id="chart-fnb-growth"></canvas>
-                            </div>
+
+                        <div style="height: 350px; width: 100%; margin-bottom: 1.5rem;">
+                            <canvas id="chart-unified-strat"></canvas>
                         </div>
+
+                        <div id="strat-verdict" style="background: rgba(255,255,255,0.03); padding: 1.5rem; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); text-align: center;">
+                            </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </section>
