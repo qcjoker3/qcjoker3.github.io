@@ -11,9 +11,7 @@
 
     <header class="main-nav">
         <div class="container d-flex justify-between align-center">
-            <a href="index.html" class="logo">
-                <strong><span style="color: #2DD4BF;">Finoza.</span></strong>
-            </a>
+            <a href="index.html" class="logo"><strong><span style="color: #2DD4BF;">Finoza.</span></strong></a>
             <button class="hamburger-btn d-block-mobile" id="menu-toggle">☰</button>
             <nav id="nav-links">
                 <a href="budget.html">Budget</a>
@@ -27,9 +25,9 @@
     <section class="hero-modern" style="padding-bottom: 3rem;">
         <div class="container hero-centered">
             <div class="hero-text text-center">
-                <span class="badge badge-accent mb-3">Phase 3 : Décaissement</span>
-                <h1 class="gradient-text" style="font-size: clamp(2.5rem, 5vw, 4rem);">L'art de la liberté temporelle.</h1>
-                <p>La retraite n'est pas un âge, c'est un montant. Calculez votre indépendance financière, mesurez le coût réel des régimes publics, et préparez un legs qui ne sera pas confisqué par l'impôt.</p>
+                <span class="badge badge-accent mb-3">La Phase de Décaissement</span>
+                <h1 class="gradient-text" style="font-size: clamp(2.5rem, 5vw, 4rem);">L'ingénierie de votre liberté.</h1>
+                <p>Accumuler de l'argent demande de la discipline. Le décaisser demande de la stratégie. Découvrez comment optimiser votre « rendement de vie », neutraliser la bombe fiscale de vos 71 ans, et contourner les dogmes traditionnels de la retraite.</p>
             </div>
         </div>
     </section>
@@ -37,39 +35,25 @@
     <section class="section-padding">
         <div class="container diagnostic-container-wide">
             <div class="section-header text-center mb-5">
-                <h2>Le Chiffre FIRE (Indépendance)</h2>
-                <p class="text-muted">La règle du 4% (Trinity Study) stipule que si vous possédez 25x vos dépenses annuelles, votre capital peut survivre à l'inflation sans jamais s'épuiser.</p>
+                <span class="badge badge-accent">Acte I : La Cible</span>
+                <h2>Votre Chiffre de Liberté</h2>
+                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">L'indépendance financière n'est pas un âge, c'est un montant de capital capable de financer votre vie sans que vous ayez à travailler.</p>
             </div>
 
             <div class="trap-layout" style="grid-template-columns: 380px 1fr; gap: 2.5rem;">
                 <div class="inputs-column">
                     <div class="premium-input-card">
-                        <h4 class="card-subtitle">Vos besoins vitaux</h4>
-                        <div class="premium-input-row">
-                            <label>Dépenses mensuelles ($)</label>
-                            <input type="number" id="fire-expense" value="4500" oninput="calculateFIRE()">
-                        </div>
-                        <div class="premium-input-row">
-                            <label>Taux de retrait (SWR) (%)</label>
-                            <input type="number" id="fire-swr" value="4.0" step="0.1" oninput="calculateFIRE()">
-                        </div>
+                        <h4 class="card-subtitle">Dépenses mensuelles visées</h4>
                         <div class="premium-input-row" style="border-bottom: none;">
-                            <label>Épargne actuelle ($)</label>
-                            <input type="number" id="fire-current" value="150000" oninput="calculateFIRE()">
+                            <input type="number" id="fire-expense" value="5000" oninput="calculateFIRE()">
                         </div>
                     </div>
                 </div>
-
                 <div class="dashboard-column">
-                    <div class="dashboard-card" style="padding: 2.5rem; text-align: center;">
-                        <span class="label" style="color: var(--subtle-text-color); text-transform: uppercase; letter-spacing: 1px;">Le Prix de votre Liberté</span>
-                        <h3 id="res-fire-target" style="font-size: 3.5rem; color: #2DD4BF; margin: 10px 0; font-family: var(--font-heading);">$0</h3>
-                        
-                        <div style="width: 100%; height: 12px; background: rgba(255,255,255,0.05); border-radius: 50px; margin: 25px 0; overflow: hidden; position: relative;">
-                            <div id="res-fire-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10B981, #2DD4BF); transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);"></div>
-                        </div>
-                        
-                        <p id="res-fire-verdict" style="font-size: 1.1rem; color: var(--heading-color); font-weight: 600;"></p>
+                    <div class="dashboard-card" style="text-align: center; padding: 2.5rem;">
+                        <span class="label" style="text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Capital requis (Règle du 4%)</span>
+                        <h3 id="res-fire-target" class="hero-alert-value" style="color: #2DD4BF; font-size: 3.5rem;">$0</h3>
+                        <p class="text-muted">À ce niveau, vos placements génèrent votre revenu annuel à vie.</p>
                     </div>
                 </div>
             </div>
@@ -79,66 +63,42 @@
     <section class="section-padding bg-light">
         <div class="container diagnostic-container-wide">
             <div class="section-header text-center mb-5">
+                <span class="badge badge-accent">Acte II : Le Backtest Historique</span>
                 <h2>Le Coût d'Opportunité de la RRQ</h2>
-                <p class="text-muted">Un calcul en <strong>dollars constants</strong>. Que se passerait-il si vous investissiez uniquement <u>votre part</u> de cotisation RRQ (env. 6.4% du salaire admissible) dans votre propre portefeuille ?</p>
+                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">Plutôt que d'utiliser des moyennes théoriques, regardons la réalité. Pour un travailleur au salaire maximum ayant cotisé de 1986 à 2025 (40 ans), nous avons calculé l'évolution de ses primes RRQ si elles avaient été investies dans l'indice canadien S&P/TSX chaque année.</p>
             </div>
 
-            <div class="trap-layout" style="grid-template-columns: 380px 1fr; gap: 2.5rem;">
-                <div class="inputs-column">
-                    <div class="premium-input-card">
-                        <h4 class="card-subtitle">Profil de carrière</h4>
-                        <div class="premium-input-row">
-                            <label>Salaire annuel ($)</label>
-                            <input type="number" id="rrq-salary" value="75000" oninput="calculateRRQ()">
-                        </div>
-                        <div class="premium-input-row">
-                            <label>Rendement Nominal (%)</label>
-                            <input type="number" id="rrq-return" value="7.0" step="0.1" oninput="calculateRRQ()">
-                        </div>
-                        <div class="premium-input-row" style="border-bottom: none;">
-                            <label>Années de cotisation</label>
-                            <input type="number" id="rrq-years" value="35" oninput="calculateRRQ()">
-                        </div>
-                        <p style="font-size: 0.75rem; color: var(--subtle-text-color); margin-top: 15px;">*Le calcul utilise le MGA projeté de 2026 (72 900$) et soustrait une inflation cible de 2.1% pour vous donner un résultat en pouvoir d'achat actuel.</p>
-                    </div>
-                </div>
-
+            <div class="trap-layout" style="grid-template-columns: 1fr; gap: 2.5rem;">
                 <div class="dashboard-column">
                     <div class="strat-grid">
-                        <div class="strat-card">
-                            <div class="strat-card-header">
-                                <span style="color: #4F46E5; font-weight: 700;">Rente RRQ (Bonifiée)</span>
-                            </div>
-                            <div class="strat-card-row">
-                                <span>Rente garantie :</span>
-                                <span id="res-rrq-rent" class="font-bold" style="color: var(--heading-color);">$0 / an</span>
-                            </div>
-                            <div class="strat-card-footer">
-                                <span>Légué au décès :</span>
-                                <span class="text-red">2 500 $ (Max)</span>
+                        <div class="strat-card" style="padding: 2rem;">
+                            <span class="label" style="text-transform: uppercase; font-size: 0.85rem;">La Réalité : Rente RRQ Max (2026)</span>
+                            <span class="value" style="display:block; font-size: 2.5rem; color: #4F46E5; font-weight: bold; margin: 10px 0;">18 091 $ / an</span>
+                            <p class="text-muted">C'est la rente maximale garantie à 65 ans aujourd'hui.</p>
+                            <div style="border-top: 1px dashed rgba(255,255,255,0.1); margin-top: 15px; padding-top: 15px;">
+                                <p class="text-red" style="font-size: 0.95rem; font-weight: bold; margin: 0;">🚫 Capital léguable au décès : 2 500 $ (Max)</p>
                             </div>
                         </div>
 
-                        <div class="strat-card" style="border-color: rgba(45, 212, 191, 0.3);">
-                            <div class="strat-card-header">
-                                <span style="color: #2DD4BF; font-weight: 700;">Portefeuille Privé</span>
-                            </div>
-                            <div class="strat-card-row">
-                                <span>Revenu autonome (4%) :</span>
-                                <span id="res-priv-income" class="font-bold" style="color: #2DD4BF;">$0 / an</span>
-                            </div>
-                            <div class="strat-card-footer">
-                                <span>Légué au décès :</span>
-                                <span id="res-priv-legacy" style="color: #2DD4BF; font-weight: bold;">$0</span>
+                        <div class="strat-card" style="border-color: #2DD4BF; padding: 2rem;">
+                            <span class="label" style="text-transform: uppercase; font-size: 0.85rem;">La Simulation : Vos primes investies</span>
+                            <span id="res-hist-cap" class="value" style="display:block; font-size: 2.5rem; color: #2DD4BF; font-weight: bold; margin: 10px 0;">$0</span>
+                            <p class="text-muted">La valeur qu'aurait atteint votre compte d'investissement aujourd'hui.</p>
+                            <div style="border-top: 1px dashed rgba(255,255,255,0.1); margin-top: 15px; padding-top: 15px;">
+                                <p style="color: #2DD4BF; font-size: 0.95rem; font-weight: bold; margin: 0;">💎 Revenu perpétuel à 4% : <span id="res-hist-income">$0</span> / an</p>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="hero-alert mt-4" style="text-align: left; padding: 1.5rem;">
-                        <span style="display: block; font-size: 0.9rem; color: var(--subtle-text-color); text-transform: uppercase; font-weight: 600; margin-bottom: 5px;">Le Verdict de la Richesse</span>
-                        <p id="res-rrq-verdict" style="margin: 0; color: var(--text-color); font-size: 0.95rem;"></p>
+
+                    <div class="hero-alert mt-4" style="text-align: left; padding: 2rem; border-left: 4px solid #A855F7;">
+                        <h4 style="font-size: 1.2rem; color: var(--heading-color); margin-bottom: 10px;">Le Bilan Actuariel</h4>
+                        <p id="res-hist-verdict" style="margin: 0; font-size: 1rem; color: var(--text-color); line-height: 1.6;"></p>
                     </div>
                 </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <p style="font-size: 0.75rem; color: var(--subtle-text-color); max-width: 800px; margin: 0 auto;">*Données utilisées : MGA historique, taux de cotisations réels de l'employé (passant de 1.8% à 6.4%), exemption de base, et rendement annuel total du S&P/TSX pour chaque année de 1986 à 2025.</p>
             </div>
         </div>
     </section>
@@ -146,19 +106,56 @@
     <section class="section-padding">
         <div class="container diagnostic-container-wide">
             <div class="section-header text-center mb-5">
-                <h2>Le Patrimoine Intergénérationnel</h2>
-                <p class="text-muted">Si vous décédez avec 500 000 $, votre famille ne recevra pas 500 000 $. L'outil dans lequel réside cet argent dictera le pourcentage confisqué par l'impôt.</p>
+                <span class="badge badge-accent">Acte III : Le Piège</span>
+                <h2>Le Mur Fiscal de 71 ans</h2>
+                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">À 71 ans, l'État vous oblige à convertir vos REER en FERR. Si vous ne planifiez pas, vous risquez une explosion d'impôts et la perte de vos prestations gouvernementales.</p>
             </div>
 
-            <div class="bento-grid-3" style="grid-template-columns: 1fr 1fr;">
-                <div class="bento-card" style="border-top: 4px solid #EF4444; background: rgba(239, 68, 68, 0.02);">
-                    <h3 style="color: #EF4444;">REER / CRI (L'implosion)</h3>
-                    <p class="text-muted">La valeur totale est ajoutée à votre revenu l'année du décès (hors roulement au conjoint). Conséquence : la moitié de votre vie d'épargne peut disparaître dans la tranche d'imposition maximale (53.3%).</p>
+            <div class="bento-grid-3">
+                <div class="bento-card" style="border-top: 4px solid #EF4444;">
+                    <h3 style="color: #EF4444;">1. Retraits Forcés</h3>
+                    <p class="text-muted">Le passage au FERR déclenche des retraits minimums obligatoires qui augmentent chaque année. Votre revenu imposable bondit, que vous en ayez besoin ou non.</p>
                 </div>
-                <div class="bento-card" style="border-top: 4px solid #2DD4BF; background: rgba(45, 212, 191, 0.02);">
-                    <h3 style="color: #2DD4BF;">CELI (Le transfert absolu)</h3>
-                    <p class="text-muted">La totalité du capital et des rendements passe à vos héritiers <strong>sans aucune incidence fiscale</strong>. C'est l'outil qui permet au rendement composé de traverser les générations.</p>
+                <div class="bento-card" style="border-top: 4px solid #F59E0B;">
+                    <h3 style="color: #F59E0B;">2. Récupération PSV</h3>
+                    <p class="text-muted">Si vos revenus forcés (Pension + FERR) dépassent ~90 000 $, l'impôt récupère votre PSV. C'est une taxe déguisée sur votre succès d'épargnant.</p>
                 </div>
+                <div class="bento-card" style="border-top: 4px solid #6366F1;">
+                    <h3 style="color: #6366F1;">3. Bombe Successorale</h3>
+                    <p class="text-muted">Au décès, 100% de votre REER restant est imposé comme un revenu en une seule année. L'État peut confisquer plus de 50% de votre héritage d'un seul coup.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding bg-light">
+        <div class="container diagnostic-container-wide">
+            <div class="section-header text-center mb-5">
+                <span class="badge badge-accent">Acte IV : La Stratégie</span>
+                <h2>Optimiser le Rendement de Vie</h2>
+            </div>
+
+            <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2.5rem;">
+                <div class="strat-card" style="border-left: 4px solid #2DD4BF; padding: 2.5rem;">
+                    <h3 style="color: #2DD4BF; margin-top: 0;">La Fonte du REER</h3>
+                    <p class="text-muted">La stratégie Finoza consiste à décaisser volontairement votre REER entre 60 et 70 ans. En "vidant" le REER avant le mur de 71 ans, vous payez l'impôt à un taux plus faible et protégez vos prestations futures (PSV).</p>
+                </div>
+                <div class="strat-card" style="border-left: 4px solid #A855F7; padding: 2.5rem;">
+                    <h3 style="color: #A855F7; margin-top: 0;">Le Legs "Main Chaude"</h3>
+                    <p class="text-muted">Plutôt que de léguer un REER lourdement imposé à 90 ans, donnez de votre vivant. Transférez votre surplus CELI à vos enfants pendant qu'ils sont jeunes pour maximiser l'utilité réelle de l'argent familial.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container text-center">
+            <div class="hero-alert" style="padding: 4rem; border-color: rgba(168, 85, 247, 0.3); background: rgba(168, 85, 247, 0.05);">
+                <i class="fa-solid fa-microchip" style="font-size: 3rem; color: #A855F7; margin-bottom: 20px;"></i>
+                <h2 style="margin-bottom: 20px;">Prêt pour l'ingénierie financière ?</h2>
+                <p class="text-muted mb-5" style="max-width: 700px; margin: 0 auto; font-size: 1.1rem;">Le Méga Simulateur Finoza calcule pour vous le lissage d'impôt, l'optimisation RRQ, la protection de la PSV et le plan de décaissement croisé (CELI/REER/Non-enregistré) année par année.</p>
+                <a href="#" class="btn-primary-large" style="background: #A855F7; color: white;">Lancer l'Analyse Algorithmique →</a>
+                <p style="font-size: 0.8rem; color: var(--subtle-text-color); margin-top: 15px; text-transform: uppercase; letter-spacing: 1px;">Module à venir</p>
             </div>
         </div>
     </section>
