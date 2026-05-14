@@ -612,3 +612,57 @@ select.clean-input option {
         font-size: 2.2rem !important;
     }
 }
+
+/* ==========================================================
+   PAGE RETRAITE : HERO & SCROLL
+========================================================== */
+html { 
+    scroll-behavior: smooth; 
+}
+
+.scroll-btn {
+    background: #2DD4BF;
+    color: #0B0F19;
+    padding: 14px 32px;
+    border-radius: 50px;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.scroll-btn:hover { 
+    transform: translateY(-3px); 
+    box-shadow: 0 10px 20px rgba(45, 212, 191, 0.2);
+}
+
+/* ==========================================================
+   PAGE RETRAITE : TABLEAU DE COMPARAISON (RRQ)
+========================================================== */
+.comp-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+}
+
+.comp-table th, 
+.comp-table td { 
+    padding: 18px; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+    text-align: left; 
+}
+
+.comp-table th { 
+    color: var(--subtle-text-color); 
+    font-size: 0.85rem; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+}
+
+.comp-table td { 
+    font-size: 1.1rem; 
+}
+
+.highlight-row { 
+    background: rgba(45, 212, 191, 0.03); 
+}
