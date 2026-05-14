@@ -6,13 +6,15 @@
     <title>Retraite & Patrimoine | Finoza</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
     <header class="main-nav">
         <div class="container d-flex justify-between align-center">
-            <a href="index.html" class="logo"><strong><span style="color: #2DD4BF;">Finoza.</span></strong></a>
+            <a href="index.html" class="logo">
+                <strong><span style="color: #2DD4BF;">Finoza.</span></strong>
+            </a>
+            <button class="hamburger-btn d-block-mobile" id="menu-toggle">☰</button>
             <nav id="nav-links">
                 <a href="budget.html">Budget</a>
                 <a href="credit.html">Crédit</a>
@@ -22,37 +24,52 @@
         </div>
     </header>
 
+    <section class="hero-modern" style="padding-bottom: 3rem;">
+        <div class="container hero-centered">
+            <div class="hero-text text-center">
+                <span class="badge badge-accent mb-3">Phase 3 : Décaissement</span>
+                <h1 class="gradient-text" style="font-size: clamp(2.5rem, 5vw, 4rem);">L'art de la liberté temporelle.</h1>
+                <p>La retraite n'est pas un âge, c'est un montant. Calculez votre indépendance financière, mesurez le coût réel des régimes publics, et préparez un legs qui ne sera pas confisqué par l'impôt.</p>
+            </div>
+        </div>
+    </section>
+
     <section class="section-padding">
-        <div class="container">
+        <div class="container diagnostic-container-wide">
             <div class="section-header text-center mb-5">
-                <span class="badge badge-accent">Concept FIRE</span>
-                <h2>La Règle du 25x</h2>
-                <p class="text-muted">L'indépendance financière n'est pas un âge, c'est un montant. Calculez votre "prix de liberté" basé sur un taux de retrait sécuritaire (SWR) de 4%.</p>
+                <h2>Le Chiffre FIRE (Indépendance)</h2>
+                <p class="text-muted">La règle du 4% (Trinity Study) stipule que si vous possédez 25x vos dépenses annuelles, votre capital peut survivre à l'inflation sans jamais s'épuiser.</p>
             </div>
 
             <div class="trap-layout" style="grid-template-columns: 380px 1fr; gap: 2.5rem;">
                 <div class="inputs-column">
                     <div class="premium-input-card">
-                        <h4 class="card-subtitle">Objectif de vie</h4>
+                        <h4 class="card-subtitle">Vos besoins vitaux</h4>
                         <div class="premium-input-row">
-                            <label>Dépenses mensuelles souhaitées</label>
-                            <input type="number" id="fire-expense" value="4000" oninput="calculateRetirement()">
+                            <label>Dépenses mensuelles ($)</label>
+                            <input type="number" id="fire-expense" value="4500" oninput="calculateFIRE()">
                         </div>
                         <div class="premium-input-row">
+                            <label>Taux de retrait (SWR) (%)</label>
+                            <input type="number" id="fire-swr" value="4.0" step="0.1" oninput="calculateFIRE()">
+                        </div>
+                        <div class="premium-input-row" style="border-bottom: none;">
                             <label>Épargne actuelle ($)</label>
-                            <input type="number" id="fire-current" value="50000" oninput="calculateRetirement()">
+                            <input type="number" id="fire-current" value="150000" oninput="calculateFIRE()">
                         </div>
                     </div>
                 </div>
 
                 <div class="dashboard-column">
                     <div class="dashboard-card" style="padding: 2.5rem; text-align: center;">
-                        <span class="label">Votre Chiffre de Liberté</span>
-                        <h3 id="res-fire-target" class="hero-alert-value" style="color: #2DD4BF; font-size: 3.5rem;">$0</h3>
-                        <div id="fire-progress-bar" style="width: 100%; height: 10px; background: rgba(255,255,255,0.05); border-radius: 50px; margin: 20px 0; overflow: hidden;">
-                            <div id="fire-progress-fill" style="width: 0%; height: 100%; background: #2DD4BF; transition: width 0.5s;"></div>
+                        <span class="label" style="color: var(--subtle-text-color); text-transform: uppercase; letter-spacing: 1px;">Le Prix de votre Liberté</span>
+                        <h3 id="res-fire-target" style="font-size: 3.5rem; color: #2DD4BF; margin: 10px 0; font-family: var(--font-heading);">$0</h3>
+                        
+                        <div style="width: 100%; height: 12px; background: rgba(255,255,255,0.05); border-radius: 50px; margin: 25px 0; overflow: hidden; position: relative;">
+                            <div id="res-fire-progress-bar" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10B981, #2DD4BF); transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);"></div>
                         </div>
-                        <p id="fire-verdict" class="text-muted"></p>
+                        
+                        <p id="res-fire-verdict" style="font-size: 1.1rem; color: var(--heading-color); font-weight: 600;"></p>
                     </div>
                 </div>
             </div>
@@ -60,55 +77,109 @@
     </section>
 
     <section class="section-padding bg-light">
-        <div class="container">
+        <div class="container diagnostic-container-wide">
             <div class="section-header text-center mb-5">
-                <h2>RRQ vs Investissement Privé</h2>
-                <p class="text-muted">Analyse rigoureuse : que se passe-t-il si vous investissez <u>uniquement votre part</u> de cotisation RRQ (6.4%) par vous-même en dollars constants ?</p>
+                <h2>Le Coût d'Opportunité de la RRQ</h2>
+                <p class="text-muted">Un calcul en <strong>dollars constants</strong>. Que se passerait-il si vous investissiez uniquement <u>votre part</u> de cotisation RRQ (env. 6.4% du salaire admissible) dans votre propre portefeuille ?</p>
             </div>
 
             <div class="trap-layout" style="grid-template-columns: 380px 1fr; gap: 2.5rem;">
                 <div class="inputs-column">
                     <div class="premium-input-card">
-                        <h4 class="card-subtitle">Paramètres Actuaires</h4>
+                        <h4 class="card-subtitle">Profil de carrière</h4>
                         <div class="premium-input-row">
                             <label>Salaire annuel ($)</label>
-                            <input type="number" id="rrq-salary" value="75000" oninput="calculateRetirement()">
+                            <input type="number" id="rrq-salary" value="75000" oninput="calculateRRQ()">
                         </div>
                         <div class="premium-input-row">
                             <label>Rendement Nominal (%)</label>
-                            <input type="number" id="rrq-return" value="7.0" step="0.1" oninput="calculateRetirement()">
+                            <input type="number" id="rrq-return" value="7.0" step="0.1" oninput="calculateRRQ()">
                         </div>
-                        <div class="premium-input-row">
-                            <label>Horizon de carrière (ans)</label>
-                            <input type="number" id="rrq-years" value="35" oninput="calculateRetirement()">
+                        <div class="premium-input-row" style="border-bottom: none;">
+                            <label>Années de cotisation</label>
+                            <input type="number" id="rrq-years" value="35" oninput="calculateRRQ()">
                         </div>
+                        <p style="font-size: 0.75rem; color: var(--subtle-text-color); margin-top: 15px;">*Le calcul utilise le MGA projeté de 2026 (72 900$) et soustrait une inflation cible de 2.1% pour vous donner un résultat en pouvoir d'achat actuel.</p>
                     </div>
                 </div>
 
                 <div class="dashboard-column">
                     <div class="strat-grid">
                         <div class="strat-card">
-                            <div class="strat-card-header"><span style="color: #4F46E5;">Rente RRQ (33%)</span></div>
-                            <div class="strat-card-row"><span>Rente annuelle :</span> <span id="res-rrq-rent" class="font-bold">$0</span></div>
-                            <div class="strat-card-footer"><span>Valeur au décès :</span> <span class="text-red">$0</span></div>
+                            <div class="strat-card-header">
+                                <span style="color: #4F46E5; font-weight: 700;">Rente RRQ (Bonifiée)</span>
+                            </div>
+                            <div class="strat-card-row">
+                                <span>Rente garantie :</span>
+                                <span id="res-rrq-rent" class="font-bold" style="color: var(--heading-color);">$0 / an</span>
+                            </div>
+                            <div class="strat-card-footer">
+                                <span>Légué au décès :</span>
+                                <span class="text-red">2 500 $ (Max)</span>
+                            </div>
                         </div>
-                        <div class="strat-card" style="border-color: #2DD4BF;">
-                            <div class="strat-card-header"><span style="color: #2DD4BF;">Patrimoine Privé</span></div>
-                            <div class="strat-card-row"><span>Capital accumulé :</span> <span id="res-priv-cap" class="font-bold">$0</span></div>
-                            <div class="strat-card-footer"><span>Revenu (4%) :</span> <span id="res-priv-income" style="color: #2DD4BF;">$0</span></div>
+
+                        <div class="strat-card" style="border-color: rgba(45, 212, 191, 0.3);">
+                            <div class="strat-card-header">
+                                <span style="color: #2DD4BF; font-weight: 700;">Portefeuille Privé</span>
+                            </div>
+                            <div class="strat-card-row">
+                                <span>Revenu autonome (4%) :</span>
+                                <span id="res-priv-income" class="font-bold" style="color: #2DD4BF;">$0 / an</span>
+                            </div>
+                            <div class="strat-card-footer">
+                                <span>Légué au décès :</span>
+                                <span id="res-priv-legacy" style="color: #2DD4BF; font-weight: bold;">$0</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="hero-alert mt-4" style="padding: 1.5rem; text-align: left;">
-                        <h4 style="font-size: 1rem; color: var(--heading-color); margin-bottom: 10px;">L'Arbitrage du Legs</h4>
-                        <p class="text-muted" style="font-size: 0.85rem; margin: 0;">
-                            Bien que la RRQ offre une rente garantie, elle consomme 100% de votre capital. En investissant votre part, vous bâtissez un patrimoine transmissible de <span id="res-legacy-val" style="color: #2DD4BF; font-weight: 700;">$0</span>.
-                        </p>
+                    
+                    <div class="hero-alert mt-4" style="text-align: left; padding: 1.5rem;">
+                        <span style="display: block; font-size: 0.9rem; color: var(--subtle-text-color); text-transform: uppercase; font-weight: 600; margin-bottom: 5px;">Le Verdict de la Richesse</span>
+                        <p id="res-rrq-verdict" style="margin: 0; color: var(--text-color); font-size: 0.95rem;"></p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
+    <section class="section-padding">
+        <div class="container diagnostic-container-wide">
+            <div class="section-header text-center mb-5">
+                <h2>Le Patrimoine Intergénérationnel</h2>
+                <p class="text-muted">Si vous décédez avec 500 000 $, votre famille ne recevra pas 500 000 $. L'outil dans lequel réside cet argent dictera le pourcentage confisqué par l'impôt.</p>
+            </div>
+
+            <div class="bento-grid-3" style="grid-template-columns: 1fr 1fr;">
+                <div class="bento-card" style="border-top: 4px solid #EF4444; background: rgba(239, 68, 68, 0.02);">
+                    <h3 style="color: #EF4444;">REER / CRI (L'implosion)</h3>
+                    <p class="text-muted">La valeur totale est ajoutée à votre revenu l'année du décès (hors roulement au conjoint). Conséquence : la moitié de votre vie d'épargne peut disparaître dans la tranche d'imposition maximale (53.3%).</p>
+                </div>
+                <div class="bento-card" style="border-top: 4px solid #2DD4BF; background: rgba(45, 212, 191, 0.02);">
+                    <h3 style="color: #2DD4BF;">CELI (Le transfert absolu)</h3>
+                    <p class="text-muted">La totalité du capital et des rendements passe à vos héritiers <strong>sans aucune incidence fiscale</strong>. C'est l'outil qui permet au rendement composé de traverser les générations.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer style="background: #0B0F19; padding: 4rem 0; text-align: center; border-top: 1px solid rgba(255,255,255,0.05);">
+        <div class="container">
+            <p style="color: var(--subtle-text-color);">&copy; 2026 Finoza. Tous droits réservés.</p>
+        </div>
+    </footer>
+
     <script src="retraite.js"></script>
+    <script>
+        // Script rapide de navigation active
+        document.addEventListener('DOMContentLoaded', () => {
+            const currentPath = window.location.pathname.split("/").pop() || 'index.html';
+            document.querySelectorAll('#nav-links a').forEach(link => {
+                if (link.getAttribute('href') === currentPath) link.classList.add('active');
+            });
+            const menuToggle = document.getElementById('menu-toggle');
+            if(menuToggle) menuToggle.onclick = () => document.getElementById('nav-links').classList.toggle('show');
+        });
+    </script>
 </body>
 </html>
