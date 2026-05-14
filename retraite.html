@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Retraite & Patrimoine | Finoza</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="main-nav">
+        <div class="container d-flex justify-between align-center">
+            <a href="index.html" class="logo"><strong><span style="color: #2DD4BF;">Finoza.</span></strong></a>
+            <nav id="nav-links">
+                <a href="budget.html">Budget</a>
+                <a href="credit.html">Crédit</a>
+                <a href="investissements.html">Investissements</a>
+                <a href="retraite.html" class="active">Retraite & Patrimoine</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="section-padding">
+        <div class="container diagnostic-container-wide">
+            <div class="section-header text-center mb-5">
+                <span class="badge badge-accent">Objectif : Liberté</span>
+                <h2>Le Chiffre de l'Indépendance (FIRE)</h2>
+                <p class="text-muted">La règle du 4% stipule que si vous possédez 25x vos dépenses annuelles, vous pouvez techniquement arrêter de travailler à jamais sans épuiser votre capital.</p>
+            </div>
+
+            <div class="trap-layout" style="grid-template-columns: 380px 1fr; gap: 2.5rem;">
+                <div class="inputs-column">
+                    <div class="premium-input-card">
+                        <h4 class="card-subtitle">Vos besoins futurs</h4>
+                        <div class="premium-input-row">
+                            <label>Dépenses mensuelles visées ($)</label>
+                            <input type="number" id="fire-expense" value="4000" oninput="calculateFIRE()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Taux de retrait (SWR) (%)</label>
+                            <input type="number" id="fire-swr" value="4.0" step="0.1" oninput="calculateFIRE()">
+                        </div>
+                        <div class="premium-input-row" style="border-bottom: none;">
+                            <label>Capital déjà accumulé ($)</label>
+                            <input type="number" id="fire-current" value="100000" oninput="calculateFIRE()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-column">
+                    <div class="dashboard-card" style="padding: 2.5rem;">
+                        <div class="hero-alert">
+                            <span class="hero-alert-title">Votre "Chiffre Magique" (Indépendance)</span>
+                            <span class="hero-alert-value" id="fire-target">$0</span>
+                            <span class="hero-alert-badge" id="fire-status">
+                                Manque à gagner : $0
+                            </span>
+                        </div>
+                        <p class="text-center text-muted" style="font-size: 0.9rem;">
+                            C'est le montant requis pour que votre capital génère <span id="fire-annual-income">$0</span> par an, indexé à l'inflation, sans jamais toucher au principal.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding bg-light">
+        <div class="container diagnostic-container-wide">
+            <div class="section-header text-center mb-5">
+                <h2>Le Paradoxe de la RRQ</h2>
+                <p class="text-muted">La Régime de Rentes du Québec est un filet de sécurité, mais c'est aussi un coût d'opportunité massif. Comparez ce que vos cotisations forcées donneraient si elles étaient investies dans un indice boursier mondial.</p>
+            </div>
+
+            <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 2rem;">
+                <div class="strat-card">
+                    <h3 style="color: #4F46E5; margin-bottom: 1rem;">Le Pilier Public (RRQ)</h3>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.5rem;">La rente maximale à 65 ans est d'environ 1 360 $ / mois (16 320 $ / an). Elle est indexée, mais s'éteint à votre décès (ou laisse une faible rente au conjoint).</p>
+                    <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 8px;">
+                        <span class="label">Rente annuelle estimée</span>
+                        <span class="value" style="display:block; font-size: 1.8rem; color: var(--heading-color);">$16,320</span>
+                        <span class="text-red" style="font-size: 0.8rem; font-weight: bold;">🚫 Capital perdu au décès</span>
+                    </div>
+                </div>
+
+                <div class="strat-card" style="border-color: #2DD4BF;">
+                    <h3 style="color: #2DD4BF; margin-bottom: 1rem;">Le Pilier Privé (Investissement)</h3>
+                    <p class="text-muted" style="font-size: 0.9rem; margin-bottom: 1.5rem;">Si les cotisations RRQ (environ 8 000 $ / an pour employé+employeur au max) étaient investies à 7% par an pendant 35 ans.</p>
+                    <div style="background: rgba(45, 212, 191, 0.05); padding: 1rem; border-radius: 8px;">
+                        <span class="label">Capital léguable accumulé</span>
+                        <span class="value" style="display:block; font-size: 1.8rem; color: #2DD4BF;">$1,105,800</span>
+                        <span style="color: #2DD4BF; font-size: 0.8rem; font-weight: bold;">💎 Revenu à 4% : $44,232 / an</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-padding">
+        <div class="container">
+            <div class="section-header text-center mb-5">
+                <h2>Le Patrimoine et le Legs</h2>
+                <p class="text-muted">Comment mourir riche (fiscalement). Le choix de vos comptes aujourd'hui dictera ce qui restera à vos héritiers demain.</p>
+            </div>
+
+            <div class="strat-grid">
+                <div class="strat-card">
+                    <h3 style="color: #EF4444;">Le REER : L'explosion fiscale</h3>
+                    <p class="text-muted">Au décès, 100% du REER/CRI est ajouté à votre revenu final. L'impôt peut confisquer jusqu'à <strong>53.3%</strong> de votre héritage d'un coup. C'est le compte le moins efficace pour le legs.</p>
+                </div>
+                <div class="strat-card" style="border-color: #2DD4BF;">
+                    <h3 style="color: #2DD4BF;">Le CELI : L'arme de succession</h3>
+                    <p class="text-muted">Le CELI est transféré <strong>100% libre d'impôt</strong> aux bénéficiaires. C'est l'outil ultime pour créer une richesse intergénérationnelle qui ne cesse jamais de composer.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="retraite.js"></script>
+</body>
+</html>
