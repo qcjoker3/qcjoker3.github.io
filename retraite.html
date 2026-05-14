@@ -6,36 +6,29 @@
     <title>Retraite & Patrimoine | Finoza</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0"></script>
+
     <style>
-        html {
-            scroll-behavior: smooth;
-        }
-        .hero-premium {
-            height: 75vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: radial-gradient(circle at top right, rgba(45, 212, 191, 0.05), transparent), #0B0F19;
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
+        /* Styles spécifiques au scroll et aux tables de données */
+        html { scroll-behavior: smooth; }
         .scroll-btn {
             background: #2DD4BF;
             color: #0B0F19;
-            padding: 16px 36px;
+            padding: 14px 32px;
             border-radius: 50px;
             font-weight: 700;
             text-decoration: none;
             display: inline-block;
-            margin-top: 40px;
+            margin-top: 30px;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
         .scroll-btn:hover { 
             transform: translateY(-3px); 
             box-shadow: 0 10px 20px rgba(45, 212, 191, 0.2);
         }
-        .comp-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        .comp-table { width: 100%; border-collapse: collapse; }
         .comp-table th, .comp-table td { padding: 18px; border-bottom: 1px solid rgba(255,255,255,0.05); text-align: left; }
         .comp-table th { color: var(--subtle-text-color); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
         .comp-table td { font-size: 1.1rem; }
@@ -46,46 +39,51 @@
 
     <header class="main-nav">
         <div class="container d-flex justify-between align-center">
-            <a href="index.html" class="logo"><strong><span style="color: #2DD4BF;">Finoza.</span></strong></a>
+            <a href="index.html" class="logo">
+                <strong><span style="color: #2DD4BF;">Finoza.</span></strong>
+            </a>
             <button class="hamburger-btn d-block-mobile" id="menu-toggle">☰</button>
             <nav id="nav-links">
-                <a href="budget.html">Budget</a>
-                <a href="credit.html">Crédit</a>
-                <a href="investissements.html">Investissements</a>
-                <a href="retraite.html" class="active">Retraite & Patrimoine</a>
+                <a href="budget.html">Budget et liquidités</a>
+                <a href="credit.html">Crédit et financement</a>
+                <a href="investissements.html">Placements et fiscalité</a>
+                <a href="retraite.html" class="active" style="color: var(--heading-color);">Retraite et patrimoine</a>
+                <a href="pieges.html">Pièges financiers</a>
+                <a href="articles.html">Articles</a>
             </nav>
         </div>
     </header>
 
-    <section class="hero-premium">
-        <div class="container">
-            <h1 class="gradient-text" style="font-size: clamp(3rem, 6vw, 5.5rem); line-height: 1.1; margin-bottom: 20px;">L'architecte de votre <br>héritage.</h1>
-            <p style="max-width: 700px; margin: 0 auto; font-size: 1.25rem; color: var(--subtle-text-color); line-height: 1.6;">
-                Dépassez la simple épargne. Maîtrisez la fiscalité du décaissement et optimisez votre rendement de vie avant que l'État ne s'en charge.
-            </p>
-            <a href="#simulateur-section" class="scroll-btn">Optimiser ma retraite ↓</a>
+    <section class="hero-modern" style="padding-bottom: 3rem; border-bottom: 1px solid rgba(255,255,255,0.05);">
+        <div class="container hero-centered">
+            <div class="hero-text text-center">
+                <span class="badge badge-gris mb-3">Pilier : Décaissement</span>
+                <h1 class="gradient-text" style="font-size: clamp(2.5rem, 5vw, 4.5rem);">L'architecte de votre héritage.</h1>
+                <p>Dépassez la simple accumulation. Maîtrisez la fiscalité du décaissement, testez la viabilité de votre portefeuille, et optimisez votre « rendement de vie » avant que l'État ne s'en charge.</p>
+                <a href="#simulateur-section" class="scroll-btn">Optimiser ma retraite ↓</a>
+            </div>
         </div>
     </section>
 
     <section class="section-padding">
-        <div class="container diagnostic-container-wide">
+        <div class="container">
             <div class="section-header text-center mb-5">
                 <h2>Le Rendement de Vie</h2>
                 <p class="text-muted" style="max-width: 800px; margin: 0 auto;">L'argent n'est qu'un outil pour acheter du temps et des expériences. Son utilité marginale chute drastiquement avec l'âge. Ne mourez pas avec des millions inutiles.</p>
             </div>
-            
-            <div class="bento-grid-3" style="grid-template-columns: repeat(3, 1fr);">
-                <div class="bento-card" style="border-top: 3px solid #2DD4BF;">
-                    <h3 style="color: #2DD4BF;">L'Utilité de crête</h3>
-                    <p class="text-muted">Un dollar dépensé à 65 ans pour un voyage en famille a une valeur mémorielle infiniment supérieure au même dollar dépensé à 90 ans. Finoza vous aide à trouver votre "pic" de décaissement.</p>
+
+            <div class="bento-grid-3">
+                <div class="bento-card" style="border-top: 4px solid #2DD4BF;">
+                    <h3 style="font-size: 1.3rem;">🏔️ L'Utilité de crête</h3>
+                    <p class="text-muted">Un dollar dépensé à 65 ans pour un voyage a une valeur mémorielle infiniment supérieure au même dollar dépensé à 90 ans. Trouvez votre "pic" de décaissement pour maximiser votre qualité de vie.</p>
                 </div>
-                <div class="bento-card" style="border-top: 3px solid #A855F7;">
-                    <h3 style="color: #A855F7;">Le Legs "Main Chaude"</h3>
-                    <p class="text-muted">Le plus grand cadeau à vos enfants n'est pas un héritage massif à leurs 65 ans, mais une aide ciblée à leurs 30 ans. Transférez la richesse quand elle a le plus d'impact sur leur trajectoire.</p>
+                <div class="bento-card" style="border-top: 4px solid #A855F7;">
+                    <h3 style="font-size: 1.3rem;">🔥 Le Legs "Main Chaude"</h3>
+                    <p class="text-muted">Le plus grand cadeau à vos enfants n'est pas un héritage massif à leurs 65 ans, mais une aide ciblée à leurs 30 ans. Transférez la richesse de votre vivant, quand elle a le plus d'impact.</p>
                 </div>
-                <div class="bento-card" style="border-top: 3px solid #F59E0B;">
-                    <h3 style="color: #F59E0B;">Fenêtres d'opportunités</h3>
-                    <p class="text-muted">Nous modélisons votre retraite en blocs de temps ("Time Buckets"). Identifiez les activités que vous ne pourrez plus faire après 75 ans et financez-les agressivement dès maintenant.</p>
+                <div class="bento-card" style="border-top: 4px solid #F59E0B;">
+                    <h3 style="font-size: 1.3rem;">⏳ Fenêtres d'opportunités</h3>
+                    <p class="text-muted">Nous modélisons la retraite en blocs de temps ("Time Buckets"). Identifiez les activités que vous ne pourrez plus faire après 75 ans et financez-les agressivement dès aujourd'hui.</p>
                 </div>
             </div>
         </div>
@@ -98,11 +96,11 @@
                 <p class="text-muted" style="max-width: 800px; margin: 0 auto;">L'État ne vous montre qu'une partie de l'équation. En incluant la part employeur (qui est en réalité votre rémunération différée), le coût d'opportunité d'une vie entière de cotisation est stupéfiant.</p>
             </div>
 
-            <div class="dashboard-card" style="padding: 3rem; overflow-x: auto;">
+            <div class="dashboard-card" style="padding: 2.5rem; overflow-x: auto;">
                 <table class="comp-table">
                     <thead>
                         <tr>
-                            <th style="width: 40%;">Scénario (40 ans au Max de 1986 à 2025)</th>
+                            <th style="width: 45%;">Scénario (40 ans au Max de 1986 à 2025)</th>
                             <th>Capital Accumulé</th>
                             <th>Revenu Perpétuel (4%)</th>
                             <th>Légué au décès</th>
@@ -110,87 +108,113 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><strong>Régime de Rentes du Québec (RRQ)</strong><br><span style="font-size:0.85rem; color:var(--subtle-text-color); font-weight:normal;">La rente garantie par le gouvernement</span></td>
+                            <td>
+                                <strong style="color: var(--heading-color);">Régime de Rentes du Québec (RRQ)</strong><br>
+                                <span style="font-size:0.85rem; color:var(--subtle-text-color);">La rente garantie par le gouvernement</span>
+                            </td>
                             <td style="color: #EF4444; font-weight: bold;">0 $ (Aliéné)</td>
-                            <td>~ 18 091 $</td>
+                            <td style="font-weight: 500;">~ 18 091 $</td>
                             <td style="color: #EF4444; font-weight: bold;">2 500 $ (Max)</td>
                         </tr>
                         <tr>
-                            <td><strong>Privé : Votre part uniquement (6.4%)</strong><br><span style="font-size:0.85rem; color:var(--subtle-text-color); font-weight:normal;">Ce qui est visiblement déduit de votre paie</span></td>
+                            <td>
+                                <strong style="color: var(--heading-color);">Privé : Votre part (6.4%)</strong><br>
+                                <span style="font-size:0.85rem; color:var(--subtle-text-color);">Ce qui est visiblement déduit de votre paie</span>
+                            </td>
                             <td id="res-rrq-part-emp" style="color: var(--text-color);">Calcul...</td>
                             <td id="res-rrq-inc-emp" style="color: var(--text-color);">Calcul...</td>
                             <td style="color: #2DD4BF; font-weight: bold;">100 %</td>
                         </tr>
                         <tr class="highlight-row" style="border-top: 1px solid rgba(45, 212, 191, 0.3);">
-                            <td style="color: #2DD4BF;"><strong>Privé : La totalité (12.8%)</strong><br><span style="font-size:0.85rem; color:var(--subtle-text-color); font-weight:normal;">Votre part + la part employeur (votre vrai salaire)</span></td>
+                            <td>
+                                <strong style="color: #2DD4BF;">Privé : La totalité (12.8%)</strong><br>
+                                <span style="font-size:0.85rem; color:var(--subtle-text-color);">Votre part + la part employeur (votre vrai salaire)</span>
+                            </td>
                             <td id="res-rrq-part-total" style="color: #2DD4BF; font-weight: 800;">Calcul...</td>
                             <td id="res-rrq-inc-total" style="color: #2DD4BF; font-weight: 800;">Calcul...</td>
                             <td style="color: #2DD4BF; font-weight: 800;">100 %</td>
                         </tr>
                     </tbody>
                 </table>
-                <p class="text-muted mt-4 text-center" style="font-size: 0.85rem;">*Simulation basée sur les taux réels de cotisations historiques et les rendements totaux réels du S&P/TSX depuis 1986.</p>
+                <p class="text-muted mt-4" style="font-size: 0.85rem; text-align: center;">*Simulation algorithmique basée sur les taux réels de cotisations historiques et les rendements totaux réels du S&P/TSX depuis 1986.</p>
             </div>
         </div>
     </section>
 
     <section class="section-padding">
-        <div class="container diagnostic-container-wide">
+        <div class="container">
             <div class="section-header text-center mb-5">
-                <h2>La Liquidation Successorale</h2>
-                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">À votre décès, l'impôt ne frappe pas seulement vos gains ; il traite la <u>totalité</u> de vos actifs enregistrés comme un revenu encaissé le même jour.</p>
+                <h2>La Liquidation Successorale (Le Mur des 71 ans)</h2>
+                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">À votre décès, l'impôt ne frappe pas seulement vos gains ; il traite la totalité de vos actifs enregistrés comme un revenu encaissé le même jour.</p>
             </div>
 
-            <div class="trap-layout" style="grid-template-columns: 1fr 1fr; gap: 3rem;">
-                <div class="strat-card" style="border-top: 4px solid #EF4444; background: rgba(239, 68, 68, 0.02); padding: 2.5rem;">
-                    <h3 style="color: #EF4444;">L'Implosion des Comptes (REER, CRI)</h3>
-                    <p class="text-muted">Au décès du dernier conjoint, 100% de la valeur de vos REER/FERR et CRI/FRV est ajoutée à votre déclaration de revenus finale. Si vous avez 1M$ de côté, l'ARC considère que vous avez gagné 1M$ cette année-là.
-                    <br><br>
-                    <strong>Conséquence :</strong> Un taux d'imposition marginal de 53.3%. Vos enfants perdent la moitié de votre vie d'efforts en 24 heures. Sans oublier la perte de la PSV par récupération bien avant le décès à cause des retraits forcés (FERR) à 71 ans.</p>
+            <div class="bento-grid-3">
+                <div class="bento-card" style="border-top: 4px solid #EF4444; background: rgba(239, 68, 68, 0.02);">
+                    <h3 style="color: #EF4444; font-size: 1.3rem;">⚠️ L'Implosion (REER/CRI)</h3>
+                    <p class="text-muted">Au décès du dernier conjoint, 100% de la valeur de vos FERR et FRV s'ajoute à votre revenu final. L'ARC vous imposera souvent au taux marginal maximum (53.3%). Vos enfants perdent la moitié de votre vie d'efforts en 24h.</p>
                 </div>
-                <div class="strat-card" style="border-top: 4px solid #2DD4BF; background: rgba(45, 212, 191, 0.02); padding: 2.5rem;">
-                    <h3 style="color: #2DD4BF;">La Parade : Le Décaissement Lissé</h3>
-                    <p class="text-muted">L'objectif n'est pas de minimiser l'impôt cette année, mais de le minimiser sur 30 ans. 
-                    <br><br>
-                    <strong>La Stratégie :</strong> "Fondre" vos comptes enregistrés (REER) dès 60 ans pour niveler vos paliers d'imposition, tout en maximisant le CELI. Réduire la taille de la cible avant le mur de 71 ans et avant le décès est la seule façon de protéger votre patrimoine familial.</p>
+
+                <div class="bento-card" style="border-top: 4px solid #F59E0B; background: rgba(245, 158, 11, 0.02);">
+                    <h3 style="color: #F59E0B; font-size: 1.3rem;">📉 La Perte de la PSV</h3>
+                    <p class="text-muted">L'obligation de convertir vos REER en FERR à 71 ans force des retraits minimums. Ces revenus artificiels s'additionnent à vos pensions et peuvent déclencher la "récupération" (l'annulation) de votre chèque de PSV.</p>
+                </div>
+
+                <div class="bento-card" style="border-top: 4px solid #2DD4BF; background: rgba(45, 212, 191, 0.02);">
+                    <h3 style="color: #2DD4BF; font-size: 1.3rem;">✅ La Parade Finoza</h3>
+                    <p class="text-muted">La stratégie du <strong>décaissement lissé</strong>. "Fondez" vos comptes enregistrés dès 60 ans pour niveler vos paliers d'imposition et protéger votre PSV future. Réduisez la taille de la cible avant de frapper le mur.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <section id="simulateur-section" class="section-padding bg-light" style="scroll-margin-top: 80px;">
-        <div class="container text-center">
-            <div class="hero-alert" style="padding: 4rem; border-color: rgba(45, 212, 191, 0.3); background: rgba(45, 212, 191, 0.03);">
-                <i class="fa-solid fa-chart-line" style="font-size: 3rem; color: #2DD4BF; margin-bottom: 20px;"></i>
-                <h2 style="margin-bottom: 15px;">Le Test de Survie du Portefeuille</h2>
-                <p class="text-muted mb-5" style="max-width: 700px; margin: 0 auto; font-size: 1.1rem;">
-                    Avant d'entrer dans l'optimisation fiscale profonde, testez la viabilité brute de votre capital face à un taux de retrait et un rendement estimés.
-                </p>
+        <div class="container diagnostic-container-wide">
+            <div class="section-header text-center mb-5">
+                <h2>Le Test de Survie du Portefeuille</h2>
+                <p class="text-muted" style="max-width: 800px; margin: 0 auto;">Avant d'entrer dans l'optimisation fiscale profonde, testez la viabilité brute de votre capital. Votre argent survivra-t-il jusqu'à 100 ans ?</p>
+            </div>
+
+            <div class="trap-layout" style="grid-template-columns: 350px 1fr; gap: 2.5rem;">
                 
-                <div class="dashboard-card mb-5" style="max-width: 900px; margin-left: auto; margin-right: auto; padding: 2rem;">
-                    <div style="height: 350px;">
-                        <canvas id="decumulationChart"></canvas>
+                <div class="inputs-column">
+                    <div class="premium-input-card">
+                        <h4 class="card-subtitle">Paramètres du décaissement</h4>
+                        <div class="premium-input-row">
+                            <label>Capital initial ($)</label>
+                            <input type="number" id="dec-capital" value="1000000" oninput="calculateDecumulation()">
+                        </div>
+                        <div class="premium-input-row">
+                            <label>Taux de retrait (%)</label>
+                            <input type="number" id="dec-swr" value="4.5" step="0.1" oninput="calculateDecumulation()">
+                        </div>
+                        <div class="premium-input-row" style="border-bottom: none;">
+                            <label>Rendement net réel (%)</label>
+                            <input type="number" id="dec-return" value="4.0" step="0.1" oninput="calculateDecumulation()">
+                        </div>
+                        <p class="text-muted mt-3 mb-0" style="font-size: 0.75rem;">*Le rendement réel est le rendement de vos placements une fois l'inflation déduite (ex: 6% rendement brut - 2% inflation = 4%).</p>
                     </div>
-                    <div class="premium-input-card mt-4" style="background: transparent; border: none; padding: 0;">
-                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;">
-                            <div>
-                                <label style="display: block; text-align: left; font-size: 0.85rem; color: var(--subtle-text-color); margin-bottom: 5px;">Capital ($)</label>
-                                <input type="number" id="dec-capital" value="1000000" oninput="calculateDecumulation()" style="width: 100%;">
-                            </div>
-                            <div>
-                                <label style="display: block; text-align: left; font-size: 0.85rem; color: var(--subtle-text-color); margin-bottom: 5px;">Taux de retrait (%)</label>
-                                <input type="number" id="dec-swr" value="4.5" step="0.1" oninput="calculateDecumulation()" style="width: 100%;">
-                            </div>
-                            <div>
-                                <label style="display: block; text-align: left; font-size: 0.85rem; color: var(--subtle-text-color); margin-bottom: 5px;">Rendement net réel (%)</label>
-                                <input type="number" id="dec-return" value="4.0" step="0.1" oninput="calculateDecumulation()" style="width: 100%;">
-                            </div>
+                </div>
+
+                <div class="dashboard-column">
+                    <div class="dashboard-card" style="padding: 2rem; display: flex; flex-direction: column;">
+                        
+                        <div class="d-flex justify-between align-center mb-4">
+                            <h3 style="margin: 0; font-size: 1.2rem; color: var(--heading-color);">Projection jusqu'à 100 ans</h3>
+                        </div>
+                        
+                        <div style="height: 250px; width: 100%;">
+                            <canvas id="decumulationChart"></canvas>
+                        </div>
+                        
+                        <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; margin-top: 1.5rem; text-align: center;">
+                            <a href="simulateur-avance.html" class="clean-input" style="display: inline-block; background: rgba(168, 85, 247, 0.1); color: #A855F7; font-weight: 700; padding: 12px 30px; border-radius: 50px; border: 1px solid rgba(168, 85, 247, 0.3); text-decoration: none; transition: all 0.2s;">
+                                Lancer le Méga Simulateur Finoza Pro →
+                            </a>
+                            <p class="text-muted mt-2 mb-0" style="font-size: 0.8rem;">Passez au niveau supérieur avec notre planificateur algorithmique complet (impôts, FERR, RRQ).</p>
                         </div>
                     </div>
                 </div>
 
-                <a href="simulateur-avancé.html" class="btn-primary-large" style="background: #2DD4BF; color: #0B0F19; font-weight: 800; padding: 20px 50px; font-size: 1.1rem;">Lancer le Méga Simulateur Finoza Pro →</a>
-                <p style="font-size: 0.8rem; color: var(--subtle-text-color); margin-top: 15px; text-transform: uppercase; letter-spacing: 1px;">Le planificateur algorithmique complet</p>
             </div>
         </div>
     </section>
