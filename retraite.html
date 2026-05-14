@@ -211,7 +211,7 @@
                 <p class="text-muted" style="max-width: 800px; margin: 0 auto;">Avant d'entrer dans l'optimisation fiscale profonde, vérifiez la viabilité mathématique de votre plan. Entrez le <strong>montant mensuel net</strong> que vous souhaitez retirer de vos placements, et voyez si votre capital survivra jusqu'à 100 ans ou s'il s'épuisera prématurément.</p>
             </div>
 
-            <div class="trap-layout" style="grid-template-columns: 350px 1fr; gap: 2.5rem;">
+            <div class="trap-layout" style="grid-template-columns: 350px 1fr; gap: 2.5rem; margin-bottom: 3rem;">
                 
                 <div class="inputs-column">
                     <div class="premium-input-card">
@@ -241,28 +241,27 @@
                 </div>
 
                 <div class="dashboard-column">
-                    <div class="dashboard-card" style="padding: 2rem; display: flex; flex-direction: column;">
-                        
+                    <div class="dashboard-card" style="padding: 2rem; display: flex; flex-direction: column; height: 100%;">
                         <div class="d-flex justify-between align-center mb-4">
                             <h3 style="margin: 0; font-size: 1.2rem; color: var(--heading-color);">Décaissement du capital</h3>
                         </div>
                         
-                        <div style="height: 250px; width: 100%;">
+                        <div style="flex-grow: 1; min-height: 250px; width: 100%;">
                             <canvas id="decumulationChart"></canvas>
                         </div>
                         
                         <div style="border-top: 1px solid rgba(255,255,255,0.05); padding-top: 1.5rem; margin-top: 1.5rem; text-align: center;">
                             <h4 style="color: var(--heading-color); margin-bottom: 10px;">Ceci est une estimation sommaire.</h4>
-                            <p class="text-muted mb-4" style="font-size: 0.95rem;">Essayez notre simulateur de retraite pour avoir une vision plus claire de votre avenir financier.</p>
+                            <p class="text-muted mb-0" style="font-size: 0.95rem;">Passez au niveau supérieur pour obtenir une vision claire de votre avenir financier réel.</p>
                         </div>
                     </div>
-                    <div href="simulateur-avance.html" class="clean-input" style="display: inline-block; background: rgba(168, 85, 247, 0.1); color: #A855F7; font-weight: 700; padding: 16px 40px; border-radius: 50px; border: 1px solid rgba(168, 85, 247, 0.4); text-decoration: none; transition: all 0.2s;">
-                                Exécuter le Méga Simulateur Finoza Pro →
-                    </div>
-                    </div>
                 </div>
-
+            </div> <div style="text-align: center; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 3rem;">
+                <a href="simulateur-avance.html" style="display: inline-block; background: rgba(168, 85, 247, 0.1); color: #A855F7; font-weight: 700; padding: 18px 50px; font-size: 1.1rem; border-radius: 50px; border: 1px solid rgba(168, 85, 247, 0.4); text-decoration: none; transition: all 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+                    Exécuter le Méga Simulateur Finoza Pro →
+                </a>
             </div>
+
         </div>
     </section>
 
