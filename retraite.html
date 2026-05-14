@@ -104,7 +104,7 @@
         </div>
     </section>
 
-    <section class="section-padding">
+    <section class="section-padding bg-light">
         <div class="container diagnostic-container-wide">
             <div class="section-header text-center mb-5">
                 <h2>La Prime d'Assurance Cachée (Le Paradoxe RRQ)</h2>
@@ -152,6 +152,28 @@
                     </tbody>
                 </table>
                 <p class="text-muted mt-4 text-center" style="font-size: 0.85rem;">*L'écart immense entre la ligne 1 et 3 représente le "prix" colossal que vous payez à l'État pour garantir cette rente et mutualiser le risque avec le reste de la population.</p>
+
+                <details style="margin-top: 25px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 20px;">
+                    <summary style="color: var(--subtle-text-color); font-size: 0.85rem; cursor: pointer; text-align: center; font-weight: 500; outline: none;">
+                        <span style="border-bottom: 1px dashed var(--subtle-text-color); padding-bottom: 2px;">Voir les données historiques utilisées pour la simulation (1986-2025)</span>
+                    </summary>
+                    <div style="margin-top: 20px; max-height: 300px; overflow-y: auto; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 8px;">
+                        <table style="width: 100%; font-size: 0.8rem; color: var(--subtle-text-color); border-collapse: collapse; text-align: right;">
+                            <thead>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <th style="text-align: left; padding-bottom: 8px;">Année</th>
+                                    <th style="padding-bottom: 8px;">MGA</th>
+                                    <th style="padding-bottom: 8px;">Exemption base</th>
+                                    <th style="padding-bottom: 8px;">Taux employé</th>
+                                    <th style="padding-bottom: 8px;">Rendement TSX</th>
+                                </tr>
+                            </thead>
+                            <tbody id="hist-data-tbody">
+                                </tbody>
+                        </table>
+                    </div>
+                </details>
+
             </div>
         </div>
     </section>
