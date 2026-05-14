@@ -82,6 +82,7 @@ let decumulationChartInstance = null;
 
 function calculateDecumulation() {
     const capInput = document.getElementById('dec-capital');
+    const ageInput = document.getElementById('dec-age');
     if (!capInput) return;
 
     const initialCapital = parseFloat(capInput.value) || 0;
@@ -99,7 +100,7 @@ function calculateDecumulation() {
     let dataPoints = [];
     let currentCapital = initialCapital;
 
-    for (let age = 60; age <= 100; age++) {
+    for (let age = ageInput; age <= 100; age++) {
         labels.push(age);
         dataPoints.push(currentCapital);
 
