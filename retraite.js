@@ -187,7 +187,39 @@ function renderChart(labels, data) {
     });
 }
 
+// Fonction pour remplir le tableau caché avec les données
+function populateHistoricalTable() {
+    const tbody = document.getElementById('hist-data-tbody');
+    if (!tbody) return;
+    
+    historicalDataTSX.forEach(data => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+        
+        // Formatage des pourcentages
+        const tsxFormatted = (data.tsx * 100).toFixed(2) + ' %';
+        const rateFormatted = (data.rate * 100).toFixed(2) + ' %';
+        
+        // Code couleur pour le rendement TSX (Vert = positif, Rouge = négatif)
+        const tsxColor = data.tsx >= 0 ? '#2DD4BF' : '#EF4444';
+        
+        tr.innerHTML = `
+            <td style="text-align: left; padding: 8px 0; color: var(--text-color);">${data.year}</td>
+            <td style="padding: 8px 0;">${formatCurrency(data.mga)}</td>
+            <td style="padding: 8px 0;">${formatCurrency(data.ybe)}</td>
+            <td style="padding: 8px 0;">${rateFormatted}</td>
+            <td style="padding: 8px 0; color: ${tsxColor}; font-weight: 600;">${tsxFormatted}</td>
+        `;
+        
+        tbody.appendChild(tr);
+    });
+}
+
+// ==========================================================
+// INITIALISATION
+// ==========================================================
 document.addEventListener('DOMContentLoaded', () => {
     runHistoricalBacktest();
+    populateHistoricalTable(); // <-- Ajout de l'appel ici
     calculateDecumulation();
 });
