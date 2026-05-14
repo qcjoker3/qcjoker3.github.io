@@ -56,21 +56,14 @@ function runHistoricalBacktest() {
     let portTotal = 0;
 
     historicalDataTSX.forEach(data => {
-        // La cotisation annuelle : (MGA - Exemption) * Taux
         let contribEmp = (data.mga - data.ybe) * data.rate;
-        // La part employeur est égale à la part employé
         let contribTotal = contribEmp * 2; 
-
-        // Ajout au portefeuille
         portEmp += contribEmp;
         portTotal += contribTotal;
-
-        // Croissance TSX
         portEmp = portEmp * (1 + data.tsx);
         portTotal = portTotal * (1 + data.tsx);
     });
 
-    // Mise à jour DOM
     const empCapEl = document.getElementById('res-rrq-part-emp');
     const empIncEl = document.getElementById('res-rrq-inc-emp');
     const totCapEl = document.getElementById('res-rrq-part-total');
@@ -83,36 +76,40 @@ function runHistoricalBacktest() {
 }
 
 // ==========================================================
-// MODULE : SIMULATEUR DE SURVIE (GRAPHIQUE)
+// MODULE : SIMULATEUR DE SURVIE (GRAPHIQUE EN DOLLARS CONSTANTS)
 // ==========================================================
 let decumulationChartInstance = null;
 
 function calculateDecumulation() {
-    const capitalInput = document.getElementById('dec-capital');
-    if (!capitalInput) return;
+    const capInput = document.getElementById('dec-capital');
+    if (!capInput) return;
 
-    const initialCapital = parseFloat(capitalInput.value) || 0;
-    const swr = parseFloat(document.getElementById('dec-swr').value) / 100 || 0;
-    // On utilise directement un rendement net réel (après inflation) pour simplifier le visuel
-    const realReturn = parseFloat(document.getElementById('dec-return').value) / 100 || 0; 
+    const initialCapital = parseFloat(capInput.value) || 0;
+    const monthlyIncome = parseFloat(document.getElementById('dec-monthly').value) || 0;
+    const nominalReturn = parseFloat(document.getElementById('dec-return').value) / 100 || 0;
+    const inflation = parseFloat(document.getElementById('dec-inflation').value) / 100 || 0;
 
-    const annualIncome = initialCapital * swr;
+    // Calcul du rendement RÉEL pour que le graphique soit affiché en pouvoir d'achat constant
+    const realReturn = (1 + nominalReturn) / (1 + inflation) - 1;
+    
+    // Le besoin annuel basé sur l'entrée mensuelle
+    const annualIncomeReal = monthlyIncome * 12;
 
     let labels = [];
     let dataPoints = [];
     let currentCapital = initialCapital;
 
-    // Décaissement de 60 à 100 ans
     for (let age = 60; age <= 100; age++) {
         labels.push(age);
         dataPoints.push(currentCapital);
 
-        // Retrait en début d'année, puis croissance du solde restant
-        currentCapital -= annualIncome;
+        // Retrait en début d'année
+        currentCapital -= annualIncomeReal;
         
         if (currentCapital <= 0) {
             currentCapital = 0;
         } else {
+            // Croissance réelle du solde restant
             currentCapital = currentCapital * (1 + realReturn);
         }
     }
@@ -127,13 +124,11 @@ function renderChart(labels, data) {
         decumulationChartInstance.destroy();
     }
 
-    // Couleur : rouge si la simulation finit à 0, teal sinon
     const goesToZero = data[data.length - 1] === 0;
     const lineColor = goesToZero ? '#EF4444' : '#2DD4BF';
     
-    // Dégradé sous la courbe
-    const gradient = ctx.createLinearGradient(0, 0, 0, 350);
-    gradient.addColorStop(0, goesToZero ? 'rgba(239, 68, 68, 0.4)' : 'rgba(45, 212, 191, 0.4)');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, goesToZero ? 'rgba(239, 68, 68, 0.3)' : 'rgba(45, 212, 191, 0.3)');
     gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
     decumulationChartInstance = new Chart(ctx, {
@@ -141,7 +136,7 @@ function renderChart(labels, data) {
         data: {
             labels: labels,
             datasets: [{
-                label: 'Capital Restant ($)',
+                label: 'Capital Réel Restant',
                 data: data,
                 borderColor: lineColor,
                 backgroundColor: gradient,
@@ -170,7 +165,6 @@ function renderChart(labels, data) {
                     grid: { display: false },
                     ticks: {
                         color: '#9CA3AF',
-                        // Affichage à coup de 5 ans sur l'axe des X
                         callback: function(value, index) {
                             const age = labels[index];
                             return age % 5 === 0 ? age : null;
@@ -183,7 +177,8 @@ function renderChart(labels, data) {
                     ticks: {
                         color: '#9CA3AF',
                         callback: function(value) {
-                            return '$' + (value / 1000) + 'k';
+                            if (value === 0) return '0 $';
+                            return (value / 1000) + 'k';
                         }
                     }
                 }
@@ -192,9 +187,6 @@ function renderChart(labels, data) {
     });
 }
 
-// ==========================================================
-// INITIALISATION
-// ==========================================================
 document.addEventListener('DOMContentLoaded', () => {
     runHistoricalBacktest();
     calculateDecumulation();
