@@ -75,6 +75,34 @@ function runHistoricalBacktest() {
     if (totIncEl) totIncEl.innerText = formatCurrency(portTotal * 0.04);
 }
 
+// Fonction pour remplir le tableau caché avec les données
+function populateHistoricalTable() {
+    const tbody = document.getElementById('hist-data-tbody');
+    if (!tbody) return;
+    
+    historicalDataTSX.forEach(data => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
+        
+        // Formatage des pourcentages
+        const tsxFormatted = (data.tsx * 100).toFixed(2) + ' %';
+        const rateFormatted = (data.rate * 100).toFixed(2) + ' %';
+        
+        // Code couleur pour le rendement TSX
+        const tsxColor = data.tsx >= 0 ? '#2DD4BF' : '#EF4444';
+        
+        tr.innerHTML = `
+            <td style="text-align: left; padding: 8px 0; color: var(--text-color);">${data.year}</td>
+            <td style="padding: 8px 0;">${formatCurrency(data.mga)}</td>
+            <td style="padding: 8px 0;">${formatCurrency(data.ybe)}</td>
+            <td style="padding: 8px 0;">${rateFormatted}</td>
+            <td style="padding: 8px 0; color: ${tsxColor}; font-weight: 600;">${tsxFormatted}</td>
+        `;
+        
+        tbody.appendChild(tr);
+    });
+}
+
 // ==========================================================
 // MODULE : SIMULATEUR DE SURVIE (GRAPHIQUE EN DOLLARS CONSTANTS)
 // ==========================================================
@@ -83,24 +111,27 @@ let decumulationChartInstance = null;
 function calculateDecumulation() {
     const capInput = document.getElementById('dec-capital');
     const ageInput = document.getElementById('dec-age');
-    if (!capInput) return;
+    if (!capInput || !ageInput) return;
 
+    // CORRECTION : S'assurer d'extraire la valeur numérique des champs
     const initialCapital = parseFloat(capInput.value) || 0;
+    const startAge = parseInt(ageInput.value) || 65; 
     const monthlyIncome = parseFloat(document.getElementById('dec-monthly').value) || 0;
     const nominalReturn = parseFloat(document.getElementById('dec-return').value) / 100 || 0;
     const inflation = parseFloat(document.getElementById('dec-inflation').value) / 100 || 0;
 
-    // Calcul du rendement RÉEL pour que le graphique soit affiché en pouvoir d'achat constant
+    // Calcul du rendement RÉEL (Pouvoir d'achat constant)
     const realReturn = (1 + nominalReturn) / (1 + inflation) - 1;
     
-    // Le besoin annuel basé sur l'entrée mensuelle
+    // Le besoin annuel
     const annualIncomeReal = monthlyIncome * 12;
 
     let labels = [];
     let dataPoints = [];
     let currentCapital = initialCapital;
 
-    for (let age = ageInput; age <= 100; age++) {
+    // CORRECTION : La boucle utilise maintenant `startAge` correctement
+    for (let age = startAge; age <= 100; age++) {
         labels.push(age);
         dataPoints.push(currentCapital);
 
@@ -110,7 +141,7 @@ function calculateDecumulation() {
         if (currentCapital <= 0) {
             currentCapital = 0;
         } else {
-            // Croissance réelle du solde restant
+            // Croissance réelle
             currentCapital = currentCapital * (1 + realReturn);
         }
     }
@@ -188,39 +219,11 @@ function renderChart(labels, data) {
     });
 }
 
-// Fonction pour remplir le tableau caché avec les données
-function populateHistoricalTable() {
-    const tbody = document.getElementById('hist-data-tbody');
-    if (!tbody) return;
-    
-    historicalDataTSX.forEach(data => {
-        const tr = document.createElement('tr');
-        tr.style.borderBottom = "1px solid rgba(255,255,255,0.03)";
-        
-        // Formatage des pourcentages
-        const tsxFormatted = (data.tsx * 100).toFixed(2) + ' %';
-        const rateFormatted = (data.rate * 100).toFixed(2) + ' %';
-        
-        // Code couleur pour le rendement TSX (Vert = positif, Rouge = négatif)
-        const tsxColor = data.tsx >= 0 ? '#2DD4BF' : '#EF4444';
-        
-        tr.innerHTML = `
-            <td style="text-align: left; padding: 8px 0; color: var(--text-color);">${data.year}</td>
-            <td style="padding: 8px 0;">${formatCurrency(data.mga)}</td>
-            <td style="padding: 8px 0;">${formatCurrency(data.ybe)}</td>
-            <td style="padding: 8px 0;">${rateFormatted}</td>
-            <td style="padding: 8px 0; color: ${tsxColor}; font-weight: 600;">${tsxFormatted}</td>
-        `;
-        
-        tbody.appendChild(tr);
-    });
-}
-
 // ==========================================================
 // INITIALISATION
 // ==========================================================
 document.addEventListener('DOMContentLoaded', () => {
     runHistoricalBacktest();
-    populateHistoricalTable(); // <-- Ajout de l'appel ici
+    populateHistoricalTable(); 
     calculateDecumulation();
 });
