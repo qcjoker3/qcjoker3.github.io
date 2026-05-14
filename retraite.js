@@ -6,26 +6,9 @@ const formatCurrency = (val) => {
 };
 
 // ==========================================================
-// MODULE 1 : CALCULATEUR FIRE
+// MODULE : PARADOXE RRQ (BACKTEST TSX 1986-2025)
 // ==========================================================
-function calculateFIRE() {
-    const expInput = document.getElementById('fire-expense');
-    if(!expInput) return; // Sécurité si l'élément n'est pas sur la page
-    
-    const monthlyExp = parseFloat(expInput.value) || 0;
-    const fireTarget = (monthlyExp * 12) / 0.04;
-    document.getElementById('res-fire-target').innerText = formatCurrency(fireTarget);
-}
-
-// ==========================================================
-// MODULE 2 : BACKTEST RRQ VS S&P/TSX (1986-2025)
-// ==========================================================
-// Base de données historique (1986-2025)
-// mga = Maximum des gains admissibles (RRQ)
-// ybe = Exemption de base (RRQ)
-// rate = Taux de cotisation de l'employé (RRQ)
-// tsx = Rendement TOTAL annuel du S&P/TSX Composite (incluant les dividendes réinvestis)
-const historicalData1986_2025 = [
+const historicalDataTSX = [
     { year: 1986, mga: 25900, ybe: 2500, rate: 0.018, tsx: 0.0880 },
     { year: 1987, mga: 26600, ybe: 2600, rate: 0.019, tsx: 0.0590 },
     { year: 1988, mga: 27500, ybe: 2700, rate: 0.020, tsx: 0.1110 },
@@ -65,51 +48,154 @@ const historicalData1986_2025 = [
     { year: 2022, mga: 64900, ybe: 3500, rate: 0.0615, tsx: -0.0580 },
     { year: 2023, mga: 66600, ybe: 3500, rate: 0.064, tsx: 0.1180 },
     { year: 2024, mga: 68500, ybe: 3500, rate: 0.064, tsx: 0.2240 },
-    { year: 2025, mga: 71200, ybe: 3500, rate: 0.064, tsx: 0.0850 } // Rendement estimé projeté pour l'année complète
+    { year: 2025, mga: 71200, ybe: 3500, rate: 0.064, tsx: 0.0850 }
 ];
 
 function runHistoricalBacktest() {
-    let portfolioValue = 0;
-    let totalContributed = 0;
+    let portEmp = 0;
+    let portTotal = 0;
 
-    // Simulation de l'investissement année par année
-    historicalData1986_2025.forEach(data => {
-        // La cotisation annuelle de l'employé
-        let contribution = (data.mga - data.ybe) * data.rate;
-        
-        // Ajout de la nouvelle cotisation au portefeuille
-        portfolioValue += contribution;
-        totalContributed += contribution;
+    historicalDataTSX.forEach(data => {
+        // La cotisation annuelle : (MGA - Exemption) * Taux
+        let contribEmp = (data.mga - data.ybe) * data.rate;
+        // La part employeur est égale à la part employé
+        let contribTotal = contribEmp * 2; 
 
-        // La croissance boursière du TSX pour cette année-là s'applique sur le tout
-        portfolioValue = portfolioValue * (1 + data.tsx);
+        // Ajout au portefeuille
+        portEmp += contribEmp;
+        portTotal += contribTotal;
+
+        // Croissance TSX
+        portEmp = portEmp * (1 + data.tsx);
+        portTotal = portTotal * (1 + data.tsx);
     });
 
-    const income4Percent = portfolioValue * 0.04;
-    const maxRRQ2026 = 18091; // Valeur approximative de la rente max à 65 ans en 2026
+    // Mise à jour DOM
+    const empCapEl = document.getElementById('res-rrq-part-emp');
+    const empIncEl = document.getElementById('res-rrq-inc-emp');
+    const totCapEl = document.getElementById('res-rrq-part-total');
+    const totIncEl = document.getElementById('res-rrq-inc-total');
 
-    // Mise à jour de l'interface
-    const capEl = document.getElementById('res-hist-cap');
-    const incEl = document.getElementById('res-hist-income');
-    const verdictEl = document.getElementById('res-hist-verdict');
+    if (empCapEl) empCapEl.innerText = formatCurrency(portEmp);
+    if (empIncEl) empIncEl.innerText = formatCurrency(portEmp * 0.04);
+    if (totCapEl) totCapEl.innerText = formatCurrency(portTotal);
+    if (totIncEl) totIncEl.innerText = formatCurrency(portTotal * 0.04);
+}
 
-    if (capEl) capEl.innerText = formatCurrency(portfolioValue);
-    if (incEl) incEl.innerText = formatCurrency(income4Percent);
+// ==========================================================
+// MODULE : SIMULATEUR DE SURVIE (GRAPHIQUE)
+// ==========================================================
+let decumulationChartInstance = null;
 
-    if (verdictEl) {
-        verdictEl.innerHTML = `
-            Sur 40 ans, vos cotisations RRQ n'ont représenté que <strong>${formatCurrency(totalContributed)}</strong> de votre poche. 
-            Investi dans le S&P/TSX (le marché canadien), ce capital a traversé les krachs de 2000, 2008 et 2020 pour atteindre <strong style="color:#2DD4BF;">${formatCurrency(portfolioValue)}</strong>.<br><br>
-            Aujourd'hui, vous pourriez vous verser <strong>${formatCurrency(income4Percent)}/an</strong> pour le reste de vos jours (un montant qui rivalise avec la RRQ), 
-            <strong>MAIS</strong> avec l'avantage massif de conserver l'entièreté de votre capital pour le léguer à votre famille, au lieu de voir l'État l'absorber à votre décès.
-        `;
+function calculateDecumulation() {
+    const capitalInput = document.getElementById('dec-capital');
+    if (!capitalInput) return;
+
+    const initialCapital = parseFloat(capitalInput.value) || 0;
+    const swr = parseFloat(document.getElementById('dec-swr').value) / 100 || 0;
+    // On utilise directement un rendement net réel (après inflation) pour simplifier le visuel
+    const realReturn = parseFloat(document.getElementById('dec-return').value) / 100 || 0; 
+
+    const annualIncome = initialCapital * swr;
+
+    let labels = [];
+    let dataPoints = [];
+    let currentCapital = initialCapital;
+
+    // Décaissement de 60 à 100 ans
+    for (let age = 60; age <= 100; age++) {
+        labels.push(age);
+        dataPoints.push(currentCapital);
+
+        // Retrait en début d'année, puis croissance du solde restant
+        currentCapital -= annualIncome;
+        
+        if (currentCapital <= 0) {
+            currentCapital = 0;
+        } else {
+            currentCapital = currentCapital * (1 + realReturn);
+        }
     }
+
+    renderChart(labels, dataPoints);
+}
+
+function renderChart(labels, data) {
+    const ctx = document.getElementById('decumulationChart').getContext('2d');
+    
+    if (decumulationChartInstance) {
+        decumulationChartInstance.destroy();
+    }
+
+    // Couleur : rouge si la simulation finit à 0, teal sinon
+    const goesToZero = data[data.length - 1] === 0;
+    const lineColor = goesToZero ? '#EF4444' : '#2DD4BF';
+    
+    // Dégradé sous la courbe
+    const gradient = ctx.createLinearGradient(0, 0, 0, 350);
+    gradient.addColorStop(0, goesToZero ? 'rgba(239, 68, 68, 0.4)' : 'rgba(45, 212, 191, 0.4)');
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+    decumulationChartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Capital Restant ($)',
+                data: data,
+                borderColor: lineColor,
+                backgroundColor: gradient,
+                borderWidth: 3,
+                fill: true,
+                pointRadius: 0,
+                pointHoverRadius: 6,
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return formatCurrency(context.parsed.y);
+                        }
+                    }
+                }
+            },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: {
+                        color: '#9CA3AF',
+                        // Affichage à coup de 5 ans sur l'axe des X
+                        callback: function(value, index) {
+                            const age = labels[index];
+                            return age % 5 === 0 ? age : null;
+                        }
+                    }
+                },
+                y: {
+                    beginAtZero: true,
+                    grid: { color: 'rgba(255,255,255,0.05)' },
+                    ticks: {
+                        color: '#9CA3AF',
+                        callback: function(value) {
+                            return '$' + (value / 1000) + 'k';
+                        }
+                    }
+                }
+            }
+        }
+    });
 }
 
 // ==========================================================
 // INITIALISATION
 // ==========================================================
 document.addEventListener('DOMContentLoaded', () => {
-    calculateFIRE();
     runHistoricalBacktest();
+    calculateDecumulation();
 });
